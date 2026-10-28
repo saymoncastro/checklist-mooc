@@ -93,24 +93,49 @@ class policy {
      */
     public static function load(?array $override = null): array {
         $policy = self::defaults();
+        $warnings = [];
         $json = trim((string) get_config('local_mooc_audit', 'policyjson'));
         if ($json !== '') {
             $decoded = json_decode($json, true);
             if (is_array($decoded)) {
-                $policy = array_merge($policy, $decoded);
+                $policy = array_merge($policy, self::typed($decoded, $warnings));
                 $policy['policy_version'] = ($decoded['policy_version'] ?? $policy['policy_version']) . '+admin';
             } else {
-                $policy['policy_error'] = 'policyjson inválido: ' . json_last_error_msg();
+                $warnings[] = get_string('policy_invalid', 'local_mooc_audit', json_last_error_msg());
             }
         }
         if ($override) {
-            $policy = array_merge($policy, $override);
+            $policy = array_merge($policy, self::typed($override, $warnings));
         }
+        $policy['warnings'] = $warnings;
         $ref = $policy['reference_timestamp'] ?: time();
         if (empty($policy['reoffer_year'])) {
             $policy['reoffer_year'] = (int) date('Y', $ref) + 1;
         }
         $policy['reference_timestamp'] = $ref;
         return $policy;
+    }
+
+    /**
+     * Drop override values whose type differs from the default's type (array vs scalar), recording a warning.
+     * Unknown keys are kept (a newer policy may carry keys this version ignores); null is accepted for keys that
+     * default to null.
+     *
+     * @param array $values
+     * @param array $warnings by reference
+     * @return array
+     */
+    protected static function typed(array $values, array &$warnings): array {
+        $defaults = self::defaults();
+        foreach ($values as $k => $v) {
+            if (!array_key_exists($k, $defaults) || $defaults[$k] === null || $v === null) {
+                continue;
+            }
+            if (is_array($defaults[$k]) !== is_array($v)) {
+                $warnings[] = get_string('policy_badtype', 'local_mooc_audit', $k);
+                unset($values[$k]);
+            }
+        }
+        return $values;
     }
 }

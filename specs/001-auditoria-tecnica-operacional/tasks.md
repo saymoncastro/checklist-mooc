@@ -15,8 +15,8 @@ description: "Task list for 001 — Auditoria Técnica Operacional de Cursos MOO
 **Organization**: fases de preparação e fundação (refatoração protegida), depois uma fase por user story (P1 → P3),
 depois cobertura por regra e acabamento. Caminhos relativos a `plugin/local_mooc_audit/` salvo indicação.
 
-**Status desta lista**: proposta para avaliação e autorização. **Nenhuma tarefa deve ser executada antes da
-autorização institucional** (ver `docs/relatorio-adocao-sdd.md`).
+**Status desta lista**: fases 1 e 2 autorizadas em 2026-10-28 e concluídas (T001–T047b marcadas); fases 3–9 aguardam
+validação da equipe após a fase 3 ser autorizada (ver `docs/relatorio-adocao-sdd.md`).
 
 ## Format: `[ID] [P?] [Story] Description`
 
@@ -34,14 +34,14 @@ execução no contêiner `moocaudit-webserver-1` (`/var/www/html/local/mooc_audi
 
 **Purpose**: congelar o comportamento atual das 29 regras e preparar a infraestrutura de testes.
 
-- [ ] T001 Extrair a construção dos cursos A/B de `cli/make_fixtures.php` para o gerador do componente `tests/generator/lib.php` (`local_mooc_audit_generator extends component_generator_base`, métodos `create_course_a(int $year)` e `create_course_b(int $year)`, usando `create_course`, `add_moduleinfo`, `block_manager`, `enrol_self`), pulando jogos/certificado quando o módulo não existe
-- [ ] T002 Fazer `cli/make_fixtures.php` incluir `tests/generator/lib.php` e chamar o gerador (um único código de fixture) mantendo a recusa fora de `localhost`/`debugdeveloper`
-- [ ] T003 Gerar `tests/fixtures/expected_A.json` e `tests/fixtures/expected_B.json` (mapa `rule → lista ordenada de [status, gravidade]`) executando `engine::audit()` com a versão **atual** de `classes/rules.php` sobre os cursos criados pelo gerador
-- [ ] T004 Criar `tests/characterization_test.php` que constrói A e B em PHPUnit, audita e compara com `expected_*.json`; deve passar com `rules.php` antes de qualquer migração
-- [ ] T005 [P] Criar `classes/local/status.php` com as constantes dos 6 estados, 5 gravidades e ordens de exibição (copiadas de `rules.php`/`engine.php`), sem alterar ainda os usos
-- [ ] T006 [P] Criar `classes/local/category.php` com as 8 categorias (`offer_enrol`, `institutional_resources`, `assessment_grades`, `completion_restrictions`, `certification`, `content_files`, `structure_blocks`, `plugins_environment`) e método `all()`
-- [ ] T007 [P] Acrescentar em `lang/en/local_mooc_audit.php` e `lang/pt_br/local_mooc_audit.php` as strings de categorias (`category_<id>`), estados (`status_<id>`), gravidades (`severity_<id>`), situação geral (`overall_<id>`) e seções da página (`section_nonconformities`, `section_warnings`, `section_unverifiable`, `section_errors`, `section_conformant`, `section_notices`, `rerun`, `jsonlink`, `auditmenu`, `pagetitle`)
-- [ ] T008 [P] Incrementar `version.php` para `2026102900`, release `0.2.0`, manter `MATURITY_ALPHA`
+- [x] T001 Extrair a construção dos cursos A/B de `cli/make_fixtures.php` para o gerador do componente `tests/generator/lib.php` (`local_mooc_audit_generator extends component_generator_base`, métodos `create_course_a(int $year)` e `create_course_b(int $year)`, usando `create_course`, `add_moduleinfo`, `block_manager`, `enrol_self`), pulando jogos/certificado quando o módulo não existe
+- [x] T002 Fazer `cli/make_fixtures.php` incluir `tests/generator/lib.php` e chamar o gerador (um único código de fixture) mantendo a recusa fora de `localhost`/`debugdeveloper`
+- [x] T003 Gerar `tests/fixtures/expected_A.json` e `tests/fixtures/expected_B.json` (mapa `rule → lista ordenada de [status, gravidade]`) executando `engine::audit()` com a versão **atual** de `classes/rules.php` sobre os cursos criados pelo gerador
+- [x] T004 Criar `tests/characterization_test.php` que constrói A e B em PHPUnit, audita e compara com `expected_*.json`; deve passar com `rules.php` antes de qualquer migração
+- [x] T005 [P] Criar `classes/local/status.php` com as constantes dos 6 estados, 5 gravidades e ordens de exibição (copiadas de `rules.php`/`engine.php`), sem alterar ainda os usos
+- [x] T006 [P] Criar `classes/local/category.php` com as 8 categorias (`offer_enrol`, `institutional_resources`, `assessment_grades`, `completion_restrictions`, `certification`, `content_files`, `structure_blocks`, `plugins_environment`) e método `all()`
+- [x] T007 [P] Acrescentar em `lang/en/local_mooc_audit.php` e `lang/pt_br/local_mooc_audit.php` as strings de categorias (`category_<id>`), estados (`status_<id>`), gravidades (`severity_<id>`), situação geral (`overall_<id>`) e seções da página (`section_nonconformities`, `section_warnings`, `section_unverifiable`, `section_errors`, `section_conformant`, `section_notices`, `rerun`, `jsonlink`, `auditmenu`, `pagetitle`)
+- [x] T008 [P] Incrementar `version.php` para `2026102900`, release `0.2.0`, manter `MATURITY_ALPHA`
 
 **Checkpoint**: `characterization_test` verde com o código atual; suíte existente verde.
 
@@ -52,46 +52,46 @@ execução no contêiner `moocaudit-webserver-1` (`/var/www/html/local/mooc_audi
 **Purpose**: reorganização protegida pela caracterização; bloqueia as user stories porque o renderer depende de
 `category`/`locus`/`link` nos resultados.
 
-- [ ] T009 Criar `classes/local/rule/rule_interface.php` (`id(): string`, `meta(): array`, `evaluate(array $snapshot, array $policy): array`) conforme `data-model.md` (campos de `meta()`: id, title, category, origin, type, severity, policy_keys, locus, guidance, source)
-- [ ] T010 Criar `classes/local/rule/base.php` (abstrata) com o construtor de finding `f()` (status, local, evidencia, extra: encontrado, esperado, orientacao, gravidade, cmid, locus, section) e `meta()` padrão preenchido a partir de constantes da subclasse
-- [ ] T011 Criar `classes/local/helpers.php` movendo de `rules.php`: `norm()`, `text()`, `label()`, `mods()`, `graded()`, `certs()`, `d()`
-- [ ] T012 [P] Criar `classes/local/rule/cl04.php` movendo `rules::cl04()`; meta: category `institutional_resources`, type `institucional`, severity Média, policy_keys `[summary_required_links]`, locus `course_settings`
-- [ ] T013 [P] Criar `classes/local/rule/cl05.php` (category `offer_enrol`, institucional, Baixa, `[target_category_name]`, locus `course_settings`)
-- [ ] T014 [P] Criar `classes/local/rule/cl06.php` (`offer_enrol`, institucional, Alta, `[reoffer_year, required_start_date, min_days_between_start_and_end]`, `course_settings`)
-- [ ] T015 [P] Criar `classes/local/rule/cl07.php` (`offer_enrol`, institucional, Alta, `[reoffer_year, allowed_end_dates]`, `course_settings`)
-- [ ] T016 [P] Criar `classes/local/rule/cl08.php` (`offer_enrol`, institucional, Alta, `[]`, locus `enrol`)
-- [ ] T017 [P] Criar `classes/local/rule/cl09.php` (`institutional_resources`, institucional, Média, `[required_forum_name]`, `module_edit`)
-- [ ] T018 [P] Criar `classes/local/rule/cl11.php` (`institutional_resources`, institucional, Alta, `[required_feedback_profile, required_certificate_module, licence_certificate_name]`, `module_edit`)
-- [ ] T019 [P] Criar `classes/local/rule/cl12.php` (`assessment_grades`, institucional, Alta, `[course_total_max, required_aggregation, aggregateonlygraded_allowed]`, locus `gradebook`)
-- [ ] T020 [P] Criar `classes/local/rule/cl13.php` (`assessment_grades`, institucional, Alta, `[min_quiz_attempts, attempts_rule]`, `module_edit`)
-- [ ] T021 [P] Criar `classes/local/rule/cl14.php` (`assessment_grades`, institucional, Média, `[]`, `module_edit`)
-- [ ] T022 [P] Criar `classes/local/rule/cl16.php` (`completion_restrictions`, institucional, Alta, `[required_feedback_evaluation]`, `module_edit`)
-- [ ] T023 [P] Criar `classes/local/rule/cl17.php` (`completion_restrictions`, institucional, Média, `[completion_expected]`, `module_edit`)
-- [ ] T024 [P] Criar `classes/local/rule/cl18.php` (`structure_blocks`, institucional/mista, Média, `[forbidden_modules]`, `module_edit`)
-- [ ] T025 [P] Criar `classes/local/rule/cl19.php` (`completion_restrictions`, institucional, Baixa, `[]`, `module_edit`)
-- [ ] T026 [P] Criar `classes/local/rule/cl20.php` (`structure_blocks`, institucional, Baixa, `[generic_section_names]`, locus `course_settings` para hiddensections e `section` para seções, com `section` preenchido)
-- [ ] T027 [P] Criar `classes/local/rule/cl21.php` (`structure_blocks`, institucional, Média, `[required_blocks]`, locus `blocks`)
-- [ ] T028 [P] Criar `classes/local/rule/cl22.php` (`institutional_resources`, institucional, Média, `[licence_label_text, licence_feedback_name, licence_certificate_name]`, `module_edit`)
-- [ ] T029 [P] Criar `classes/local/rule/cl23.php` (`certification`, institucional, Bloqueante, `[certificate_min_grade, required_feedback_evaluation, required_certificate_module]`, `module_edit`)
-- [ ] T030 [P] Criar `classes/local/rule/xint02.php` (`content_files`, tecnica, Alta, `[]`, `module_edit`)
-- [ ] T031 [P] Criar `classes/local/rule/xint03.php` (`plugins_environment`, tecnica, Alta, `[]`, locus `none`)
-- [ ] T032 [P] Criar `classes/local/rule/xcont01.php` (`content_files`, tecnica, Média, `[]`, `module_edit`)
-- [ ] T033 [P] Criar `classes/local/rule/xcont04.php` (`content_files`, tecnica, Média, `[]`, `module_edit`)
-- [ ] T034 [P] Criar `classes/local/rule/xav01.php` (`assessment_grades`, tecnica, Média, `[]`, `module_edit`)
-- [ ] T035 [P] Criar `classes/local/rule/xdep01.php` (`completion_restrictions`, tecnica, Alta, `[]`, `module_edit`; findings de seção com locus `section`)
-- [ ] T036 [P] Criar `classes/local/rule/xdep02.php` (`completion_restrictions`, tecnica, Bloqueante, `[]`, `module_edit`)
-- [ ] T037 [P] Criar `classes/local/rule/xdep03.php` (`completion_restrictions`, tecnica, Alta, `[]`, `module_edit`)
-- [ ] T038 [P] Criar `classes/local/rule/xdep04.php` (`completion_restrictions`, tecnica, Bloqueante, `[]`, locus `none`)
-- [ ] T039 [P] Criar `classes/local/rule/xcert01.php` (`certification`, tecnica, Bloqueante, `[required_certificate_module, licence_certificate_name]`, `module_edit`)
-- [ ] T040 [P] Criar `classes/local/rule/xstr01.php` (`structure_blocks`, tecnica, Baixa, `[]`, `module_edit`)
-- [ ] T041 Acrescentar em `lang/en` e `lang/pt_br` as strings `rule_<id>_title` e `rule_<id>_guidance` das 29 regras (títulos atuais de `rules::catalog()`; orientações padrão atuais), e trocar nos findings os textos fixos de orientação pelo uso de `get_string` (manter o texto em pt_br idêntico ao atual para a caracterização)
-- [ ] T042 Criar `classes/local/catalog.php` com a lista explícita ordenada das 29 classes (mesma ordem de `rules::catalog()`) e `instances(): rule_interface[]`
-- [ ] T043 Alterar `classes/engine.php`: `run_rules()` itera `catalog::instances()`, aplica `meta()` (titulo, origem, classe `A`, category, tipo, gravidade padrão, locus padrão, orientacao padrão quando ausente), mantém isolamento de exceção → ERRO; `summarize()` acrescenta `overall_status` (regra do `data-model.md`); `audit()` acrescenta `contract_version` `"1.0"`
-- [ ] T044 Remover `classes/rules.php` e `use` residuais; `engine_test` passa a referenciar `\local_mooc_audit\local\status`
-- [ ] T045 Rodar `characterization_test` e `engine_test`: estados por regra em A e B idênticos a `expected_*.json`; corrigir qualquer desvio antes de prosseguir (desvio intencional exige atualização documentada do JSON esperado e nota em `docs/catalogo-regras.md`)
-- [ ] T046 Alterar `classes/policy.php`: `load()` devolve `warnings[]` (`policyjson inválido: …`; chave conhecida com tipo inesperado → padrão mantido + aviso); remover `policy_error`; `engine::audit()` copia para `policy_warnings`
-- [ ] T047 Criar `classes/local/locator.php` (`url_for(array $result, int $courseid, array $snapshot_modules, array $snapshot_sections): ?moodle_url`) conforme research R5, resolvendo o id da seção a partir do número; `engine::audit()` preenche `link` (string ou null) em cada resultado
-- [ ] T047b Em `engine::run_rules()`, quando `$snapshot['site']['enableavailability']` ou `['enablecompletion']` for 0, substituir os resultados das regras das categorias `completion_restrictions` e `certification` por um NAO_VERIFICAVEL com motivo ("acompanhamento de conclusão/restrições de acesso desabilitado no site"); teste em `engine_test.php` com `set_config('enablecompletion', 0)`; a caracterização (T045) continua válida porque A/B rodam com ambos habilitados
+- [x] T009 Criar `classes/local/rule/rule_interface.php` (`id(): string`, `meta(): array`, `evaluate(array $snapshot, array $policy): array`) conforme `data-model.md` (campos de `meta()`: id, title, category, origin, type, severity, policy_keys, locus, guidance, source)
+- [x] T010 Criar `classes/local/rule/base.php` (abstrata) com o construtor de finding `f()` (status, local, evidencia, extra: encontrado, esperado, orientacao, gravidade, cmid, locus, section) e `meta()` padrão preenchido a partir de constantes da subclasse
+- [x] T011 Criar `classes/local/helpers.php` movendo de `rules.php`: `norm()`, `text()`, `label()`, `mods()`, `graded()`, `certs()`, `d()`
+- [x] T012 [P] Criar `classes/local/rule/cl04.php` movendo `rules::cl04()`; meta: category `institutional_resources`, type `institucional`, severity Média, policy_keys `[summary_required_links]`, locus `course_settings`
+- [x] T013 [P] Criar `classes/local/rule/cl05.php` (category `offer_enrol`, institucional, Baixa, `[target_category_name]`, locus `course_settings`)
+- [x] T014 [P] Criar `classes/local/rule/cl06.php` (`offer_enrol`, institucional, Alta, `[reoffer_year, required_start_date, min_days_between_start_and_end]`, `course_settings`)
+- [x] T015 [P] Criar `classes/local/rule/cl07.php` (`offer_enrol`, institucional, Alta, `[reoffer_year, allowed_end_dates]`, `course_settings`)
+- [x] T016 [P] Criar `classes/local/rule/cl08.php` (`offer_enrol`, institucional, Alta, `[]`, locus `enrol`)
+- [x] T017 [P] Criar `classes/local/rule/cl09.php` (`institutional_resources`, institucional, Média, `[required_forum_name]`, `module_edit`)
+- [x] T018 [P] Criar `classes/local/rule/cl11.php` (`institutional_resources`, institucional, Alta, `[required_feedback_profile, required_certificate_module, licence_certificate_name]`, `module_edit`)
+- [x] T019 [P] Criar `classes/local/rule/cl12.php` (`assessment_grades`, institucional, Alta, `[course_total_max, required_aggregation, aggregateonlygraded_allowed]`, locus `gradebook`)
+- [x] T020 [P] Criar `classes/local/rule/cl13.php` (`assessment_grades`, institucional, Alta, `[min_quiz_attempts, attempts_rule]`, `module_edit`)
+- [x] T021 [P] Criar `classes/local/rule/cl14.php` (`assessment_grades`, institucional, Média, `[]`, `module_edit`)
+- [x] T022 [P] Criar `classes/local/rule/cl16.php` (`completion_restrictions`, institucional, Alta, `[required_feedback_evaluation]`, `module_edit`)
+- [x] T023 [P] Criar `classes/local/rule/cl17.php` (`completion_restrictions`, institucional, Média, `[completion_expected]`, `module_edit`)
+- [x] T024 [P] Criar `classes/local/rule/cl18.php` (`structure_blocks`, institucional/mista, Média, `[forbidden_modules]`, `module_edit`)
+- [x] T025 [P] Criar `classes/local/rule/cl19.php` (`completion_restrictions`, institucional, Baixa, `[]`, `module_edit`)
+- [x] T026 [P] Criar `classes/local/rule/cl20.php` (`structure_blocks`, institucional, Baixa, `[generic_section_names]`, locus `course_settings` para hiddensections e `section` para seções, com `section` preenchido)
+- [x] T027 [P] Criar `classes/local/rule/cl21.php` (`structure_blocks`, institucional, Média, `[required_blocks]`, locus `blocks`)
+- [x] T028 [P] Criar `classes/local/rule/cl22.php` (`institutional_resources`, institucional, Média, `[licence_label_text, licence_feedback_name, licence_certificate_name]`, `module_edit`)
+- [x] T029 [P] Criar `classes/local/rule/cl23.php` (`certification`, institucional, Bloqueante, `[certificate_min_grade, required_feedback_evaluation, required_certificate_module]`, `module_edit`)
+- [x] T030 [P] Criar `classes/local/rule/xint02.php` (`content_files`, tecnica, Alta, `[]`, `module_edit`)
+- [x] T031 [P] Criar `classes/local/rule/xint03.php` (`plugins_environment`, tecnica, Alta, `[]`, locus `none`)
+- [x] T032 [P] Criar `classes/local/rule/xcont01.php` (`content_files`, tecnica, Média, `[]`, `module_edit`)
+- [x] T033 [P] Criar `classes/local/rule/xcont04.php` (`content_files`, tecnica, Média, `[]`, `module_edit`)
+- [x] T034 [P] Criar `classes/local/rule/xav01.php` (`assessment_grades`, tecnica, Média, `[]`, `module_edit`)
+- [x] T035 [P] Criar `classes/local/rule/xdep01.php` (`completion_restrictions`, tecnica, Alta, `[]`, `module_edit`; findings de seção com locus `section`)
+- [x] T036 [P] Criar `classes/local/rule/xdep02.php` (`completion_restrictions`, tecnica, Bloqueante, `[]`, `module_edit`)
+- [x] T037 [P] Criar `classes/local/rule/xdep03.php` (`completion_restrictions`, tecnica, Alta, `[]`, `module_edit`)
+- [x] T038 [P] Criar `classes/local/rule/xdep04.php` (`completion_restrictions`, tecnica, Bloqueante, `[]`, locus `none`)
+- [x] T039 [P] Criar `classes/local/rule/xcert01.php` (`certification`, tecnica, Bloqueante, `[required_certificate_module, licence_certificate_name]`, `module_edit`)
+- [x] T040 [P] Criar `classes/local/rule/xstr01.php` (`structure_blocks`, tecnica, Baixa, `[]`, `module_edit`)
+- [x] T041 Acrescentar em `lang/en` e `lang/pt_br` as strings `rule_<id>_title` e `rule_<id>_guidance` das 29 regras (títulos atuais de `rules::catalog()`; orientações padrão atuais), e trocar nos findings os textos fixos de orientação pelo uso de `get_string` (manter o texto em pt_br idêntico ao atual para a caracterização)
+- [x] T042 Criar `classes/local/catalog.php` com a lista explícita ordenada das 29 classes (mesma ordem de `rules::catalog()`) e `instances(): rule_interface[]`
+- [x] T043 Alterar `classes/engine.php`: `run_rules()` itera `catalog::instances()`, aplica `meta()` (titulo, origem, classe `A`, category, tipo, gravidade padrão, locus padrão, orientacao padrão quando ausente), mantém isolamento de exceção → ERRO; `summarize()` acrescenta `overall_status` (regra do `data-model.md`); `audit()` acrescenta `contract_version` `"1.0"`
+- [x] T044 Remover `classes/rules.php` e `use` residuais; `engine_test` passa a referenciar `\local_mooc_audit\local\status`
+- [x] T045 Rodar `characterization_test` e `engine_test`: estados por regra em A e B idênticos a `expected_*.json`; corrigir qualquer desvio antes de prosseguir (desvio intencional exige atualização documentada do JSON esperado e nota em `docs/catalogo-regras.md`)
+- [x] T046 Alterar `classes/policy.php`: `load()` devolve `warnings[]` (`policyjson inválido: …`; chave conhecida com tipo inesperado → padrão mantido + aviso); remover `policy_error`; `engine::audit()` copia para `policy_warnings`
+- [x] T047 Criar `classes/local/locator.php` (`url_for(array $result, int $courseid, array $snapshot_modules, array $snapshot_sections): ?moodle_url`) conforme research R5, resolvendo o id da seção a partir do número; `engine::audit()` preenche `link` (string ou null) em cada resultado
+- [x] T047b Em `engine::run_rules()`, quando `$snapshot['site']['enableavailability']` ou `['enablecompletion']` for 0, substituir os resultados das regras das categorias `completion_restrictions` e `certification` por um NAO_VERIFICAVEL com motivo ("acompanhamento de conclusão/restrições de acesso desabilitado no site"); teste em `engine_test.php` com `set_config('enablecompletion', 0)`; a caracterização (T045) continua válida porque A/B rodam com ambos habilitados
 
 **Checkpoint**: refatoração concluída; `characterization_test` verde; JSON com `contract_version`, `category`, `locus`, `link`, `overall_status`, `policy_warnings`.
 

@@ -151,7 +151,7 @@ class comparator {
             $tb = array_map(fn($t) => md5(trim((string) $t)), $b['texts']);
             foreach ($ta as $k => $h) {
                 if (($tb[$k] ?? null) !== $h) {
-                    $diffs[] = ['field' => "texts.$k", 'source' => mb_substr(rules::text($a['texts'][$k]), 0, 80), 'target' => mb_substr(rules::text($b['texts'][$k] ?? ''), 0, 80)];
+                    $diffs[] = ['field' => "texts.$k", 'source' => mb_substr(\local_mooc_audit\local\helpers::text($a['texts'][$k]), 0, 80), 'target' => mb_substr(\local_mooc_audit\local\helpers::text($b['texts'][$k] ?? ''), 0, 80)];
                 }
             }
             if ($diffs) {
@@ -195,7 +195,7 @@ class comparator {
      * @return string
      */
     protected static function key_full(array $m): string {
-        return $m['modname'] . '|' . $m['sectionnumber'] . '|' . rules::norm($m['name']);
+        return $m['modname'] . '|' . $m['sectionnumber'] . '|' . \local_mooc_audit\local\helpers::norm($m['name']);
     }
 
     /**
@@ -205,7 +205,7 @@ class comparator {
      * @return string
      */
     protected static function key_name(array $m): string {
-        return $m['modname'] . '|' . rules::norm($m['name']);
+        return $m['modname'] . '|' . \local_mooc_audit\local\helpers::norm($m['name']);
     }
 
     /**

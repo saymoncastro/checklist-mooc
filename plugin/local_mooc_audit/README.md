@@ -1,9 +1,9 @@
 # local_mooc_audit — prova de conceito de auditoria técnica de cursos MOOC dentro do Moodle 4.5
 
-Plugin local **somente leitura** que audita uma sala existente a partir do seu `courseid`, sem depender do MOOC Admin
+Plugin local **somente leitura** (versão 0.2.0, em evolução pela spec 001) que audita uma sala existente a partir do seu `courseid`, sem depender do MOOC Admin
 nem de arquivos `.mbz`. Reaproveita o catálogo de regras e as decisões institucionais do projeto `checklist-mooc`.
 
-**Estado:** prova de conceito (0.1.0-poc). Validado em Moodle 4.5.15 / PHP 8.3 / PostgreSQL 17 em ambiente local.
+**Estado:** PoC reorganizada (0.2.0): regras em classes próprias, catálogo com metadados, contrato JSON 1.0, caracterização dos cursos A/B. Validado em Moodle 4.5.15 / PHP 8.3 / PostgreSQL 17 em ambiente local.
 Não instalar em produção sem revisão.
 
 ## Instalação
@@ -41,18 +41,25 @@ Scripts **apenas para ambientes de teste** (recusam rodar fora de `localhost`): 
 (cria os cursos A — referência — e B — inconsistente) e `cli/make_import.php` (cria sala vazia e importa com o
 mecanismo nativo `core_course_external::import_course`).
 
-## Estrutura
+## Estrutura (0.2.0)
 
 | Arquivo | Papel |
 |---|---|
 | `classes/snapshot.php` | Retrato JSON-serializável da sala (mesmo modelo do protótipo MBZ) |
-| `classes/policy.php` | Parâmetros institucionais (fora do código das regras) |
-| `classes/rules.php` | Catálogo de 29 regras (`CL-*` = checklist, `X-*` = adicionais) |
-| `classes/engine.php` | Execução isolada das regras, agregação, renderização |
-| `classes/comparator.php` | Comparador experimental origem × destino |
+| `classes/policy.php` | Parâmetros institucionais (fora do código das regras); avisos de política inválida |
+| `classes/local/rule/rule_interface.php`, `base.php` | Contrato de uma regra (`id()`, `meta()`, `evaluate()`) e construtor de findings |
+| `classes/local/rule/*.php` | Uma classe por regra: 18 `CL-*` (checklist) + 11 `X-*` (adicionais), com categoria, tipo, gravidade, chaves de política, locus e fonte |
+| `classes/local/catalog.php` | Lista explícita e ordenada das 29 regras |
+| `classes/local/{status,category,helpers,locator}.php` | Estados/gravidades, 8 categorias, helpers compartilhados, mapeamento finding → URL de correção |
+| `classes/engine.php` | Execução isolada das regras, situação geral, contrato JSON 1.0, renderização texto |
+| `classes/comparator.php` | Comparador experimental origem × destino (inalterado; escopo da spec 003) |
 | `cli/audit.php`, `cli/compare.php` | Linha de comando |
-| `index.php` | Página mínima |
-| `tests/engine_test.php` | PHPUnit (3 testes, 12 asserções) |
+| `index.php` | Página mínima (será substituída na fase 3 da spec 001) |
+| `tests/generator/lib.php` | Gerador de componente: cursos A (conforme) e B (inconsistente), usado pelo PHPUnit e por `cli/make_fixtures.php` |
+| `tests/characterization_test.php` + `tests/fixtures/expected_*.json` | Estados por regra dos cursos A/B congelados (proteção contra mudança de comportamento) |
+| `tests/engine_test.php` | Motor, contrato, política, isolamento, conclusão desabilitada no site |
+
+Fluxo de desenvolvimento: `specs/001-auditoria-tecnica-operacional/` (Spec Kit) e `.specify/memory/constitution.md`.
 
 ## Fontes de dados e justificativa dos acessos
 
@@ -75,4 +82,4 @@ mecanismo nativo `core_course_external::import_course`).
   publicamente na versão 2016 (instalada apenas para validar a leitura de condições `days`).
 - O plugin não vê o pacote `.mbz`: corrupção de backup e arquivos ausentes *no pacote* só são detectáveis antes da
   restauração. Ver `RELATORIO-POC-PLUGIN-MOODLE.md`.
-- Uma classe de registro de regras (PoC); produção deve usar uma classe por regra e tarefas ad hoc para lotes.
+- Textos de evidência das regras ainda são gerados em português no código (orientações e títulos já estão em `lang/`).
