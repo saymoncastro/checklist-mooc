@@ -1,0 +1,99 @@
+=== Acessibilidade e Tecnologia [AcessibilideTecnologias_2026] (id 3) — local_mooc_audit 0.1.0-poc / política 2027-decisoes-2026-10-28 (ano 2027)
+Período: 2026-01-01 00:00 → 2026-12-31 23:59 | categoria: Categoria 1 | visível: 1 | tempo: 0.086s
+Seções: 8 | módulos: 66 {"book":1,"feedback":3,"forum":4,"label":4,"page":27,"quiz":4,"resource":21,"simplecertificate":2} | arquivos: 38 (sem conteúdo: 0)
+Blocos: ["completion_progress","html","html"] | inscrição: ["manual","guest(off)","self(off)"]
+Resumo: {"CONFORME":48,"NAO_CONFORME":16,"ATENCAO":6} | não conformes por gravidade: {"Baixa":1,"Alta":7,"Média":8}
+  [NAO_CONFORME   ] CL-06     Alta        Data de início correta (01/01 do ano da reoferta)
+      local: Configurações do curso > Data de início
+      evidência: início=01/01/2026 00:00 fim=31/12/2026 23:59
+      encontrado: ano=2026 ≠ 2027
+      esperado: 01/01/2027
+      orientação: Ajustar a data de início da oferta.
+  [NAO_CONFORME   ] CL-07     Alta        Data de término correta (31/12 do ano da reoferta)
+      local: Configurações do curso > Data de término
+      evidência: término=31/12/2026 23:59
+      esperado: 31/12/2027
+      orientação: Ajustar a data de término conforme o calendário do Cefor.
+  [NAO_CONFORME   ] CL-08     Alta        Autoinscrição habilitada com período correto
+      local: Métodos de inscrição > Autoinscrição (id 6)
+      evidência: status=1 novas_inscricoes=1 início=(não definida) fim=(não definida)
+      encontrado: método desabilitado; datas de inscrição não definidas
+      orientação: Editar a Autoinscrição: habilitar, permitir novas inscrições e alinhar as datas com as do curso.
+  [NAO_CONFORME   ] X-CONT-01 Alta        Recursos vazios (página/rótulo sem conteúdo, questionário sem questões, arquivo sem arquivo)
+      local: resource "Manual de Acessibilidade em documentos digitais" (cmid=114)
+      evidência: recurso de arquivo sem nenhum arquivo associado
+      orientação: Reenviar o arquivo. Na restauração do curso 670 isto ocorreu com aliases para "Arquivos do servidor" que não foram incluídos no backup.
+  [NAO_CONFORME   ] X-CONT-01 Alta        Recursos vazios (página/rótulo sem conteúdo, questionário sem questões, arquivo sem arquivo)
+      local: resource "O uso pedagógico dos recursos de Tecnologia Assistiva" (cmid=118)
+      evidência: recurso de arquivo sem nenhum arquivo associado
+      orientação: Reenviar o arquivo. Na restauração do curso 670 isto ocorreu com aliases para "Arquivos do servidor" que não foram incluídos no backup.
+  [NAO_CONFORME   ] X-CONT-01 Alta        Recursos vazios (página/rótulo sem conteúdo, questionário sem questões, arquivo sem arquivo)
+      local: resource "Políticas públicas de educação inclusiva: reflexões acerca da educação e da sociedade à luz da Teoria Crítica" (cmid=133)
+      evidência: recurso de arquivo sem nenhum arquivo associado
+      orientação: Reenviar o arquivo. Na restauração do curso 670 isto ocorreu com aliases para "Arquivos do servidor" que não foram incluídos no backup.
+  [NAO_CONFORME   ] X-CONT-01 Alta        Recursos vazios (página/rótulo sem conteúdo, questionário sem questões, arquivo sem arquivo)
+      local: resource "Processo de inclusão: a importância da escuta-olhar psicopedagógicos e o uso das TDICs" (cmid=134)
+      evidência: recurso de arquivo sem nenhum arquivo associado
+      orientação: Reenviar o arquivo. Na restauração do curso 670 isto ocorreu com aliases para "Arquivos do servidor" que não foram incluídos no backup.
+  [NAO_CONFORME   ] CL-21     Média      Blocos padrão presentes na página do curso
+      local: Blocos da página do curso
+      evidência: bloco "Acessibilidade": ausente
+      orientação: Adicionar o bloco HTML padrão (ou verificar o bloco de site correspondente).
+  [NAO_CONFORME   ] X-CONT-04 Média      Referências @@PLUGINFILE@@ sem arquivo correspondente
+      local: page "Principais Conceitos no Contexto da Inclusão" (cmid=84) campo content
+      evidência: @@PLUGINFILE@@/Manual%20de%20Acessibilidade%20em%20Documentos%20Digitais%20%281%29.pdf não encontrado entre os arquivos do módulo
+      orientação: Imagem/arquivo quebrado: reenviar no editor. Típico de aliases não restaurados ("unable to restore alias").
+  [NAO_CONFORME   ] X-CONT-04 Média      Referências @@PLUGINFILE@@ sem arquivo correspondente
+      local: page "Principais Conceitos no Contexto da Inclusão" (cmid=84) campo content
+      evidência: @@PLUGINFILE@@/Pol%C3%ADticas%20p%C3%BAblicas%20de%20educa%C3%A7%C3%A3o%20inclusiva.pdf não encontrado entre os arquivos do módulo
+      orientação: Imagem/arquivo quebrado: reenviar no editor. Típico de aliases não restaurados ("unable to restore alias").
+  [NAO_CONFORME   ] X-CONT-04 Média      Referências @@PLUGINFILE@@ sem arquivo correspondente
+      local: page "Principais Conceitos no Contexto da Inclusão" (cmid=84) campo content
+      evidência: @@PLUGINFILE@@/Processo%20de%20inclus%C3%A3o%20-%20olhar%20psicopedag%C3%B3gico%20e%20o%20uso%20das%20TDICs.pdf não encontrado entre os arquivos do módulo
+      orientação: Imagem/arquivo quebrado: reenviar no editor. Típico de aliases não restaurados ("unable to restore alias").
+  [NAO_CONFORME   ] X-CONT-04 Média      Referências @@PLUGINFILE@@ sem arquivo correspondente
+      local: book "Acessibilidade em Documentos Digitais" (cmid=98) campo chapter[0]
+      evidência: @@PLUGINFILE@@/Manual%20de%20Acessibilidade%20em%20Documentos%20Digitais%20%281%29.pdf não encontrado entre os arquivos do módulo
+      orientação: Imagem/arquivo quebrado: reenviar no editor. Típico de aliases não restaurados ("unable to restore alias").
+  [NAO_CONFORME   ] X-CONT-04 Média      Referências @@PLUGINFILE@@ sem arquivo correspondente
+      local: book "Acessibilidade em Documentos Digitais" (cmid=98) campo chapter[5]
+      evidência: @@PLUGINFILE@@/Manual%20de%20Acessibilidade%20em%20Documentos%20Digitais%20%281%29.pdf não encontrado entre os arquivos do módulo
+      orientação: Imagem/arquivo quebrado: reenviar no editor. Típico de aliases não restaurados ("unable to restore alias").
+  [NAO_CONFORME   ] X-CONT-04 Média      Referências @@PLUGINFILE@@ sem arquivo correspondente
+      local: book "Acessibilidade em Documentos Digitais" (cmid=98) campo chapter[5]
+      evidência: @@PLUGINFILE@@/Livro%20-%20O%20Uso%20Pedag%C3%B3gico%20dos%20Recursos%20de%20Tecnologia%20Assistiva%20%281%29.pdf não encontrado entre os arquivos do módulo
+      orientação: Imagem/arquivo quebrado: reenviar no editor. Típico de aliases não restaurados ("unable to restore alias").
+  [NAO_CONFORME   ] X-CONT-04 Média      Referências @@PLUGINFILE@@ sem arquivo correspondente
+      local: page "Tecnologia Assistiva: conceito, características e aplicações" (cmid=109) campo content
+      evidência: @@PLUGINFILE@@/Manual%20de%20Acessibilidade%20em%20Documentos%20Digitais.pdf não encontrado entre os arquivos do módulo
+      orientação: Imagem/arquivo quebrado: reenviar no editor. Típico de aliases não restaurados ("unable to restore alias").
+  [NAO_CONFORME   ] CL-05     Baixa       Categoria do curso = categoria de inscrições abertas
+      local: Configurações do curso > Categoria
+      evidência: categoria="Categoria 1"
+      esperado: Inscrições Abertas
+      orientação: Mover o curso para a categoria da oferta.
+  [ATENCAO        ] CL-20     Baixa       Seções: ocultas invisíveis, sem seções vazias ou com nome genérico
+      local: Seção 2 "Topic 2"
+      evidência: nome genérico "Topic 2"
+      orientação: Nomear a seção conforme o conteúdo.
+  [ATENCAO        ] CL-20     Baixa       Seções: ocultas invisíveis, sem seções vazias ou com nome genérico
+      local: Seção 3 "Tópico 3"
+      evidência: nome genérico "Tópico 3"
+      orientação: Nomear a seção conforme o conteúdo.
+  [ATENCAO        ] CL-20     Baixa       Seções: ocultas invisíveis, sem seções vazias ou com nome genérico
+      local: Seção 4 "Tópico 4"
+      evidência: nome genérico "Tópico 4"
+      orientação: Nomear a seção conforme o conteúdo.
+  [ATENCAO        ] CL-20     Baixa       Seções: ocultas invisíveis, sem seções vazias ou com nome genérico
+      local: Seção 5 "Topic 5"
+      evidência: nome genérico "Topic 5"
+      orientação: Nomear a seção conforme o conteúdo.
+  [ATENCAO        ] CL-20     Baixa       Seções: ocultas invisíveis, sem seções vazias ou com nome genérico
+      local: Seção 6 "Topic 6"
+      evidência: nome genérico "Topic 6"
+      orientação: Nomear a seção conforme o conteúdo.
+  [ATENCAO        ] CL-20     Baixa       Seções: ocultas invisíveis, sem seções vazias ou com nome genérico
+      local: Seção 7 "Topic 7"
+      evidência: nome genérico "Topic 7"
+      orientação: Nomear a seção conforme o conteúdo.
+  (conformes omitidos: CL-04, CL-09, CL-11, CL-12, CL-13, CL-14, CL-16, CL-17, CL-18, CL-19, CL-20, CL-21, CL-22, CL-23, X-AV-01, X-CERT-01, X-DEP-01, X-DEP-02, X-DEP-03, X-DEP-04, X-INT-02, X-INT-03, X-STR-01)

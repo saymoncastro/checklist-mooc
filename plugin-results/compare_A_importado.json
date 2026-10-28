@@ -1,0 +1,157 @@
+{
+    "source": 8,
+    "target": 10,
+    "course_diffs": [],
+    "expected_course_diffs": [
+        {
+            "field": "id",
+            "source": 8,
+            "target": 10
+        },
+        {
+            "field": "contextid",
+            "source": 208,
+            "target": 251
+        },
+        {
+            "field": "shortname",
+            "source": "MOOC_TESTE_A",
+            "target": "MOOC_TESTE_A_2027"
+        },
+        {
+            "field": "timecreated",
+            "source": 1793224621,
+            "target": 1793224684
+        },
+        {
+            "field": "timemodified",
+            "source": 1793224621,
+            "target": 1793224685
+        }
+    ],
+    "matched": [
+        {
+            "source_cmid": 180,
+            "target_cmid": 215,
+            "modname": "page",
+            "name": "Informações sobre o curso",
+            "how": "tipo+seção+nome"
+        },
+        {
+            "source_cmid": 181,
+            "target_cmid": 216,
+            "modname": "forum",
+            "name": "Espaço de interação",
+            "how": "tipo+seção+nome"
+        },
+        {
+            "source_cmid": 182,
+            "target_cmid": 217,
+            "modname": "feedback",
+            "name": "Pesquisa de Perfil",
+            "how": "tipo+seção+nome"
+        },
+        {
+            "source_cmid": 183,
+            "target_cmid": 218,
+            "modname": "label",
+            "name": "label",
+            "how": "tipo+seção+nome"
+        },
+        {
+            "source_cmid": 184,
+            "target_cmid": 219,
+            "modname": "page",
+            "name": "Conceitos iniciais",
+            "how": "tipo+seção+nome"
+        },
+        {
+            "source_cmid": 185,
+            "target_cmid": 220,
+            "modname": "page",
+            "name": "Aprofundamento",
+            "how": "tipo+seção+nome"
+        },
+        {
+            "source_cmid": 186,
+            "target_cmid": 221,
+            "modname": "quiz",
+            "name": "Questionário 1",
+            "how": "tipo+seção+nome"
+        },
+        {
+            "source_cmid": 187,
+            "target_cmid": 222,
+            "modname": "quiz",
+            "name": "Questionário 2",
+            "how": "tipo+seção+nome"
+        },
+        {
+            "source_cmid": 188,
+            "target_cmid": 223,
+            "modname": "feedback",
+            "name": "Avaliação do curso",
+            "how": "tipo+seção+nome"
+        },
+        {
+            "source_cmid": 189,
+            "target_cmid": 224,
+            "modname": "feedback",
+            "name": "Licença para capacitação",
+            "how": "tipo+seção+nome"
+        },
+        {
+            "source_cmid": 190,
+            "target_cmid": 225,
+            "modname": "simplecertificate",
+            "name": "Certificado digital de conclusão",
+            "how": "tipo+seção+nome"
+        },
+        {
+            "source_cmid": 191,
+            "target_cmid": 226,
+            "modname": "simplecertificate",
+            "name": "Declaração licença para capacitação",
+            "how": "tipo+seção+nome"
+        }
+    ],
+    "missing_in_target": [],
+    "extra_in_target": [
+        {
+            "target_cmid": 213,
+            "modname": "forum",
+            "name": "Avisos",
+            "section": 0
+        },
+        {
+            "target_cmid": 214,
+            "modname": "forum",
+            "name": "Avisos",
+            "section": 0
+        }
+    ],
+    "ambiguous": [
+        {
+            "source_cmid": 179,
+            "modname": "forum",
+            "name": "Avisos",
+            "candidates": [
+                213,
+                214
+            ]
+        }
+    ],
+    "modified": [],
+    "preserved": 12,
+    "notes": [],
+    "summary": {
+        "source_modules": 13,
+        "target_modules": 14,
+        "matched": 12,
+        "preserved": 12,
+        "modified": 0,
+        "missing_in_target": 0,
+        "extra_in_target": 2,
+        "ambiguous": 1
+    }
+}

@@ -1,0 +1,11 @@
+=== Comparação curso 8 (origem) → 10 (destino)
+Resumo: {"source_modules":13,"target_modules":14,"matched":12,"preserved":12,"modified":0,"missing_in_target":0,"extra_in_target":2,"ambiguous":1}
+  [esperado]   id: 8 → 10
+  [esperado]   contextid: 208 → 251
+  [esperado]   shortname: "MOOC_TESTE_A" → "MOOC_TESTE_A_2027"
+  [esperado]   timecreated: 1793224621 → 1793224684
+  [esperado]   timemodified: 1793224621 → 1793224685
+  [ADICIONAL]  forum "Avisos" (destino cmid 213, seção 0)
+  [ADICIONAL]  forum "Avisos" (destino cmid 214, seção 0)
+  [AMBÍGUO]    forum "Avisos" (origem cmid 179) candidatos [213,214]
+  correspondências por estratégia: {"tipo+seção+nome":12}; preservados sem diferença: 12

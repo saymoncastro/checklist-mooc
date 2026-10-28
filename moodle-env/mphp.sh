@@ -1,0 +1,3 @@
+#!/bin/sh
+# Executa php dentro do webserver do ambiente moocaudit (Moodle local). Uso: ./mphp.sh admin/cli/upgrade.php ...
+exec docker exec -i -w /var/www/html moocaudit-webserver-1 php "$@"

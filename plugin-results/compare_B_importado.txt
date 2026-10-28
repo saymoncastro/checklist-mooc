@@ -1,0 +1,19 @@
+=== Comparação curso 9 (origem) → 12 (destino)
+Resumo: {"source_modules":21,"target_modules":22,"matched":20,"preserved":18,"modified":2,"missing_in_target":0,"extra_in_target":2,"ambiguous":1}
+  [esperado]   id: 9 → 12
+  [esperado]   contextid: 225 → 290
+  [esperado]   shortname: "MOOC_TESTE_B" → "MOOC_TESTE_B_2027"
+  [esperado]   startdate: 1767236400 → 1798772400
+  [esperado]   enddate: 1814324400 → 1830308340
+  [esperado]   timecreated: 1793224622 → 1793224807
+  [esperado]   timemodified: 1793224622 → 1793224808
+  [curso]      formatoptions: "{\"hiddensections\":0,\"coursedisplay\":0}" → "{\"hiddensections\":1,\"coursedisplay\":0}"
+  [curso]      enrols: ["guest:status=1:start=0:end=0:new=","manual:status=0:start=0:end=0:new=","self:status=1:start=0:end=0:new=1"] → ["guest:status=1:start=0:end=0:new=","manual:status=0:start=0:end=0:new=","self:status=0:start=1798772400:end=1830308340:new=1"]
+  [ADICIONAL]  forum "Avisos" (destino cmid 241, seção 0)
+  [ADICIONAL]  forum "Avisos" (destino cmid 242, seção 0)
+  [AMBÍGUO]    forum "Avisos" (origem cmid 192) candidatos [241,242]
+  [MODIFICADO] glossary "Glossário de termos" (204 → 257)
+       extra.entries: 3 → 0
+  [MODIFICADO] game "Palavras cruzadas" (205 → 258)
+       extra.glossaryid: 3 → 4
+  correspondências por estratégia: {"tipo+seção+nome":20}; preservados sem diferença: 18

@@ -1,0 +1,59 @@
+<?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * CLI: audit a course (read-only).
+ *
+ * php local/mooc_audit/cli/audit.php --courseid=3 [--userid=5] [--policy=/path/policy.json] [--json] [--out=/path/report.json] [--snapshot]
+ *
+ * @package    local_mooc_audit
+ * @copyright  2026 Cefor/Ifes
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+define('CLI_SCRIPT', true);
+
+require(__DIR__ . '/../../../config.php');
+require_once($CFG->libdir . '/clilib.php');
+
+list($options, $unrecognized) = cli_get_params([
+    'courseid' => 0, 'userid' => 0, 'policy' => '', 'json' => false, 'out' => '', 'snapshot' => false, 'help' => false,
+], ['h' => 'help', 'c' => 'courseid']);
+
+if ($options['help'] || empty($options['courseid'])) {
+    cli_writeln("Auditoria MOOC somente leitura de um curso.\n\nOpções:\n  --courseid=N   curso a auditar (obrigatório)\n  --userid=N     usuário cuja visão define 'uservisible' (0 = admin)\n  --policy=FILE  JSON com parâmetros de política que sobrescrevem os padrões\n  --json         imprime o relatório em JSON em vez de texto\n  --out=FILE     grava o JSON do relatório no arquivo\n  --snapshot     inclui o retrato completo no JSON");
+    exit(0);
+}
+
+\core\session\manager::set_user(get_admin());
+$override = null;
+if ($options['policy'] !== '') {
+    $override = json_decode(file_get_contents($options['policy']), true);
+    if (!is_array($override)) {
+        cli_error('Arquivo de política inválido.');
+    }
+}
+
+$report = \local_mooc_audit\engine::audit((int) $options['courseid'], $override, (int) $options['userid'], (bool) $options['snapshot']);
+
+if ($options['out'] !== '') {
+    file_put_contents($options['out'], json_encode($report, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+}
+if ($options['json']) {
+    echo json_encode($report, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), "\n";
+} else {
+    echo \local_mooc_audit\engine::render_text($report);
+}

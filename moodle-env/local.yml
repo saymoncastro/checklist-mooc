@@ -1,0 +1,5 @@
+services:
+  webserver:
+    volumes:
+      - "${PROJECT_DIR}/plugin/local_mooc_audit:/var/www/html/local/mooc_audit"
+      - "${PROJECT_DIR}:/backups:ro"

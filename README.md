@@ -11,7 +11,11 @@ orientações de correção, para apoiar o processo anual de reoferta dos cursos
 | `RELATORIO-INVESTIGACAO-AUDITORIA-MOOC.md` | Relatório completo: engenharia reversa do formato MBZ, matriz dos 29 itens do checklist, catálogo de regras adicionais, achados nos backups reais, comparação arquitetural, MVP, arquitetura e roadmap |
 | `DECISOES-INSTITUCIONAIS-CHECKLIST.md` | As 10 ambiguidades do checklist como decisões institucionais, com as respostas registradas |
 | `RELATORIO-AUDITORIA-VIA-API-MOODLE.md` | Investigação complementar: auditar a sala restaurada via Web Services do Moodle 4.5 — inventário de funções, matriz de cobertura regra a regra, lacunas, verificações só possíveis na sala ativa, decisão arquitetural (motor único com adaptadores MBZ e API) |
-| `poc/moodle_api_client.py` | Cliente REST isolado e somente leitura (allowlist de funções) para a prova comparativa, ainda não executado |
+| `RELATORIO-POC-PLUGIN-MOODLE.md` | **Prova de conceito executada**: plugin `local_mooc_audit` em Moodle 4.5.15 local, cursos de teste A/B, importação nativa, comparação com o auditor MBZ e decisão arquitetural (plugin autônomo recomendado) |
+| `plugin/local_mooc_audit/` | Plugin local Moodle (29 regras, CLI, página, comparador, PHPUnit) — ver seu `README.md` |
+| `plugin-results/` | Saídas das auditorias (cursos restaurados 55/670, cursos A/B, importações, comparações, PHPUnit, captura de tela) |
+| `moodle-env/` | Instruções e scripts reproduzíveis do ambiente Moodle local (moodle-docker, plugins de terceiros, restauração) |
+| `poc/moodle_api_client.py` | Cliente REST isolado e somente leitura (allowlist de funções) para a prova comparativa via Web Services, não executado |
 | `poc/plano-prova-comparativa-api.md` | Plano da prova MBZ × API em homologação (14 regras, capacidades, critérios) |
 | `poc/mbz_inspect.py` | Protótipo somente-leitura (Python, só biblioteca padrão) que extrai o `.mbz` com segurança, normaliza os XML e executa 51 regras |
 | `poc/resultados/` | Saídas do protótipo (texto e JSON) para os três backups examinados |

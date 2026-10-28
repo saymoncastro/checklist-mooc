@@ -1,0 +1,73 @@
+=== Educador Maker: Primeiros Passos [EMPP] (id 2) — local_mooc_audit 0.1.0-poc / política 2027-decisoes-2026-10-28 (ano 2027)
+Período: 2020-08-11 00:00 → 2020-12-31 23:59 | categoria: Categoria 1 | visível: 1 | tempo: 0.12s
+Seções: 8 | módulos: 73 {"book":3,"choice":1,"data":1,"feedback":1,"forum":8,"game":4,"glossary":1,"label":21,"page":10,"quiz":4,"simplecertificate":1,"url":18} | arquivos: 120 (sem conteúdo: 0)
+Blocos: ["completion_progress","html","html"] | inscrição: ["manual","guest(off)","self(off)"]
+Resumo: {"CONFORME":46,"NAO_CONFORME":16} | não conformes por gravidade: {"Baixa":1,"Alta":5,"Média":9,"Bloqueante":1}
+  [NAO_CONFORME   ] CL-18     Bloqueante  Glossário: proibido se colaborativo; vazio se fonte de jogos
+      local: glossary "Glossário - Cultura Maker (#fazer #compartilhar)" (cmid=12)
+      evidência: glossário com 0 entradas; fonte de 3 jogos: game "Palavras cruzadas: Cultura Maker (#fazer #errar #aprender)" (cmid=21) [entradas na categoria: 0]; game "Jogo da Forca: Espaços Maker (#fazer #errar #aprender)" (cmid=33) [entradas na categoria: 0]; game "Jogo da Forca:  Mentalidade Maker (#fazer #errar #aprender)" (cmid=48) [entradas na categoria: 0]
+      esperado: entradas disponíveis para os jogos
+      orientação: As entradas não vêm em backup/importação sem usuários: repovoar (importar XML do glossário) ou trocar a fonte dos jogos para o banco de questões.
+  [NAO_CONFORME   ] CL-06     Alta        Data de início correta (01/01 do ano da reoferta)
+      local: Configurações do curso > Data de início
+      evidência: início=11/08/2020 00:00 fim=31/12/2020 23:59
+      encontrado: ano=2020 ≠ 2027; dia/mês=11/08 ≠ 01/01
+      esperado: 01/01/2027
+      orientação: Ajustar a data de início da oferta.
+  [NAO_CONFORME   ] CL-07     Alta        Data de término correta (31/12 do ano da reoferta)
+      local: Configurações do curso > Data de término
+      evidência: término=31/12/2020 23:59
+      esperado: 31/12/2027
+      orientação: Ajustar a data de término conforme o calendário do Cefor.
+  [NAO_CONFORME   ] CL-08     Alta        Autoinscrição habilitada com período correto
+      local: Métodos de inscrição > Autoinscrição (id 3)
+      evidência: status=1 novas_inscricoes=1 início=(não definida) fim=(não definida)
+      encontrado: método desabilitado; datas de inscrição não definidas
+      orientação: Editar a Autoinscrição: habilitar, permitir novas inscrições e alinhar as datas com as do curso.
+  [NAO_CONFORME   ] CL-11     Alta        Pesquisa de Perfil presente e exigida pelo certificado
+      local: Atividades do curso
+      evidência: nenhuma Pesquisa (feedback) ~ "Pesquisa de Perfil"
+      orientação: Importar a Pesquisa de Perfil da Sala Padrão Oficial.
+  [NAO_CONFORME   ] CL-12     Alta        Livro de notas: soma 100, agregação Natural, sem excluir vazias
+      local: Livro de notas > categoria raiz
+      evidência: aggregateonlygraded=1 (excluir notas vazias)
+      orientação: Desmarcar "Excluir notas vazias": com ela ligada, a condição de 60 pontos do certificado é relativa só às atividades já avaliadas.
+  [NAO_CONFORME   ] CL-09     Média      Fórum institucional "Espaço de interação" presente e sem conclusão
+      local: Fóruns do curso
+      evidência: nenhum fórum com nome ~ "Espaço de interação"; existentes: ["Avisos!","Estabeleça laços e construa redes! (#compartilhar)","Apresente-se aos seus colegas! (#fazer #compartilhar)","Quem de nós se vê como maker? (#fazer #compartilhar #divertir #aprender)","Desafio: Torre de Espaguete (#fazer #compartilhar #divertir #aprender)","Desafio: Carro movido a vento (#fazer #compartilhar #divertir #aprender)
+      orientação: Importar o fórum da Sala Padrão. Verificação por nome canônico.
+  [NAO_CONFORME   ] CL-14     Média      Atividades avaliativas com data de encerramento
+      local: game "Palavras cruzadas: Cultura Maker (#fazer #errar #aprender)" (cmid=21)
+      evidência: data de encerramento não definida
+      orientação: Definir a data de encerramento.
+  [NAO_CONFORME   ] CL-14     Média      Atividades avaliativas com data de encerramento
+      local: game "Jogo da Forca: Espaços Maker (#fazer #errar #aprender)" (cmid=33)
+      evidência: data de encerramento não definida
+      orientação: Definir a data de encerramento.
+  [NAO_CONFORME   ] CL-14     Média      Atividades avaliativas com data de encerramento
+      local: game "Jogo da Forca:  Mentalidade Maker (#fazer #errar #aprender)" (cmid=48)
+      evidência: data de encerramento não definida
+      orientação: Definir a data de encerramento.
+  [NAO_CONFORME   ] CL-14     Média      Atividades avaliativas com data de encerramento
+      local: game "Jogo Sopa de Letras (#fazer #errar #aprender)" (cmid=62)
+      evidência: data de encerramento não definida
+      orientação: Definir a data de encerramento.
+  [NAO_CONFORME   ] CL-21     Média      Blocos padrão presentes na página do curso
+      local: Blocos da página do curso
+      evidência: bloco "Acessibilidade": ausente
+      orientação: Adicionar o bloco HTML padrão (ou verificar o bloco de site correspondente).
+  [NAO_CONFORME   ] CL-22     Média      Licença para capacitação configurada
+      local: Área do curso (seção 0)
+      evidência: rótulo "Licença para capacitação": ausente
+  [NAO_CONFORME   ] CL-22     Média      Licença para capacitação configurada
+      local: Atividades do curso
+      evidência: pesquisa "Licença para capacitação": ausente
+  [NAO_CONFORME   ] CL-22     Média      Licença para capacitação configurada
+      local: Atividades do curso
+      evidência: declaração "Declaração licença para capacitação": ausente
+  [NAO_CONFORME   ] CL-05     Baixa       Categoria do curso = categoria de inscrições abertas
+      local: Configurações do curso > Categoria
+      evidência: categoria="Categoria 1"
+      esperado: Inscrições Abertas
+      orientação: Mover o curso para a categoria da oferta.
+  (conformes omitidos: CL-04, CL-12, CL-13, CL-14, CL-16, CL-17, CL-19, CL-20, CL-21, CL-23, X-AV-01, X-CERT-01, X-CONT-01, X-CONT-04, X-DEP-01, X-DEP-02, X-DEP-03, X-DEP-04, X-INT-02, X-INT-03, X-STR-01)

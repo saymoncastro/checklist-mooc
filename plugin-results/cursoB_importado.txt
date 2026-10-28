@@ -1,0 +1,111 @@
+=== Curso B — inconsistente [MOOC_TESTE_B_2027] (id 12) — local_mooc_audit 0.1.0-poc / política 2027-decisoes-2026-10-28 (ano 2027)
+Período: 2027-01-01 00:00 → 2027-12-31 23:59 | categoria: Inscrições Abertas | visível: 1 | tempo: 0.081s
+Seções: 5 | módulos: 22 {"feedback":3,"forum":3,"game":1,"glossary":1,"label":1,"page":8,"quiz":2,"resource":1,"simplecertificate":2} | arquivos: 1 (sem conteúdo: 1)
+Blocos: ["html","completion_progress","html"] | inscrição: ["manual","guest(off)","self"]
+Resumo: {"CONFORME":33,"NAO_CONFORME":21,"ATENCAO":4} | não conformes por gravidade: {"Média":9,"Alta":6,"Bloqueante":5,"Baixa":1}
+  [NAO_CONFORME   ] CL-18     Bloqueante  Glossário: proibido se colaborativo; vazio se fonte de jogos
+      local: glossary "Glossário de termos" (cmid=257)
+      evidência: glossário com 0 entradas; fonte de 1 jogos: game "Palavras cruzadas" (cmid=258) [entradas na categoria: n/a]
+      esperado: entradas disponíveis para os jogos
+      orientação: As entradas não vêm em backup/importação sem usuários: repovoar (importar XML do glossário) ou trocar a fonte dos jogos para o banco de questões.
+  [NAO_CONFORME   ] CL-23     Bloqueante  Certificado condicionado à Avaliação do curso e à nota mínima no total
+      local: simplecertificate "Certificado digital de conclusão" (cmid=261)
+      evidência: condições de nota=[]
+      esperado: nota ≥ 60 no total do curso
+  [NAO_CONFORME   ] X-CERT-01 Bloqueante  Alcançabilidade estática do certificado
+      local: simplecertificate "Certificado digital de conclusão" (cmid=261)
+      evidência: cadeia transitiva de conclusão: 6 módulos; tipos de condição: {"completion":2}
+      encontrado: page "Aprofundamento" (cmid=250) sem conclusão; page "Leitura obrigatória (oculta)" (cmid=253) oculto
+      orientação: Verificação estática; a emissão real exige usuário de teste.
+  [NAO_CONFORME   ] X-DEP-02  Bloqueante  Condição exige conclusão de módulo sem conclusão ou oculto
+      local: quiz "Questionário 1" (cmid=255)
+      evidência: exige conclusão de page "Aprofundamento" (cmid=250) que NÃO tem acompanhamento de conclusão
+      orientação: Habilitar conclusão no módulo-alvo ou remover a condição; do contrário ela nunca será satisfeita.
+  [NAO_CONFORME   ] X-DEP-04  Bloqueante  Ciclos no grafo de dependências de conclusão
+      local: Grafo de restrições
+      evidência: ciclo: 248 → 249 → 248
+      orientação: Remover uma das condições para quebrar o ciclo.
+  [NAO_CONFORME   ] CL-12     Alta        Livro de notas: soma 100, agregação Natural, sem excluir vazias
+      local: Livro de notas > categoria raiz
+      evidência: aggregateonlygraded=1 (excluir notas vazias)
+      orientação: Desmarcar "Excluir notas vazias": com ela ligada, a condição de 60 pontos do certificado é relativa só às atividades já avaliadas.
+  [NAO_CONFORME   ] CL-13     Alta        Questionários com ao menos duas tentativas (e enunciado coerente)
+      local: quiz "Questionário 1" (cmid=255)
+      evidência: tentativas permitidas=1
+      esperado: ≥ 2 (0 = ilimitadas)
+      orientação: Editar configurações do questionário > Nota > Tentativas permitidas.
+  [NAO_CONFORME   ] CL-13     Alta        Questionários com ao menos duas tentativas (e enunciado coerente)
+      local: quiz "Questionário 1" (cmid=255)
+      evidência: enunciado declara 2 tentativas; configurado=1
+      orientação: Corrigir o enunciado ou a configuração.
+  [NAO_CONFORME   ] CL-16     Alta        Avaliação do curso restrita à conclusão de todas as atividades com nota
+      local: feedback "Avaliação do curso" (cmid=259)
+      evidência: exige conclusão de cmids [255]
+      encontrado: faltam: quiz "Questionário 2" (cmid=256); game "Palavras cruzadas" (cmid=258)
+      esperado: conclusão de todas as atividades com nota
+      orientação: Adicionar as restrições de conclusão faltantes.
+  [NAO_CONFORME   ] X-CONT-01 Alta        Recursos vazios (página/rótulo sem conteúdo, questionário sem questões, arquivo sem arquivo)
+      local: quiz "Questionário 2" (cmid=256)
+      evidência: questionário sem questões
+  [NAO_CONFORME   ] X-INT-02  Alta        Arquivos registrados sem conteúdo no armazenamento do Moodle
+      local: resource "Apostila (arquivo perdido)" (cmid=254)
+      evidência: arquivo "apostila.txt" (mod_resource/content, 19 bytes) registrado mas sem conteúdo legível no armazenamento
+      orientação: Reenviar o arquivo. Se for alias (Arquivos do servidor), o original foi removido ou não foi copiado.
+  [NAO_CONFORME   ] CL-09     Média      Fórum institucional "Espaço de interação" presente e sem conclusão
+      local: forum "Espaço de interação" (cmid=244)
+      evidência: completion=1
+      esperado: conclusão desabilitada
+      orientação: Desabilitar a conclusão de atividade do fórum institucional.
+  [NAO_CONFORME   ] CL-14     Média      Atividades avaliativas com data de encerramento
+      local: quiz "Questionário 1" (cmid=255)
+      evidência: data de encerramento não definida
+      orientação: Definir a data de encerramento.
+  [NAO_CONFORME   ] CL-14     Média      Atividades avaliativas com data de encerramento
+      local: game "Palavras cruzadas" (cmid=258)
+      evidência: data de encerramento não definida
+      orientação: Definir a data de encerramento.
+  [NAO_CONFORME   ] CL-17     Média      Conclusão automática com critério adequado ao tipo
+      local: forum "Espaço de interação" (cmid=244)
+      evidência: conclusão MANUAL
+      esperado: automática (ou nenhuma, para rótulos/fóruns institucionais)
+      orientação: Trocar para conclusão automática com o critério adequado ao tipo.
+  [NAO_CONFORME   ] CL-17     Média      Conclusão automática com critério adequado ao tipo
+      local: label "label" (cmid=246)
+      evidência: conclusão MANUAL
+      esperado: automática (ou nenhuma, para rótulos/fóruns institucionais)
+      orientação: Trocar para conclusão automática com o critério adequado ao tipo.
+  [NAO_CONFORME   ] CL-21     Média      Blocos padrão presentes na página do curso
+      local: Blocos da página do curso
+      evidência: bloco "Acessibilidade": ausente
+      orientação: Adicionar o bloco HTML padrão (ou verificar o bloco de site correspondente).
+  [NAO_CONFORME   ] X-AV-01   Média      Enunciado × configuração (pontos)
+      local: quiz "Questionário 2" (cmid=256)
+      evidência: enunciado declara 50 pontos; nota máxima=40
+      orientação: Alinhar enunciado e nota máxima.
+  [NAO_CONFORME   ] X-CONT-01 Média      Recursos vazios (página/rótulo sem conteúdo, questionário sem questões, arquivo sem arquivo)
+      local: page "Página sem conteúdo" (cmid=251)
+      evidência: sem texto e sem mídia/links
+      orientação: Preencher ou remover o recurso.
+  [NAO_CONFORME   ] X-CONT-04 Média      Referências @@PLUGINFILE@@ sem arquivo correspondente
+      local: page "Página com imagem perdida" (cmid=252) campo content
+      evidência: @@PLUGINFILE@@/banner.png não encontrado entre os arquivos do módulo
+      orientação: Imagem/arquivo quebrado: reenviar no editor. Típico de aliases não restaurados ("unable to restore alias").
+  [NAO_CONFORME   ] CL-19     Baixa       Rótulos sem conclusão de atividade
+      local: label "label" (cmid=246)
+      evidência: completion=1
+      orientação: Desabilitar a conclusão no rótulo.
+  [ATENCAO        ] X-DEP-02  Alta        Condição exige conclusão de módulo sem conclusão ou oculto
+      local: quiz "Questionário 1" (cmid=255)
+      evidência: exige conclusão de módulo OCULTO page "Leitura obrigatória (oculta)" (cmid=253)
+  [ATENCAO        ] CL-20     Baixa       Seções: ocultas invisíveis, sem seções vazias ou com nome genérico
+      local: Seção 3 "Topic 3"
+      evidência: nome genérico "Topic 3"
+      orientação: Nomear a seção conforme o conteúdo.
+  [ATENCAO        ] X-STR-01  Baixa       Módulos ocultos, invisíveis ao usuário ou com nome vazio
+      local: page "Leitura obrigatória (oculta)" (cmid=253)
+      evidência: módulo oculto
+      orientação: Confirmar se deve permanecer oculto.
+  [ATENCAO        ] CL-17     Informativa Conclusão automática com critério adequado ao tipo
+      local: Conclusão de atividades
+      evidência: nenhuma=11 manual=2 automática=9
+  (conformes omitidos: CL-04, CL-05, CL-06, CL-07, CL-08, CL-09, CL-11, CL-12, CL-13, CL-14, CL-20, CL-21, CL-22, CL-23, X-DEP-01, X-DEP-03, X-INT-03)

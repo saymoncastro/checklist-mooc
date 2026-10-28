@@ -1,0 +1,6 @@
+export MOODLE_DOCKER_WWWROOT=${PROJECT_DIR}/moodle-local/moodle
+export MOODLE_DOCKER_DB=pgsql
+export MOODLE_DOCKER_PHP_VERSION=8.3
+export COMPOSE_PROJECT_NAME=moocaudit
+export MOODLE_DOCKER_WEB_PORT=127.0.0.1:8091
+export MOODLE_DOCKER_WEB_HOST=localhost

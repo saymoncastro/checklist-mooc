@@ -1,0 +1,28 @@
+=== Curso A — referência [MOOC_TESTE_A_2028] (id 11) — local_mooc_audit 0.1.0-poc / política 2027-decisoes-2026-10-28 (ano 2027)
+Período: 2028-01-01 00:00 → 2028-12-31 23:59 | categoria: Inscrições Abertas | visível: 1 | tempo: 0.067s
+Seções: 5 | módulos: 14 {"feedback":3,"forum":3,"label":1,"page":3,"quiz":2,"simplecertificate":2} | arquivos: 0 (sem conteúdo: 0)
+Blocos: ["html","completion_progress","html","html"] | inscrição: ["manual","guest(off)","self(off)"]
+Resumo: {"CONFORME":43,"NAO_CONFORME":3,"ATENCAO":2} | não conformes por gravidade: {"Alta":3}
+  [NAO_CONFORME   ] CL-06     Alta        Data de início correta (01/01 do ano da reoferta)
+      local: Configurações do curso > Data de início
+      evidência: início=01/01/2028 00:00 fim=31/12/2028 23:59
+      encontrado: ano=2028 ≠ 2027
+      esperado: 01/01/2027
+      orientação: Ajustar a data de início da oferta.
+  [NAO_CONFORME   ] CL-07     Alta        Data de término correta (31/12 do ano da reoferta)
+      local: Configurações do curso > Data de término
+      evidência: término=31/12/2028 23:59
+      esperado: 31/12/2027
+      orientação: Ajustar a data de término conforme o calendário do Cefor.
+  [NAO_CONFORME   ] CL-08     Alta        Autoinscrição habilitada com período correto
+      local: Métodos de inscrição > Autoinscrição (id 30)
+      evidência: status=1 novas_inscricoes=1 início=(não definida) fim=(não definida)
+      encontrado: método desabilitado; datas de inscrição não definidas
+      orientação: Editar a Autoinscrição: habilitar, permitir novas inscrições e alinhar as datas com as do curso.
+  [ATENCAO        ] CL-14     Baixa       Atividades avaliativas com data de encerramento
+      local: quiz "Questionário 1" (cmid=235)
+      evidência: encerramento=31/12/2027 23:59 (≠ fim do curso 31/12/2028 23:59)
+  [ATENCAO        ] CL-14     Baixa       Atividades avaliativas com data de encerramento
+      local: quiz "Questionário 2" (cmid=236)
+      evidência: encerramento=31/12/2027 23:59 (≠ fim do curso 31/12/2028 23:59)
+  (conformes omitidos: CL-04, CL-05, CL-09, CL-11, CL-12, CL-13, CL-16, CL-17, CL-18, CL-19, CL-20, CL-21, CL-22, CL-23, X-AV-01, X-CERT-01, X-CONT-01, X-CONT-04, X-DEP-01, X-DEP-02, X-DEP-03, X-DEP-04, X-INT-02, X-INT-03, X-STR-01)
