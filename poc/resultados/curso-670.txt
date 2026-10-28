@@ -1,0 +1,237 @@
+
+=================== backup-moodle2-course-670-acessibilidetecnologias_2026-20261028-1501-nu.mbz ===================
+Curso: Acessibilidade e Tecnologia [AcessibilideTecnologias_2026] id=670 | Moodle 4.5.8+ (Build: 20251219) | backup 2026-10-28 15:02
+Período: 2026-01-01 00:00 → 2026-12-31 23:59 | categoria: Inscrições Abertas
+Seções: 8 | módulos: 66 {'book': 1, 'feedback': 3, 'forum': 4, 'label': 4, 'page': 27, 'quiz': 4, 'resource': 21, 'simplecertificate': 2}
+Resumo: {'CONFORME': 50, 'NAO_APLICAVEL': 1, 'NAO_VERIFICAVEL': 9, 'ATENCAO': 31, 'NAO_CONFORME': 17} | não conformes por gravidade: {'Alta': 15, 'Média': 2}
+  [NAO_CONFORME   ] X-INT-02  Alta        Arquivos referenciados em files.xml sem conteúdo no backup
+      local: page "Principais Conceitos no Contexto da Inclusão" (cmid=93308, activities/page_93308/module.xml)
+      evidência: files.xml file id=1466127 mod_page/content "Manual de Acessibilidade em Documentos Digitais (1).pdf" 7542557 bytes contenthash=c238492a7e8e163d388a1f586d9c6ed34ed8f56f — ausente em files/c2/
+      orientação: O Moodle omite silenciosamente arquivos cujo conteúdo não existe no filedir de origem; após a restauração o link ficará quebrado. Reenviar o arquivo no curso de origem.
+  [NAO_CONFORME   ] X-INT-02  Alta        Arquivos referenciados em files.xml sem conteúdo no backup
+      local: page "Principais Conceitos no Contexto da Inclusão" (cmid=93308, activities/page_93308/module.xml)
+      evidência: files.xml file id=1466128 mod_page/content "Políticas públicas de educação inclusiva.pdf" 270036 bytes contenthash=d84098702b2fb633be3f8bcea996d4b3baaedd69 — ausente em files/d8/
+      orientação: O Moodle omite silenciosamente arquivos cujo conteúdo não existe no filedir de origem; após a restauração o link ficará quebrado. Reenviar o arquivo no curso de origem.
+  [NAO_CONFORME   ] X-INT-02  Alta        Arquivos referenciados em files.xml sem conteúdo no backup
+      local: page "Principais Conceitos no Contexto da Inclusão" (cmid=93308, activities/page_93308/module.xml)
+      evidência: files.xml file id=1466129 mod_page/content "Processo de inclusão - olhar psicopedagógico e o uso das TDICs.pdf" 444033 bytes contenthash=f7e82bf51f9641a4d9a71c5471f3b1d399164380 — ausente em files/f7/
+      orientação: O Moodle omite silenciosamente arquivos cujo conteúdo não existe no filedir de origem; após a restauração o link ficará quebrado. Reenviar o arquivo no curso de origem.
+  [NAO_CONFORME   ] X-INT-02  Alta        Arquivos referenciados em files.xml sem conteúdo no backup
+      local: page "Principais Conceitos no Contexto da Inclusão" (cmid=93309, activities/page_93309/module.xml)
+      evidência: files.xml file id=1466131 mod_page/content "Manual de Acessibilidade em Documentos Digitais (1).pdf" 7542557 bytes contenthash=c238492a7e8e163d388a1f586d9c6ed34ed8f56f — ausente em files/c2/
+      orientação: O Moodle omite silenciosamente arquivos cujo conteúdo não existe no filedir de origem; após a restauração o link ficará quebrado. Reenviar o arquivo no curso de origem.
+  [NAO_CONFORME   ] X-INT-02  Alta        Arquivos referenciados em files.xml sem conteúdo no backup
+      local: page "Principais Conceitos no Contexto da Inclusão" (cmid=93309, activities/page_93309/module.xml)
+      evidência: files.xml file id=1466132 mod_page/content "Políticas públicas de educação inclusiva.pdf" 270036 bytes contenthash=d84098702b2fb633be3f8bcea996d4b3baaedd69 — ausente em files/d8/
+      orientação: O Moodle omite silenciosamente arquivos cujo conteúdo não existe no filedir de origem; após a restauração o link ficará quebrado. Reenviar o arquivo no curso de origem.
+  [NAO_CONFORME   ] X-INT-02  Alta        Arquivos referenciados em files.xml sem conteúdo no backup
+      local: page "Principais Conceitos no Contexto da Inclusão" (cmid=93309, activities/page_93309/module.xml)
+      evidência: files.xml file id=1466133 mod_page/content "Processo de inclusão - olhar psicopedagógico e o uso das TDICs.pdf" 444033 bytes contenthash=f7e82bf51f9641a4d9a71c5471f3b1d399164380 — ausente em files/f7/
+      orientação: O Moodle omite silenciosamente arquivos cujo conteúdo não existe no filedir de origem; após a restauração o link ficará quebrado. Reenviar o arquivo no curso de origem.
+  [NAO_CONFORME   ] X-INT-02  Alta        Arquivos referenciados em files.xml sem conteúdo no backup
+      local: book "Acessibilidade em Documentos Digitais" (cmid=93322, activities/book_93322/module.xml)
+      evidência: files.xml file id=1466122 mod_book/chapter "Manual de Acessibilidade em Documentos Digitais (1).pdf" 7542557 bytes contenthash=c238492a7e8e163d388a1f586d9c6ed34ed8f56f — ausente em files/c2/
+      orientação: O Moodle omite silenciosamente arquivos cujo conteúdo não existe no filedir de origem; após a restauração o link ficará quebrado. Reenviar o arquivo no curso de origem.
+  [NAO_CONFORME   ] X-INT-02  Alta        Arquivos referenciados em files.xml sem conteúdo no backup
+      local: book "Acessibilidade em Documentos Digitais" (cmid=93322, activities/book_93322/module.xml)
+      evidência: files.xml file id=1466124 mod_book/chapter "Manual de Acessibilidade em Documentos Digitais (1).pdf" 7542557 bytes contenthash=c238492a7e8e163d388a1f586d9c6ed34ed8f56f — ausente em files/c2/
+      orientação: O Moodle omite silenciosamente arquivos cujo conteúdo não existe no filedir de origem; após a restauração o link ficará quebrado. Reenviar o arquivo no curso de origem.
+  [NAO_CONFORME   ] X-INT-02  Alta        Arquivos referenciados em files.xml sem conteúdo no backup
+      local: book "Acessibilidade em Documentos Digitais" (cmid=93322, activities/book_93322/module.xml)
+      evidência: files.xml file id=1466126 mod_book/chapter "Livro - O Uso Pedagógico dos Recursos de Tecnologia Assistiva (1).pdf" 14891870 bytes contenthash=ddd32577068572a1d2e467d84d2b458ba90639f5 — ausente em files/dd/
+      orientação: O Moodle omite silenciosamente arquivos cujo conteúdo não existe no filedir de origem; após a restauração o link ficará quebrado. Reenviar o arquivo no curso de origem.
+  [NAO_CONFORME   ] X-INT-02  Alta        Arquivos referenciados em files.xml sem conteúdo no backup
+      local: page "Tecnologia Assistiva: conceito, características e aplicações" (cmid=93333, activities/page_93333/module.xml)
+      evidência: files.xml file id=1466113 mod_page/content "Manual de Acessibilidade em Documentos Digitais.pdf" 7542557 bytes contenthash=c238492a7e8e163d388a1f586d9c6ed34ed8f56f — ausente em files/c2/
+      orientação: O Moodle omite silenciosamente arquivos cujo conteúdo não existe no filedir de origem; após a restauração o link ficará quebrado. Reenviar o arquivo no curso de origem.
+  [NAO_CONFORME   ] X-INT-02  Alta        Arquivos referenciados em files.xml sem conteúdo no backup
+      local: page "Tecnologia Assistiva: conceito, características e aplicações" (cmid=93334, activities/page_93334/module.xml)
+      evidência: files.xml file id=1466130 mod_page/content "Manual de Acessibilidade em Documentos Digitais.pdf" 7542557 bytes contenthash=c238492a7e8e163d388a1f586d9c6ed34ed8f56f — ausente em files/c2/
+      orientação: O Moodle omite silenciosamente arquivos cujo conteúdo não existe no filedir de origem; após a restauração o link ficará quebrado. Reenviar o arquivo no curso de origem.
+  [NAO_CONFORME   ] X-INT-02  Alta        Arquivos referenciados em files.xml sem conteúdo no backup
+      local: resource "Manual de Acessibilidade em documentos digitais" (cmid=93338, activities/resource_93338/module.xml)
+      evidência: files.xml file id=1466114 mod_resource/content "Manual de Acessibilidade em Documentos Digitais (1).pdf" 7542557 bytes contenthash=c238492a7e8e163d388a1f586d9c6ed34ed8f56f — ausente em files/c2/
+      orientação: O Moodle omite silenciosamente arquivos cujo conteúdo não existe no filedir de origem; após a restauração o link ficará quebrado. Reenviar o arquivo no curso de origem.
+  [NAO_CONFORME   ] X-INT-02  Alta        Arquivos referenciados em files.xml sem conteúdo no backup
+      local: resource "O uso pedagógico dos recursos de Tecnologia Assistiva" (cmid=93342, activities/resource_93342/module.xml)
+      evidência: files.xml file id=1466116 mod_resource/content "Livro - O Uso Pedagógico dos Recursos de Tecnologia Assistiva (1).pdf" 14891870 bytes contenthash=ddd32577068572a1d2e467d84d2b458ba90639f5 — ausente em files/dd/
+      orientação: O Moodle omite silenciosamente arquivos cujo conteúdo não existe no filedir de origem; após a restauração o link ficará quebrado. Reenviar o arquivo no curso de origem.
+  [NAO_CONFORME   ] X-INT-02  Alta        Arquivos referenciados em files.xml sem conteúdo no backup
+      local: resource "Políticas públicas de educação inclusiva: reflexões acerca da educação e da sociedade à luz da Teoria Crítica" (cmid=93357, activities/resource_93357/module.xml)
+      evidência: files.xml file id=1466118 mod_resource/content "Políticas públicas de educação inclusiva.pdf" 270036 bytes contenthash=d84098702b2fb633be3f8bcea996d4b3baaedd69 — ausente em files/d8/
+      orientação: O Moodle omite silenciosamente arquivos cujo conteúdo não existe no filedir de origem; após a restauração o link ficará quebrado. Reenviar o arquivo no curso de origem.
+  [NAO_CONFORME   ] X-INT-02  Alta        Arquivos referenciados em files.xml sem conteúdo no backup
+      local: resource "Processo de inclusão: a importância da escuta-olhar psicopedagógicos e o uso das TDICs" (cmid=93358, activities/resource_93358/module.xml)
+      evidência: files.xml file id=1466120 mod_resource/content "Processo de inclusão - olhar psicopedagógico e o uso das TDICs.pdf" 444033 bytes contenthash=f7e82bf51f9641a4d9a71c5471f3b1d399164380 — ausente em files/f7/
+      orientação: O Moodle omite silenciosamente arquivos cujo conteúdo não existe no filedir de origem; após a restauração o link ficará quebrado. Reenviar o arquivo no curso de origem.
+  [NAO_CONFORME   ] X-ACC-01  Média       Imagens sem texto alternativo
+      local: page "Quem somos" (cmid=93302, activities/page_93302/module.xml)
+      evidência: 2/2 <img> sem atributo alt (alt vazio=0) nos campos ['content']
+      orientação: Adicionar texto alternativo (alt="" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.
+  [NAO_CONFORME   ] X-ACC-01  Média       Imagens sem texto alternativo
+      local: page "Tipos de Deficiências e Barreiras" (cmid=93315, activities/page_93315/module.xml)
+      evidência: 1/1 <img> sem atributo alt (alt vazio=0) nos campos ['content']
+      orientação: Adicionar texto alternativo (alt="" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.
+  [ATENCAO        ] CL-06     Alta        Data de início correta (futura, ≥1 mês antes do fim)
+      local: course/course.xml <startdate>
+      evidência: startdate=2026-01-01 00:00 enddate=2026-12-31 23:59 ref=2026-10-28 [estado do backup: reavaliar após a restauração/criação da sala nova]
+      encontrado: ano=2026 ≠ 2027
+      esperado: 01/01/2027, ≥30 dias antes do fim
+      orientação: Ajustar a data de início. O MOOC Admin pode redefinir datas na reoferta: diferenciar auditoria do backup da auditoria pós-restauração.
+  [ATENCAO        ] CL-07     Alta        Data de término no último dia do ciclo (31/12 do ano da reoferta)
+      local: course/course.xml <enddate>
+      evidência: enddate=2026-12-31 23:59 (31/12/2026) [estado do backup: reavaliar após a restauração/criação da sala nova]
+      esperado: ['31/12'] de 2027
+      orientação: Ajustar a data de término conforme calendário do Cefor.
+  [ATENCAO        ] CL-25     Alta        Texto do certificado conforme padrão / emissão de teste
+      local: simplecertificate "Certificado digital de conclusão" (cmid=93361, activities/simplecertificate_93361/module.xml)
+      evidência: texto="o instituto federal do espirito santo, por meio do {campus}, certifica que {username}, com numero de documento {profile_cpf}, concluiu e foi aprovado(a) no curso {coursename}, realizado no periodo de "; similaridade com padrão=0.55; placeholders=['{CAMPUS}', '{USERNAME}', '{PROFILE_CPF}', '{COURSENAME}', '{TIMESTART}', '{TIMEEND}', '{CARGA_HORARIA}']
+      esperado: O Instituto Federal do Espírito Santo, por meio do {CAMPUS}, certifica que {USERNAME} participou do curso {COURSENAME}, no período de {TIMESTART} a {TIMEEND}, com carga horária de {CARGA_HORARIA} hora
+      orientação: Conferir o texto-padrão. A emissão de teste (layout, campus, assinatura) exige ambiente Moodle.
+  [ATENCAO        ] X-INT-03  Alta        Plugins não nativos necessários no destino
+      local: activities/simplecertificate_* (2 instâncias)
+      evidência: módulo não nativo mod_simplecertificate versão 2024051105
+      orientação: Garantir que o plugin exista no Moodle de destino na mesma versão ou superior; caso contrário, a restauração omite as atividades.
+  [ATENCAO        ] X-INT-03  Alta        Plugins não nativos necessários no destino
+      local: availability type="days" (1 usos)
+      evidência: plugin availability_days não nativo
+      orientação: Se ausente no destino, o Moodle ignora a condição ao carregar (modo "lax"), alterando as regras de acesso silenciosamente.
+  [ATENCAO        ] X-INT-03  Alta        Plugins não nativos necessários no destino
+      local: course/blocks/completion_progress_234020
+      evidência: bloco não nativo block_completion_progress versão 2026042700
+  [ATENCAO        ] CL-15     Média       Restrições das avaliações corretas; 1º questionário condicionado à "Escolha a sua situação"
+      local: activities/choice_*
+      evidência: nenhuma atividade Escolha ~ "situação junto ao Ifes" no curso
+      orientação: Checklist pressupõe essa escolha; cursos recentes podem não usá-la — confirmar se a regra ainda vale.
+  [ATENCAO        ] CL-21     Média       Blocos padrão presentes
+      local: course/blocks/html_*/block.xml configdata
+      evidência: bloco HTML "Acessibilidade": ausente no backup
+      orientação: Decisão institucional: o bloco deve estar na sala. Como não aparece em nenhum backup examinado, a verificação definitiva é pós-restauração (classe C); se for bloco de nível de site, ele não entra no backup do curso.
+  [ATENCAO        ] X-CONT-02 Baixa       Módulos com nomes duplicados
+      local: page "Informações sobre o curso" cmids=[93298, 93299]
+      evidência: conteúdo DIFERENTE (p.ex. versão em Libras) — não é duplicata
+      orientação: Se idêntico: remover duplicata. Se versões alternativas: diferenciar o nome (ex.: sufixo "(Libras)") para navegação/acessibilidade.
+  [ATENCAO        ] X-CONT-02 Baixa       Módulos com nomes duplicados
+      local: page "Como realizar este curso e obter o certificado?" cmids=[93300, 93301]
+      evidência: conteúdo DIFERENTE (p.ex. versão em Libras) — não é duplicata
+      orientação: Se idêntico: remover duplicata. Se versões alternativas: diferenciar o nome (ex.: sufixo "(Libras)") para navegação/acessibilidade.
+  [ATENCAO        ] X-CONT-02 Baixa       Módulos com nomes duplicados
+      local: page "Quem somos" cmids=[93302, 93303]
+      evidência: conteúdo DIFERENTE (p.ex. versão em Libras) — não é duplicata
+      orientação: Se idêntico: remover duplicata. Se versões alternativas: diferenciar o nome (ex.: sufixo "(Libras)") para navegação/acessibilidade.
+  [ATENCAO        ] X-CONT-02 Baixa       Módulos com nomes duplicados
+      local: page "Principais Conceitos no Contexto da Inclusão" cmids=[93308, 93309]
+      evidência: conteúdo DIFERENTE (p.ex. versão em Libras) — não é duplicata
+      orientação: Se idêntico: remover duplicata. Se versões alternativas: diferenciar o nome (ex.: sufixo "(Libras)") para navegação/acessibilidade.
+  [ATENCAO        ] X-CONT-02 Baixa       Módulos com nomes duplicados
+      local: page "Tipos de Deficiências e Barreiras" cmids=[93315, 93316]
+      evidência: conteúdo DIFERENTE (p.ex. versão em Libras) — não é duplicata
+      orientação: Se idêntico: remover duplicata. Se versões alternativas: diferenciar o nome (ex.: sufixo "(Libras)") para navegação/acessibilidade.
+  [ATENCAO        ] X-CONT-02 Baixa       Módulos com nomes duplicados
+      local: page "Conhecendo a Legislação" cmids=[93317, 93318]
+      evidência: conteúdo DIFERENTE (p.ex. versão em Libras) — não é duplicata
+      orientação: Se idêntico: remover duplicata. Se versões alternativas: diferenciar o nome (ex.: sufixo "(Libras)") para navegação/acessibilidade.
+  [ATENCAO        ] X-CONT-02 Baixa       Módulos com nomes duplicados
+      local: page "Introdução à Acessibilidade" cmids=[93320, 93321]
+      evidência: conteúdo DIFERENTE (p.ex. versão em Libras) — não é duplicata
+      orientação: Se idêntico: remover duplicata. Se versões alternativas: diferenciar o nome (ex.: sufixo "(Libras)") para navegação/acessibilidade.
+  [ATENCAO        ] X-CONT-02 Baixa       Módulos com nomes duplicados
+      local: page "Ambiente Digital Acessível" cmids=[93324, 93325]
+      evidência: conteúdo DIFERENTE (p.ex. versão em Libras) — não é duplicata
+      orientação: Se idêntico: remover duplicata. Se versões alternativas: diferenciar o nome (ex.: sufixo "(Libras)") para navegação/acessibilidade.
+  [ATENCAO        ] X-CONT-02 Baixa       Módulos com nomes duplicados
+      local: page "Tenho um aluno com deficiência em sala de aula: O que fazer? O que não fazer?" cmids=[93326, 93327]
+      evidência: conteúdo DIFERENTE (p.ex. versão em Libras) — não é duplicata
+      orientação: Se idêntico: remover duplicata. Se versões alternativas: diferenciar o nome (ex.: sufixo "(Libras)") para navegação/acessibilidade.
+  [ATENCAO        ] X-CONT-02 Baixa       Módulos com nomes duplicados
+      local: page "Audiodescrição" cmids=[93328, 93329]
+      evidência: conteúdo DIFERENTE (p.ex. versão em Libras) — não é duplicata
+      orientação: Se idêntico: remover duplicata. Se versões alternativas: diferenciar o nome (ex.: sufixo "(Libras)") para navegação/acessibilidade.
+  [ATENCAO        ] X-CONT-02 Baixa       Módulos com nomes duplicados
+      local: page "Diretrizes para design de recursos educacionais digitais voltados à educação bilíngue de surdos" cmids=[93330, 93331]
+      evidência: conteúdo DIFERENTE (p.ex. versão em Libras) — não é duplicata
+      orientação: Se idêntico: remover duplicata. Se versões alternativas: diferenciar o nome (ex.: sufixo "(Libras)") para navegação/acessibilidade.
+  [ATENCAO        ] X-CONT-02 Baixa       Módulos com nomes duplicados
+      local: page "Tecnologia Assistiva: conceito, características e aplicações" cmids=[93333, 93334]
+      evidência: conteúdo DIFERENTE (p.ex. versão em Libras) — não é duplicata
+      orientação: Se idêntico: remover duplicata. Se versões alternativas: diferenciar o nome (ex.: sufixo "(Libras)") para navegação/acessibilidade.
+  [ATENCAO        ] X-CONT-06 Baixa       Inventário de dependências externas (hosts)
+      local: conteúdos
+      evidência: 6 hosts via http:// (conteúdo misto pode ser bloqueado pelo navegador): ['http://portal.mec.gov.br', 'http://www.planalto.gov.br', 'http://emag.governoeletronico.gov.br', 'http://cefor.ifes.edu.br', 'http://www.adobe.com', 'http://cultura.gov.br']
+  [ATENCAO        ] X-STR-01  Baixa       Módulos ocultos, sem nome ou seções com nome genérico
+      local: seção 2 (sections/section_1892888/section.xml)
+      evidência: nome genérico "Topic 2"
+      orientação: Nomear a seção conforme o conteúdo (o banner da seção já traz o título).
+  [ATENCAO        ] X-STR-01  Baixa       Módulos ocultos, sem nome ou seções com nome genérico
+      local: seção 3 (sections/section_1892889/section.xml)
+      evidência: nome genérico "Tópico 3"
+      orientação: Nomear a seção conforme o conteúdo (o banner da seção já traz o título).
+  [ATENCAO        ] X-STR-01  Baixa       Módulos ocultos, sem nome ou seções com nome genérico
+      local: seção 4 (sections/section_1892890/section.xml)
+      evidência: nome genérico "Tópico 4"
+      orientação: Nomear a seção conforme o conteúdo (o banner da seção já traz o título).
+  [ATENCAO        ] X-STR-01  Baixa       Módulos ocultos, sem nome ou seções com nome genérico
+      local: seção 5 (sections/section_1892891/section.xml)
+      evidência: nome genérico "Topic 5"
+      orientação: Nomear a seção conforme o conteúdo (o banner da seção já traz o título).
+  [ATENCAO        ] X-STR-01  Baixa       Módulos ocultos, sem nome ou seções com nome genérico
+      local: seção 6 (sections/section_1892892/section.xml)
+      evidência: nome genérico "Topic 6"
+      orientação: Nomear a seção conforme o conteúdo (o banner da seção já traz o título).
+  [ATENCAO        ] X-STR-01  Baixa       Módulos ocultos, sem nome ou seções com nome genérico
+      local: seção 7 (sections/section_1892893/section.xml)
+      evidência: nome genérico "Topic 7"
+      orientação: Nomear a seção conforme o conteúdo (o banner da seção já traz o título).
+  [ATENCAO        ] CL-15     Informativa Restrições das avaliações corretas; 1º questionário condicionado à "Escolha a sua situação"
+      local: quiz "Testando seus conhecimentos" (cmid=93319, activities/quiz_93319/module.xml)
+      evidência: 0 condições de acesso: None
+      orientação: Restrições são opcionais pelo checklist; revisar manualmente se fazem sentido.
+  [ATENCAO        ] CL-15     Informativa Restrições das avaliações corretas; 1º questionário condicionado à "Escolha a sua situação"
+      local: quiz "Avaliando sua aprendizagem" (cmid=93332, activities/quiz_93332/module.xml)
+      evidência: 0 condições de acesso: None
+      orientação: Restrições são opcionais pelo checklist; revisar manualmente se fazem sentido.
+  [ATENCAO        ] CL-15     Informativa Restrições das avaliações corretas; 1º questionário condicionado à "Escolha a sua situação"
+      local: quiz "Verificando conteúdos estudados" (cmid=93336, activities/quiz_93336/module.xml)
+      evidência: 0 condições de acesso: None
+      orientação: Restrições são opcionais pelo checklist; revisar manualmente se fazem sentido.
+  [ATENCAO        ] CL-15     Informativa Restrições das avaliações corretas; 1º questionário condicionado à "Escolha a sua situação"
+      local: quiz "Questionário - Acessibilidade e Tecnologia" (cmid=93359, activities/quiz_93359/module.xml)
+      evidência: 0 condições de acesso: None
+      orientação: Restrições são opcionais pelo checklist; revisar manualmente se fazem sentido.
+  [NAO_VERIFICAVEL] CL-24     Alta        Assinatura do certificado atualizada (diretor-geral)
+      local: simplecertificate "Certificado digital de conclusão" (cmid=93361, activities/simplecertificate_93361/module.xml)
+      evidência: imagem image/imagem cerificado - verso.png sha1=04d2f93bdf4177276e0adb980d5d4a13dc762c81 (119518 bytes)
+      orientação: A assinatura está dentro da imagem: comparar o hash com o da arte oficial vigente (parâmetro de política).
+  [NAO_VERIFICAVEL] CL-24     Alta        Assinatura do certificado atualizada (diretor-geral)
+      local: simplecertificate "Declaração licença para capacitação" (cmid=93363, activities/simplecertificate_93363/module.xml)
+      evidência: imagem image/cabeçalho declaração (2).png sha1=9647d3efcb4198c01e7fcc762018cd184f288f08 (36401 bytes)
+      orientação: A assinatura está dentro da imagem: comparar o hash com o da arte oficial vigente (parâmetro de política).
+  [NAO_VERIFICAVEL] CL-02     Média       Informações iguais ao Projeto do Curso (SIPAC)
+      local: course/course.xml + page "Informações sobre o curso"
+      evidência: o projeto do curso não está no backup
+      orientação: Exige fonte externa (SIPAC/PDF do projeto). Automatizável apenas se o projeto for fornecido em formato estruturado.
+  [NAO_VERIFICAVEL] CL-03     Média       Professores cadastrados iguais ao projeto
+      local: moodle_backup.xml <settings>
+      evidência: users=0 role_assignments=0: backup sem usuários/papéis
+      orientação: Verificar via API/DB do Moodle após restauração (ou no curso de origem).
+  [NAO_VERIFICAVEL] CL-27     Baixa       Capa da sala igual ao thumbnail da vitrine (sem texto)
+      local: files.xml course/overviewfiles
+      evidência: capa=[('AcessTec_Mooc-01.png', '9148853176e6d0f9b9c3f1d480fa2753ccb2f2b5')]
+      orientação: Comparação com a vitrine (WordPress) e ausência de texto na imagem exigem fonte externa/OCR.
+  [NAO_VERIFICAVEL] CL-28     Baixa       Curso possui URL única
+      local: fora do backup
+      evidência: URL amigável é configuração do servidor/CGTI; não consta no MBZ
+  [NAO_VERIFICAVEL] CL-29     Baixa       Cadastro na vitrine
+      local: fora do backup
+      evidência: vitrine WordPress é sistema externo
+  [NAO_VERIFICAVEL] CL-10     Informativa Vídeos funcionam e estão incorporados
+      local: activities/*
+      evidência: 29 iframes incorporados; 0 módulos URL apontando para vídeo externo
+      orientação: Disponibilidade só verificável com acesso à rede (fase 2, com proteção SSRF e lista de domínios permitidos).
+  [NAO_VERIFICAVEL] CL-25     Informativa Texto do certificado conforme padrão / emissão de teste
+      local: simplecertificate "Certificado digital de conclusão" (cmid=93361, activities/simplecertificate_93361/module.xml)
+      evidência: emissão de certificado de teste requer Moodle em execução
+  [NAO_APLICAVEL  ] CL-01     Informativa Informações sobre o curso atualizadas conforme documento padrão
+      local: page "Informações sobre o curso" (cmid=93299, activities/page_93299/module.xml)
+      evidência: versão alternativa (Libras) — avaliada a versão textual
+  (50 resultados CONFORMES omitidos: ['CL-01', 'CL-04', 'CL-05', 'CL-08', 'CL-09', 'CL-11', 'CL-12', 'CL-13', 'CL-14', 'CL-16', 'CL-17', 'CL-18', 'CL-19', 'CL-20', 'CL-21', 'CL-22', 'CL-23', 'CL-26', 'X-ACC-02', 'X-AV-01', 'X-BLK-01', 'X-CERT-01', 'X-CONT-01', 'X-CONT-03', 'X-CONT-04', 'X-CONT-05', 'X-CONT-06', 'X-DEP-01', 'X-DEP-02', 'X-DEP-03', 'X-DEP-04', 'X-DEP-05', 'X-INT-01', 'X-INT-04', 'X-SEC-01'])

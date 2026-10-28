@@ -1,0 +1,246 @@
+
+=================== backup-moodle2-course-668-cc_mooc_2026-20261014-1555-nu.mbz ===================
+Curso: Como criar um MOOC? [CC_MOOC_2026] id=668 | Moodle None | backup None
+Período: 2026-01-01 00:00 → 2026-12-31 23:59 | categoria: Inscrições Abertas
+Seções: 10 | módulos: 74 {'assign': 1, 'book': 9, 'data': 1, 'feedback': 3, 'folder': 2, 'forum': 4, 'hvp': 4, 'label': 8, 'page': 25, 'quiz': 7, 'resource': 3, 'simplecertificate': 2, 'url': 5}
+!! Componentes ausentes no pacote: ['moodle_backup.xml', 'sections/', 'gradebook.xml', 'files.xml', 'questions.xml']
+Resumo: {'CONFORME': 52, 'NAO_VERIFICAVEL': 21, 'ATENCAO': 16, 'NAO_CONFORME': 25} | não conformes por gravidade: {'Alta': 1, 'Média': 18, 'Bloqueante': 6}
+  [NAO_CONFORME   ] X-INT-01  Bloqueante  Integridade do pacote (stream, manifesto, arquivos essenciais)
+      local: arquivo .mbz
+      evidência: erro de descompressão: ReadError: invalid compressed data; última entrada lida=files/74/748fb56dfc8d7293ebb8901126b7201c2840b3af
+      orientação: Backup corrompido/truncado: gerar novamente o backup no Moodle de origem e transferir com verificação de hash.
+  [NAO_CONFORME   ] X-INT-01  Bloqueante  Integridade do pacote (stream, manifesto, arquivos essenciais)
+      local: .ARCHIVE_INDEX
+      evidência: declarados=6685 arquivos checados=6336 ausentes=1572 tamanho divergente=1
+      encontrado: ['files/74/744af13c29203f92e163e14605ad9ab25825a47c', 'files/74/748ee2c6e595a169e250a93f5c388465f5634c36', 'files/74/74d4373065323f2ef32a6b7e3259093b27c5a3d5', 'files/74/74bc7392161902a14f61fc34e4e13982670467b5', 'files/74/74c1fb99e4bf0a54207e170a847b62238af34162', '...+1567']
+  [NAO_CONFORME   ] X-INT-01  Bloqueante  Integridade do pacote (stream, manifesto, arquivos essenciais)
+      local: moodle_backup.xml
+      evidência: arquivo/diretório essencial ausente
+      orientação: Sem este componente a restauração falha ou fica incompleta.
+  [NAO_CONFORME   ] X-INT-01  Bloqueante  Integridade do pacote (stream, manifesto, arquivos essenciais)
+      local: files.xml
+      evidência: arquivo/diretório essencial ausente
+      orientação: Sem este componente a restauração falha ou fica incompleta.
+  [NAO_CONFORME   ] X-INT-01  Bloqueante  Integridade do pacote (stream, manifesto, arquivos essenciais)
+      local: gradebook.xml
+      evidência: arquivo/diretório essencial ausente
+      orientação: Sem este componente a restauração falha ou fica incompleta.
+  [NAO_CONFORME   ] X-INT-01  Bloqueante  Integridade do pacote (stream, manifesto, arquivos essenciais)
+      local: sections/
+      evidência: arquivo/diretório essencial ausente
+      orientação: Sem este componente a restauração falha ou fica incompleta.
+  [NAO_CONFORME   ] CL-16     Alta        Avaliação do Curso restrita à conclusão de todas as atividades que valem nota
+      local: feedback "Avaliação do curso" (cmid=93226, activities/feedback_93226/module.xml)
+      evidência: availability={"op":"&","showc":[true,true,true,true,true,true,true],"c":[{"type":"completion","cm":93173,"e":1},{"type":"completion","cm":93180,"e":1},{"type":"completion","cm":93186,"e":1},{"type":"completion","cm":93192,"e":1},{"type":"completion","cm":93201,"e":1},{"type":"completion","cm":93210,"e":1},{"type":"completion","cm":93217,"e":1}]}
+      encontrado: faltam 4: ['hvp "Jogo - Sobre os Moocs" (cmid=100895, activities/hvp_100895/module.xml)', 'hvp "Jogo - Etapas do modelo ADDIEM" (cmid=100896, activities/hvp_100896/module.xml)', 'hvp "Jogo - Projeto do Curso" (cmid=100897, activities/hvp_100897/module.xml)', 'hvp "Jogo - Recursos do Moodle" (cmid=10
+      esperado: conclusão de todas as atividades com nota
+      orientação: Adicionar restrições de conclusão faltantes.
+  [NAO_CONFORME   ] CL-17     Média       Conclusão automática em atividades e recursos
+      local: hvp "Jogo - Sobre os Moocs" (cmid=100895, activities/hvp_100895/module.xml)
+      evidência: completion=1 (manual)
+      esperado: 2 (automática) ou 0 (sem acompanhamento)
+      orientação: Trocar para conclusão automática com critério adequado ao tipo.
+  [NAO_CONFORME   ] CL-17     Média       Conclusão automática em atividades e recursos
+      local: hvp "Jogo - Etapas do modelo ADDIEM" (cmid=100896, activities/hvp_100896/module.xml)
+      evidência: completion=1 (manual)
+      esperado: 2 (automática) ou 0 (sem acompanhamento)
+      orientação: Trocar para conclusão automática com critério adequado ao tipo.
+  [NAO_CONFORME   ] CL-17     Média       Conclusão automática em atividades e recursos
+      local: hvp "Jogo - Projeto do Curso" (cmid=100897, activities/hvp_100897/module.xml)
+      evidência: completion=1 (manual)
+      esperado: 2 (automática) ou 0 (sem acompanhamento)
+      orientação: Trocar para conclusão automática com critério adequado ao tipo.
+  [NAO_CONFORME   ] CL-17     Média       Conclusão automática em atividades e recursos
+      local: hvp "Jogo - Recursos do Moodle" (cmid=100898, activities/hvp_100898/module.xml)
+      evidência: completion=1 (manual)
+      esperado: 2 (automática) ou 0 (sem acompanhamento)
+      orientação: Trocar para conclusão automática com critério adequado ao tipo.
+  [NAO_CONFORME   ] X-ACC-01  Média       Imagens sem texto alternativo
+      local: book "Introdução ao Moodle" (cmid=93171, activities/book_93171/module.xml)
+      evidência: 4/6 <img> sem atributo alt (alt vazio=1) nos campos ['chapter[2]', 'chapter[3]', 'chapter[5]', 'chapter[6]']
+      orientação: Adicionar texto alternativo (alt="" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.
+  [NAO_CONFORME   ] X-ACC-01  Média       Imagens sem texto alternativo
+      local: book "Modelo ADDIEM" (cmid=93175, activities/book_93175/module.xml)
+      evidência: 2/10 <img> sem atributo alt (alt vazio=2) nos campos ['chapter[3]', 'chapter[6]']
+      orientação: Adicionar texto alternativo (alt="" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.
+  [NAO_CONFORME   ] X-ACC-01  Média       Imagens sem texto alternativo
+      local: book "Análise (Analysis) - Projeto do curso" (cmid=93181, activities/book_93181/module.xml)
+      evidência: 8/9 <img> sem atributo alt (alt vazio=1) nos campos ['chapter[0]', 'chapter[1]', 'chapter[2]', 'chapter[3]', 'chapter[4]', 'chapter[5]', 'chapter[6]', 'chapter[7]']
+      orientação: Adicionar texto alternativo (alt="" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.
+  [NAO_CONFORME   ] X-ACC-01  Média       Imagens sem texto alternativo
+      local: book "Desenvolvimento (Development) - Produzindo o curso" (cmid=93193, activities/book_93193/module.xml)
+      evidência: 2/3 <img> sem atributo alt (alt vazio=1) nos campos ['chapter[0]', 'chapter[3]']
+      orientação: Adicionar texto alternativo (alt="" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.
+  [NAO_CONFORME   ] X-ACC-01  Média       Imagens sem texto alternativo
+      local: book "Editor de Texto - inserindo textos, imagens, vídeos e links" (cmid=93195, activities/book_93195/module.xml)
+      evidência: 1/6 <img> sem atributo alt (alt vazio=5) nos campos ['chapter[0]']
+      orientação: Adicionar texto alternativo (alt="" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.
+  [NAO_CONFORME   ] X-ACC-01  Média       Imagens sem texto alternativo
+      local: book "Atividades do Moodle" (cmid=93197, activities/book_93197/module.xml)
+      evidência: 2/17 <img> sem atributo alt (alt vazio=5) nos campos ['chapter[1]', 'chapter[3]']
+      orientação: Adicionar texto alternativo (alt="" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.
+  [NAO_CONFORME   ] X-ACC-01  Média       Imagens sem texto alternativo
+      local: book "Acompanhamento pelo professor" (cmid=93214, activities/book_93214/module.xml)
+      evidência: 4/8 <img> sem atributo alt (alt vazio=0) nos campos ['chapter[0]', 'chapter[2]', 'chapter[3]']
+      orientação: Adicionar texto alternativo (alt="" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.
+  [NAO_CONFORME   ] X-ACC-01  Média       Imagens sem texto alternativo
+      local: book "Livro Acessibilidade Digital" (cmid=93225, activities/book_93225/module.xml)
+      evidência: 45/47 <img> sem atributo alt (alt vazio=0) nos campos ['chapter[1]', 'chapter[5]', 'chapter[6]', 'chapter[7]']
+      orientação: Adicionar texto alternativo (alt="" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.
+  [NAO_CONFORME   ] X-ACC-01  Média       Imagens sem texto alternativo
+      local: page "Processo formal de criação de MOOC no Ifes" (cmid=93176, activities/page_93176/module.xml)
+      evidência: 1/3 <img> sem atributo alt (alt vazio=1) nos campos ['content']
+      orientação: Adicionar texto alternativo (alt="" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.
+  [NAO_CONFORME   ] X-ACC-01  Média       Imagens sem texto alternativo
+      local: page "Projeto (Design) - Planejando o curso" (cmid=93187, activities/page_93187/module.xml)
+      evidência: 1/1 <img> sem atributo alt (alt vazio=0) nos campos ['content']
+      orientação: Adicionar texto alternativo (alt="" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.
+  [NAO_CONFORME   ] X-ACC-01  Média       Imagens sem texto alternativo
+      local: page "Implementação (Implement) - Configurando o curso" (cmid=93202, activities/page_93202/module.xml)
+      evidência: 1/1 <img> sem atributo alt (alt vazio=0) nos campos ['content']
+      orientação: Adicionar texto alternativo (alt="" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.
+  [NAO_CONFORME   ] X-ACC-01  Média       Imagens sem texto alternativo
+      local: page "Professor acessando "como estudante"" (cmid=93206, activities/page_93206/module.xml)
+      evidência: 1/1 <img> sem atributo alt (alt vazio=0) nos campos ['content']
+      orientação: Adicionar texto alternativo (alt="" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.
+  [NAO_CONFORME   ] X-ACC-01  Média       Imagens sem texto alternativo
+      local: page "Avaliação (Evaluate) - Avaliando o curso" (cmid=93211, activities/page_93211/module.xml)
+      evidência: 1/1 <img> sem atributo alt (alt vazio=0) nos campos ['content']
+      orientação: Adicionar texto alternativo (alt="" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.
+  [NAO_CONFORME   ] X-ACC-01  Média       Imagens sem texto alternativo
+      local: page "Avaliação pelos alunos" (cmid=93215, activities/page_93215/module.xml)
+      evidência: 3/3 <img> sem atributo alt (alt vazio=0) nos campos ['content']
+      orientação: Adicionar texto alternativo (alt="" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.
+  [ATENCAO        ] CL-06     Alta        Data de início correta (futura, ≥1 mês antes do fim)
+      local: course/course.xml <startdate>
+      evidência: startdate=2026-01-01 00:00 enddate=2026-12-31 23:59 ref=2026-10-28 [estado do backup: reavaliar após a restauração/criação da sala nova]
+      encontrado: ano=2026 ≠ 2027
+      esperado: 01/01/2027, ≥30 dias antes do fim
+      orientação: Ajustar a data de início. O MOOC Admin pode redefinir datas na reoferta: diferenciar auditoria do backup da auditoria pós-restauração.
+  [ATENCAO        ] CL-07     Alta        Data de término no último dia do ciclo (31/12 do ano da reoferta)
+      local: course/course.xml <enddate>
+      evidência: enddate=2026-12-31 23:59 (31/12/2026) [estado do backup: reavaliar após a restauração/criação da sala nova]
+      esperado: ['31/12'] de 2027
+      orientação: Ajustar a data de término conforme calendário do Cefor.
+  [ATENCAO        ] CL-25     Alta        Texto do certificado conforme padrão / emissão de teste
+      local: simplecertificate "Certificado digital de conclusão" (cmid=93227, activities/simplecertificate_93227/module.xml)
+      evidência: texto="o instituto federal do espirito santo, por meio do {campus}, certifica que {username}, com numero de documento {profile_cpf}, concluiu e foi aprovado(a) no curso {coursename}, realizado no periodo de "; similaridade com padrão=0.55; placeholders=['{CAMPUS}', '{USERNAME}', '{PROFILE_CPF}', '{COURSENAME}', '{TIMESTART}', '{TIMEEND}', '{CARGA_HORARIA}']
+      esperado: O Instituto Federal do Espírito Santo, por meio do {CAMPUS}, certifica que {USERNAME} participou do curso {COURSENAME}, no período de {TIMESTART} a {TIMEEND}, com carga horária de {CARGA_HORARIA} hora
+      orientação: Conferir o texto-padrão. A emissão de teste (layout, campus, assinatura) exige ambiente Moodle.
+  [ATENCAO        ] X-INT-03  Alta        Plugins não nativos necessários no destino
+      local: activities/hvp_* (4 instâncias)
+      evidência: módulo não nativo mod_hvp versão 2026081300
+      orientação: Garantir que o plugin exista no Moodle de destino na mesma versão ou superior; caso contrário, a restauração omite as atividades.
+  [ATENCAO        ] X-INT-03  Alta        Plugins não nativos necessários no destino
+      local: activities/simplecertificate_* (2 instâncias)
+      evidência: módulo não nativo mod_simplecertificate versão 2024051105
+      orientação: Garantir que o plugin exista no Moodle de destino na mesma versão ou superior; caso contrário, a restauração omite as atividades.
+  [ATENCAO        ] X-INT-03  Alta        Plugins não nativos necessários no destino
+      local: availability type="days" (2 usos)
+      evidência: plugin availability_days não nativo
+      orientação: Se ausente no destino, o Moodle ignora a condição ao carregar (modo "lax"), alterando as regras de acesso silenciosamente.
+  [ATENCAO        ] X-INT-03  Alta        Plugins não nativos necessários no destino
+      local: course/blocks/completion_progress_234013
+      evidência: bloco não nativo block_completion_progress versão 2026042700
+  [ATENCAO        ] CL-15     Média       Restrições das avaliações corretas; 1º questionário condicionado à "Escolha a sua situação"
+      local: activities/choice_*
+      evidência: nenhuma atividade Escolha ~ "situação junto ao Ifes" no curso
+      orientação: Checklist pressupõe essa escolha; cursos recentes podem não usá-la — confirmar se a regra ainda vale.
+  [ATENCAO        ] CL-21     Média       Blocos padrão presentes
+      local: course/blocks/html_*/block.xml configdata
+      evidência: bloco HTML "Acessibilidade": ausente no backup
+      orientação: Decisão institucional: o bloco deve estar na sala. Como não aparece em nenhum backup examinado, a verificação definitiva é pós-restauração (classe C); se for bloco de nível de site, ele não entra no backup do curso.
+  [ATENCAO        ] X-CONT-02 Média       Módulos com nomes duplicados
+      local: label "Rótulo" cmids=[93172, 93179, 93184, 93190, 93199, 93208, 93216]
+      evidência: conteúdo idêntico
+      orientação: Se idêntico: remover duplicata. Se versões alternativas: diferenciar o nome (ex.: sufixo "(Libras)") para navegação/acessibilidade.
+  [ATENCAO        ] CL-10     Baixa       Vídeos funcionam e estão incorporados
+      local: url "Playlist do curso Como criar um MOOC" (cmid=93219, activities/url_93219/module.xml)
+      evidência: externalurl=https://www.youtube.com/playlist?list=PLbiTpGaDVLLjB14nwPtpxXFr38GYvGmxL
+      esperado: vídeo incorporado (embed) na própria sala
+      orientação: Checklist pede vídeos "embedados"; URL externa de vídeo é um sinal, não prova de problema.
+  [ATENCAO        ] X-ACC-02  Baixa       Links com texto genérico
+      local: book "Editor de Texto - inserindo textos, imagens, vídeos e links" (cmid=93195, activities/book_93195/module.xml) campo chapter[0]
+      evidência: texto "link" -> https://conhecimento.cefor.ifes.edu.br/wp-content/uploads/2016/11/tutorial_13_-_
+      orientação: Usar texto de link descritivo.
+  [ATENCAO        ] X-CONT-05 Baixa       Menções a anos anteriores em campos institucionais
+      local: page "Informações sobre o curso" (cmid=93161, activities/page_93161/module.xml)
+      evidência: anos anteriores citados: [2026]
+      orientação: Conferir se a menção é referência bibliográfica (ok) ou dado da oferta anterior (atualizar).
+  [ATENCAO        ] X-CONT-06 Baixa       Inventário de dependências externas (hosts)
+      local: conteúdos
+      evidência: 19 hosts via http:// (conteúdo misto pode ser bloqueado pelo navegador): ['http://necacaf.blogspot.com', 'http://proedu.rnp.br', 'http://www.cinted.ufrgs.br', 'http://objetoseducacionais2.mec.gov.br', 'http://bndigital.bn.gov.br', 'http://www.dominiopublico.gov.br', 'http://www.bbc.co.uk', 'http://www.projetos.unijui.edu.br']
+  [ATENCAO        ] X-DEP-05  Baixa       Condições redundantes/duplicadas
+      local: simplecertificate "Certificado digital de conclusão" (cmid=93227, activities/simplecertificate_93227/module.xml)
+      evidência: condição repetida 2x: {"d": 9, "type": "days"}
+      orientação: Remover a duplicata (inofensiva, mas indica edição descuidada).
+  [ATENCAO        ] CL-17     Informativa Conclusão automática em atividades e recursos
+      local: activities/*/module.xml <completion>
+      evidência: distribuição: nenhuma=24 manual=4 automática=46
+  [NAO_VERIFICAVEL] CL-23     Bloqueante  Certificado condicionado à Avaliação do Curso e a 60 pontos
+      local: simplecertificate "Certificado digital de conclusão" (cmid=93227, activities/simplecertificate_93227/module.xml)
+      evidência: grade item 73332 min=60: gradebook.xml ausente, não é possível confirmar que é o total do curso
+  [NAO_VERIFICAVEL] CL-12     Alta        Livro de notas soma 100 pontos
+      local: gradebook.xml
+      evidência: arquivo ausente (backup incompleto): agregação do curso não verificável
+  [NAO_VERIFICAVEL] CL-24     Alta        Assinatura do certificado atualizada (diretor-geral)
+      local: simplecertificate "Certificado digital de conclusão" (cmid=93227, activities/simplecertificate_93227/module.xml)
+      evidência: files.xml ausente
+  [NAO_VERIFICAVEL] CL-24     Alta        Assinatura do certificado atualizada (diretor-geral)
+      local: simplecertificate "Declaração licença para capacitação" (cmid=93229, activities/simplecertificate_93229/module.xml)
+      evidência: files.xml ausente
+  [NAO_VERIFICAVEL] X-DEP-03  Alta        Condições de nota apontando para itens inexistentes
+      local: feedback "Licença para capacitação" (cmid=93228, activities/feedback_93228/module.xml)
+      evidência: condição grade id=73332 min=1 max=None não encontrada nos itens de nota do backup
+  [NAO_VERIFICAVEL] X-DEP-03  Alta        Condições de nota apontando para itens inexistentes
+      local: simplecertificate "Certificado digital de conclusão" (cmid=93227, activities/simplecertificate_93227/module.xml)
+      evidência: condição grade id=73332 min=60 max=None não encontrada nos itens de nota do backup
+  [NAO_VERIFICAVEL] X-INT-02  Alta        Arquivos referenciados em files.xml sem conteúdo no backup
+      local: files.xml
+      evidência: ausente
+  [NAO_VERIFICAVEL] CL-02     Média       Informações iguais ao Projeto do Curso (SIPAC)
+      local: course/course.xml + page "Informações sobre o curso"
+      evidência: o projeto do curso não está no backup
+      orientação: Exige fonte externa (SIPAC/PDF do projeto). Automatizável apenas se o projeto for fornecido em formato estruturado.
+  [NAO_VERIFICAVEL] CL-03     Média       Professores cadastrados iguais ao projeto
+      local: moodle_backup.xml <settings>
+      evidência: users=None role_assignments=None: backup sem usuários/papéis
+      orientação: Verificar via API/DB do Moodle após restauração (ou no curso de origem).
+  [NAO_VERIFICAVEL] X-CONT-04 Média       Referências @@PLUGINFILE@@ sem arquivo correspondente
+      local: files.xml
+      evidência: ausente
+  [NAO_VERIFICAVEL] X-INT-04  Média       Referências inforef a arquivos inexistentes em files.xml
+      local: files.xml
+      evidência: ausente
+  [NAO_VERIFICAVEL] CL-26     Baixa       Padrão visual (imagem de topo, divisores, imagens de seção)
+      local: files.xml
+      evidência: ausente: imagens não verificáveis
+  [NAO_VERIFICAVEL] CL-27     Baixa       Capa da sala igual ao thumbnail da vitrine (sem texto)
+      local: files.xml
+      evidência: ausente
+  [NAO_VERIFICAVEL] CL-28     Baixa       Curso possui URL única
+      local: fora do backup
+      evidência: URL amigável é configuração do servidor/CGTI; não consta no MBZ
+  [NAO_VERIFICAVEL] CL-29     Baixa       Cadastro na vitrine
+      local: fora do backup
+      evidência: vitrine WordPress é sistema externo
+  [NAO_VERIFICAVEL] CL-10     Informativa Vídeos funcionam e estão incorporados
+      local: activities/*
+      evidência: 198 iframes incorporados; 1 módulos URL apontando para vídeo externo
+      orientação: Disponibilidade só verificável com acesso à rede (fase 2, com proteção SSRF e lista de domínios permitidos).
+  [NAO_VERIFICAVEL] CL-14     Informativa Atividades avaliativas com data de encerramento
+      local: hvp "Jogo - Sobre os Moocs" (cmid=100895, activities/hvp_100895/module.xml)
+      evidência: tipo de módulo sem campo de encerramento conhecido pelo protótipo
+  [NAO_VERIFICAVEL] CL-14     Informativa Atividades avaliativas com data de encerramento
+      local: hvp "Jogo - Etapas do modelo ADDIEM" (cmid=100896, activities/hvp_100896/module.xml)
+      evidência: tipo de módulo sem campo de encerramento conhecido pelo protótipo
+  [NAO_VERIFICAVEL] CL-14     Informativa Atividades avaliativas com data de encerramento
+      local: hvp "Jogo - Projeto do Curso" (cmid=100897, activities/hvp_100897/module.xml)
+      evidência: tipo de módulo sem campo de encerramento conhecido pelo protótipo
+  [NAO_VERIFICAVEL] CL-14     Informativa Atividades avaliativas com data de encerramento
+      local: hvp "Jogo - Recursos do Moodle" (cmid=100898, activities/hvp_100898/module.xml)
+      evidência: tipo de módulo sem campo de encerramento conhecido pelo protótipo
+  [NAO_VERIFICAVEL] CL-25     Informativa Texto do certificado conforme padrão / emissão de teste
+      local: simplecertificate "Certificado digital de conclusão" (cmid=93227, activities/simplecertificate_93227/module.xml)
+      evidência: emissão de certificado de teste requer Moodle em execução
+  (52 resultados CONFORMES omitidos: ['CL-01', 'CL-04', 'CL-05', 'CL-08', 'CL-09', 'CL-11', 'CL-12', 'CL-13', 'CL-14', 'CL-15', 'CL-18', 'CL-19', 'CL-20', 'CL-21', 'CL-22', 'CL-23', 'X-AV-01', 'X-BLK-01', 'X-CERT-01', 'X-CONT-01', 'X-CONT-03', 'X-CONT-06', 'X-DEP-01', 'X-DEP-02', 'X-DEP-04', 'X-SEC-01', 'X-STR-01'])

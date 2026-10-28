@@ -1,0 +1,16 @@
+# Backups Moodle: conteúdo institucional (inclui senhas de inscrição em texto claro) e arquivos grandes.
+# Mantidos apenas localmente. Nunca versionar.
+*.mbz
+
+# Planilha institucional com links internos; adicionar deliberadamente se desejado.
+*.xlsx
+
+# Extrações temporárias e saídas locais do protótipo
+extract/
+poc-work/
+*.tmp
+__pycache__/
+*.pyc
+
+# Sistema
+.DS_Store

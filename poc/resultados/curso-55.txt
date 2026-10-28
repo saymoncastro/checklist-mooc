@@ -1,0 +1,392 @@
+
+=================== backup-moodle2-course-55-empp-20261028-1455-nu.mbz ===================
+Curso: Educador Maker: Primeiros Passos [EMPP] id=55 | Moodle 4.5.8+ (Build: 20251219) | backup 2026-10-28 14:55
+Período: 2020-08-11 00:00 → 2020-12-31 23:59 | categoria: 2020/2
+Seções: 8 | módulos: 73 {'book': 3, 'choice': 1, 'data': 1, 'feedback': 1, 'forum': 8, 'game': 4, 'glossary': 1, 'label': 21, 'page': 10, 'quiz': 4, 'simplecertificate': 1, 'url': 18}
+Resumo: {'ATENCAO': 28, 'NAO_VERIFICAVEL': 9, 'CONFORME': 40, 'NAO_CONFORME': 52} | não conformes por gravidade: {'Média': 50, 'Alta': 1, 'Bloqueante': 1}
+  [NAO_CONFORME   ] CL-18     Bloqueante  Curso sem Glossário
+      local: glossary "Glossário - Cultura Maker (#fazer #compartilhar)" (cmid=10899, activities/glossary_10899/module.xml)
+      evidência: glossário com 0 entradas no backup (users=0); fonte de 3 jogos: game:11506 "Palavras cruzadas: Cultura Maker (#fazer #errar #aprender)" (categoria 1), game:11509 "Jogo da Forca: Espaços Maker (#fazer #errar #aprender)" (categoria 2), game:11685 "Jogo da Forca:  Mentalidade Maker (#fazer #errar #aprender)" (categoria 3)
+      esperado: entradas disponíveis para os jogos na sala restaurada
+      orientação: As entradas do glossário são dados de usuário (mod/glossary backup_glossary_stepslib: tabela glossary_entries só é exportada com userinfo). Em backup sem usuários o glossário é restaurado vazio e os jogos que dependem dele ficam sem palavras. Repovoar as entradas após a restauração (importação XML do glossário) ou trocar a fonte dos jogos para o banco de questões.
+  [NAO_CONFORME   ] CL-11     Alta        Pesquisa de Perfil presente e exigida pelo Certificado
+      local: activities/feedback_*
+      evidência: nenhum feedback com nome ~ "Pesquisa de Perfil"
+      orientação: Importar a Pesquisa de Perfil da Sala Padrão Oficial.
+  [NAO_CONFORME   ] CL-09     Média       Fórum "Espaço de Interação" presente
+      local: activities/forum_*
+      evidência: nenhum fórum com nome ~ "Espaço de interação"; fóruns existentes=['Desafio: Torre de Espaguete (#fazer #compartilhar #divertir #aprender)', 'Desafio: Carro movido a vento (#fazer #compartilhar #divertir #aprender)', 'Estabeleça laços e construa redes! (#compartilhar)', 'Teste: "Você é um verdadeiro maker?" (#fazer #compartilhar #divertir)', 'Desafio: Cartazes Divertidos  (#fazer #compartilhar #div
+      orientação: Importar o fórum da Sala Padrão. Verificação por NOME: fórum equivalente com outro nome gera falso positivo.
+  [NAO_CONFORME   ] CL-14     Média       Atividades avaliativas com data de encerramento
+      local: game "Palavras cruzadas: Cultura Maker (#fazer #errar #aprender)" (cmid=11506, activities/game_11506/module.xml)
+      evidência: data de encerramento = 0 (não definida)
+      orientação: Definir a data de encerramento.
+  [NAO_CONFORME   ] CL-14     Média       Atividades avaliativas com data de encerramento
+      local: game "Jogo da Forca: Espaços Maker (#fazer #errar #aprender)" (cmid=11509, activities/game_11509/module.xml)
+      evidência: data de encerramento = 0 (não definida)
+      orientação: Definir a data de encerramento.
+  [NAO_CONFORME   ] CL-14     Média       Atividades avaliativas com data de encerramento
+      local: game "Jogo da Forca:  Mentalidade Maker (#fazer #errar #aprender)" (cmid=11685, activities/game_11685/module.xml)
+      evidência: data de encerramento = 0 (não definida)
+      orientação: Definir a data de encerramento.
+  [NAO_CONFORME   ] CL-14     Média       Atividades avaliativas com data de encerramento
+      local: game "Jogo Sopa de Letras (#fazer #errar #aprender)" (cmid=12974, activities/game_12974/module.xml)
+      evidência: data de encerramento = 0 (não definida)
+      orientação: Definir a data de encerramento.
+  [NAO_CONFORME   ] CL-15     Média       Restrições das avaliações corretas; 1º questionário condicionado à "Escolha a sua situação"
+      local: quiz "Questionário: Cultura Maker (#fazer #errar #aprender)" (cmid=10076, activities/quiz_10076/module.xml)
+      evidência: availability=None
+      esperado: completion cm=13882
+      orientação: Adicionar restrição de conclusão da Escolha ao primeiro questionário.
+  [NAO_CONFORME   ] CL-22     Média       Licença para Capacitação configurada
+      local: activities/label_* (seção 0)
+      evidência: rótulo com "Licença para capacitação": []
+  [NAO_CONFORME   ] CL-22     Média       Licença para Capacitação configurada
+      local: activities/feedback_*
+      evidência: feedback "Licença para capacitação": []
+  [NAO_CONFORME   ] CL-22     Média       Licença para Capacitação configurada
+      local: activities/simplecertificate_*
+      evidência: declaração "Declaração licença para capacitação": []
+  [NAO_CONFORME   ] X-ACC-01  Média       Imagens sem texto alternativo
+      local: book "📚 Espaço Maker (#aprender)" (cmid=10091, activities/book_10091/module.xml)
+      evidência: 6/6 <img> sem atributo alt (alt vazio=0) nos campos ['chapter[0]', 'chapter[4]', 'chapter[6]', 'chapter[9]']
+      orientação: Adicionar texto alternativo (alt="" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.
+  [NAO_CONFORME   ] X-ACC-01  Média       Imagens sem texto alternativo
+      local: book "📚 Mentalidade Maker (#aprender)" (cmid=11274, activities/book_11274/module.xml)
+      evidência: 4/4 <img> sem atributo alt (alt vazio=0) nos campos ['chapter[1]', 'chapter[2]', 'chapter[4]', 'chapter[6]']
+      orientação: Adicionar texto alternativo (alt="" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.
+  [NAO_CONFORME   ] X-ACC-01  Média       Imagens sem texto alternativo
+      local: book "📚 Cultura Maker na educação (#aprender)" (cmid=9605, activities/book_9605/module.xml)
+      evidência: 3/3 <img> sem atributo alt (alt vazio=0) nos campos ['chapter[0]', 'chapter[1]', 'chapter[4]']
+      orientação: Adicionar texto alternativo (alt="" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.
+  [NAO_CONFORME   ] X-ACC-01  Média       Imagens sem texto alternativo
+      local: data "Atividade Maker - Para Escola e Casa (#fazer #compartilhar)" (cmid=13755, activities/data_13755/module.xml)
+      evidência: 1/1 <img> sem atributo alt (alt vazio=0) nos campos ['intro']
+      orientação: Adicionar texto alternativo (alt="" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.
+  [NAO_CONFORME   ] X-ACC-01  Média       Imagens sem texto alternativo
+      local: forum "Desafio: Torre de Espaguete (#fazer #compartilhar #divertir #aprender)" (cmid=10161, activities/forum_10161/module.xml)
+      evidência: 3/3 <img> sem atributo alt (alt vazio=0) nos campos ['intro']
+      orientação: Adicionar texto alternativo (alt="" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.
+  [NAO_CONFORME   ] X-ACC-01  Média       Imagens sem texto alternativo
+      local: forum "Desafio: Carro movido a vento (#fazer #compartilhar #divertir #aprender)" (cmid=10266, activities/forum_10266/module.xml)
+      evidência: 1/1 <img> sem atributo alt (alt vazio=0) nos campos ['intro']
+      orientação: Adicionar texto alternativo (alt="" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.
+  [NAO_CONFORME   ] X-ACC-01  Média       Imagens sem texto alternativo
+      local: forum "Desafio: Cartazes Divertidos  (#fazer #compartilhar #divertir #aprender)" (cmid=11490, activities/forum_11490/module.xml)
+      evidência: 1/1 <img> sem atributo alt (alt vazio=0) nos campos ['intro']
+      orientação: Adicionar texto alternativo (alt="" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.
+  [NAO_CONFORME   ] X-ACC-01  Média       Imagens sem texto alternativo
+      local: forum "Apresente-se aos seus colegas! (#fazer #compartilhar)" (cmid=9780, activities/forum_9780/module.xml)
+      evidência: 1/1 <img> sem atributo alt (alt vazio=0) nos campos ['intro']
+      orientação: Adicionar texto alternativo (alt="" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.
+  [NAO_CONFORME   ] X-ACC-01  Média       Imagens sem texto alternativo
+      local: forum "Quem de nós se vê como maker? (#fazer #compartilhar #divertir #aprender)" (cmid=9781, activities/forum_9781/module.xml)
+      evidência: 1/1 <img> sem atributo alt (alt vazio=0) nos campos ['intro']
+      orientação: Adicionar texto alternativo (alt="" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.
+  [NAO_CONFORME   ] X-ACC-01  Média       Imagens sem texto alternativo
+      local: label "Rótulo" (cmid=11461, activities/label_11461/module.xml)
+      evidência: 1/1 <img> sem atributo alt (alt vazio=0) nos campos ['intro']
+      orientação: Adicionar texto alternativo (alt="" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.
+  [NAO_CONFORME   ] X-ACC-01  Média       Imagens sem texto alternativo
+      local: label "  
+" (cmid=11491, activities/label_11491/module.xml)
+      evidência: 1/1 <img> sem atributo alt (alt vazio=0) nos campos ['intro']
+      orientação: Adicionar texto alternativo (alt="" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.
+  [NAO_CONFORME   ] X-ACC-01  Média       Imagens sem texto alternativo
+      local: label "  
+
+
+
+" (cmid=11661, activities/label_11661/module.xml)
+      evidência: 1/1 <img> sem atributo alt (alt vazio=0) nos campos ['intro']
+      orientação: Adicionar texto alternativo (alt="" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.
+  [NAO_CONFORME   ] X-ACC-01  Média       Imagens sem texto alternativo
+      local: label "Rótulo" (cmid=11669, activities/label_11669/module.xml)
+      evidência: 1/1 <img> sem atributo alt (alt vazio=0) nos campos ['intro']
+      orientação: Adicionar texto alternativo (alt="" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.
+  [NAO_CONFORME   ] X-ACC-01  Média       Imagens sem texto alternativo
+      local: label "  
+" (cmid=13819, activities/label_13819/module.xml)
+      evidência: 1/1 <img> sem atributo alt (alt vazio=0) nos campos ['intro']
+      orientação: Adicionar texto alternativo (alt="" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.
+  [NAO_CONFORME   ] X-ACC-01  Média       Imagens sem texto alternativo
+      local: label "Rótulo" (cmid=13833, activities/label_13833/module.xml)
+      evidência: 1/1 <img> sem atributo alt (alt vazio=0) nos campos ['intro']
+      orientação: Adicionar texto alternativo (alt="" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.
+  [NAO_CONFORME   ] X-ACC-01  Média       Imagens sem texto alternativo
+      local: label "  
+" (cmid=13889, activities/label_13889/module.xml)
+      evidência: 1/1 <img> sem atributo alt (alt vazio=0) nos campos ['intro']
+      orientação: Adicionar texto alternativo (alt="" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.
+  [NAO_CONFORME   ] X-ACC-01  Média       Imagens sem texto alternativo
+      local: label "Rótulo" (cmid=13890, activities/label_13890/module.xml)
+      evidência: 1/1 <img> sem atributo alt (alt vazio=0) nos campos ['intro']
+      orientação: Adicionar texto alternativo (alt="" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.
+  [NAO_CONFORME   ] X-ACC-01  Média       Imagens sem texto alternativo
+      local: label "  
+
+
+
+" (cmid=13891, activities/label_13891/module.xml)
+      evidência: 1/1 <img> sem atributo alt (alt vazio=0) nos campos ['intro']
+      orientação: Adicionar texto alternativo (alt="" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.
+  [NAO_CONFORME   ] X-ACC-01  Média       Imagens sem texto alternativo
+      local: label "  
+" (cmid=13892, activities/label_13892/module.xml)
+      evidência: 1/1 <img> sem atributo alt (alt vazio=0) nos campos ['intro']
+      orientação: Adicionar texto alternativo (alt="" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.
+  [NAO_CONFORME   ] X-ACC-01  Média       Imagens sem texto alternativo
+      local: label " 
+" (cmid=13893, activities/label_13893/module.xml)
+      evidência: 1/1 <img> sem atributo alt (alt vazio=0) nos campos ['intro']
+      orientação: Adicionar texto alternativo (alt="" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.
+  [NAO_CONFORME   ] X-ACC-01  Média       Imagens sem texto alternativo
+      local: label "Rótulo" (cmid=13894, activities/label_13894/module.xml)
+      evidência: 1/1 <img> sem atributo alt (alt vazio=0) nos campos ['intro']
+      orientação: Adicionar texto alternativo (alt="" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.
+  [NAO_CONFORME   ] X-ACC-01  Média       Imagens sem texto alternativo
+      local: label "  
+
+
+
+" (cmid=13895, activities/label_13895/module.xml)
+      evidência: 1/1 <img> sem atributo alt (alt vazio=0) nos campos ['intro']
+      orientação: Adicionar texto alternativo (alt="" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.
+  [NAO_CONFORME   ] X-ACC-01  Média       Imagens sem texto alternativo
+      local: label "  
+" (cmid=13896, activities/label_13896/module.xml)
+      evidência: 1/1 <img> sem atributo alt (alt vazio=0) nos campos ['intro']
+      orientação: Adicionar texto alternativo (alt="" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.
+  [NAO_CONFORME   ] X-ACC-01  Média       Imagens sem texto alternativo
+      local: label " 
+" (cmid=13897, activities/label_13897/module.xml)
+      evidência: 1/1 <img> sem atributo alt (alt vazio=0) nos campos ['intro']
+      orientação: Adicionar texto alternativo (alt="" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.
+  [NAO_CONFORME   ] X-ACC-01  Média       Imagens sem texto alternativo
+      local: label "Rótulo" (cmid=13898, activities/label_13898/module.xml)
+      evidência: 1/1 <img> sem atributo alt (alt vazio=0) nos campos ['intro']
+      orientação: Adicionar texto alternativo (alt="" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.
+  [NAO_CONFORME   ] X-ACC-01  Média       Imagens sem texto alternativo
+      local: label "  
+
+
+
+" (cmid=13899, activities/label_13899/module.xml)
+      evidência: 1/1 <img> sem atributo alt (alt vazio=0) nos campos ['intro']
+      orientação: Adicionar texto alternativo (alt="" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.
+  [NAO_CONFORME   ] X-ACC-01  Média       Imagens sem texto alternativo
+      local: label "  
+" (cmid=13900, activities/label_13900/module.xml)
+      evidência: 1/1 <img> sem atributo alt (alt vazio=0) nos campos ['intro']
+      orientação: Adicionar texto alternativo (alt="" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.
+  [NAO_CONFORME   ] X-ACC-01  Média       Imagens sem texto alternativo
+      local: label " 
+" (cmid=13901, activities/label_13901/module.xml)
+      evidência: 1/1 <img> sem atributo alt (alt vazio=0) nos campos ['intro']
+      orientação: Adicionar texto alternativo (alt="" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.
+  [NAO_CONFORME   ] X-ACC-01  Média       Imagens sem texto alternativo
+      local: label "  
+" (cmid=13902, activities/label_13902/module.xml)
+      evidência: 1/1 <img> sem atributo alt (alt vazio=0) nos campos ['intro']
+      orientação: Adicionar texto alternativo (alt="" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.
+  [NAO_CONFORME   ] X-ACC-01  Média       Imagens sem texto alternativo
+      local: label " 
+" (cmid=8703, activities/label_8703/module.xml)
+      evidência: 1/1 <img> sem atributo alt (alt vazio=0) nos campos ['intro']
+      orientação: Adicionar texto alternativo (alt="" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.
+  [NAO_CONFORME   ] X-ACC-01  Média       Imagens sem texto alternativo
+      local: page "Informações sobre o curso" (cmid=5413, activities/page_5413/module.xml)
+      evidência: 1/1 <img> sem atributo alt (alt vazio=0) nos campos ['content']
+      orientação: Adicionar texto alternativo (alt="" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.
+  [NAO_CONFORME   ] X-ACC-01  Média       Imagens sem texto alternativo
+      local: url "📚 Dicas para inspirar a criação de espaços maker (#aprender)" (cmid=10081, activities/url_10081/module.xml)
+      evidência: 1/1 <img> sem atributo alt (alt vazio=0) nos campos ['intro']
+      orientação: Adicionar texto alternativo (alt="" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.
+  [NAO_CONFORME   ] X-ACC-01  Média       Imagens sem texto alternativo
+      local: url "📚 O que devo saber sobre esta nova tendência (#aprender)" (cmid=10085, activities/url_10085/module.xml)
+      evidência: 1/1 <img> sem atributo alt (alt vazio=0) nos campos ['intro']
+      orientação: Adicionar texto alternativo (alt="" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.
+  [NAO_CONFORME   ] X-ACC-01  Média       Imagens sem texto alternativo
+      local: seção 1 "Boas-vindas e Mão na Massa!"
+      evidência: 1/1 <img> sem alt
+  [NAO_CONFORME   ] X-ACC-01  Média       Imagens sem texto alternativo
+      local: seção 2 "Cultura Maker"
+      evidência: 1/1 <img> sem alt
+  [NAO_CONFORME   ] X-ACC-01  Média       Imagens sem texto alternativo
+      local: seção 3 "Espaços que Inspiram"
+      evidência: 1/1 <img> sem alt
+  [NAO_CONFORME   ] X-ACC-01  Média       Imagens sem texto alternativo
+      local: seção 4 "Mentalidade Maker"
+      evidência: 1/1 <img> sem alt
+  [NAO_CONFORME   ] X-ACC-01  Média       Imagens sem texto alternativo
+      local: seção 5 "Cultura Maker na Educação"
+      evidência: 1/1 <img> sem alt
+  [NAO_CONFORME   ] X-ACC-01  Média       Imagens sem texto alternativo
+      local: seção 6 "Compartilhe Práticas Maker na Educação"
+      evidência: 1/1 <img> sem alt
+  [NAO_CONFORME   ] X-ACC-01  Média       Imagens sem texto alternativo
+      local: seção 7 "Certificado e conclusão"
+      evidência: 1/1 <img> sem alt
+  [NAO_CONFORME   ] X-CONT-03 Média       Links absolutos para o Moodle de origem com identificadores do curso antigo
+      local: book "📚 Cultura Maker na educação (#aprender)" (cmid=9605, activities/book_9605/module.xml) campo chapter[3]
+      evidência: link absoluto https://mooc.cefor.ifes.edu.br/moodle/question/edit.php?courseid=55
+      orientação: Links com id numérico não são remapeados na restauração (só links codificados $@...VIEWBYID@$ são). Substituir por link relativo/atualizado.
+  [ATENCAO        ] CL-06     Alta        Data de início correta (futura, ≥1 mês antes do fim)
+      local: course/course.xml <startdate>
+      evidência: startdate=2020-08-11 00:00 enddate=2020-12-31 23:59 ref=2026-10-28 [estado do backup: reavaliar após a restauração/criação da sala nova]
+      encontrado: ano=2020 ≠ 2027; dia/mês=11/08 ≠ 01/01
+      esperado: 01/01/2027, ≥30 dias antes do fim
+      orientação: Ajustar a data de início. O MOOC Admin pode redefinir datas na reoferta: diferenciar auditoria do backup da auditoria pós-restauração.
+  [ATENCAO        ] CL-07     Alta        Data de término no último dia do ciclo (31/12 do ano da reoferta)
+      local: course/course.xml <enddate>
+      evidência: enddate=2020-12-31 23:59 (31/12/2020) [estado do backup: reavaliar após a restauração/criação da sala nova]
+      esperado: ['31/12'] de 2027
+      orientação: Ajustar a data de término conforme calendário do Cefor.
+  [ATENCAO        ] CL-25     Alta        Texto do certificado conforme padrão / emissão de teste
+      local: simplecertificate "Certificado digital de conclusão" (cmid=5420, activities/simplecertificate_5420/module.xml)
+      evidência: texto="o instituto federal do espirito santo, por meio do {campus}, certifica que {username} concluiu e foi aprovado(a) no curso {coursename}, realizado no periodo de {timestart} a {timeend} , com carga hora"; similaridade com padrão=0.61; placeholders=['{CAMPUS}', '{USERNAME}', '{COURSENAME}', '{TIMESTART}', '{TIMEEND}', '{CARGA_HORARIA}']
+      esperado: O Instituto Federal do Espírito Santo, por meio do {CAMPUS}, certifica que {USERNAME} participou do curso {COURSENAME}, no período de {TIMESTART} a {TIMEEND}, com carga horária de {CARGA_HORARIA} hora
+      orientação: Conferir o texto-padrão. A emissão de teste (layout, campus, assinatura) exige ambiente Moodle.
+  [ATENCAO        ] X-INT-03  Alta        Plugins não nativos necessários no destino
+      local: activities/game_* (4 instâncias)
+      evidência: módulo não nativo mod_game versão 2026051500
+      orientação: Garantir que o plugin exista no Moodle de destino na mesma versão ou superior; caso contrário, a restauração omite as atividades.
+  [ATENCAO        ] X-INT-03  Alta        Plugins não nativos necessários no destino
+      local: activities/simplecertificate_* (1 instâncias)
+      evidência: módulo não nativo mod_simplecertificate versão 2024051105
+      orientação: Garantir que o plugin exista no Moodle de destino na mesma versão ou superior; caso contrário, a restauração omite as atividades.
+  [ATENCAO        ] X-INT-03  Alta        Plugins não nativos necessários no destino
+      local: availability type="days" (1 usos)
+      evidência: plugin availability_days não nativo
+      orientação: Se ausente no destino, o Moodle ignora a condição ao carregar (modo "lax"), alterando as regras de acesso silenciosamente.
+  [ATENCAO        ] X-INT-03  Alta        Plugins não nativos necessários no destino
+      local: course/blocks/completion_progress_27011
+      evidência: bloco não nativo block_completion_progress versão 2026042700
+  [ATENCAO        ] CL-01     Média       Informações sobre o curso atualizadas conforme documento padrão
+      local: page "Informações sobre o curso" (cmid=5413, activities/page_5413/module.xml)
+      evidência: cabeçalhos encontrados=['nome do curso', 'carga horaria', 'idioma', 'nivel de dificuldade', 'publico-alvo', 'requisitos tecnicos', 'pre-requisitos', 'conteudos', 'metodologia', 'processo de avaliacao', 'professor']
+      encontrado: ausentes=['descricao do curso']
+      esperado: estrutura do documento padrão (verificação humana do conteúdo)
+      orientação: Conferir o texto com o documento-padrão; a estrutura é verificável, o conteúdo não.
+  [ATENCAO        ] CL-04     Média       Sumário replica Informações e contém botões Criar Conta / Turmas anteriores
+      local: course.xml <summary> vs page "Informações sobre o curso" (cmid=5413, activities/page_5413/module.xml)
+      evidência: similaridade textual=0.55
+      esperado: >= 0.60 (heurística)
+      orientação: Replicar o texto da página no sumário.
+  [ATENCAO        ] CL-21     Média       Blocos padrão presentes
+      local: course/blocks/html_*/block.xml configdata
+      evidência: bloco HTML "Acessibilidade": ausente no backup
+      orientação: Decisão institucional: o bloco deve estar na sala. Como não aparece em nenhum backup examinado, a verificação definitiva é pós-restauração (classe C); se for bloco de nível de site, ele não entra no backup do curso.
+  [ATENCAO        ] CL-05     Baixa       Categoria do curso = categoria de inscrições abertas
+      local: course/course.xml <category>
+      evidência: categoria="2020/2" [estado do backup: reavaliar após a restauração/criação da sala nova]
+      esperado: Inscrições Abertas
+      orientação: Alterar a categoria. Observação: o MOOC Admin pode definir a categoria após a restauração; neste caso a regra deve ser avaliada pós-restauração.
+  [ATENCAO        ] CL-10     Baixa       Vídeos funcionam e estão incorporados
+      local: url "🎞️ Aprendizagem mão na massa (#aprender #divertir)" (cmid=10112, activities/url_10112/module.xml)
+      evidência: externalurl=https://www.youtube.com/watch?v=nfzFAavTtGw
+      esperado: vídeo incorporado (embed) na própria sala
+      orientação: Checklist pede vídeos "embedados"; URL externa de vídeo é um sinal, não prova de problema.
+  [ATENCAO        ] CL-10     Baixa       Vídeos funcionam e estão incorporados
+      local: url "🎞️ Uma Sala Maker na Escola Viva (#aprender #divertir)" (cmid=10116, activities/url_10116/module.xml)
+      evidência: externalurl=https://www.youtube.com/watch?v=4nfMFmbEUAE
+      esperado: vídeo incorporado (embed) na própria sala
+      orientação: Checklist pede vídeos "embedados"; URL externa de vídeo é um sinal, não prova de problema.
+  [ATENCAO        ] CL-10     Baixa       Vídeos funcionam e estão incorporados
+      local: url "🎞️ Desenvolvendo a Mentalidade Maker (#aprender)" (cmid=10118, activities/url_10118/module.xml)
+      evidência: externalurl=https://www.youtube.com/watch?v=oQvcbLmNfok
+      esperado: vídeo incorporado (embed) na própria sala
+      orientação: Checklist pede vídeos "embedados"; URL externa de vídeo é um sinal, não prova de problema.
+  [ATENCAO        ] CL-10     Baixa       Vídeos funcionam e estão incorporados
+      local: url "🎞️ Cultura Maker na escola (#aprender)" (cmid=11488, activities/url_11488/module.xml)
+      evidência: externalurl=https://youtu.be/SoDDCz-25o4
+      esperado: vídeo incorporado (embed) na própria sala
+      orientação: Checklist pede vídeos "embedados"; URL externa de vídeo é um sinal, não prova de problema.
+  [ATENCAO        ] CL-10     Baixa       Vídeos funcionam e estão incorporados
+      local: url "🎞️ Cultura Maker (#aprender #divertir)" (cmid=11664, activities/url_11664/module.xml)
+      evidência: externalurl=https://youtu.be/UgJhn56k9dg
+      esperado: vídeo incorporado (embed) na própria sala
+      orientação: Checklist pede vídeos "embedados"; URL externa de vídeo é um sinal, não prova de problema.
+  [ATENCAO        ] CL-10     Baixa       Vídeos funcionam e estão incorporados
+      local: url "🎞️ Laboratórios Maker (#aprender #divertir)" (cmid=11666, activities/url_11666/module.xml)
+      evidência: externalurl=https://youtu.be/A7WRS59uhRY
+      esperado: vídeo incorporado (embed) na própria sala
+      orientação: Checklist pede vídeos "embedados"; URL externa de vídeo é um sinal, não prova de problema.
+  [ATENCAO        ] CL-10     Baixa       Vídeos funcionam e estão incorporados
+      local: url "🎞️  Mentalidade Maker (#aprender #divertir)" (cmid=11674, activities/url_11674/module.xml)
+      evidência: externalurl=https://youtu.be/gCzcfrVlwg4
+      esperado: vídeo incorporado (embed) na própria sala
+      orientação: Checklist pede vídeos "embedados"; URL externa de vídeo é um sinal, não prova de problema.
+  [ATENCAO        ] CL-10     Baixa       Vídeos funcionam e estão incorporados
+      local: url "🎞️  Espiral Criativa (#aprender #divertir)" (cmid=11675, activities/url_11675/module.xml)
+      evidência: externalurl=https://youtu.be/I-aQWV6n7xM
+      esperado: vídeo incorporado (embed) na própria sala
+      orientação: Checklist pede vídeos "embedados"; URL externa de vídeo é um sinal, não prova de problema.
+  [ATENCAO        ] X-CONT-02 Baixa       Módulos com nomes duplicados
+      local: label "Rótulo" cmids=[11461, 11669, 13833, 13890, 13894, 13898]
+      evidência: conteúdo DIFERENTE (p.ex. versão em Libras) — não é duplicata
+      orientação: Se idêntico: remover duplicata. Se versões alternativas: diferenciar o nome (ex.: sufixo "(Libras)") para navegação/acessibilidade.
+  [ATENCAO        ] X-CONT-06 Baixa       Inventário de dependências externas (hosts)
+      local: conteúdos
+      evidência: 4 hosts via http:// (conteúdo misto pode ser bloqueado pelo navegador): ['http://www.makerspaceforeducation.com', 'http://intergalacticrobot.blogspot.com.br', 'http://blog.lyceum.com.br', 'http://g1.globo.com']
+  [ATENCAO        ] CL-08     Informativa Autoinscrição habilitada com período correto
+      local: course/enrolments.xml (guest)
+      evidência: acesso de visitante habilitado com senha
+      orientação: Confirmar se o acesso de visitante é desejado na reoferta.
+  [ATENCAO        ] CL-15     Informativa Restrições das avaliações corretas; 1º questionário condicionado à "Escolha a sua situação"
+      local: quiz "Questionário: Cultura Maker (#fazer #errar #aprender)" (cmid=10076, activities/quiz_10076/module.xml)
+      evidência: 0 condições de acesso: None
+      orientação: Restrições são opcionais pelo checklist; revisar manualmente se fazem sentido.
+  [ATENCAO        ] CL-15     Informativa Restrições das avaliações corretas; 1º questionário condicionado à "Escolha a sua situação"
+      local: quiz "Questionário: Espaços Maker (#fazer #errar #aprender)" (cmid=10264, activities/quiz_10264/module.xml)
+      evidência: 0 condições de acesso: None
+      orientação: Restrições são opcionais pelo checklist; revisar manualmente se fazem sentido.
+  [ATENCAO        ] CL-15     Informativa Restrições das avaliações corretas; 1º questionário condicionado à "Escolha a sua situação"
+      local: quiz "Questionário: Mentalidade Maker (#fazer #errar #aprender)" (cmid=11474, activities/quiz_11474/module.xml)
+      evidência: 0 condições de acesso: None
+      orientação: Restrições são opcionais pelo checklist; revisar manualmente se fazem sentido.
+  [ATENCAO        ] CL-15     Informativa Restrições das avaliações corretas; 1º questionário condicionado à "Escolha a sua situação"
+      local: quiz "Questionário: Cultura Maker na educação (#fazer #errar #aprender)" (cmid=11681, activities/quiz_11681/module.xml)
+      evidência: 0 condições de acesso: None
+      orientação: Restrições são opcionais pelo checklist; revisar manualmente se fazem sentido.
+  [ATENCAO        ] CL-16     Informativa Avaliação do Curso restrita à conclusão de todas as atividades que valem nota
+      local: feedback "Avaliação do curso" (cmid=5419, activities/feedback_5419/module.xml)
+      evidência: exige também cmids sem nota: [13888, 13882]
+  [ATENCAO        ] X-SEC-01  Informativa Dados sensíveis no backup (senhas de inscrição)
+      local: course/enrolments.xml
+      evidência: 1 métodos de inscrição com senha em texto claro no backup
+      orientação: O relatório nunca deve exibir o valor; o arquivo deve ser tratado como confidencial.
+  [NAO_VERIFICAVEL] CL-24     Alta        Assinatura do certificado atualizada (diretor-geral)
+      local: simplecertificate "Certificado digital de conclusão" (cmid=5420, activities/simplecertificate_5420/module.xml)
+      evidência: imagem image/imagem cerificado.png sha1=f73feedee02a11701ab47d13dc52f8864a68a4d5 (130157 bytes)
+      orientação: A assinatura está dentro da imagem: comparar o hash com o da arte oficial vigente (parâmetro de política).
+  [NAO_VERIFICAVEL] CL-24     Alta        Assinatura do certificado atualizada (diretor-geral)
+      local: simplecertificate "Certificado digital de conclusão" (cmid=5420, activities/simplecertificate_5420/module.xml)
+      evidência: imagem image/imagem cerificado - verso.png sha1=04d2f93bdf4177276e0adb980d5d4a13dc762c81 (119518 bytes)
+      orientação: A assinatura está dentro da imagem: comparar o hash com o da arte oficial vigente (parâmetro de política).
+  [NAO_VERIFICAVEL] CL-02     Média       Informações iguais ao Projeto do Curso (SIPAC)
+      local: course/course.xml + page "Informações sobre o curso"
+      evidência: o projeto do curso não está no backup
+      orientação: Exige fonte externa (SIPAC/PDF do projeto). Automatizável apenas se o projeto for fornecido em formato estruturado.
+  [NAO_VERIFICAVEL] CL-03     Média       Professores cadastrados iguais ao projeto
+      local: moodle_backup.xml <settings>
+      evidência: users=0 role_assignments=0: backup sem usuários/papéis
+      orientação: Verificar via API/DB do Moodle após restauração (ou no curso de origem).
+  [NAO_VERIFICAVEL] CL-27     Baixa       Capa da sala igual ao thumbnail da vitrine (sem texto)
+      local: files.xml course/overviewfiles
+      evidência: capa=[('Sala_de_Aula_TOPO_Educador_Maker_Primeiros_Passos.png', 'c2ba5597e1966fe1edeaaa7d65b41f346a960251')]
+      orientação: Comparação com a vitrine (WordPress) e ausência de texto na imagem exigem fonte externa/OCR.
+  [NAO_VERIFICAVEL] CL-28     Baixa       Curso possui URL única
+      local: fora do backup
+      evidência: URL amigável é configuração do servidor/CGTI; não consta no MBZ
+  [NAO_VERIFICAVEL] CL-29     Baixa       Cadastro na vitrine
+      local: fora do backup
+      evidência: vitrine WordPress é sistema externo
+  [NAO_VERIFICAVEL] CL-10     Informativa Vídeos funcionam e estão incorporados
+      local: activities/*
+      evidência: 18 iframes incorporados; 8 módulos URL apontando para vídeo externo
+      orientação: Disponibilidade só verificável com acesso à rede (fase 2, com proteção SSRF e lista de domínios permitidos).
+  [NAO_VERIFICAVEL] CL-25     Informativa Texto do certificado conforme padrão / emissão de teste
+      local: simplecertificate "Certificado digital de conclusão" (cmid=5420, activities/simplecertificate_5420/module.xml)
+      evidência: emissão de certificado de teste requer Moodle em execução
+  (40 resultados CONFORMES omitidos: ['CL-04', 'CL-08', 'CL-12', 'CL-13', 'CL-14', 'CL-16', 'CL-17', 'CL-19', 'CL-20', 'CL-21', 'CL-23', 'CL-26', 'X-ACC-02', 'X-AV-01', 'X-BLK-01', 'X-CERT-01', 'X-CONT-01', 'X-CONT-04', 'X-CONT-05', 'X-CONT-06', 'X-DEP-01', 'X-DEP-02', 'X-DEP-03', 'X-DEP-04', 'X-DEP-05', 'X-INT-01', 'X-INT-02', 'X-INT-04', 'X-STR-01'])

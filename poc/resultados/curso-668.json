@@ -1,0 +1,2319 @@
+{
+ "engine": "mbz_inspect PoC 0.1",
+ "policy_version": "2027-decisoes-2026-10-28",
+ "executed_at": "2026-10-28T16:27:01",
+ "target": "backup-moodle2-course-668-cc_mooc_2026-20261014-1555-nu.mbz",
+ "archive": {
+  "format": "tgz",
+  "entries": 5033,
+  "bytes": 101557579,
+  "rejected": [],
+  "stream_error": "ReadError: invalid compressed data",
+  "last_entry": "files/74/748fb56dfc8d7293ebb8901126b7201c2840b3af",
+  "size_bytes": 49113390
+ },
+ "archive_index": {
+  "present": true,
+  "declared": 6685,
+  "size_mismatch": [
+   [
+    "files/74/748fb56dfc8d7293ebb8901126b7201c2840b3af",
+    72608,
+    0
+   ]
+  ],
+  "checked": 6336,
+  "missing_count": 1572
+ },
+ "inventory": {
+  "curso": {
+   "id": "668",
+   "shortname": "CC_MOOC_2026",
+   "fullname": "Como criar um MOOC?",
+   "format": "topics",
+   "visible": "1",
+   "lang": "",
+   "enablecompletion": "1"
+  },
+  "categoria": {
+   "id": "6",
+   "name": "Inscrições Abertas"
+  },
+  "startdate": "2026-01-01 00:00",
+  "enddate": "2026-12-31 23:59",
+  "origem": {
+   "moodle_release": null,
+   "backup_version": null,
+   "original_wwwroot": null,
+   "original_course_id": null,
+   "backup_date": null
+  },
+  "backup_date": null,
+  "settings": {},
+  "arquivos_ausentes_no_pacote": [
+   "moodle_backup.xml",
+   "sections/",
+   "gradebook.xml",
+   "files.xml",
+   "questions.xml"
+  ],
+  "secoes": [
+   {
+    "n": 0,
+    "nome": null,
+    "modulos": 6,
+    "visible": null,
+    "reconstruida": true
+   },
+   {
+    "n": 1,
+    "nome": null,
+    "modulos": 9,
+    "visible": null,
+    "reconstruida": true
+   },
+   {
+    "n": 2,
+    "nome": null,
+    "modulos": 7,
+    "visible": null,
+    "reconstruida": true
+   },
+   {
+    "n": 3,
+    "nome": null,
+    "modulos": 7,
+    "visible": null,
+    "reconstruida": true
+   },
+   {
+    "n": 4,
+    "nome": null,
+    "modulos": 6,
+    "visible": null,
+    "reconstruida": true
+   },
+   {
+    "n": 5,
+    "nome": null,
+    "modulos": 10,
+    "visible": null,
+    "reconstruida": true
+   },
+   {
+    "n": 6,
+    "nome": null,
+    "modulos": 9,
+    "visible": null,
+    "reconstruida": true
+   },
+   {
+    "n": 7,
+    "nome": null,
+    "modulos": 7,
+    "visible": null,
+    "reconstruida": true
+   },
+   {
+    "n": 8,
+    "nome": null,
+    "modulos": 9,
+    "visible": null,
+    "reconstruida": true
+   },
+   {
+    "n": 9,
+    "nome": null,
+    "modulos": 4,
+    "visible": null,
+    "reconstruida": true
+   }
+  ],
+  "modulos_por_tipo": {
+   "assign": 1,
+   "book": 9,
+   "data": 1,
+   "feedback": 3,
+   "folder": 2,
+   "forum": 4,
+   "hvp": 4,
+   "label": 8,
+   "page": 25,
+   "quiz": 7,
+   "resource": 3,
+   "simplecertificate": 2,
+   "url": 5
+  },
+  "total_modulos": 74,
+  "questionarios": [
+   {
+    "cmid": 93173,
+    "nome": "Questionário 1 - Introdução ao MOOC",
+    "attempts": 2,
+    "timeclose": 1798772340,
+    "grade": 10.0,
+    "slots": 5,
+    "grademethod": 1
+   },
+   {
+    "cmid": 93180,
+    "nome": "Questionário 2 - Processo de Criação de um curso MOOC",
+    "attempts": 2,
+    "timeclose": 1798772340,
+    "grade": 10.0,
+    "slots": 5,
+    "grademethod": 1
+   },
+   {
+    "cmid": 93186,
+    "nome": "Questionário 3 -  Análise (Analysis)",
+    "attempts": 2,
+    "timeclose": 1798772340,
+    "grade": 10.0,
+    "slots": 5,
+    "grademethod": 1
+   },
+   {
+    "cmid": 93192,
+    "nome": "Questionário 4 - Projeto (Design)",
+    "attempts": 2,
+    "timeclose": 1798772340,
+    "grade": 10.0,
+    "slots": 5,
+    "grademethod": 1
+   },
+   {
+    "cmid": 93201,
+    "nome": "Questionário 5 - Desenvolvimento (Development)",
+    "attempts": 2,
+    "timeclose": 1798772340,
+    "grade": 30.0,
+    "slots": 15,
+    "grademethod": 1
+   },
+   {
+    "cmid": 93210,
+    "nome": "Questionário 6 - Implementação (Implement)",
+    "attempts": 2,
+    "timeclose": 1798772340,
+    "grade": 10.0,
+    "slots": 5,
+    "grademethod": 1
+   },
+   {
+    "cmid": 93217,
+    "nome": "Questionário 7 - Avaliação (Evaluate)",
+    "attempts": 2,
+    "timeclose": 1798772340,
+    "grade": 10.0,
+    "slots": 5,
+    "grademethod": 1
+   }
+  ],
+  "itens_de_nota": [
+   {
+    "cmid": 93209,
+    "mod": "assign",
+    "nome": "Envio de Recursos e Atividades configurados no Moodle",
+    "grademax": 100.0,
+    "gradetype": 0,
+    "coef2": 1.0
+   },
+   {
+    "cmid": 100895,
+    "mod": "hvp",
+    "nome": "Jogo - Sobre os Moocs",
+    "grademax": 2.0,
+    "gradetype": 1,
+    "coef2": 0.02
+   },
+   {
+    "cmid": 100896,
+    "mod": "hvp",
+    "nome": "Jogo - Etapas do modelo ADDIEM",
+    "grademax": 2.0,
+    "gradetype": 1,
+    "coef2": 0.02
+   },
+   {
+    "cmid": 100897,
+    "mod": "hvp",
+    "nome": "Jogo - Projeto do Curso",
+    "grademax": 4.0,
+    "gradetype": 1,
+    "coef2": 0.04
+   },
+   {
+    "cmid": 100898,
+    "mod": "hvp",
+    "nome": "Jogo - Recursos do Moodle",
+    "grademax": 2.0,
+    "gradetype": 1,
+    "coef2": 0.02
+   },
+   {
+    "cmid": 93173,
+    "mod": "quiz",
+    "nome": "Questionário 1 - Introdução ao MOOC",
+    "grademax": 10.0,
+    "gradetype": 1,
+    "coef2": 0.1
+   },
+   {
+    "cmid": 93180,
+    "mod": "quiz",
+    "nome": "Questionário 2 - Processo de Criação de um curso MOOC",
+    "grademax": 10.0,
+    "gradetype": 1,
+    "coef2": 0.1
+   },
+   {
+    "cmid": 93186,
+    "mod": "quiz",
+    "nome": "Questionário 3 -  Análise (Analysis)",
+    "grademax": 10.0,
+    "gradetype": 1,
+    "coef2": 0.1
+   },
+   {
+    "cmid": 93192,
+    "mod": "quiz",
+    "nome": "Questionário 4 - Projeto (Design)",
+    "grademax": 10.0,
+    "gradetype": 1,
+    "coef2": 0.1
+   },
+   {
+    "cmid": 93201,
+    "mod": "quiz",
+    "nome": "Questionário 5 - Desenvolvimento (Development)",
+    "grademax": 30.0,
+    "gradetype": 1,
+    "coef2": 0.3
+   },
+   {
+    "cmid": 93210,
+    "mod": "quiz",
+    "nome": "Questionário 6 - Implementação (Implement)",
+    "grademax": 10.0,
+    "gradetype": 1,
+    "coef2": 0.1
+   },
+   {
+    "cmid": 93217,
+    "mod": "quiz",
+    "nome": "Questionário 7 - Avaliação (Evaluate)",
+    "grademax": 10.0,
+    "gradetype": 1,
+    "coef2": 0.1
+   }
+  ],
+  "categorias_de_nota": null,
+  "restricoes": [
+   {
+    "cmid": 93226,
+    "mod": "feedback",
+    "nome": "Avaliação do curso",
+    "availability": {
+     "op": "&",
+     "showc": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+     ],
+     "c": [
+      {
+       "type": "completion",
+       "cm": 93173,
+       "e": 1
+      },
+      {
+       "type": "completion",
+       "cm": 93180,
+       "e": 1
+      },
+      {
+       "type": "completion",
+       "cm": 93186,
+       "e": 1
+      },
+      {
+       "type": "completion",
+       "cm": 93192,
+       "e": 1
+      },
+      {
+       "type": "completion",
+       "cm": 93201,
+       "e": 1
+      },
+      {
+       "type": "completion",
+       "cm": 93210,
+       "e": 1
+      },
+      {
+       "type": "completion",
+       "cm": 93217,
+       "e": 1
+      }
+     ]
+    }
+   },
+   {
+    "cmid": 93228,
+    "mod": "feedback",
+    "nome": "Licença para capacitação",
+    "availability": {
+     "op": "!&",
+     "c": [
+      {
+       "type": "grade",
+       "id": 73332,
+       "min": 1
+      }
+     ],
+     "show": true
+    }
+   },
+   {
+    "cmid": 93173,
+    "mod": "quiz",
+    "nome": "Questionário 1 - Introdução ao MOOC",
+    "availability": {
+     "op": "&",
+     "showc": [
+      true,
+      true,
+      true,
+      true
+     ],
+     "c": [
+      {
+       "type": "completion",
+       "cm": 93168,
+       "e": 1
+      },
+      {
+       "type": "completion",
+       "cm": 93170,
+       "e": 1
+      },
+      {
+       "type": "completion",
+       "cm": 93171,
+       "e": 1
+      },
+      {
+       "type": "completion",
+       "cm": 93169,
+       "e": 1
+      }
+     ]
+    }
+   },
+   {
+    "cmid": 93180,
+    "mod": "quiz",
+    "nome": "Questionário 2 - Processo de Criação de um curso MOOC",
+    "availability": {
+     "op": "&",
+     "showc": [
+      true,
+      true,
+      true,
+      true
+     ],
+     "c": [
+      {
+       "type": "completion",
+       "cm": 93175,
+       "e": 1
+      },
+      {
+       "type": "completion",
+       "cm": 93176,
+       "e": 1
+      },
+      {
+       "type": "completion",
+       "cm": 93177,
+       "e": 1
+      },
+      {
+       "type": "completion",
+       "cm": 93178,
+       "e": 1
+      }
+     ]
+    }
+   },
+   {
+    "cmid": 93186,
+    "mod": "quiz",
+    "nome": "Questionário 3 -  Análise (Analysis)",
+    "availability": {
+     "op": "&",
+     "showc": [
+      true,
+      true,
+      true
+     ],
+     "c": [
+      {
+       "type": "completion",
+       "cm": 93181,
+       "e": 1
+      },
+      {
+       "type": "completion",
+       "cm": 93182,
+       "e": 1
+      },
+      {
+       "type": "completion",
+       "cm": 93185,
+       "e": 1
+      }
+     ]
+    }
+   },
+   {
+    "cmid": 93192,
+    "mod": "quiz",
+    "nome": "Questionário 4 - Projeto (Design)",
+    "availability": {
+     "op": "&",
+     "showc": [
+      true,
+      true,
+      true
+     ],
+     "c": [
+      {
+       "type": "completion",
+       "cm": 93187,
+       "e": 1
+      },
+      {
+       "type": "completion",
+       "cm": 93188,
+       "e": 1
+      },
+      {
+       "type": "completion",
+       "cm": 93191,
+       "e": 1
+      }
+     ]
+    }
+   },
+   {
+    "cmid": 93201,
+    "mod": "quiz",
+    "nome": "Questionário 5 - Desenvolvimento (Development)",
+    "availability": {
+     "op": "&",
+     "c": [
+      {
+       "type": "completion",
+       "cm": 93193,
+       "e": 1
+      },
+      {
+       "type": "completion",
+       "cm": 93194,
+       "e": 1
+      },
+      {
+       "type": "completion",
+       "cm": 93195,
+       "e": 1
+      },
+      {
+       "type": "completion",
+       "cm": 93196,
+       "e": 1
+      },
+      {
+       "type": "completion",
+       "cm": 93197,
+       "e": 1
+      },
+      {
+       "type": "completion",
+       "cm": 93198,
+       "e": 1
+      },
+      {
+       "type": "completion",
+       "cm": 93200,
+       "e": 1
+      }
+     ],
+     "showc": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+     ]
+    }
+   },
+   {
+    "cmid": 93210,
+    "mod": "quiz",
+    "nome": "Questionário 6 - Implementação (Implement)",
+    "availability": {
+     "op": "&",
+     "showc": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+     ],
+     "c": [
+      {
+       "type": "completion",
+       "cm": 93202,
+       "e": 1
+      },
+      {
+       "type": "completion",
+       "cm": 93203,
+       "e": 1
+      },
+      {
+       "type": "completion",
+       "cm": 93204,
+       "e": 1
+      },
+      {
+       "type": "completion",
+       "cm": 93205,
+       "e": 1
+      },
+      {
+       "type": "completion",
+       "cm": 93206,
+       "e": 1
+      },
+      {
+       "type": "completion",
+       "cm": 93207,
+       "e": 1
+      },
+      {
+       "type": "completion",
+       "cm": 93209,
+       "e": 1
+      }
+     ]
+    }
+   },
+   {
+    "cmid": 93217,
+    "mod": "quiz",
+    "nome": "Questionário 7 - Avaliação (Evaluate)",
+    "availability": {
+     "op": "&",
+     "showc": [
+      true,
+      true,
+      true,
+      true,
+      true
+     ],
+     "c": [
+      {
+       "type": "completion",
+       "cm": 93211,
+       "e": 1
+      },
+      {
+       "type": "completion",
+       "cm": 93212,
+       "e": 1
+      },
+      {
+       "type": "completion",
+       "cm": 93213,
+       "e": 1
+      },
+      {
+       "type": "completion",
+       "cm": 93214,
+       "e": 1
+      },
+      {
+       "type": "completion",
+       "cm": 93215,
+       "e": 1
+      }
+     ]
+    }
+   },
+   {
+    "cmid": 93227,
+    "mod": "simplecertificate",
+    "nome": "Certificado digital de conclusão",
+    "availability": {
+     "op": "&",
+     "showc": [
+      true,
+      true,
+      true,
+      true,
+      true
+     ],
+     "c": [
+      {
+       "type": "completion",
+       "cm": 93226,
+       "e": 1
+      },
+      {
+       "type": "grade",
+       "id": 73332,
+       "min": 60
+      },
+      {
+       "type": "days",
+       "d": "9"
+      },
+      {
+       "type": "completion",
+       "cm": 93163,
+       "e": 1
+      },
+      {
+       "type": "days",
+       "d": 9
+      }
+     ]
+    }
+   }
+  ],
+  "conclusao": {
+   "assign:2": 1,
+   "book:2": 8,
+   "book:0": 1,
+   "data:2": 1,
+   "feedback:2": 2,
+   "feedback:0": 1,
+   "folder:0": 2,
+   "forum:0": 2,
+   "forum:2": 2,
+   "hvp:1": 4,
+   "label:0": 8,
+   "page:2": 25,
+   "quiz:2": 7,
+   "resource:0": 3,
+   "simplecertificate:0": 2,
+   "url:0": 5
+  },
+  "blocos": [
+   {
+    "name": "completion_progress",
+    "title": null,
+    "version": "2026042700"
+   },
+   {
+    "name": "html",
+    "title": "Dúvidas técnicas? Podemos ajudar!",
+    "version": "2024100700"
+   },
+   {
+    "name": "html",
+    "title": "Atenção ao prazo!!!",
+    "version": "2024100700"
+   },
+   {
+    "name": "online_users",
+    "title": null,
+    "version": "2024100700"
+   }
+  ],
+  "inscricao": [
+   {
+    "id": "75958",
+    "enrol": "manual",
+    "status": 0,
+    "enrolstartdate": 0,
+    "enrolenddate": 0,
+    "customint6": null,
+    "roleid": 5,
+    "has_password": false
+   },
+   {
+    "id": "75959",
+    "enrol": "guest",
+    "status": 1,
+    "enrolstartdate": 0,
+    "enrolenddate": 0,
+    "customint6": null,
+    "roleid": 0,
+    "has_password": false
+   },
+   {
+    "id": "75960",
+    "enrol": "self",
+    "status": 0,
+    "enrolstartdate": 1767236400,
+    "enrolenddate": 1798772340,
+    "customint6": 1,
+    "roleid": 5,
+    "has_password": false
+   }
+  ],
+  "badges": 0,
+  "questoes": {
+   "categorias": 0,
+   "questoes": 0,
+   "tipos": {}
+  },
+  "arquivos": {
+   "registros": 0,
+   "nao_diretorio": 0,
+   "bytes_declarados": 0,
+   "ausentes_no_backup": 0,
+   "por_mimetype": {}
+  },
+  "plugins": {
+   "modulos": {
+    "assign": "2024100700",
+    "book": "2024100700",
+    "data": "2024100700",
+    "feedback": "2024100701",
+    "folder": "2024100700",
+    "forum": "2024100700",
+    "hvp": "2026081300",
+    "label": "2024100700",
+    "page": "2024100700",
+    "quiz": "2024100700",
+    "resource": "2024100700",
+    "simplecertificate": "2024051105",
+    "url": "2024100700"
+   },
+   "blocos": {
+    "completion_progress": "2026042700",
+    "html": "2024100700",
+    "online_users": "2024100700"
+   }
+  }
+ },
+ "summary": {
+  "por_status": {
+   "CONFORME": 52,
+   "NAO_VERIFICAVEL": 21,
+   "ATENCAO": 16,
+   "NAO_CONFORME": 25
+  },
+  "nao_conformes_por_gravidade": {
+   "Alta": 1,
+   "Média": 18,
+   "Bloqueante": 6
+  },
+  "regras_executadas": 51
+ },
+ "results": [
+  {
+   "status": "CONFORME",
+   "local": "page \"Informações sobre o curso\" (cmid=93161, activities/page_93161/module.xml)",
+   "evidencia": "cabeçalhos encontrados=['nome do curso', 'descricao do curso', 'carga horaria', 'idioma', 'nivel de dificuldade', 'publico-alvo', 'requisitos tecnicos', 'pre-requisitos', 'conteudos', 'metodologia', 'processo de avaliacao', 'professor']",
+   "encontrado": "ausentes=[]",
+   "esperado": "estrutura do documento padrão (verificação humana do conteúdo)",
+   "orientacao": "Conferir o texto com o documento-padrão; a estrutura é verificável, o conteúdo não.",
+   "gravidade": "Média",
+   "rule": "CL-01",
+   "titulo": "Informações sobre o curso atualizadas conforme documento padrão",
+   "origem": "checklist:1",
+   "classe": "D"
+  },
+  {
+   "status": "NAO_VERIFICAVEL",
+   "local": "course/course.xml + page \"Informações sobre o curso\"",
+   "evidencia": "o projeto do curso não está no backup",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": "Exige fonte externa (SIPAC/PDF do projeto). Automatizável apenas se o projeto for fornecido em formato estruturado.",
+   "gravidade": "Média",
+   "rule": "CL-02",
+   "titulo": "Informações iguais ao Projeto do Curso (SIPAC)",
+   "origem": "checklist:2",
+   "classe": "B"
+  },
+  {
+   "status": "NAO_VERIFICAVEL",
+   "local": "moodle_backup.xml <settings>",
+   "evidencia": "users=None role_assignments=None: backup sem usuários/papéis",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": "Verificar via API/DB do Moodle após restauração (ou no curso de origem).",
+   "gravidade": "Média",
+   "rule": "CL-03",
+   "titulo": "Professores cadastrados iguais ao projeto",
+   "origem": "checklist:3",
+   "classe": "C"
+  },
+  {
+   "status": "CONFORME",
+   "local": "course/course.xml <summary>",
+   "evidencia": "link https://mooc.cefor.ifes.edu.br/moodle/login/signup.php presente",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": "Acrescentar o código do botão ao final do sumário.",
+   "gravidade": "Média",
+   "rule": "CL-04",
+   "titulo": "Sumário replica Informações e contém botões Criar Conta / Turmas anteriores",
+   "origem": "checklist:4",
+   "classe": "A"
+  },
+  {
+   "status": "CONFORME",
+   "local": "course/course.xml <summary>",
+   "evidencia": "link https://mooc.cefor.ifes.edu.br/moodle/course/index.php?categoryid=7 presente",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": "Acrescentar o código do botão ao final do sumário.",
+   "gravidade": "Média",
+   "rule": "CL-04",
+   "titulo": "Sumário replica Informações e contém botões Criar Conta / Turmas anteriores",
+   "origem": "checklist:4",
+   "classe": "A"
+  },
+  {
+   "status": "CONFORME",
+   "local": "course.xml <summary> vs page \"Informações sobre o curso\" (cmid=93161, activities/page_93161/module.xml)",
+   "evidencia": "similaridade textual=0.98",
+   "encontrado": null,
+   "esperado": ">= 0.60 (heurística)",
+   "orientacao": "Replicar o texto da página no sumário.",
+   "gravidade": "Média",
+   "rule": "CL-04",
+   "titulo": "Sumário replica Informações e contém botões Criar Conta / Turmas anteriores",
+   "origem": "checklist:4",
+   "classe": "A"
+  },
+  {
+   "status": "CONFORME",
+   "local": "course/course.xml <category>",
+   "evidencia": "categoria=\"Inscrições Abertas\"",
+   "encontrado": null,
+   "esperado": "Inscrições Abertas",
+   "orientacao": "Alterar a categoria. Observação: o MOOC Admin pode definir a categoria após a restauração; neste caso a regra deve ser avaliada pós-restauração.",
+   "gravidade": "Baixa",
+   "rule": "CL-05",
+   "titulo": "Categoria do curso = categoria de inscrições abertas",
+   "origem": "checklist:5",
+   "classe": "A"
+  },
+  {
+   "status": "ATENCAO",
+   "local": "course/course.xml <startdate>",
+   "evidencia": "startdate=2026-01-01 00:00 enddate=2026-12-31 23:59 ref=2026-10-28 [estado do backup: reavaliar após a restauração/criação da sala nova]",
+   "encontrado": "ano=2026 ≠ 2027",
+   "esperado": "01/01/2027, ≥30 dias antes do fim",
+   "orientacao": "Ajustar a data de início. O MOOC Admin pode redefinir datas na reoferta: diferenciar auditoria do backup da auditoria pós-restauração.",
+   "gravidade": "Alta",
+   "rule": "CL-06",
+   "titulo": "Data de início correta (futura, ≥1 mês antes do fim)",
+   "origem": "checklist:6",
+   "classe": "A"
+  },
+  {
+   "status": "ATENCAO",
+   "local": "course/course.xml <enddate>",
+   "evidencia": "enddate=2026-12-31 23:59 (31/12/2026) [estado do backup: reavaliar após a restauração/criação da sala nova]",
+   "encontrado": null,
+   "esperado": "['31/12'] de 2027",
+   "orientacao": "Ajustar a data de término conforme calendário do Cefor.",
+   "gravidade": "Alta",
+   "rule": "CL-07",
+   "titulo": "Data de término no último dia do ciclo (31/12 do ano da reoferta)",
+   "origem": "checklist:7",
+   "classe": "A"
+  },
+  {
+   "status": "CONFORME",
+   "local": "course/enrolments.xml enrol id=75960 (self)",
+   "evidencia": "status=0 customint6=1 start=2026-01-01 00:00 end=2026-12-31 23:59",
+   "encontrado": "ok",
+   "esperado": null,
+   "orientacao": "Editar o método Autoinscrição: visível, datas e \"permitir novas inscrições\". Nota: a igualdade estrita com as datas do curso é interpretação; o checklist só pede datas \"corretas\".",
+   "gravidade": "Alta",
+   "rule": "CL-08",
+   "titulo": "Autoinscrição habilitada com período correto",
+   "origem": "checklist:8",
+   "classe": "A"
+  },
+  {
+   "status": "CONFORME",
+   "local": "forum \"Espaço de interação\" (cmid=93164, activities/forum_93164/module.xml)",
+   "evidencia": "visible=1 completion=0",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": null,
+   "gravidade": "Média",
+   "rule": "CL-09",
+   "titulo": "Fórum \"Espaço de Interação\" presente",
+   "origem": "checklist:9",
+   "classe": "A"
+  },
+  {
+   "status": "NAO_VERIFICAVEL",
+   "local": "activities/*",
+   "evidencia": "198 iframes incorporados; 1 módulos URL apontando para vídeo externo",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": "Disponibilidade só verificável com acesso à rede (fase 2, com proteção SSRF e lista de domínios permitidos).",
+   "gravidade": "Informativa",
+   "rule": "CL-10",
+   "titulo": "Vídeos funcionam e estão incorporados",
+   "origem": "checklist:10",
+   "classe": "B"
+  },
+  {
+   "status": "ATENCAO",
+   "local": "url \"Playlist do curso Como criar um MOOC\" (cmid=93219, activities/url_93219/module.xml)",
+   "evidencia": "externalurl=https://www.youtube.com/playlist?list=PLbiTpGaDVLLjB14nwPtpxXFr38GYvGmxL",
+   "encontrado": null,
+   "esperado": "vídeo incorporado (embed) na própria sala",
+   "orientacao": "Checklist pede vídeos \"embedados\"; URL externa de vídeo é um sinal, não prova de problema.",
+   "gravidade": "Baixa",
+   "rule": "CL-10",
+   "titulo": "Vídeos funcionam e estão incorporados",
+   "origem": "checklist:10",
+   "classe": "B"
+  },
+  {
+   "status": "CONFORME",
+   "local": "feedback \"Pesquisa de Perfil \" (cmid=93163, activities/feedback_93163/module.xml)",
+   "evidencia": "completion=2 completionsubmit=1",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": null,
+   "gravidade": "Alta",
+   "rule": "CL-11",
+   "titulo": "Pesquisa de Perfil presente e exigida pelo Certificado",
+   "origem": "checklist:11",
+   "classe": "A"
+  },
+  {
+   "status": "CONFORME",
+   "local": "simplecertificate \"Certificado digital de conclusão\" (cmid=93227, activities/simplecertificate_93227/module.xml)",
+   "evidencia": "availability={\"op\":\"&\",\"showc\":[true,true,true,true,true],\"c\":[{\"type\":\"completion\",\"cm\":93226,\"e\":1},{\"type\":\"grade\",\"id\":73332,\"min\":60},{\"type\":\"days\",\"d\":\"9\"},{\"type\":\"completion\",\"cm\":93163,\"e\":1},{\"type\":\"days\",\"d\":9}]}",
+   "encontrado": "cmids exigidos=[93226, 93163]",
+   "esperado": "conter completion cm=93163 (Pesquisa de Perfil )",
+   "orientacao": "Adicionar ao certificado a restrição de conclusão da Pesquisa de Perfil.",
+   "gravidade": "Alta",
+   "rule": "CL-11",
+   "titulo": "Pesquisa de Perfil presente e exigida pelo Certificado",
+   "origem": "checklist:11",
+   "classe": "A"
+  },
+  {
+   "status": "CONFORME",
+   "local": "activities/*/grades.xml (itens itemtype=mod, gradetype=1)",
+   "evidencia": "soma grademax=100; itens=['hvp:100895=2', 'hvp:100896=2', 'hvp:100897=4', 'hvp:100898=2', 'quiz:93173=10', 'quiz:93180=10', 'quiz:93186=10', 'quiz:93192=10', 'quiz:93201=30', 'quiz:93210=10', 'quiz:93217=10']",
+   "encontrado": null,
+   "esperado": "100",
+   "orientacao": "Ajustar notas máximas das atividades. Interpretação adotada: soma dos grademax dos itens de valor (agregação Natural). Se houver categorias com peso/agregação diferente, a soma bruta não representa a nota final.",
+   "gravidade": "Alta",
+   "rule": "CL-12",
+   "titulo": "Livro de notas soma 100 pontos",
+   "origem": "checklist:12",
+   "classe": "A"
+  },
+  {
+   "status": "NAO_VERIFICAVEL",
+   "local": "gradebook.xml",
+   "evidencia": "arquivo ausente (backup incompleto): agregação do curso não verificável",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": null,
+   "gravidade": "Alta",
+   "rule": "CL-12",
+   "titulo": "Livro de notas soma 100 pontos",
+   "origem": "checklist:12",
+   "classe": "A"
+  },
+  {
+   "status": "CONFORME",
+   "local": "quiz \"Questionário 1 - Introdução ao MOOC\" (cmid=93173, activities/quiz_93173/module.xml)",
+   "evidencia": "attempts_number=2 (quiz_93173/quiz.xml)",
+   "encontrado": null,
+   "esperado": ">= 2 (0=ilimitadas)",
+   "orientacao": "Editar configurações do questionário > Nota > Tentativas permitidas.",
+   "gravidade": "Alta",
+   "rule": "CL-13",
+   "titulo": "Questionários com ao menos duas tentativas",
+   "origem": "checklist:13",
+   "classe": "A"
+  },
+  {
+   "status": "CONFORME",
+   "local": "quiz \"Questionário 2 - Processo de Criação de um curso MOOC\" (cmid=93180, activities/quiz_93180/module.xml)",
+   "evidencia": "attempts_number=2 (quiz_93180/quiz.xml)",
+   "encontrado": null,
+   "esperado": ">= 2 (0=ilimitadas)",
+   "orientacao": "Editar configurações do questionário > Nota > Tentativas permitidas.",
+   "gravidade": "Alta",
+   "rule": "CL-13",
+   "titulo": "Questionários com ao menos duas tentativas",
+   "origem": "checklist:13",
+   "classe": "A"
+  },
+  {
+   "status": "CONFORME",
+   "local": "quiz \"Questionário 3 -  Análise (Analysis)\" (cmid=93186, activities/quiz_93186/module.xml)",
+   "evidencia": "attempts_number=2 (quiz_93186/quiz.xml)",
+   "encontrado": null,
+   "esperado": ">= 2 (0=ilimitadas)",
+   "orientacao": "Editar configurações do questionário > Nota > Tentativas permitidas.",
+   "gravidade": "Alta",
+   "rule": "CL-13",
+   "titulo": "Questionários com ao menos duas tentativas",
+   "origem": "checklist:13",
+   "classe": "A"
+  },
+  {
+   "status": "CONFORME",
+   "local": "quiz \"Questionário 4 - Projeto (Design)\" (cmid=93192, activities/quiz_93192/module.xml)",
+   "evidencia": "attempts_number=2 (quiz_93192/quiz.xml)",
+   "encontrado": null,
+   "esperado": ">= 2 (0=ilimitadas)",
+   "orientacao": "Editar configurações do questionário > Nota > Tentativas permitidas.",
+   "gravidade": "Alta",
+   "rule": "CL-13",
+   "titulo": "Questionários com ao menos duas tentativas",
+   "origem": "checklist:13",
+   "classe": "A"
+  },
+  {
+   "status": "CONFORME",
+   "local": "quiz \"Questionário 5 - Desenvolvimento (Development)\" (cmid=93201, activities/quiz_93201/module.xml)",
+   "evidencia": "attempts_number=2 (quiz_93201/quiz.xml)",
+   "encontrado": null,
+   "esperado": ">= 2 (0=ilimitadas)",
+   "orientacao": "Editar configurações do questionário > Nota > Tentativas permitidas.",
+   "gravidade": "Alta",
+   "rule": "CL-13",
+   "titulo": "Questionários com ao menos duas tentativas",
+   "origem": "checklist:13",
+   "classe": "A"
+  },
+  {
+   "status": "CONFORME",
+   "local": "quiz \"Questionário 6 - Implementação (Implement)\" (cmid=93210, activities/quiz_93210/module.xml)",
+   "evidencia": "attempts_number=2 (quiz_93210/quiz.xml)",
+   "encontrado": null,
+   "esperado": ">= 2 (0=ilimitadas)",
+   "orientacao": "Editar configurações do questionário > Nota > Tentativas permitidas.",
+   "gravidade": "Alta",
+   "rule": "CL-13",
+   "titulo": "Questionários com ao menos duas tentativas",
+   "origem": "checklist:13",
+   "classe": "A"
+  },
+  {
+   "status": "CONFORME",
+   "local": "quiz \"Questionário 7 - Avaliação (Evaluate)\" (cmid=93217, activities/quiz_93217/module.xml)",
+   "evidencia": "attempts_number=2 (quiz_93217/quiz.xml)",
+   "encontrado": null,
+   "esperado": ">= 2 (0=ilimitadas)",
+   "orientacao": "Editar configurações do questionário > Nota > Tentativas permitidas.",
+   "gravidade": "Alta",
+   "rule": "CL-13",
+   "titulo": "Questionários com ao menos duas tentativas",
+   "origem": "checklist:13",
+   "classe": "A"
+  },
+  {
+   "status": "NAO_VERIFICAVEL",
+   "local": "hvp \"Jogo - Sobre os Moocs\" (cmid=100895, activities/hvp_100895/module.xml)",
+   "evidencia": "tipo de módulo sem campo de encerramento conhecido pelo protótipo",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": null,
+   "gravidade": "Informativa",
+   "rule": "CL-14",
+   "titulo": "Atividades avaliativas com data de encerramento",
+   "origem": "checklist:14",
+   "classe": "A"
+  },
+  {
+   "status": "NAO_VERIFICAVEL",
+   "local": "hvp \"Jogo - Etapas do modelo ADDIEM\" (cmid=100896, activities/hvp_100896/module.xml)",
+   "evidencia": "tipo de módulo sem campo de encerramento conhecido pelo protótipo",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": null,
+   "gravidade": "Informativa",
+   "rule": "CL-14",
+   "titulo": "Atividades avaliativas com data de encerramento",
+   "origem": "checklist:14",
+   "classe": "A"
+  },
+  {
+   "status": "NAO_VERIFICAVEL",
+   "local": "hvp \"Jogo - Projeto do Curso\" (cmid=100897, activities/hvp_100897/module.xml)",
+   "evidencia": "tipo de módulo sem campo de encerramento conhecido pelo protótipo",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": null,
+   "gravidade": "Informativa",
+   "rule": "CL-14",
+   "titulo": "Atividades avaliativas com data de encerramento",
+   "origem": "checklist:14",
+   "classe": "A"
+  },
+  {
+   "status": "NAO_VERIFICAVEL",
+   "local": "hvp \"Jogo - Recursos do Moodle\" (cmid=100898, activities/hvp_100898/module.xml)",
+   "evidencia": "tipo de módulo sem campo de encerramento conhecido pelo protótipo",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": null,
+   "gravidade": "Informativa",
+   "rule": "CL-14",
+   "titulo": "Atividades avaliativas com data de encerramento",
+   "origem": "checklist:14",
+   "classe": "A"
+  },
+  {
+   "status": "CONFORME",
+   "local": "quiz \"Questionário 1 - Introdução ao MOOC\" (cmid=93173, activities/quiz_93173/module.xml)",
+   "evidencia": "encerramento=2026-12-31 23:59",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": null,
+   "gravidade": "Média",
+   "rule": "CL-14",
+   "titulo": "Atividades avaliativas com data de encerramento",
+   "origem": "checklist:14",
+   "classe": "A"
+  },
+  {
+   "status": "CONFORME",
+   "local": "quiz \"Questionário 2 - Processo de Criação de um curso MOOC\" (cmid=93180, activities/quiz_93180/module.xml)",
+   "evidencia": "encerramento=2026-12-31 23:59",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": null,
+   "gravidade": "Média",
+   "rule": "CL-14",
+   "titulo": "Atividades avaliativas com data de encerramento",
+   "origem": "checklist:14",
+   "classe": "A"
+  },
+  {
+   "status": "CONFORME",
+   "local": "quiz \"Questionário 3 -  Análise (Analysis)\" (cmid=93186, activities/quiz_93186/module.xml)",
+   "evidencia": "encerramento=2026-12-31 23:59",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": null,
+   "gravidade": "Média",
+   "rule": "CL-14",
+   "titulo": "Atividades avaliativas com data de encerramento",
+   "origem": "checklist:14",
+   "classe": "A"
+  },
+  {
+   "status": "CONFORME",
+   "local": "quiz \"Questionário 4 - Projeto (Design)\" (cmid=93192, activities/quiz_93192/module.xml)",
+   "evidencia": "encerramento=2026-12-31 23:59",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": null,
+   "gravidade": "Média",
+   "rule": "CL-14",
+   "titulo": "Atividades avaliativas com data de encerramento",
+   "origem": "checklist:14",
+   "classe": "A"
+  },
+  {
+   "status": "CONFORME",
+   "local": "quiz \"Questionário 5 - Desenvolvimento (Development)\" (cmid=93201, activities/quiz_93201/module.xml)",
+   "evidencia": "encerramento=2026-12-31 23:59",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": null,
+   "gravidade": "Média",
+   "rule": "CL-14",
+   "titulo": "Atividades avaliativas com data de encerramento",
+   "origem": "checklist:14",
+   "classe": "A"
+  },
+  {
+   "status": "CONFORME",
+   "local": "quiz \"Questionário 6 - Implementação (Implement)\" (cmid=93210, activities/quiz_93210/module.xml)",
+   "evidencia": "encerramento=2026-12-31 23:59",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": null,
+   "gravidade": "Média",
+   "rule": "CL-14",
+   "titulo": "Atividades avaliativas com data de encerramento",
+   "origem": "checklist:14",
+   "classe": "A"
+  },
+  {
+   "status": "CONFORME",
+   "local": "quiz \"Questionário 7 - Avaliação (Evaluate)\" (cmid=93217, activities/quiz_93217/module.xml)",
+   "evidencia": "encerramento=2026-12-31 23:59",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": null,
+   "gravidade": "Média",
+   "rule": "CL-14",
+   "titulo": "Atividades avaliativas com data de encerramento",
+   "origem": "checklist:14",
+   "classe": "A"
+  },
+  {
+   "status": "ATENCAO",
+   "local": "activities/choice_*",
+   "evidencia": "nenhuma atividade Escolha ~ \"situação junto ao Ifes\" no curso",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": "Checklist pressupõe essa escolha; cursos recentes podem não usá-la — confirmar se a regra ainda vale.",
+   "gravidade": "Média",
+   "rule": "CL-15",
+   "titulo": "Restrições das avaliações corretas; 1º questionário condicionado à \"Escolha a sua situação\"",
+   "origem": "checklist:15",
+   "classe": "D"
+  },
+  {
+   "status": "CONFORME",
+   "local": "quiz \"Questionário 1 - Introdução ao MOOC\" (cmid=93173, activities/quiz_93173/module.xml)",
+   "evidencia": "4 condições de acesso: {\"op\":\"&\",\"showc\":[true,true,true,true],\"c\":[{\"type\":\"completion\",\"cm\":93168,\"e\":1},{\"type\":\"completion\",\"cm\":93170,\"e\":1},{\"type\":\"completion\",\"cm\":93171,\"e\":1},{\"type\":\"completion\",\"cm\":93169,\"e\":1}]}",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": "Restrições são opcionais pelo checklist; revisar manualmente se fazem sentido.",
+   "gravidade": "Informativa",
+   "rule": "CL-15",
+   "titulo": "Restrições das avaliações corretas; 1º questionário condicionado à \"Escolha a sua situação\"",
+   "origem": "checklist:15",
+   "classe": "D"
+  },
+  {
+   "status": "CONFORME",
+   "local": "quiz \"Questionário 2 - Processo de Criação de um curso MOOC\" (cmid=93180, activities/quiz_93180/module.xml)",
+   "evidencia": "4 condições de acesso: {\"op\":\"&\",\"showc\":[true,true,true,true],\"c\":[{\"type\":\"completion\",\"cm\":93175,\"e\":1},{\"type\":\"completion\",\"cm\":93176,\"e\":1},{\"type\":\"completion\",\"cm\":93177,\"e\":1},{\"type\":\"completion\",\"cm\":93178,\"e\":1}]}",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": "Restrições são opcionais pelo checklist; revisar manualmente se fazem sentido.",
+   "gravidade": "Informativa",
+   "rule": "CL-15",
+   "titulo": "Restrições das avaliações corretas; 1º questionário condicionado à \"Escolha a sua situação\"",
+   "origem": "checklist:15",
+   "classe": "D"
+  },
+  {
+   "status": "CONFORME",
+   "local": "quiz \"Questionário 3 -  Análise (Analysis)\" (cmid=93186, activities/quiz_93186/module.xml)",
+   "evidencia": "3 condições de acesso: {\"op\":\"&\",\"showc\":[true,true,true],\"c\":[{\"type\":\"completion\",\"cm\":93181,\"e\":1},{\"type\":\"completion\",\"cm\":93182,\"e\":1},{\"type\":\"completion\",\"cm\":93185,\"e\":1}]}",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": "Restrições são opcionais pelo checklist; revisar manualmente se fazem sentido.",
+   "gravidade": "Informativa",
+   "rule": "CL-15",
+   "titulo": "Restrições das avaliações corretas; 1º questionário condicionado à \"Escolha a sua situação\"",
+   "origem": "checklist:15",
+   "classe": "D"
+  },
+  {
+   "status": "CONFORME",
+   "local": "quiz \"Questionário 4 - Projeto (Design)\" (cmid=93192, activities/quiz_93192/module.xml)",
+   "evidencia": "3 condições de acesso: {\"op\":\"&\",\"showc\":[true,true,true],\"c\":[{\"type\":\"completion\",\"cm\":93187,\"e\":1},{\"type\":\"completion\",\"cm\":93188,\"e\":1},{\"type\":\"completion\",\"cm\":93191,\"e\":1}]}",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": "Restrições são opcionais pelo checklist; revisar manualmente se fazem sentido.",
+   "gravidade": "Informativa",
+   "rule": "CL-15",
+   "titulo": "Restrições das avaliações corretas; 1º questionário condicionado à \"Escolha a sua situação\"",
+   "origem": "checklist:15",
+   "classe": "D"
+  },
+  {
+   "status": "CONFORME",
+   "local": "quiz \"Questionário 5 - Desenvolvimento (Development)\" (cmid=93201, activities/quiz_93201/module.xml)",
+   "evidencia": "7 condições de acesso: {\"op\":\"&\",\"c\":[{\"type\":\"completion\",\"cm\":93193,\"e\":1},{\"type\":\"completion\",\"cm\":93194,\"e\":1},{\"type\":\"completion\",\"cm\":93195,\"e\":1},{\"type\":\"completion\",\"cm\":93196,\"e\":1},{\"type\":\"completion\",\"cm\":93197,\"e\":1},{\"type\":\"completion\",\"cm\":93198,\"e\":1},{\"type\":\"completion\",\"cm\":93200,\"e\":1}],\"showc\":[true,true,true,true,true,true,true]}",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": "Restrições são opcionais pelo checklist; revisar manualmente se fazem sentido.",
+   "gravidade": "Informativa",
+   "rule": "CL-15",
+   "titulo": "Restrições das avaliações corretas; 1º questionário condicionado à \"Escolha a sua situação\"",
+   "origem": "checklist:15",
+   "classe": "D"
+  },
+  {
+   "status": "CONFORME",
+   "local": "quiz \"Questionário 6 - Implementação (Implement)\" (cmid=93210, activities/quiz_93210/module.xml)",
+   "evidencia": "7 condições de acesso: {\"op\":\"&\",\"showc\":[true,true,true,true,true,true,true],\"c\":[{\"type\":\"completion\",\"cm\":93202,\"e\":1},{\"type\":\"completion\",\"cm\":93203,\"e\":1},{\"type\":\"completion\",\"cm\":93204,\"e\":1},{\"type\":\"completion\",\"cm\":93205,\"e\":1},{\"type\":\"completion\",\"cm\":93206,\"e\":1},{\"type\":\"completion\",\"cm\":93207,\"e\":1},{\"type\":\"completion\",\"cm\":93209,\"e\":1}]}",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": "Restrições são opcionais pelo checklist; revisar manualmente se fazem sentido.",
+   "gravidade": "Informativa",
+   "rule": "CL-15",
+   "titulo": "Restrições das avaliações corretas; 1º questionário condicionado à \"Escolha a sua situação\"",
+   "origem": "checklist:15",
+   "classe": "D"
+  },
+  {
+   "status": "CONFORME",
+   "local": "quiz \"Questionário 7 - Avaliação (Evaluate)\" (cmid=93217, activities/quiz_93217/module.xml)",
+   "evidencia": "5 condições de acesso: {\"op\":\"&\",\"showc\":[true,true,true,true,true],\"c\":[{\"type\":\"completion\",\"cm\":93211,\"e\":1},{\"type\":\"completion\",\"cm\":93212,\"e\":1},{\"type\":\"completion\",\"cm\":93213,\"e\":1},{\"type\":\"completion\",\"cm\":93214,\"e\":1},{\"type\":\"completion\",\"cm\":93215,\"e\":1}]}",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": "Restrições são opcionais pelo checklist; revisar manualmente se fazem sentido.",
+   "gravidade": "Informativa",
+   "rule": "CL-15",
+   "titulo": "Restrições das avaliações corretas; 1º questionário condicionado à \"Escolha a sua situação\"",
+   "origem": "checklist:15",
+   "classe": "D"
+  },
+  {
+   "status": "NAO_CONFORME",
+   "local": "feedback \"Avaliação do curso\" (cmid=93226, activities/feedback_93226/module.xml)",
+   "evidencia": "availability={\"op\":\"&\",\"showc\":[true,true,true,true,true,true,true],\"c\":[{\"type\":\"completion\",\"cm\":93173,\"e\":1},{\"type\":\"completion\",\"cm\":93180,\"e\":1},{\"type\":\"completion\",\"cm\":93186,\"e\":1},{\"type\":\"completion\",\"cm\":93192,\"e\":1},{\"type\":\"completion\",\"cm\":93201,\"e\":1},{\"type\":\"completion\",\"cm\":93210,\"e\":1},{\"type\":\"completion\",\"cm\":93217,\"e\":1}]}",
+   "encontrado": "faltam 4: ['hvp \"Jogo - Sobre os Moocs\" (cmid=100895, activities/hvp_100895/module.xml)', 'hvp \"Jogo - Etapas do modelo ADDIEM\" (cmid=100896, activities/hvp_100896/module.xml)', 'hvp \"Jogo - Projeto do Curso\" (cmid=100897, activities/hvp_100897/module.xml)', 'hvp \"Jogo - Recursos do Moodle\" (cmid=100898, activities/hvp_100898/module.xml)']",
+   "esperado": "conclusão de todas as atividades com nota",
+   "orientacao": "Adicionar restrições de conclusão faltantes.",
+   "gravidade": "Alta",
+   "rule": "CL-16",
+   "titulo": "Avaliação do Curso restrita à conclusão de todas as atividades que valem nota",
+   "origem": "checklist:16",
+   "classe": "A"
+  },
+  {
+   "status": "ATENCAO",
+   "local": "activities/*/module.xml <completion>",
+   "evidencia": "distribuição: nenhuma=24 manual=4 automática=46",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": null,
+   "gravidade": "Informativa",
+   "rule": "CL-17",
+   "titulo": "Conclusão automática em atividades e recursos",
+   "origem": "checklist:17",
+   "classe": "A"
+  },
+  {
+   "status": "NAO_CONFORME",
+   "local": "hvp \"Jogo - Sobre os Moocs\" (cmid=100895, activities/hvp_100895/module.xml)",
+   "evidencia": "completion=1 (manual)",
+   "encontrado": null,
+   "esperado": "2 (automática) ou 0 (sem acompanhamento)",
+   "orientacao": "Trocar para conclusão automática com critério adequado ao tipo.",
+   "gravidade": "Média",
+   "rule": "CL-17",
+   "titulo": "Conclusão automática em atividades e recursos",
+   "origem": "checklist:17",
+   "classe": "A"
+  },
+  {
+   "status": "NAO_CONFORME",
+   "local": "hvp \"Jogo - Etapas do modelo ADDIEM\" (cmid=100896, activities/hvp_100896/module.xml)",
+   "evidencia": "completion=1 (manual)",
+   "encontrado": null,
+   "esperado": "2 (automática) ou 0 (sem acompanhamento)",
+   "orientacao": "Trocar para conclusão automática com critério adequado ao tipo.",
+   "gravidade": "Média",
+   "rule": "CL-17",
+   "titulo": "Conclusão automática em atividades e recursos",
+   "origem": "checklist:17",
+   "classe": "A"
+  },
+  {
+   "status": "NAO_CONFORME",
+   "local": "hvp \"Jogo - Projeto do Curso\" (cmid=100897, activities/hvp_100897/module.xml)",
+   "evidencia": "completion=1 (manual)",
+   "encontrado": null,
+   "esperado": "2 (automática) ou 0 (sem acompanhamento)",
+   "orientacao": "Trocar para conclusão automática com critério adequado ao tipo.",
+   "gravidade": "Média",
+   "rule": "CL-17",
+   "titulo": "Conclusão automática em atividades e recursos",
+   "origem": "checklist:17",
+   "classe": "A"
+  },
+  {
+   "status": "NAO_CONFORME",
+   "local": "hvp \"Jogo - Recursos do Moodle\" (cmid=100898, activities/hvp_100898/module.xml)",
+   "evidencia": "completion=1 (manual)",
+   "encontrado": null,
+   "esperado": "2 (automática) ou 0 (sem acompanhamento)",
+   "orientacao": "Trocar para conclusão automática com critério adequado ao tipo.",
+   "gravidade": "Média",
+   "rule": "CL-17",
+   "titulo": "Conclusão automática em atividades e recursos",
+   "origem": "checklist:17",
+   "classe": "A"
+  },
+  {
+   "status": "CONFORME",
+   "local": "activities/",
+   "evidencia": "nenhum módulo glossary",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": null,
+   "gravidade": "Média",
+   "rule": "CL-18",
+   "titulo": "Curso sem Glossário",
+   "origem": "checklist:18",
+   "classe": "A"
+  },
+  {
+   "status": "CONFORME",
+   "local": "activities/label_*",
+   "evidencia": "nenhum rótulo com conclusão habilitada",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": null,
+   "gravidade": "Baixa",
+   "rule": "CL-19",
+   "titulo": "Rótulos e materiais complementares sem conclusão de atividade",
+   "origem": "checklist:19",
+   "classe": "A"
+  },
+  {
+   "status": "CONFORME",
+   "local": "course/course.xml courseformatoption hiddensections",
+   "evidencia": "hiddensections=1",
+   "encontrado": null,
+   "esperado": "1 (completamente invisíveis)",
+   "orientacao": "Editar configurações do curso > Formato > Seções escondidas.",
+   "gravidade": "Baixa",
+   "rule": "CL-20",
+   "titulo": "Seções excedentes suprimidas / ocultas invisíveis",
+   "origem": "checklist:20",
+   "classe": "A"
+  },
+  {
+   "status": "CONFORME",
+   "local": "course/blocks/",
+   "evidencia": "blocos no backup=['completion_progress', 'html', 'html', 'online_users']; títulos html=['duvidas tecnicas? podemos ajudar!', 'atencao ao prazo!!!']",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": null,
+   "gravidade": "Média",
+   "rule": "CL-21",
+   "titulo": "Blocos padrão presentes",
+   "origem": "checklist:21",
+   "classe": "A"
+  },
+  {
+   "status": "CONFORME",
+   "local": "course/blocks/html_*/block.xml configdata",
+   "evidencia": "bloco HTML \"Atenção ao prazo\": presente",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": null,
+   "gravidade": "Média",
+   "rule": "CL-21",
+   "titulo": "Blocos padrão presentes",
+   "origem": "checklist:21",
+   "classe": "A"
+  },
+  {
+   "status": "CONFORME",
+   "local": "course/blocks/html_*/block.xml configdata",
+   "evidencia": "bloco HTML \"Dúvidas técnicas\": presente",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": null,
+   "gravidade": "Média",
+   "rule": "CL-21",
+   "titulo": "Blocos padrão presentes",
+   "origem": "checklist:21",
+   "classe": "A"
+  },
+  {
+   "status": "ATENCAO",
+   "local": "course/blocks/html_*/block.xml configdata",
+   "evidencia": "bloco HTML \"Acessibilidade\": ausente no backup",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": "Decisão institucional: o bloco deve estar na sala. Como não aparece em nenhum backup examinado, a verificação definitiva é pós-restauração (classe C); se for bloco de nível de site, ele não entra no backup do curso.",
+   "gravidade": "Média",
+   "rule": "CL-21",
+   "titulo": "Blocos padrão presentes",
+   "origem": "checklist:21",
+   "classe": "A"
+  },
+  {
+   "status": "CONFORME",
+   "local": "course/blocks/completion_progress_234013/block.xml configdata",
+   "evidencia": "46 atividades selecionadas; inexistentes=[]; sem conclusão=[]",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": "Reconfigurar o bloco Progresso de Conclusão após alterações nas atividades. Observação: os ids de instância são remapeados na restauração; a lista é verificável apenas contra o próprio backup.",
+   "gravidade": "Média",
+   "rule": "X-BLK-01",
+   "titulo": "Bloco de progresso referencia atividades existentes",
+   "origem": "extra:6.7",
+   "classe": "A"
+  },
+  {
+   "status": "CONFORME",
+   "local": "activities/label_* (seção 0)",
+   "evidencia": "rótulo com \"Licença para capacitação\": [93166]",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": null,
+   "gravidade": "Média",
+   "rule": "CL-22",
+   "titulo": "Licença para Capacitação configurada",
+   "origem": "checklist:22",
+   "classe": "A"
+  },
+  {
+   "status": "CONFORME",
+   "local": "activities/feedback_*",
+   "evidencia": "feedback \"Licença para capacitação\": [93228]",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": null,
+   "gravidade": "Média",
+   "rule": "CL-22",
+   "titulo": "Licença para Capacitação configurada",
+   "origem": "checklist:22",
+   "classe": "A"
+  },
+  {
+   "status": "CONFORME",
+   "local": "activities/simplecertificate_*",
+   "evidencia": "declaração \"Declaração licença para capacitação\": [93229]",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": null,
+   "gravidade": "Média",
+   "rule": "CL-22",
+   "titulo": "Licença para Capacitação configurada",
+   "origem": "checklist:22",
+   "classe": "A"
+  },
+  {
+   "status": "CONFORME",
+   "local": "simplecertificate \"Certificado digital de conclusão\" (cmid=93227, activities/simplecertificate_93227/module.xml)",
+   "evidencia": "availability={\"op\":\"&\",\"showc\":[true,true,true,true,true],\"c\":[{\"type\":\"completion\",\"cm\":93226,\"e\":1},{\"type\":\"grade\",\"id\":73332,\"min\":60},{\"type\":\"days\",\"d\":\"9\"},{\"type\":\"completion\",\"cm\":93163,\"e\":1},{\"type\":\"days\",\"d\":9}]}",
+   "encontrado": "completion cms=[93226, 93163]",
+   "esperado": "conter cm da Avaliação do curso (93226)",
+   "orientacao": null,
+   "gravidade": "Bloqueante",
+   "rule": "CL-23",
+   "titulo": "Certificado condicionado à Avaliação do Curso e a 60 pontos",
+   "origem": "checklist:23",
+   "classe": "A"
+  },
+  {
+   "status": "NAO_VERIFICAVEL",
+   "local": "simplecertificate \"Certificado digital de conclusão\" (cmid=93227, activities/simplecertificate_93227/module.xml)",
+   "evidencia": "grade item 73332 min=60: gradebook.xml ausente, não é possível confirmar que é o total do curso",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": null,
+   "gravidade": "Bloqueante",
+   "rule": "CL-23",
+   "titulo": "Certificado condicionado à Avaliação do Curso e a 60 pontos",
+   "origem": "checklist:23",
+   "classe": "A"
+  },
+  {
+   "status": "NAO_VERIFICAVEL",
+   "local": "simplecertificate \"Certificado digital de conclusão\" (cmid=93227, activities/simplecertificate_93227/module.xml)",
+   "evidencia": "files.xml ausente",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": null,
+   "gravidade": "Alta",
+   "rule": "CL-24",
+   "titulo": "Assinatura do certificado atualizada (diretor-geral)",
+   "origem": "checklist:24",
+   "classe": "B"
+  },
+  {
+   "status": "NAO_VERIFICAVEL",
+   "local": "simplecertificate \"Declaração licença para capacitação\" (cmid=93229, activities/simplecertificate_93229/module.xml)",
+   "evidencia": "files.xml ausente",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": null,
+   "gravidade": "Alta",
+   "rule": "CL-24",
+   "titulo": "Assinatura do certificado atualizada (diretor-geral)",
+   "origem": "checklist:24",
+   "classe": "B"
+  },
+  {
+   "status": "ATENCAO",
+   "local": "simplecertificate \"Certificado digital de conclusão\" (cmid=93227, activities/simplecertificate_93227/module.xml)",
+   "evidencia": "texto=\"o instituto federal do espirito santo, por meio do {campus}, certifica que {username}, com numero de documento {profile_cpf}, concluiu e foi aprovado(a) no curso {coursename}, realizado no periodo de \"; similaridade com padrão=0.55; placeholders=['{CAMPUS}', '{USERNAME}', '{PROFILE_CPF}', '{COURSENAME}', '{TIMESTART}', '{TIMEEND}', '{CARGA_HORARIA}']",
+   "encontrado": null,
+   "esperado": "O Instituto Federal do Espírito Santo, por meio do {CAMPUS}, certifica que {USERNAME} participou do curso {COURSENAME}, no período de {TIMESTART} a {TIMEEND}, com carga horária de {CARGA_HORARIA} horas.",
+   "orientacao": "Conferir o texto-padrão. A emissão de teste (layout, campus, assinatura) exige ambiente Moodle.",
+   "gravidade": "Alta",
+   "rule": "CL-25",
+   "titulo": "Texto do certificado conforme padrão / emissão de teste",
+   "origem": "checklist:25",
+   "classe": "D"
+  },
+  {
+   "status": "NAO_VERIFICAVEL",
+   "local": "simplecertificate \"Certificado digital de conclusão\" (cmid=93227, activities/simplecertificate_93227/module.xml)",
+   "evidencia": "emissão de certificado de teste requer Moodle em execução",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": null,
+   "gravidade": "Informativa",
+   "rule": "CL-25",
+   "titulo": "Texto do certificado conforme padrão / emissão de teste",
+   "origem": "checklist:25",
+   "classe": "D"
+  },
+  {
+   "status": "NAO_VERIFICAVEL",
+   "local": "files.xml",
+   "evidencia": "ausente: imagens não verificáveis",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": null,
+   "gravidade": "Baixa",
+   "rule": "CL-26",
+   "titulo": "Padrão visual (imagem de topo, divisores, imagens de seção)",
+   "origem": "checklist:26",
+   "classe": "D"
+  },
+  {
+   "status": "NAO_VERIFICAVEL",
+   "local": "files.xml",
+   "evidencia": "ausente",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": null,
+   "gravidade": "Baixa",
+   "rule": "CL-27",
+   "titulo": "Capa da sala igual ao thumbnail da vitrine (sem texto)",
+   "origem": "checklist:27",
+   "classe": "B"
+  },
+  {
+   "status": "NAO_VERIFICAVEL",
+   "local": "fora do backup",
+   "evidencia": "URL amigável é configuração do servidor/CGTI; não consta no MBZ",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": null,
+   "gravidade": "Baixa",
+   "rule": "CL-28",
+   "titulo": "Curso possui URL única",
+   "origem": "checklist:28",
+   "classe": "E"
+  },
+  {
+   "status": "NAO_VERIFICAVEL",
+   "local": "fora do backup",
+   "evidencia": "vitrine WordPress é sistema externo",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": null,
+   "gravidade": "Baixa",
+   "rule": "CL-29",
+   "titulo": "Cadastro na vitrine",
+   "origem": "checklist:29",
+   "classe": "E"
+  },
+  {
+   "status": "NAO_CONFORME",
+   "local": "arquivo .mbz",
+   "evidencia": "erro de descompressão: ReadError: invalid compressed data; última entrada lida=files/74/748fb56dfc8d7293ebb8901126b7201c2840b3af",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": "Backup corrompido/truncado: gerar novamente o backup no Moodle de origem e transferir com verificação de hash.",
+   "gravidade": "Bloqueante",
+   "rule": "X-INT-01",
+   "titulo": "Integridade do pacote (stream, manifesto, arquivos essenciais)",
+   "origem": "extra:6.1",
+   "classe": "A"
+  },
+  {
+   "status": "NAO_CONFORME",
+   "local": ".ARCHIVE_INDEX",
+   "evidencia": "declarados=6685 arquivos checados=6336 ausentes=1572 tamanho divergente=1",
+   "encontrado": [
+    "files/74/744af13c29203f92e163e14605ad9ab25825a47c",
+    "files/74/748ee2c6e595a169e250a93f5c388465f5634c36",
+    "files/74/74d4373065323f2ef32a6b7e3259093b27c5a3d5",
+    "files/74/74bc7392161902a14f61fc34e4e13982670467b5",
+    "files/74/74c1fb99e4bf0a54207e170a847b62238af34162",
+    "...+1567"
+   ],
+   "esperado": null,
+   "orientacao": null,
+   "gravidade": "Bloqueante",
+   "rule": "X-INT-01",
+   "titulo": "Integridade do pacote (stream, manifesto, arquivos essenciais)",
+   "origem": "extra:6.1",
+   "classe": "A"
+  },
+  {
+   "status": "NAO_CONFORME",
+   "local": "moodle_backup.xml",
+   "evidencia": "arquivo/diretório essencial ausente",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": "Sem este componente a restauração falha ou fica incompleta.",
+   "gravidade": "Bloqueante",
+   "rule": "X-INT-01",
+   "titulo": "Integridade do pacote (stream, manifesto, arquivos essenciais)",
+   "origem": "extra:6.1",
+   "classe": "A"
+  },
+  {
+   "status": "NAO_CONFORME",
+   "local": "files.xml",
+   "evidencia": "arquivo/diretório essencial ausente",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": "Sem este componente a restauração falha ou fica incompleta.",
+   "gravidade": "Bloqueante",
+   "rule": "X-INT-01",
+   "titulo": "Integridade do pacote (stream, manifesto, arquivos essenciais)",
+   "origem": "extra:6.1",
+   "classe": "A"
+  },
+  {
+   "status": "NAO_CONFORME",
+   "local": "gradebook.xml",
+   "evidencia": "arquivo/diretório essencial ausente",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": "Sem este componente a restauração falha ou fica incompleta.",
+   "gravidade": "Bloqueante",
+   "rule": "X-INT-01",
+   "titulo": "Integridade do pacote (stream, manifesto, arquivos essenciais)",
+   "origem": "extra:6.1",
+   "classe": "A"
+  },
+  {
+   "status": "NAO_CONFORME",
+   "local": "sections/",
+   "evidencia": "arquivo/diretório essencial ausente",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": "Sem este componente a restauração falha ou fica incompleta.",
+   "gravidade": "Bloqueante",
+   "rule": "X-INT-01",
+   "titulo": "Integridade do pacote (stream, manifesto, arquivos essenciais)",
+   "origem": "extra:6.1",
+   "classe": "A"
+  },
+  {
+   "status": "NAO_VERIFICAVEL",
+   "local": "files.xml",
+   "evidencia": "ausente",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": null,
+   "gravidade": "Alta",
+   "rule": "X-INT-02",
+   "titulo": "Arquivos referenciados em files.xml sem conteúdo no backup",
+   "origem": "extra:6.1/6.2",
+   "classe": "A"
+  },
+  {
+   "status": "ATENCAO",
+   "local": "activities/hvp_* (4 instâncias)",
+   "evidencia": "módulo não nativo mod_hvp versão 2026081300",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": "Garantir que o plugin exista no Moodle de destino na mesma versão ou superior; caso contrário, a restauração omite as atividades.",
+   "gravidade": "Alta",
+   "rule": "X-INT-03",
+   "titulo": "Plugins não nativos necessários no destino",
+   "origem": "extra:6.1",
+   "classe": "A"
+  },
+  {
+   "status": "ATENCAO",
+   "local": "activities/simplecertificate_* (2 instâncias)",
+   "evidencia": "módulo não nativo mod_simplecertificate versão 2024051105",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": "Garantir que o plugin exista no Moodle de destino na mesma versão ou superior; caso contrário, a restauração omite as atividades.",
+   "gravidade": "Alta",
+   "rule": "X-INT-03",
+   "titulo": "Plugins não nativos necessários no destino",
+   "origem": "extra:6.1",
+   "classe": "A"
+  },
+  {
+   "status": "ATENCAO",
+   "local": "availability type=\"days\" (2 usos)",
+   "evidencia": "plugin availability_days não nativo",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": "Se ausente no destino, o Moodle ignora a condição ao carregar (modo \"lax\"), alterando as regras de acesso silenciosamente.",
+   "gravidade": "Alta",
+   "rule": "X-INT-03",
+   "titulo": "Plugins não nativos necessários no destino",
+   "origem": "extra:6.1",
+   "classe": "A"
+  },
+  {
+   "status": "ATENCAO",
+   "local": "course/blocks/completion_progress_234013",
+   "evidencia": "bloco não nativo block_completion_progress versão 2026042700",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": null,
+   "gravidade": "Alta",
+   "rule": "X-INT-03",
+   "titulo": "Plugins não nativos necessários no destino",
+   "origem": "extra:6.1",
+   "classe": "A"
+  },
+  {
+   "status": "NAO_VERIFICAVEL",
+   "local": "files.xml",
+   "evidencia": "ausente",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": null,
+   "gravidade": "Média",
+   "rule": "X-INT-04",
+   "titulo": "Referências inforef a arquivos inexistentes em files.xml",
+   "origem": "extra:6.1",
+   "classe": "A"
+  },
+  {
+   "status": "CONFORME",
+   "local": "availability",
+   "evidencia": "todas as referências a cm existem",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": null,
+   "gravidade": "Alta",
+   "rule": "X-DEP-01",
+   "titulo": "Condições de acesso apontando para módulos inexistentes",
+   "origem": "extra:6.4",
+   "classe": "A"
+  },
+  {
+   "status": "CONFORME",
+   "local": "availability",
+   "evidencia": "todas as condições de conclusão apontam para módulos com conclusão habilitada",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": null,
+   "gravidade": "Bloqueante",
+   "rule": "X-DEP-02",
+   "titulo": "Condição exige conclusão de módulo sem acompanhamento de conclusão (impossível)",
+   "origem": "extra:6.4",
+   "classe": "A"
+  },
+  {
+   "status": "NAO_VERIFICAVEL",
+   "local": "feedback \"Licença para capacitação\" (cmid=93228, activities/feedback_93228/module.xml)",
+   "evidencia": "condição grade id=73332 min=1 max=None não encontrada nos itens de nota do backup",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": null,
+   "gravidade": "Alta",
+   "rule": "X-DEP-03",
+   "titulo": "Condições de nota apontando para itens inexistentes",
+   "origem": "extra:6.4",
+   "classe": "A"
+  },
+  {
+   "status": "NAO_VERIFICAVEL",
+   "local": "simplecertificate \"Certificado digital de conclusão\" (cmid=93227, activities/simplecertificate_93227/module.xml)",
+   "evidencia": "condição grade id=73332 min=60 max=None não encontrada nos itens de nota do backup",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": null,
+   "gravidade": "Alta",
+   "rule": "X-DEP-03",
+   "titulo": "Condições de nota apontando para itens inexistentes",
+   "origem": "extra:6.4",
+   "classe": "A"
+  },
+  {
+   "status": "CONFORME",
+   "local": "grafo de disponibilidade",
+   "evidencia": "9 nós com condições, 42 arestas, sem ciclos",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": null,
+   "gravidade": "Bloqueante",
+   "rule": "X-DEP-04",
+   "titulo": "Ciclos no grafo de dependências de conclusão",
+   "origem": "extra:6.4",
+   "classe": "A"
+  },
+  {
+   "status": "ATENCAO",
+   "local": "simplecertificate \"Certificado digital de conclusão\" (cmid=93227, activities/simplecertificate_93227/module.xml)",
+   "evidencia": "condição repetida 2x: {\"d\": 9, \"type\": \"days\"}",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": "Remover a duplicata (inofensiva, mas indica edição descuidada).",
+   "gravidade": "Baixa",
+   "rule": "X-DEP-05",
+   "titulo": "Condições redundantes/duplicadas",
+   "origem": "extra:6.4",
+   "classe": "A"
+  },
+  {
+   "status": "CONFORME",
+   "local": "simplecertificate \"Certificado digital de conclusão\" (cmid=93227, activities/simplecertificate_93227/module.xml)",
+   "evidencia": "cadeia transitiva de conclusão exige 42 módulos: [93163, 93168, 93169, 93170, 93171, 93173, 93175, 93176, 93177, 93178, 93180, 93181, 93182, 93185, 93186, 93187, 93188, 93191, 93192, 93193, 93194, 93195, 93196, 93197, 93198, 93200, 93201, 93202, 93203, 93204, 93205, 93206, 93207, 93209, 93210, 93211, 93212, 93213, 93214, 93215, 93217, 93226]; tipos de condição no certificado={'completion': 2, 'grade': 1, 'days': 2}",
+   "encontrado": "cadeia estaticamente satisfazível",
+   "esperado": null,
+   "orientacao": "Verificação estática: não prova emissão. Condições \"grade\", \"days\" e critérios de conclusão por nota dependem de execução real (usuário de teste).",
+   "gravidade": "Bloqueante",
+   "rule": "X-CERT-01",
+   "titulo": "Alcançabilidade estática do certificado",
+   "origem": "extra:6.5",
+   "classe": "A"
+  },
+  {
+   "status": "CONFORME",
+   "local": "activities",
+   "evidencia": "nenhum recurso vazio detectado",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": null,
+   "gravidade": "Média",
+   "rule": "X-CONT-01",
+   "titulo": "Recursos vazios (página/rótulo/livro sem texto nem mídia)",
+   "origem": "extra:6.2",
+   "classe": "A"
+  },
+  {
+   "status": "ATENCAO",
+   "local": "label \"Rótulo\" cmids=[93172, 93179, 93184, 93190, 93199, 93208, 93216]",
+   "evidencia": "conteúdo idêntico",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": "Se idêntico: remover duplicata. Se versões alternativas: diferenciar o nome (ex.: sufixo \"(Libras)\") para navegação/acessibilidade.",
+   "gravidade": "Média",
+   "rule": "X-CONT-02",
+   "titulo": "Módulos com nomes duplicados",
+   "origem": "extra:6.2",
+   "classe": "D"
+  },
+  {
+   "status": "CONFORME",
+   "local": "conteúdos",
+   "evidencia": "nenhum link absoluto com id de curso/módulo antigo",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": null,
+   "gravidade": "Média",
+   "rule": "X-CONT-03",
+   "titulo": "Links absolutos para o Moodle de origem com identificadores do curso antigo",
+   "origem": "extra:6.2/6.6",
+   "classe": "A"
+  },
+  {
+   "status": "NAO_VERIFICAVEL",
+   "local": "files.xml",
+   "evidencia": "ausente",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": null,
+   "gravidade": "Média",
+   "rule": "X-CONT-04",
+   "titulo": "Referências @@PLUGINFILE@@ sem arquivo correspondente",
+   "origem": "extra:6.2",
+   "classe": "A"
+  },
+  {
+   "status": "ATENCAO",
+   "local": "page \"Informações sobre o curso\" (cmid=93161, activities/page_93161/module.xml)",
+   "evidencia": "anos anteriores citados: [2026]",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": "Conferir se a menção é referência bibliográfica (ok) ou dado da oferta anterior (atualizar).",
+   "gravidade": "Baixa",
+   "rule": "X-CONT-05",
+   "titulo": "Menções a anos anteriores em campos institucionais",
+   "origem": "extra:6.2/6.6",
+   "classe": "D"
+  },
+  {
+   "status": "CONFORME",
+   "local": "conteúdos",
+   "evidencia": "74 hosts externos; top=[('https://www.youtube.com', 199), ('https://ava3.cefor.ifes.edu.br', 50), ('https://mooc.cefor.ifes.edu.br', 37), ('https://drive.google.com', 24), ('http://www.planalto.gov.br', 14), ('https://docs.google.com', 7), ('http://portal.mec.gov.br', 6), ('https://moodle.com', 5)]",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": null,
+   "gravidade": "Informativa",
+   "rule": "X-CONT-06",
+   "titulo": "Inventário de dependências externas (hosts)",
+   "origem": "extra:6.2",
+   "classe": "B"
+  },
+  {
+   "status": "ATENCAO",
+   "local": "conteúdos",
+   "evidencia": "19 hosts via http:// (conteúdo misto pode ser bloqueado pelo navegador): ['http://necacaf.blogspot.com', 'http://proedu.rnp.br', 'http://www.cinted.ufrgs.br', 'http://objetoseducacionais2.mec.gov.br', 'http://bndigital.bn.gov.br', 'http://www.dominiopublico.gov.br', 'http://www.bbc.co.uk', 'http://www.projetos.unijui.edu.br']",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": null,
+   "gravidade": "Baixa",
+   "rule": "X-CONT-06",
+   "titulo": "Inventário de dependências externas (hosts)",
+   "origem": "extra:6.2",
+   "classe": "B"
+  },
+  {
+   "status": "NAO_CONFORME",
+   "local": "book \"Introdução ao Moodle\" (cmid=93171, activities/book_93171/module.xml)",
+   "evidencia": "4/6 <img> sem atributo alt (alt vazio=1) nos campos ['chapter[2]', 'chapter[3]', 'chapter[5]', 'chapter[6]']",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": "Adicionar texto alternativo (alt=\"\" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.",
+   "gravidade": "Média",
+   "rule": "X-ACC-01",
+   "titulo": "Imagens sem texto alternativo",
+   "origem": "extra:6.8",
+   "classe": "A"
+  },
+  {
+   "status": "NAO_CONFORME",
+   "local": "book \"Modelo ADDIEM\" (cmid=93175, activities/book_93175/module.xml)",
+   "evidencia": "2/10 <img> sem atributo alt (alt vazio=2) nos campos ['chapter[3]', 'chapter[6]']",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": "Adicionar texto alternativo (alt=\"\" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.",
+   "gravidade": "Média",
+   "rule": "X-ACC-01",
+   "titulo": "Imagens sem texto alternativo",
+   "origem": "extra:6.8",
+   "classe": "A"
+  },
+  {
+   "status": "NAO_CONFORME",
+   "local": "book \"Análise (Analysis) - Projeto do curso\" (cmid=93181, activities/book_93181/module.xml)",
+   "evidencia": "8/9 <img> sem atributo alt (alt vazio=1) nos campos ['chapter[0]', 'chapter[1]', 'chapter[2]', 'chapter[3]', 'chapter[4]', 'chapter[5]', 'chapter[6]', 'chapter[7]']",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": "Adicionar texto alternativo (alt=\"\" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.",
+   "gravidade": "Média",
+   "rule": "X-ACC-01",
+   "titulo": "Imagens sem texto alternativo",
+   "origem": "extra:6.8",
+   "classe": "A"
+  },
+  {
+   "status": "NAO_CONFORME",
+   "local": "book \"Desenvolvimento (Development) - Produzindo o curso\" (cmid=93193, activities/book_93193/module.xml)",
+   "evidencia": "2/3 <img> sem atributo alt (alt vazio=1) nos campos ['chapter[0]', 'chapter[3]']",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": "Adicionar texto alternativo (alt=\"\" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.",
+   "gravidade": "Média",
+   "rule": "X-ACC-01",
+   "titulo": "Imagens sem texto alternativo",
+   "origem": "extra:6.8",
+   "classe": "A"
+  },
+  {
+   "status": "NAO_CONFORME",
+   "local": "book \"Editor de Texto - inserindo textos, imagens, vídeos e links\" (cmid=93195, activities/book_93195/module.xml)",
+   "evidencia": "1/6 <img> sem atributo alt (alt vazio=5) nos campos ['chapter[0]']",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": "Adicionar texto alternativo (alt=\"\" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.",
+   "gravidade": "Média",
+   "rule": "X-ACC-01",
+   "titulo": "Imagens sem texto alternativo",
+   "origem": "extra:6.8",
+   "classe": "A"
+  },
+  {
+   "status": "NAO_CONFORME",
+   "local": "book \"Atividades do Moodle\" (cmid=93197, activities/book_93197/module.xml)",
+   "evidencia": "2/17 <img> sem atributo alt (alt vazio=5) nos campos ['chapter[1]', 'chapter[3]']",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": "Adicionar texto alternativo (alt=\"\" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.",
+   "gravidade": "Média",
+   "rule": "X-ACC-01",
+   "titulo": "Imagens sem texto alternativo",
+   "origem": "extra:6.8",
+   "classe": "A"
+  },
+  {
+   "status": "NAO_CONFORME",
+   "local": "book \"Acompanhamento pelo professor\" (cmid=93214, activities/book_93214/module.xml)",
+   "evidencia": "4/8 <img> sem atributo alt (alt vazio=0) nos campos ['chapter[0]', 'chapter[2]', 'chapter[3]']",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": "Adicionar texto alternativo (alt=\"\" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.",
+   "gravidade": "Média",
+   "rule": "X-ACC-01",
+   "titulo": "Imagens sem texto alternativo",
+   "origem": "extra:6.8",
+   "classe": "A"
+  },
+  {
+   "status": "NAO_CONFORME",
+   "local": "book \"Livro Acessibilidade Digital\" (cmid=93225, activities/book_93225/module.xml)",
+   "evidencia": "45/47 <img> sem atributo alt (alt vazio=0) nos campos ['chapter[1]', 'chapter[5]', 'chapter[6]', 'chapter[7]']",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": "Adicionar texto alternativo (alt=\"\" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.",
+   "gravidade": "Média",
+   "rule": "X-ACC-01",
+   "titulo": "Imagens sem texto alternativo",
+   "origem": "extra:6.8",
+   "classe": "A"
+  },
+  {
+   "status": "NAO_CONFORME",
+   "local": "page \"Processo formal de criação de MOOC no Ifes\" (cmid=93176, activities/page_93176/module.xml)",
+   "evidencia": "1/3 <img> sem atributo alt (alt vazio=1) nos campos ['content']",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": "Adicionar texto alternativo (alt=\"\" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.",
+   "gravidade": "Média",
+   "rule": "X-ACC-01",
+   "titulo": "Imagens sem texto alternativo",
+   "origem": "extra:6.8",
+   "classe": "A"
+  },
+  {
+   "status": "NAO_CONFORME",
+   "local": "page \"Projeto (Design) - Planejando o curso\" (cmid=93187, activities/page_93187/module.xml)",
+   "evidencia": "1/1 <img> sem atributo alt (alt vazio=0) nos campos ['content']",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": "Adicionar texto alternativo (alt=\"\" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.",
+   "gravidade": "Média",
+   "rule": "X-ACC-01",
+   "titulo": "Imagens sem texto alternativo",
+   "origem": "extra:6.8",
+   "classe": "A"
+  },
+  {
+   "status": "NAO_CONFORME",
+   "local": "page \"Implementação (Implement) - Configurando o curso\" (cmid=93202, activities/page_93202/module.xml)",
+   "evidencia": "1/1 <img> sem atributo alt (alt vazio=0) nos campos ['content']",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": "Adicionar texto alternativo (alt=\"\" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.",
+   "gravidade": "Média",
+   "rule": "X-ACC-01",
+   "titulo": "Imagens sem texto alternativo",
+   "origem": "extra:6.8",
+   "classe": "A"
+  },
+  {
+   "status": "NAO_CONFORME",
+   "local": "page \"Professor acessando \"como estudante\"\" (cmid=93206, activities/page_93206/module.xml)",
+   "evidencia": "1/1 <img> sem atributo alt (alt vazio=0) nos campos ['content']",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": "Adicionar texto alternativo (alt=\"\" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.",
+   "gravidade": "Média",
+   "rule": "X-ACC-01",
+   "titulo": "Imagens sem texto alternativo",
+   "origem": "extra:6.8",
+   "classe": "A"
+  },
+  {
+   "status": "NAO_CONFORME",
+   "local": "page \"Avaliação (Evaluate) - Avaliando o curso\" (cmid=93211, activities/page_93211/module.xml)",
+   "evidencia": "1/1 <img> sem atributo alt (alt vazio=0) nos campos ['content']",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": "Adicionar texto alternativo (alt=\"\" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.",
+   "gravidade": "Média",
+   "rule": "X-ACC-01",
+   "titulo": "Imagens sem texto alternativo",
+   "origem": "extra:6.8",
+   "classe": "A"
+  },
+  {
+   "status": "NAO_CONFORME",
+   "local": "page \"Avaliação pelos alunos\" (cmid=93215, activities/page_93215/module.xml)",
+   "evidencia": "3/3 <img> sem atributo alt (alt vazio=0) nos campos ['content']",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": "Adicionar texto alternativo (alt=\"\" apenas para imagens decorativas). Sinal estático; não substitui auditoria WCAG/eMAG.",
+   "gravidade": "Média",
+   "rule": "X-ACC-01",
+   "titulo": "Imagens sem texto alternativo",
+   "origem": "extra:6.8",
+   "classe": "A"
+  },
+  {
+   "status": "ATENCAO",
+   "local": "book \"Editor de Texto - inserindo textos, imagens, vídeos e links\" (cmid=93195, activities/book_93195/module.xml) campo chapter[0]",
+   "evidencia": "texto \"link\" -> https://conhecimento.cefor.ifes.edu.br/wp-content/uploads/2016/11/tutorial_13_-_",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": "Usar texto de link descritivo.",
+   "gravidade": "Baixa",
+   "rule": "X-ACC-02",
+   "titulo": "Links com texto genérico",
+   "origem": "extra:6.8",
+   "classe": "A"
+  },
+  {
+   "status": "CONFORME",
+   "local": "enunciados",
+   "evidencia": "sem divergências detectadas entre enunciado e pontuação",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": null,
+   "gravidade": "Média",
+   "rule": "X-AV-01",
+   "titulo": "Coerência entre enunciado e configuração (pontos)",
+   "origem": "extra:6.3",
+   "classe": "A"
+  },
+  {
+   "status": "CONFORME",
+   "local": "estrutura",
+   "evidencia": "sem módulos ocultos/sem nome e sem seções com nome genérico",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": null,
+   "gravidade": "Baixa",
+   "rule": "X-STR-01",
+   "titulo": "Módulos ocultos, sem nome ou seções com nome genérico",
+   "origem": "extra:6.7",
+   "classe": "A"
+  },
+  {
+   "status": "CONFORME",
+   "local": "course/enrolments.xml",
+   "evidencia": "sem senhas de inscrição",
+   "encontrado": null,
+   "esperado": null,
+   "orientacao": "O relatório nunca deve exibir o valor; o arquivo deve ser tratado como confidencial.",
+   "gravidade": "Informativa",
+   "rule": "X-SEC-01",
+   "titulo": "Dados sensíveis no backup (senhas de inscrição)",
+   "origem": "extra:12",
+   "classe": "A"
+  }
+ ]
+}
