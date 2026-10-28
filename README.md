@@ -10,6 +10,9 @@ orientações de correção, para apoiar o processo anual de reoferta dos cursos
 |---|---|
 | `RELATORIO-INVESTIGACAO-AUDITORIA-MOOC.md` | Relatório completo: engenharia reversa do formato MBZ, matriz dos 29 itens do checklist, catálogo de regras adicionais, achados nos backups reais, comparação arquitetural, MVP, arquitetura e roadmap |
 | `DECISOES-INSTITUCIONAIS-CHECKLIST.md` | As 10 ambiguidades do checklist como decisões institucionais, com as respostas registradas |
+| `RELATORIO-AUDITORIA-VIA-API-MOODLE.md` | Investigação complementar: auditar a sala restaurada via Web Services do Moodle 4.5 — inventário de funções, matriz de cobertura regra a regra, lacunas, verificações só possíveis na sala ativa, decisão arquitetural (motor único com adaptadores MBZ e API) |
+| `poc/moodle_api_client.py` | Cliente REST isolado e somente leitura (allowlist de funções) para a prova comparativa, ainda não executado |
+| `poc/plano-prova-comparativa-api.md` | Plano da prova MBZ × API em homologação (14 regras, capacidades, critérios) |
 | `poc/mbz_inspect.py` | Protótipo somente-leitura (Python, só biblioteca padrão) que extrai o `.mbz` com segurança, normaliza os XML e executa 51 regras |
 | `poc/resultados/` | Saídas do protótipo (texto e JSON) para os três backups examinados |
 | `poc/README.md` | Uso e limitações do protótipo |
