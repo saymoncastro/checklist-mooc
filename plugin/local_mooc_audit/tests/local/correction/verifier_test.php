@@ -45,9 +45,16 @@ final class verifier_test extends \basic_testcase {
      * Two non conformities of the rule on the activity disappear: resolved, nothing introduced.
      */
     public function test_resolved(): void {
-        $before = [$this->r('CL-13', 5, status::NAO_CONFORME, 'tentativas=1'), $this->r('CL-13', 5, status::NAO_CONFORME,
-            'enunciado 2'), $this->r('CL-07', 0, status::NAO_CONFORME, 'fim', 'curso')];
-        $after = [$this->r('CL-13', 5, status::CONFORME, 'tentativas=2'), $this->r('CL-07', 0, status::NAO_CONFORME, 'fim', 'curso')];
+        $before = [$this->r('CL-13', 5, status::NAO_CONFORME, 'tentativas=1'), $this->r(
+            'CL-13',
+            5,
+            status::NAO_CONFORME,
+            'enunciado 2'
+        ), $this->r('CL-07', 0, status::NAO_CONFORME, 'fim', 'curso')];
+        $after = [
+            $this->r('CL-13', 5, status::CONFORME, 'tentativas=2'),
+            $this->r('CL-07', 0, status::NAO_CONFORME, 'fim', 'curso'),
+        ];
         $c = verifier::compare($before, $after, 'CL-13', 5);
         $this->assertTrue($c['targetresolved']);
         $this->assertSame(verifier::RESOLVED, $c['outcome']);

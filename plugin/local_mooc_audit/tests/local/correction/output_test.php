@@ -77,8 +77,10 @@ final class output_test extends correction_testcase {
         $this->assertStringContainsString('name="sesskey" value="' . sesskey() . '"', $html);
         $this->assertStringContainsString('name="fingerprint" value="' . $p->fingerprint() . '"', $html);
         $this->assertStringContainsString(get_string('fix_confirm', 'local_mooc_audit'), $html);
-        foreach (['fix_problem', 'fix_location', 'fix_rule', 'fix_current', 'fix_proposed', 'fix_justification', 'fix_impact',
-                'fix_risks', 'fix_authorised'] as $label) {
+        foreach (
+            ['fix_problem', 'fix_location', 'fix_rule', 'fix_current', 'fix_proposed', 'fix_justification', 'fix_impact',
+                'fix_risks', 'fix_authorised'] as $label
+        ) {
             $this->assertStringContainsString(get_string($label, 'local_mooc_audit'), $html, $label);
         }
 

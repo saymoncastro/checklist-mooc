@@ -119,9 +119,11 @@ class completion_guidance extends base {
         if ($m['completiongradeitemnumber'] !== null) {
             $crit[] = 'grade';
         }
-        foreach (['completionsubmit' => 'submit', 'completionentries' => 'entries', 'completionposts' => 'posts',
+        foreach (
+            ['completionsubmit' => 'submit', 'completionentries' => 'entries', 'completionposts' => 'posts',
             'completiondiscussions' => 'posts', 'completionreplies' => 'posts', 'completionminattempts' => 'attempts',
-            'completionattemptsexhausted' => 'attempts', 'completionpass' => 'grade'] as $k => $v) {
+            'completionattemptsexhausted' => 'attempts', 'completionpass' => 'grade'] as $k => $v
+        ) {
             if (!empty($m['extra'][$k])) {
                 $crit[] = $v;
             }

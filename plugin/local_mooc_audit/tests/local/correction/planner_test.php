@@ -183,8 +183,16 @@ final class planner_test extends correction_testcase {
         $this->assertStringContainsString('CL-07', implode(' ', $p->blockers));
 
         $course2 = $this->ccourse(['shortname' => 'c2']);
-        $q2 = $this->quiz($course2, 'Q', 2, 50, 0, '<p>Tentativas permitidas: 2.</p>', 2,
-            ['timeopen' => $this->ts(($y + 1) . '-01-10 00:00')]);
+        $q2 = $this->quiz(
+            $course2,
+            'Q',
+            2,
+            50,
+            0,
+            '<p>Tentativas permitidas: 2.</p>',
+            2,
+            ['timeopen' => $this->ts(($y + 1) . '-01-10 00:00')]
+        );
         $p = $this->plan($course2, 'CL-14', $q2->coursemodule);
         $this->assertFalse($p->is_executable());
         $this->assertStringContainsString('opening', implode(' ', $p->blockers));

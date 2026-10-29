@@ -79,14 +79,16 @@ final class proposal_test extends \basic_testcase {
         $p->risks[] = 'enrolled';
         $p->currentdisplay = 'one';
         $this->assertSame($fp, $p->fingerprint());
-        foreach ([
+        foreach (
+            [
             fn($p) => $p->state['cacherev'] = 11,
             fn($p) => $p->state['timemodified'] = 101,
             fn($p) => $p->current = 3,
             fn($p) => $p->proposed = 4,
             fn($p) => $p->policyversion = 'v2',
             fn($p) => $p->blockers[] = 'grades',
-        ] as $i => $change) {
+            ] as $i => $change
+        ) {
             $p = $this->executable();
             $change($p);
             $this->assertNotSame($fp, $p->fingerprint(), "change $i");

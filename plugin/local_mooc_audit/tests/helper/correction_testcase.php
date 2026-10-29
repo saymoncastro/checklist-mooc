@@ -59,8 +59,10 @@ abstract class correction_testcase extends rule_testcase {
      */
     protected function ccourse(array $extra = []): stdClass {
         $y = $this->year();
-        return $this->course(array_merge(['startdate' => $this->ts("$y-01-01 00:00"), 'enddate' => $this->ts("$y-12-31 23:59")],
-            $extra));
+        return $this->course(array_merge(
+            ['startdate' => $this->ts("$y-01-01 00:00"), 'enddate' => $this->ts("$y-12-31 23:59")],
+            $extra
+        ));
     }
 
     /**

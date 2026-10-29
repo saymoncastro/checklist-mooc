@@ -76,8 +76,8 @@ class close_date_guidance extends base {
         $known = isset(self::FIELDS[$type]);
         $p->effect = $this->str($known ? 'cl14_guided_field_' . $type : 'cl14_guided_field_unknown');
         $p->blockers[] = $this->str('cl14_guided_reason', $type);
-        $p->dependencies[] = $this->str('cl14_period', (object) ['start' => $this->date((int) $ctx['snapshot']['course']['startdate']),
-            'end' => $this->date($end)]);
+        $start = (int) $ctx['snapshot']['course']['startdate'];
+        $p->dependencies[] = $this->str('cl14_period', (object) ['start' => $this->date($start), 'end' => $this->date($end)]);
         $p->dependencies[] = $this->str('cl14_dep_cl07');
         if ($type === 'assign') {
             $p->risks[] = $this->str('cl14_risk_assign');

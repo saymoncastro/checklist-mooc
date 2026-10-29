@@ -153,9 +153,12 @@ class planner {
             $after = engine::run_rules($strategy->simulate($snapshot, $p), $policy);
             $p->impact = verifier::compare($results, $after, $ruleid, $cmid);
             if (!$p->impact['targetresolved']) {
-                $p->blockers[] = get_string('fix_blocker_notresolved', 'local_mooc_audit',
+                $p->blockers[] = get_string(
+                    'fix_blocker_notresolved',
+                    'local_mooc_audit',
                     implode('; ', array_map(fn($r) => $r['evidencia'], array_filter($after, fn($r) => $r['rule'] === $ruleid
-                        && (int) $r['cmid'] === $cmid && $r['status'] === status::NAO_CONFORME))));
+                    && (int) $r['cmid'] === $cmid && $r['status'] === status::NAO_CONFORME)))
+                );
             }
             if ($p->impact['introduced']) {
                 $p->blockers[] = get_string('fix_blocker_introduced', 'local_mooc_audit', implode('; ', $p->impact['introduced']));

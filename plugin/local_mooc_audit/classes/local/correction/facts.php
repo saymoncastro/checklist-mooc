@@ -117,8 +117,11 @@ class facts {
      */
     public static function completion_records(int $cmid): int {
         global $DB;
-        return $DB->count_records_select('course_modules_completion', 'coursemoduleid = :cmid AND completionstate > 0',
-            ['cmid' => $cmid]);
+        return $DB->count_records_select(
+            'course_modules_completion',
+            'coursemoduleid = :cmid AND completionstate > 0',
+            ['cmid' => $cmid]
+        );
     }
 
     /**

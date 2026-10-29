@@ -84,8 +84,11 @@ class provider implements
         if ($context->contextlevel != CONTEXT_COURSE) {
             return;
         }
-        $userlist->add_from_sql('userid', 'SELECT userid FROM {local_mooc_audit_fix} WHERE courseid = :courseid AND userid > 0',
-            ['courseid' => $context->instanceid]);
+        $userlist->add_from_sql(
+            'userid',
+            'SELECT userid FROM {local_mooc_audit_fix} WHERE courseid = :courseid AND userid > 0',
+            ['courseid' => $context->instanceid]
+        );
     }
 
     /**
@@ -100,8 +103,12 @@ class provider implements
             if ($context->contextlevel != CONTEXT_COURSE) {
                 continue;
             }
-            $rows = $DB->get_records('local_mooc_audit_fix', ['courseid' => $context->instanceid, 'userid' => $userid],
-                'timecreated', 'id, cmid, ruleid, field, oldvalue, newvalue, outcome, reaudit, timecreated');
+            $rows = $DB->get_records(
+                'local_mooc_audit_fix',
+                ['courseid' => $context->instanceid, 'userid' => $userid],
+                'timecreated',
+                'id, cmid, ruleid, field, oldvalue, newvalue, outcome, reaudit, timecreated'
+            );
             if (!$rows) {
                 continue;
             }
@@ -110,8 +117,10 @@ class provider implements
                 'newvalue' => $r->newvalue, 'outcome' => $r->outcome, 'reaudit' => $r->reaudit,
                 'timecreated' => \core_privacy\local\request\transform::datetime($r->timecreated),
             ], array_values($rows));
-            writer::with_context($context)->export_data([get_string('privacy:path', 'local_mooc_audit')],
-                (object) ['corrections' => $data]);
+            writer::with_context($context)->export_data(
+                [get_string('privacy:path', 'local_mooc_audit')],
+                (object) ['corrections' => $data]
+            );
         }
     }
 

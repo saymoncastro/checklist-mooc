@@ -24,7 +24,9 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/local/mooc_audit/tests/helper/correction_testcase.php');
-require_once($CFG->dirroot . '/local/mooc_audit/tests/fixtures/correction_doubles.php');
+foreach (['failing_write', 'unreadable_write', 'reaudit_fails_executor', 'nowait_executor'] as $double) {
+    require_once($CFG->dirroot . "/local/mooc_audit/tests/fixtures/correction/$double.php");
+}
 
 /**
  * Confirmed corrections: only the planned field changes, Moodle reads the new value, the re-audit no longer reports the
