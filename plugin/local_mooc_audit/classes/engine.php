@@ -50,11 +50,30 @@ class engine {
         int $userid = 0,
         bool $includesnapshot = false
     ): array {
-        $policy = policy::load($policyoverride);
+        return self::audit_with_policy($courseid, policy::load($policyoverride), $userid, $includesnapshot);
+    }
+
+    /**
+     * Audit a course with an already loaded policy (the history stores exactly the policy it applied).
+     *
+     * @param int $courseid
+     * @param array $policy loaded policy (policy::load())
+     * @param int $userid test viewer (0 = none)
+     * @param bool $includesnapshot include the full snapshot in the report
+     * @param rule_interface[]|null $rules rules to run (default: the catalogue; tests may inject others)
+     * @return array report
+     */
+    public static function audit_with_policy(
+        int $courseid,
+        array $policy,
+        int $userid = 0,
+        bool $includesnapshot = false,
+        ?array $rules = null
+    ): array {
         $t0 = microtime(true);
         $snapshot = snapshot::build($courseid, $userid);
         $tsnap = microtime(true) - $t0;
-        $results = self::run_rules($snapshot, $policy);
+        $results = self::run_rules($snapshot, $policy, $rules);
         foreach ($results as &$r) {
             $url = locator::url_for($r, $courseid, $snapshot['modules'], $snapshot['sections']);
             $r['link'] = $url ? $url->out(false) : null;
