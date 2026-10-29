@@ -37,7 +37,8 @@ confirmação institucional antes da implementação começar; as demais são pr
   entre execuções e lote ficam na especificação 005. Nenhuma tabela própria nesta entrega.
 - Q: Quem pode executar a auditoria por padrão? → A: **Papéis com arquétipo gerente** (como hoje), no contexto do
   curso; a instituição concede a outros papéis (ex.: professor editor) pelo mecanismo nativo de permissões.
-  **[validar]** se proponentes devem receber a permissão já no MVP.
+  **[validar]** se proponentes devem receber a permissão já no MVP. **Atualizado em 2026-10-29** (decisão 11,
+  spec 002): o padrão passou a ser **gerente e professor editor**.
 - Q: A auditoria avalia a sala na visão de quem executa ou na visão de um estudante? → A: **Visão administrativa**
   (todos os módulos visíveis) na página; a visão de um usuário de teste continua disponível só por linha de comando e
   entra na interface em entrega posterior.
@@ -231,7 +232,8 @@ personalização.
   resposta padrão de permissão negada da plataforma.
 - **FR-004**: A permissão de auditar MUST ser concedida por padrão apenas a papéis de gerência (arquétipo gerente do
   Moodle) e MUST ser atribuível
-  a outros papéis pelo mecanismo nativo de permissões, sem alteração de código.
+  a outros papéis pelo mecanismo nativo de permissões, sem alteração de código. *Alterado em 2026-10-29 pela decisão
+  11 (spec 002): padrão = arquétipos gerente e professor editor; professor não editor e estudante não.*
 
 **Execução e política**
 

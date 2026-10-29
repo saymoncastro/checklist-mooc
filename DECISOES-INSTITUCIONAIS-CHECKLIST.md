@@ -3,7 +3,7 @@
 **Para:** equipe Cefor/CGTE responsável pela reoferta de cursos MOOC
 **Contexto:** a investigação de viabilidade (`RELATORIO-INVESTIGACAO-AUDITORIA-MOOC.md`) mostrou que 17 dos 29 itens do checklist podem ser verificados automaticamente a partir do backup `.mbz`. Para transformá-los em regras sem ambiguidade foram levantadas 10 decisões.
 
-**Situação em 2026-10-29:** decisão 11 (quem aplica correções assistidas) registrada. **Em 2026-10-28:** 9 decisões registradas (abaixo, com a resposta dada); 1 pendente (nomes canônicos). As decisões já foram refletidas na política de exemplo do protótipo (`poc/mbz_inspect.py`, `DEFAULT_POLICY`, versão `2027-decisoes-2026-10-28`).
+**Situação em 2026-10-29:** decisão 11 (quem audita e aplica correções assistidas) registrada. **Em 2026-10-28:** 9 decisões registradas (abaixo, com a resposta dada); 1 pendente (nomes canônicos). As decisões já foram refletidas na política de exemplo do protótipo (`poc/mbz_inspect.py`, `DEFAULT_POLICY`, versão `2027-decisoes-2026-10-28`).
 
 ---
 
@@ -81,13 +81,13 @@ Enquanto não houver confirmação, o protótipo usa esses nomes; cursos antigos
 
 ---
 
-## 11. Quem pode aplicar correções assistidas (Auditor MOOC, spec 002) — **DECIDIDO em 2026-10-29: gerentes e professores editores**
+## 11. Quem pode auditar e aplicar correções assistidas (Auditor MOOC, specs 001 e 002) — **DECIDIDO em 2026-10-29: gerentes e professores editores**
 
 Regra: as capacidades `local/mooc_audit:preparecorrection` (ver propostas) e `local/mooc_audit:applycorrection`
 (confirmar correções) são concedidas por padrão aos arquétipos gerente e professor editor; aplicar exige também a
 capacidade nativa `moodle/course:manageactivities` na atividade. Professores não editores e estudantes não as recebem.
-Observação: para abrir o relatório pelo menu do curso, o professor precisa de `local/mooc_audit:audit`, que permanece
-restrita a gerentes até decisão sobre a Spec 001.
+A capacidade de auditar (`local/mooc_audit:audit`, menu *Mais > Auditoria técnica*) segue o mesmo padrão: gerente e
+professor editor. A comparação entre cursos (`local/mooc_audit:compare`, contexto de sistema) continua só com gerentes.
 
 ---
 

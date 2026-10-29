@@ -50,11 +50,8 @@ Feature: Assisted correction of a technical audit finding
     And the field "Attempts allowed" matches value "1"
 
   @javascript
-  Scenario: An editing teacher who can open the audit applies a correction
-    Given the following "permission overrides" exist:
-      | capability             | permission | role           | contextlevel | reference |
-      | local/mooc_audit:audit | Allow      | editingteacher | Course       | CT1       |
-    And I am on the "Curso de teste" "Course" page logged in as "teacher1"
+  Scenario: An editing teacher opens the audit and applies a correction
+    Given I am on the "Curso de teste" "Course" page logged in as "teacher1"
     And I navigate to "Technical audit" in current page administration
     When I click on "See correction proposal" "link" in the "CL-13" "table_row"
     And I press "Confirm correction"

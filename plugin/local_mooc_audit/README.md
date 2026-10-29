@@ -30,12 +30,12 @@ Nenhuma alteração no núcleo. Capacidades próprias (arquétipos padrão na ú
 
 | Capacidade | Contexto | Tipo | Para | Padrão |
 |---|---|---|---|---|
-| `local/mooc_audit:audit` | curso | read | executar a auditoria e ver o relatório | manager |
+| `local/mooc_audit:audit` | curso | read | executar a auditoria e ver o relatório | manager, editingteacher |
 | `local/mooc_audit:compare` | sistema | read | comparar origem × destino | manager |
 | `local/mooc_audit:preparecorrection` | curso | read | ver propostas de correção | manager, editingteacher |
 | `local/mooc_audit:applycorrection` | curso | write, `RISK_CONFIG` | confirmar correções (exige também `moodle/course:manageactivities` na atividade) | manager, editingteacher |
 
-Professores editores só chegam às propostas pelo menu do curso se também receberem `local/mooc_audit:audit`.
+Padrões da decisão 11 (2026-10-29); professores não editores e estudantes não recebem nenhuma capacidade do plugin.
 
 Tabela própria: `local_mooc_audit_fix` (trilha das correções confirmadas; ver privacidade).
 
@@ -109,7 +109,7 @@ mecanismo nativo `core_course_external::import_course`).
 | `tests/local/rule/*_test.php` | Um arquivo por regra (29): cenários conforme, não conforme e, quando a regra os produz, atenção/não se aplica/não verificável, construídos por API (ex.: X-INT-03 com condição de plugin inexistente; X-CERT-01 com visão de estudante) |
 | `tests/readonly_test.php` | Hashes de 17 tabelas do curso B antes e depois de três auditorias (admin, estudante, texto) idênticos; `timemodified`/`cacherev` inalterados; idem ao abrir todas as propostas e o relatório com ações (sem evento, sem linha na trilha) |
 | `tests/locator_test.php` | URL esperada por locus; identificadores ausentes → sem link |
-| `tests/access_test.php` | Capacidade de auditoria por arquétipo (estudante/professor não; gerente sim), definição sem risco declarado, nó de navegação só com a capacidade; capacidades de correção (gerente e professor editor sim; professor não editor e estudante não; `applycorrection` write com `RISK_CONFIG`) |
+| `tests/access_test.php` | Capacidade de auditoria por arquétipo (estudante/professor não editor não; professor editor/gerente sim), definição sem risco declarado, nó de navegação só com a capacidade; capacidades de correção (gerente e professor editor sim; professor não editor e estudante não; `applycorrection` write com `RISK_CONFIG`) |
 | `tests/output_test.php` | Dados do template e renderização da página (cursos A/B) |
 | `classes/local/correction/proposal.php` | Proposta (valor, impressão digital, invariante de executabilidade) |
 | `classes/local/correction/planner.php` | Monta a proposta a partir de uma auditoria fresca; simulação; capacidades e papéis |
@@ -122,7 +122,7 @@ mecanismo nativo `core_course_external::import_course`).
 | `tests/local/correction/*_test.php`, `tests/helper/correction_testcase.php`, `tests/fixtures/correction/` | Planejador, executor (sucesso, conflitos, permissões, estudantes, falha com rollback, releitura, reauditoria, trava), verificador, proposta, saída |
 | `tests/privacy/provider_test.php` | Metadados, exportação e anonimização |
 | `tests/behat/correction.feature` | Ver proposta, confirmar (com axe), cancelar, professor editor aplica, professor não editor vê mas não aplica |
-| `tests/behat/audit_page.feature` | Gerente abre o relatório pelo menu do curso (com JavaScript e verificação de acessibilidade axe), reexecuta; professor e estudante não veem a entrada |
+| `tests/behat/audit_page.feature` | Gerente abre o relatório pelo menu do curso (com JavaScript e verificação de acessibilidade axe), reexecuta; professor editor abre o relatório; professor não editor e estudante não veem a entrada |
 
 Fluxo de desenvolvimento: `specs/001-auditoria-tecnica-operacional/` (Spec Kit) e `.specify/memory/constitution.md`.
 

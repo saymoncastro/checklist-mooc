@@ -47,7 +47,8 @@ Nenhum requisito sem tarefa; nenhuma tarefa sem requisito. Os 12 cenários exper
 | X | Spec, plano, tarefas e análise antes do código (commit `bed2031` precede `ad44c0b`) | ✅ |
 
 Achados: nenhum CRITICAL. **MEDIUM** — marco de encerramento do CL-14 segue **[validar]**; quem corrige foi
-decidido em 2026-10-29 (gerente e professor editor), mas professores só chegam ao relatório com `:audit` (Spec 001). **LOW** — janela residual de concorrência com edição manual simultânea
+decidido em 2026-10-29: gerente e professor editor auditam, veem e aplicam correções (o FR-004 da Spec 001 foi
+atualizado; `access_test` e `audit_page.feature` ajustados). **LOW** — janela residual de concorrência com edição manual simultânea
 (documentada). **LOW** — `access_test` da spec 001 continua afirmando "sem risco" apenas para `:audit`/`:compare`;
 `applycorrection` declara `RISK_CONFIG`.
 

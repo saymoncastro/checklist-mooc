@@ -25,8 +25,8 @@ contêineres da Spec 001 e produção intocados.
 
 | Suíte | Resultado |
 |---|---|
-| PHPUnit `local_mooc_audit_testsuite` | **113 testes, 2017 asserções, OK** (75 da Spec 001, incluindo caracterização A/B e contrato 1.0, + 38 novos) |
-| Behat `@local_mooc_audit` | **6 cenários, 79 passos, OK** (2 da Spec 001 + 4 novos; acessibilidade axe na prévia; professor editor aplica, professor não editor não) |
+| PHPUnit `local_mooc_audit_testsuite` | **113 testes, 2019 asserções, OK** (75 da Spec 001, incluindo caracterização A/B e contrato 1.0, + 38 novos) |
+| Behat `@local_mooc_audit` | **6 cenários, 82 passos, OK** (2 da Spec 001 + 4 novos; acessibilidade axe na prévia; professor editor aplica, professor não editor não) |
 | PHPCS `moodle` | 0 erros, 0 avisos |
 | `php -l` | sem erros |
 | Upgrade 0.2.0 → 0.3.0 | `admin/cli/upgrade.php` cria a tabela e as capacidades |
@@ -64,7 +64,8 @@ CL-14) e reauditam; no Moodle local a tela oficial de edição exibiu o novo val
 - **Escrita mínima**: lista branca de 2 colunas; comparação do registro inteiro nos testes.
 - **Saída**: templates usam apenas `{{ }}` (escapado); nenhum `{{{ }}}`; conteúdo de curso (nomes) escapado.
 - **Privacidade**: só `userid` de quem confirmou; exportação; exclusão por anonimização.
-- **Capacidades**: `applycorrection` com `captype=write` e `RISK_CONFIG`; padrão gerente e professor editor (decisão 11), nunca professor não editor nem estudante.
+- **Capacidades**: `applycorrection` com `captype=write` e `RISK_CONFIG`; auditar, ver e aplicar correções: padrão
+  gerente e professor editor (decisão 11), nunca professor não editor nem estudante.
 - Revisão independente (subagente, leitura do diff): ver §4.1.
 
 ### 4.1 Revisão independente
@@ -134,9 +135,8 @@ institucionais ausentes (CL-09, CL-11, CL-21, CL-22) e glossário dos jogos (CL-
 qualquer alteração em atividade com tentativas/notas de estudantes.
 
 **A Spec 002 está pronta para merge e posterior homologação?** Pronta para **revisão** técnica, não para merge
-imediato: (1) depende do merge do PR #1 (Spec 001) — o PR desta spec tem a branch da 001 como base; (2) faltam as
-a validação institucional ainda marcada **[validar]** (marco do encerramento do CL-14) e, para professores usarem o
-menu, a decisão da Spec 001 sobre quem audita; (3) validação em uma cópia da
+imediato: (1) depende do merge do PR #1 (Spec 001) — o PR desta spec tem a branch da 001 como base; (2) falta a
+validação institucional ainda marcada **[validar]** (marco do encerramento do CL-14); (3) validação em uma cópia da
 instalação institucional com plugins e dados reais antes de produção. Tecnicamente, a suíte completa, o Behat e o
 PHPCS passam.
 

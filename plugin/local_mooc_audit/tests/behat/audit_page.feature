@@ -9,6 +9,7 @@ Feature: Technical audit of a course
       | username | firstname | lastname | email                |
       | manager1 | Gestora   | Um       | manager1@example.com |
       | teacher1 | Docente   | Um       | teacher1@example.com |
+      | teacher2 | Tutora    | Dois     | teacher2@example.com |
       | student1 | Estudante | Um       | student1@example.com |
     And the following "courses" exist:
       | fullname       | shortname | enablecompletion |
@@ -17,6 +18,7 @@ Feature: Technical audit of a course
       | user     | course | role           |
       | manager1 | CT1    | manager        |
       | teacher1 | CT1    | editingteacher |
+      | teacher2 | CT1    | teacher        |
       | student1 | CT1    | student        |
     And the following "activities" exist:
       | activity | name           | course | attempts |
@@ -43,9 +45,13 @@ Feature: Technical audit of a course
     And I should see "Blocked" in the ".local_mooc_audit-overall" "css_element"
 
   @javascript
-  Scenario: Teachers and students do not see the audit entry
+  Scenario: Editing teachers open the audit; non-editing teachers and students do not see the entry
     Given I am on the "Curso de teste" "Course" page logged in as "teacher1"
-    Then "Technical audit" "link" should not exist
+    When I navigate to "Technical audit" in current page administration
+    Then I should see "Technical audit: Curso de teste"
+    And I log out
+    And I am on the "Curso de teste" "Course" page logged in as "teacher2"
+    And "Technical audit" "link" should not exist
     And I log out
     And I am on the "Curso de teste" "Course" page logged in as "student1"
     And "Technical audit" "link" should not exist

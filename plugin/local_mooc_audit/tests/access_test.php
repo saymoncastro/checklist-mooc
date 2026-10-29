@@ -26,7 +26,8 @@ namespace local_mooc_audit;
  */
 final class access_test extends \advanced_testcase {
     /**
-     * Enrolled student and teacher do not hold local/mooc_audit:audit by default; a manager does.
+     * Students and non-editing teachers do not hold local/mooc_audit:audit by default; editing teachers and managers do
+     * (decision 11, 2026-10-29).
      */
     public function test_capability_by_archetype(): void {
         $this->resetAfterTest();
@@ -34,12 +35,14 @@ final class access_test extends \advanced_testcase {
         $course = $gen->create_course();
         $context = \context_course::instance($course->id);
         $student = $gen->create_and_enrol($course, 'student');
-        $teacher = $gen->create_and_enrol($course, 'editingteacher');
+        $teacher = $gen->create_and_enrol($course, 'teacher');
+        $editingteacher = $gen->create_and_enrol($course, 'editingteacher');
         $manager = $gen->create_and_enrol($course, 'manager');
         $guest = $gen->create_user();
 
         $this->assertFalse(has_capability('local/mooc_audit:audit', $context, $student));
         $this->assertFalse(has_capability('local/mooc_audit:audit', $context, $teacher));
+        $this->assertTrue(has_capability('local/mooc_audit:audit', $context, $editingteacher));
         $this->assertFalse(has_capability('local/mooc_audit:audit', $context, $guest));
         $this->assertTrue(has_capability('local/mooc_audit:audit', $context, $manager));
         $this->assertTrue(has_capability('local/mooc_audit:audit', $context, get_admin()));
@@ -96,13 +99,19 @@ final class access_test extends \advanced_testcase {
         $gen = $this->getDataGenerator();
         $course = $gen->create_course();
         $context = \context_course::instance($course->id);
-        $teacher = $gen->create_and_enrol($course, 'editingteacher');
+        $teacher = $gen->create_and_enrol($course, 'teacher');
+        $editingteacher = $gen->create_and_enrol($course, 'editingteacher');
         $manager = $gen->create_and_enrol($course, 'manager');
 
         $this->setUser($teacher);
         $node = \navigation_node::create('courseadmin', null, \navigation_node::TYPE_COURSE);
         local_mooc_audit_extend_navigation_course($node, $course, $context);
         $this->assertFalse($node->find('local_mooc_audit', \navigation_node::TYPE_SETTING));
+
+        $this->setUser($editingteacher);
+        $node = \navigation_node::create('courseadmin', null, \navigation_node::TYPE_COURSE);
+        local_mooc_audit_extend_navigation_course($node, $course, $context);
+        $this->assertNotFalse($node->find('local_mooc_audit', \navigation_node::TYPE_SETTING));
 
         $this->setUser($manager);
         $node = \navigation_node::create('courseadmin', null, \navigation_node::TYPE_COURSE);
