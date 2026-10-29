@@ -161,3 +161,34 @@ O PHPCS usa uma cópia de `/tmp/cs` do contêiner `moocaudit-wt` (`docker cp`). 
 `docker rm -f moocaudit-s2-web moocaudit-s2-selenium && docker network disconnect moocaudit_s2 moocaudit-db-1 &&
 docker network rm moocaudit_s2 && docker exec moocaudit-db-1 dropdb -U moodle moodle_s2`.
 
+## Ambiente da spec 003 (comparação entre ofertas)
+
+Mesmo desenho do ambiente da spec 002, com banco `moodle_s3`, porta 8094 e rede `moocaudit_s3`, montando o plugin do
+worktree da spec 003:
+
+```bash
+docker exec moocaudit-db-1 createdb -U moodle moodle_s3
+docker network create moocaudit_s3
+docker network connect --alias db moocaudit_s3 moocaudit-db-1
+docker run -d --name moocaudit-s3-web --network moocaudit_s3 -p 127.0.0.1:8094:80 \
+  -e MOODLE_DOCKER_DBTYPE=pgsql -e MOODLE_DOCKER_DBNAME=moodle_s3 -e MOODLE_DOCKER_DBUSER=moodle -e 'MOODLE_DOCKER_DBPASS=m@0dl3ing' \
+  -e MOODLE_DOCKER_WEB_HOST=localhost -e MOODLE_DOCKER_WEB_PORT=127.0.0.1:8094 -e MOODLE_DOCKER_RUNNING=1 -e MOODLE_DOCKER_BROWSER=chrome \
+  -v "$PROJECT_DIR/moodle-local/moodle:/var/www/html" -v "<worktree>/plugin/local_mooc_audit:/var/www/html/local/mooc_audit" \
+  -w /var/www/html moodlehq/moodle-php-apache:8.3
+docker exec moocaudit-s3-web bash -c 'mkdir -p /var/www/moodledata /var/www/behatdata /var/www/behatfaildumps && chown www-data /var/www/moodledata /var/www/behatdata /var/www/behatfaildumps && echo "127.0.0.1 webserver" >> /etc/hosts'
+docker exec -w /var/www/html moocaudit-s3-web php admin/cli/install_database.php --agree-license \
+  --fullname="Auditor MOOC (spec 003)" --shortname=s3 --adminpass='Admin123!' --adminemail=admin@example.com --lang=pt_br
+docker exec -w /var/www/html moocaudit-s3-web php local/mooc_audit/cli/make_fixtures.php      # A = 2, B = 3
+docker exec -w /var/www/html moocaudit-s3-web php local/mooc_audit/cli/make_scenarios.php --year=2027   # cenários A–G
+docker exec moocaudit-s3-web chown -R www-data /var/www/moodledata
+docker exec -w /var/www/html moocaudit-s3-web php admin/tool/phpunit/cli/init.php
+IP=$(docker inspect moocaudit-s3-web --format '{{(index .NetworkSettings.Networks "moocaudit_s3").IPAddress}}')
+docker run -d --name moocaudit-s3-selenium --network moocaudit_s3 --network-alias selenium --add-host "webserver:$IP" \
+  --shm-size=2g selenium/standalone-chrome:4
+docker exec -w /var/www/html moocaudit-s3-web php admin/tool/behat/cli/init.php
+```
+
+Site: http://localhost:8094 (admin / `Admin123!`, apenas local). Medição de desempenho:
+`docker cp plugin-results/0.4.0/make151.php moocaudit-s3-web:/tmp/ && docker exec -w /var/www/html moocaudit-s3-web php /tmp/make151.php`.
+Remover tudo: `docker rm -f moocaudit-s3-web moocaudit-s3-selenium && docker network disconnect moocaudit_s3 moocaudit-db-1 &&
+docker network rm moocaudit_s3 && docker exec moocaudit-db-1 dropdb -U moodle moodle_s3`.

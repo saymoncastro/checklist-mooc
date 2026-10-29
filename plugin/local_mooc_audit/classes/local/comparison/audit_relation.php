@@ -24,8 +24,9 @@ use local_mooc_audit\local\status;
  *
  * Each result gets a location key without internal ids: rule + matched pair (results with a cmid), rule + section
  * number, or rule + location text with ids removed. Results sharing a key are grouped (worst state wins). A "problem"
- * is NAO_CONFORME or ATENCAO. Rules of the offer cycle never produce "persistent" items: their problems in the target
- * are pending items of the new offer, whatever the source state was. No class blames the import mechanism.
+ * is NAO_CONFORME or ATENCAO; a problem is persistent only when the source was at least as bad (an ATENCAO that became
+ * NAO_CONFORME is new in the target). Rules of the offer cycle never produce "persistent" items: their problems in the
+ * target are pending items of the new offer, whatever the source state was. No class blames the import mechanism.
  *
  * @package    local_mooc_audit
  * @copyright  2026 Cefor/Ifes
@@ -137,7 +138,10 @@ class audit_relation {
                     $class = 'indeterminado';
                 } else if ($tcmid && isset($extra[$tcmid])) {
                     $class = 'novo_em_atividade_adicional';
-                } else if ($s && self::is_problem($s['status'])) {
+                } else if (
+                    $s && self::is_problem($s['status'])
+                        && status::status_rank($s['status']) <= status::status_rank($t['status'])
+                ) {
                     $class = 'persistente';
                 } else {
                     $class = 'novo_no_destino';
@@ -148,8 +152,14 @@ class audit_relation {
                 $class = $t['status'] === status::NAO_APLICAVEL ? 'nao_aplicavel_no_destino' : 'resolvido_no_destino';
             }
             if ($class) {
-                $items[] = self::item($class, $k, $s, $t, $tcmid !== null && isset($reverse[$tcmid]) ? $reverse[$tcmid] : null,
-                    $tcmid);
+                $items[] = self::item(
+                    $class,
+                    $k,
+                    $s,
+                    $t,
+                    $tcmid !== null && isset($reverse[$tcmid]) ? $reverse[$tcmid] : null,
+                    $tcmid
+                );
             }
         }
         foreach ($gs as $k => $s) {

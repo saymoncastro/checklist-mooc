@@ -49,20 +49,22 @@ class local_mooc_audit_generator extends component_generator_base {
      * Course A: reference course.
      *
      * @param int $year reoffer year (dates 01/01 → 31/12 of that year)
+     * @param string $shortname
      * @return array [stdClass course, array logical name => cmid]
      */
-    public function create_course_a(int $year): array {
-        return $this->build('MOOC_TESTE_A', 'Curso A — referência', false, $year);
+    public function create_course_a(int $year, string $shortname = 'MOOC_TESTE_A'): array {
+        return $this->build($shortname, 'Curso A — referência', false, $year);
     }
 
     /**
      * Course B: inconsistent course.
      *
      * @param int $year reoffer year
+     * @param string $shortname
      * @return array [stdClass course, array logical name => cmid]
      */
-    public function create_course_b(int $year): array {
-        return $this->build('MOOC_TESTE_B', 'Curso B — inconsistente', true, $year);
+    public function create_course_b(int $year, string $shortname = 'MOOC_TESTE_B'): array {
+        return $this->build($shortname, 'Curso B — inconsistente', true, $year);
     }
 
     /**
@@ -443,6 +445,223 @@ class local_mooc_audit_generator extends component_generator_base {
         $root->update();
         rebuild_course_cache($course->id, true);
         return [get_course($course->id), $ids];
+    }
+
+    /**
+     * Import the content of a course into a new empty course, as Course administration > Import does (backup and restore
+     * in import mode, no user data), then optionally apply the adjustments of the new offer (dates of the course and of
+     * self enrolment). Used by the comparison scenarios (specs/003).
+     *
+     * @param stdClass $source
+     * @param string $shortname of the new course
+     * @param int $year year of the new offer
+     * @param bool $adjust apply the new offer dates and self enrolment; false keeps the dates of the source
+     * @return stdClass the new course
+     */
+    public function import_into_new_course(stdClass $source, string $shortname, int $year, bool $adjust = true): stdClass {
+        global $CFG, $USER;
+        require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
+        require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
+        $tz = new DateTimeZone(core_date::get_server_timezone());
+        $start = $adjust ? (new DateTime("$year-01-01 00:00", $tz))->getTimestamp() : (int) $source->startdate;
+        $end = $adjust ? (new DateTime("$year-12-31 23:59", $tz))->getTimestamp() : (int) $source->enddate;
+        $target = create_course((object) ['fullname' => $source->fullname, 'shortname' => $shortname,
+            'category' => $source->category, 'format' => $source->format, 'numsections' => 1, 'startdate' => $start,
+            'enddate' => $end, 'visible' => 1, 'enablecompletion' => 1, 'showcompletionconditions' => 1,
+            'summary' => $source->summary, 'summaryformat' => FORMAT_HTML, 'lang' => $source->lang]);
+
+        ob_start();
+        $bc = new backup_controller(
+            backup::TYPE_1COURSE,
+            $source->id,
+            backup::FORMAT_MOODLE,
+            backup::INTERACTIVE_NO,
+            backup::MODE_IMPORT,
+            $USER->id
+        );
+        $bc->execute_plan();
+        $backupid = $bc->get_backupid();
+        $bc->destroy();
+        $rc = new restore_controller(
+            $backupid,
+            $target->id,
+            backup::INTERACTIVE_NO,
+            backup::MODE_IMPORT,
+            $USER->id,
+            backup::TARGET_EXISTING_ADDING
+        );
+        $rc->execute_precheck();
+        $rc->execute_plan();
+        $rc->destroy();
+        ob_end_clean();
+
+        if ($adjust) {
+            $course = get_course($target->id);
+            $course->startdate = $start;
+            $course->enddate = $end;
+            update_course($course);
+            $plugin = enrol_get_plugin('self');
+            foreach (enrol_get_instances($target->id, false) as $inst) {
+                if ($inst->enrol === 'self') {
+                    $plugin->update_instance($inst, (object) ['status' => ENROL_INSTANCE_ENABLED, 'enrolstartdate' => $start,
+                        'enrolenddate' => $end, 'customint6' => 1, 'roleid' => 5, 'name' => '',
+                        'expirynotify' => 0, 'expirythreshold' => $inst->expirythreshold, 'notifyall' => 0]);
+                }
+            }
+        }
+        rebuild_course_cache($target->id, true);
+        return get_course($target->id);
+    }
+
+    /**
+     * Scenario C (specs/003): a glossary with three entries used as the word source of a crossword game.
+     *
+     * @param int $year
+     * @param string $shortname
+     * @return array [course, logical name => cmid]
+     */
+    public function create_glossary_game_course(int $year, string $shortname = 'CEN_C'): array {
+        $course = $this->scenario_course($shortname, 'Cenário C — glossário de jogo', $year);
+        $ids = [];
+        $ids['intro'] = $this->add_module($course, 'page', 1, ['name' => 'Introdução', 'content' => '<p>Bem-vindo.</p>',
+            'contentformat' => FORMAT_HTML, 'display' => RESOURCELIB_DISPLAY_OPEN, 'printintro' => 0,
+            'printlastmodified' => 0])->coursemodule;
+        $gl = $this->add_module($course, 'glossary', 1, ['name' => 'Glossário do jogo', 'displayformat' => 'dictionary',
+            'mainglossary' => 0, 'globalglossary' => 0, 'allowduplicatedentries' => 0, 'showspecial' => 1, 'showalphabet' => 1,
+            'showall' => 1, 'allowcomments' => 0, 'allowprintview' => 1, 'usedynalink' => 0, 'defaultapproval' => 1,
+            'entbypage' => 10, 'editalways' => 0, 'rsstype' => 0, 'rssarticles' => 0, 'assessed' => 0, 'scale' => 0]);
+        $ids['glossario'] = $gl->coursemodule;
+        $glgen = $this->datagenerator->get_plugin_generator('mod_glossary');
+        $glossary = (object) ['id' => $gl->instance, 'course' => $course->id];
+        foreach (
+            ['ACESSIBILIDADE' => 'Garantia de acesso', 'LIBRAS' => 'Língua Brasileira de Sinais',
+            'LEITOR' => 'Leitor de tela'] as $concept => $definition
+        ) {
+            $glgen->create_content($glossary, ['concept' => $concept, 'definition' => $definition, 'approved' => 1]);
+        }
+        if (self::has_module('game')) {
+            $ids['jogo'] = $this->add_module($course, 'game', 1, ['name' => 'Palavras cruzadas', 'gamekind' => 'cross',
+                'sourcemodule' => 'glossary', 'glossaryid' => $gl->instance, 'glossarycategoryid' => 0, 'grade' => 0,
+                'grademethod' => 1, 'param1' => 0, 'param2' => 0, 'shuffle' => 1, 'timeopen' => 0, 'timeclose' => 0])->coursemodule;
+        }
+        rebuild_course_cache($course->id, true);
+        return [get_course($course->id), $ids];
+    }
+
+    /**
+     * Scenario E (specs/003): three resources, each with its own file.
+     *
+     * @param int $year
+     * @param string $shortname
+     * @return array [course, logical name => cmid]
+     */
+    public function create_files_course(int $year, string $shortname = 'CEN_E'): array {
+        $course = $this->scenario_course($shortname, 'Cenário E — arquivos', $year);
+        $fs = get_file_storage();
+        $ids = [];
+        foreach ([1, 2, 3] as $n) {
+            $res = $this->add_module($course, 'resource', 1, ['name' => "Apostila $n", 'display' => RESOURCELIB_DISPLAY_AUTO,
+                'printintro' => 0, 'files' => 0]);
+            $fs->create_file_from_string(['contextid' => context_module::instance($res->coursemodule)->id,
+                'component' => 'mod_resource', 'filearea' => 'content', 'itemid' => 0, 'filepath' => '/',
+                'filename' => "apostila$n.txt"], "Conteúdo da apostila $n do curso $shortname");
+            $ids["apostila$n"] = $res->coursemodule;
+        }
+        rebuild_course_cache($course->id, true);
+        return [get_course($course->id), $ids];
+    }
+
+    /**
+     * Scenario E, in the target: file record removed (resource 1), file content lost from the store (resource 2: the
+     * record points to content that does not exist; the shared content of the source stays intact), resource hidden
+     * from students (resource 3).
+     *
+     * @param stdClass $target
+     */
+    public function break_files(stdClass $target): void {
+        global $DB;
+        $fs = get_file_storage();
+        foreach (get_fast_modinfo($target)->get_instances_of('resource') as $cm) {
+            $context = context_module::instance($cm->id);
+            if ($cm->name === 'Apostila 1') {
+                $fs->delete_area_files($context->id, 'mod_resource', 'content');
+            } else if ($cm->name === 'Apostila 2') {
+                $DB->set_field_select(
+                    'files',
+                    'contenthash',
+                    sha1('conteudo-perdido-' . $cm->id),
+                    "contextid = ? AND component = 'mod_resource' AND filearea = 'content' AND filename <> '.'",
+                    [$context->id]
+                );
+            } else if ($cm->name === 'Apostila 3') {
+                set_coursemodule_visible($cm->id, 0);
+            }
+        }
+        rebuild_course_cache($target->id, true);
+    }
+
+    /**
+     * Scenario F (specs/003): activities with repeated names — two "Aula 1" pages (one with the Libras video) and two
+     * identical "Leitura complementar" pages.
+     *
+     * @param int $year
+     * @param string $shortname
+     * @return array [course, logical name => cmid]
+     */
+    public function create_repeated_names_course(int $year, string $shortname = 'CEN_F'): array {
+        $course = $this->scenario_course($shortname, 'Cenário F — nomes repetidos', $year);
+        $page = fn(string $name, string $html) => ['name' => $name, 'content' => $html, 'contentformat' => FORMAT_HTML,
+            'display' => RESOURCELIB_DISPLAY_OPEN, 'printintro' => 0, 'printlastmodified' => 0,
+            'completion' => COMPLETION_TRACKING_AUTOMATIC, 'completionview' => 1];
+        $ids = [];
+        $ids['aula1'] = $this->add_module($course, 'page', 1, $page('Aula 1', '<p>Texto da aula 1.</p>'))->coursemodule;
+        $ids['aula1_libras'] = $this->add_module($course, 'page', 1, $page('Aula 1', '<p>Texto da aula 1.</p>'
+            . '<p><iframe src="https://videos.example/libras-aula-1"></iframe></p>'))->coursemodule;
+        $copy = $page('Leitura complementar', '<p>Mesmo texto.</p>');
+        $ids['leitura_a'] = $this->add_module($course, 'page', 2, $copy)->coursemodule;
+        $ids['leitura_b'] = $this->add_module($course, 'page', 2, $copy)->coursemodule;
+        rebuild_course_cache($course->id, true);
+        return [get_course($course->id), $ids];
+    }
+
+    /**
+     * Scenario D (specs/003), in the target: change the assessment settings of a quiz (attempts, maximum grade,
+     * completion) directly, as an editor could have done after the import.
+     *
+     * @param int $cmid
+     * @param int $attempts
+     * @param float $grade
+     */
+    public function change_quiz_assessment(int $cmid, int $attempts, float $grade): void {
+        global $DB;
+        $cm = get_coursemodule_from_id('quiz', $cmid, 0, false, MUST_EXIST);
+        $DB->set_field('quiz', 'attempts', $attempts, ['id' => $cm->instance]);
+        $DB->set_field('quiz', 'grade', $grade, ['id' => $cm->instance]);
+        $item = grade_item::fetch(['itemtype' => 'mod', 'itemmodule' => 'quiz', 'iteminstance' => $cm->instance,
+            'itemnumber' => 0, 'courseid' => $cm->course]);
+        $item->grademax = $grade;
+        $item->update();
+        $DB->update_record('course_modules', (object) ['id' => $cmid, 'completion' => COMPLETION_TRACKING_MANUAL,
+            'completiongradeitemnumber' => null, 'completionpassgrade' => 0]);
+        rebuild_course_cache($cm->course, true);
+    }
+
+    /**
+     * Empty course of a scenario in the target category, dates of the given year.
+     *
+     * @param string $shortname
+     * @param string $fullname
+     * @param int $year
+     * @return stdClass
+     */
+    protected function scenario_course(string $shortname, string $fullname, int $year): stdClass {
+        $tz = new DateTimeZone(core_date::get_server_timezone());
+        return create_course((object) ['fullname' => $fullname, 'shortname' => $shortname,
+            'category' => $this->target_category()->id, 'format' => 'topics', 'numsections' => 2,
+            'startdate' => (new DateTime("$year-01-01 00:00", $tz))->getTimestamp(),
+            'enddate' => (new DateTime("$year-12-31 23:59", $tz))->getTimestamp(), 'visible' => 1, 'enablecompletion' => 1,
+            'showcompletionconditions' => 1, 'summary' => '<p>Cenário de comparação.</p>', 'summaryformat' => FORMAT_HTML,
+            'lang' => 'pt_br']);
     }
 
     /**

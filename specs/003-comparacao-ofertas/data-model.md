@@ -89,7 +89,8 @@ Regras de classificação (determinísticas, nesta ordem):
 1. regra do ciclo e problema no destino → `pendencia_oferta`;
 2. regra do ciclo sem problema no destino → não listada (contexto da origem não é herdado);
 3. problema no destino: local em ambiguidade → `indeterminado`; atividade adicional → `novo_em_atividade_adicional`;
-   problema também na origem (mesma chave) → `persistente`; senão → `novo_no_destino`;
+   problema também na origem (mesma chave) e origem pelo menos tão grave quanto o destino → `persistente`; senão
+   (inclusive `ATENCAO` na origem que virou `NAO_CONFORME` no destino) → `novo_no_destino`;
 4. destino `NAO_VERIFICAVEL`/`ERRO` → `nao_verificavel_no_destino`;
 5. problema só na origem: atividade sem par → `ausente_no_destino`; destino `NAO_APLICAVEL` →
    `nao_aplicavel_no_destino`; destino `CONFORME` ou sem resultado na chave → `resolvido_no_destino`; módulo em

@@ -1,0 +1,1 @@
+phpcs exit 0 (0 = sem erros nem avisos)

@@ -151,7 +151,7 @@ porque o plugin lê a sala real (a distinção "API externa × backup" deixou de
 
 | ID | Verificação | Cobertura atual no plugin | Prio. |
 |---|---|---|---|
-| ENV-01 | Restauração completa: todo módulo da origem existe no destino | ★ parcialmente pelo comparador (`missing_in_target`) | 2 (spec 003) |
+| ENV-01 | Restauração completa: todo módulo da origem existe no destino | ★ comparação entre ofertas (spec 003, 0.4.0): ausentes, adicionais, ambíguas, modificadas | 2 (spec 003) |
 | ENV-02 | Plugin de atividade ausente no destino | ★ X-INT-03 | 1 |
 | ENV-03 | Arquivo quebrado no servidor | ★ X-INT-02 / X-CONT-01 / X-CONT-04 | 1 |
 | ENV-04 | Diferença entre visão administrativa e do estudante | ★ `--userid` (X-STR-01, X-CERT-01) | 1 (expor na página: spec 001 decide) |

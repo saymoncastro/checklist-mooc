@@ -1,0 +1,461 @@
+{
+    "contract": "comparison",
+    "contract_version": "1.0",
+    "engine": "local_mooc_audit 0.4.0",
+    "executed_at": "2026-10-29T15:26:55+00:00",
+    "timing": {
+        "snapshot_source_s": 0.042,
+        "snapshot_target_s": 0.008,
+        "rules_s": 0.017,
+        "compare_s": 0.013,
+        "total_s": 0.08,
+        "memory_peak_mb": 24
+    },
+    "source": {
+        "id": 15,
+        "shortname": "CEN_F",
+        "fullname": "Cenário F — nomes repetidos",
+        "startdate": "2026-01-01 00:00",
+        "enddate": "2026-12-31 23:59",
+        "category": "Inscrições Abertas",
+        "sections": 3,
+        "modules": 5,
+        "modules_by_type": {
+            "forum": 1,
+            "page": 4
+        },
+        "overall_status": "BLOQUEADA"
+    },
+    "target": {
+        "id": 16,
+        "shortname": "CEN_F_NOVA",
+        "fullname": "Cenário F — nomes repetidos",
+        "startdate": "2027-01-01 00:00",
+        "enddate": "2027-12-31 23:59",
+        "category": "Inscrições Abertas",
+        "sections": 3,
+        "modules": 6,
+        "modules_by_type": {
+            "forum": 2,
+            "page": 4
+        },
+        "overall_status": "BLOQUEADA"
+    },
+    "policy": {
+        "version": "2027-decisoes-2026-10-28",
+        "target_reoffer_year": 2027,
+        "source_reoffer_year": 2026,
+        "source_basis": "startdate",
+        "cycle_rules": [
+            "CL-05",
+            "CL-06",
+            "CL-07",
+            "CL-08",
+            "CL-14"
+        ],
+        "note": "Destino avaliado pela política 2027-decisoes-2026-10-28 para a reoferta 2027; origem avaliada pela mesma política no contexto da sua própria oferta (2026), para não tratar como herdado o que só mudou de ano."
+    },
+    "summary": {
+        "source_modules": 5,
+        "target_modules": 6,
+        "preserved": 2,
+        "modified": 0,
+        "modified_relevant": 0,
+        "missing_in_target": 0,
+        "extra_in_target": 0,
+        "ambiguous_groups": 2,
+        "ambiguous_source_modules": 3,
+        "duplicates_in_target": 1,
+        "matches_by_confidence": {
+            "alta": 2
+        },
+        "course_diffs_relevant": 0,
+        "expected_identifier_changes": 6,
+        "audit_counts": {
+            "pendencia_oferta": 0,
+            "novo_no_destino": 2,
+            "novo_em_atividade_adicional": 0,
+            "persistente": 10,
+            "indeterminado": 0,
+            "nao_verificavel_no_destino": 0,
+            "ausente_no_destino": 0,
+            "resolvido_no_destino": 0,
+            "nao_aplicavel_no_destino": 0
+        },
+        "verdict": "REVISAR"
+    },
+    "matches": [
+        {
+            "source_cmid": 174,
+            "target_cmid": 180,
+            "modname": "page",
+            "source_name": "Aula 1",
+            "target_name": "Aula 1",
+            "source_section": 1,
+            "target_section": 1,
+            "strategy": "type_section_name_content",
+            "confidence": "alta",
+            "state": "preservada",
+            "relevance": "nenhuma",
+            "problematic": false,
+            "diffs": [],
+            "expected_count": 2
+        },
+        {
+            "source_cmid": 175,
+            "target_cmid": 181,
+            "modname": "page",
+            "source_name": "Aula 1",
+            "target_name": "Aula 1",
+            "source_section": 1,
+            "target_section": 1,
+            "strategy": "type_section_name_content",
+            "confidence": "alta",
+            "state": "preservada",
+            "relevance": "nenhuma",
+            "problematic": false,
+            "diffs": [],
+            "expected_count": 2
+        }
+    ],
+    "missing_in_target": [],
+    "extra_in_target": [],
+    "ambiguities": [
+        {
+            "reason": "duplicado_no_destino",
+            "modname": "forum",
+            "name": "Avisos",
+            "source": [
+                {
+                    "cmid": 173,
+                    "section": 0,
+                    "position": 0
+                }
+            ],
+            "target": [
+                {
+                    "cmid": 178,
+                    "section": 0,
+                    "position": 0
+                },
+                {
+                    "cmid": 179,
+                    "section": 0,
+                    "position": 1
+                }
+            ],
+            "settings_identical": true,
+            "explanation": "Uma atividade na origem e 2 com o mesmo tipo e nome no destino (duplicidade): confira qual deve permanecer; nenhuma foi escolhida automaticamente."
+        },
+        {
+            "reason": "conteudo_equivalente",
+            "modname": "page",
+            "name": "Leitura complementar",
+            "source": [
+                {
+                    "cmid": 176,
+                    "section": 2,
+                    "position": 0
+                },
+                {
+                    "cmid": 177,
+                    "section": 2,
+                    "position": 1
+                }
+            ],
+            "target": [
+                {
+                    "cmid": 182,
+                    "section": 2,
+                    "position": 0
+                },
+                {
+                    "cmid": 183,
+                    "section": 2,
+                    "position": 1
+                }
+            ],
+            "settings_identical": true,
+            "explanation": "2 atividade(s) na origem e 2 no destino com o mesmo tipo, nome e conteúdo idêntico: não é possível dizer qual corresponde a qual."
+        }
+    ],
+    "course_diffs": [
+        {
+            "scope": "course",
+            "field": "shortname",
+            "source": "CEN_F",
+            "target": "CEN_F_NOVA",
+            "kind": "esperada",
+            "code": "offer_setting",
+            "explanation": "Configuração da oferta alterada (shortname: CEN_F → CEN_F_NOVA): esperado em uma nova oferta; a conformidade é verificada pela política da nova oferta."
+        },
+        {
+            "scope": "course",
+            "field": "startdate",
+            "source": "01/01/2026 00:00",
+            "target": "01/01/2027 00:00",
+            "kind": "esperada",
+            "code": "offer_setting",
+            "explanation": "Configuração da oferta alterada (startdate: 01/01/2026 00:00 → 01/01/2027 00:00): esperado em uma nova oferta; a conformidade é verificada pela política da nova oferta."
+        },
+        {
+            "scope": "course",
+            "field": "enddate",
+            "source": "31/12/2026 23:59",
+            "target": "31/12/2027 23:59",
+            "kind": "esperada",
+            "code": "offer_setting",
+            "explanation": "Configuração da oferta alterada (enddate: 31/12/2026 23:59 → 31/12/2027 23:59): esperado em uma nova oferta; a conformidade é verificada pela política da nova oferta."
+        },
+        {
+            "scope": "enrol",
+            "field": "self.status",
+            "source": 1,
+            "target": 0,
+            "kind": "esperada",
+            "code": "offer_setting",
+            "explanation": "Configuração da oferta alterada (self.status: 1 → 0): esperado em uma nova oferta; a conformidade é verificada pela política da nova oferta."
+        },
+        {
+            "scope": "enrol",
+            "field": "self.enrolstartdate",
+            "source": "(não definida)",
+            "target": "01/01/2027 00:00",
+            "kind": "esperada",
+            "code": "offer_setting",
+            "explanation": "Configuração da oferta alterada (self.enrolstartdate: (não definida) → 01/01/2027 00:00): esperado em uma nova oferta; a conformidade é verificada pela política da nova oferta."
+        },
+        {
+            "scope": "enrol",
+            "field": "self.enrolenddate",
+            "source": "(não definida)",
+            "target": "31/12/2027 23:59",
+            "kind": "esperada",
+            "code": "offer_setting",
+            "explanation": "Configuração da oferta alterada (self.enrolenddate: (não definida) → 31/12/2027 23:59): esperado em uma nova oferta; a conformidade é verificada pela política da nova oferta."
+        }
+    ],
+    "audit": {
+        "items": [
+            {
+                "classification": "novo_no_destino",
+                "rule": "CL-12",
+                "title": "Livro de notas: soma 100, agregação Natural, sem excluir vazias",
+                "category": "assessment_grades",
+                "severity": "Alta",
+                "status_source": null,
+                "status_target": "NAO_CONFORME",
+                "local": "Livro de notas > categoria raiz",
+                "cmid_source": null,
+                "cmid_target": null,
+                "link": "http://localhost:8094/grade/edit/tree/index.php?id=16",
+                "evidence_source": null,
+                "evidence_target": "aggregateonlygraded=1 (excluir notas vazias)",
+                "guidance": "Desmarcar \"Excluir notas vazias\": com ela ligada, a condição de 60 pontos do certificado é relativa só às atividades já avaliadas.",
+                "key": "CL-12|t:livro de notas > categoria raiz"
+            },
+            {
+                "classification": "novo_no_destino",
+                "rule": "CL-12",
+                "title": "Livro de notas: soma 100, agregação Natural, sem excluir vazias",
+                "category": "assessment_grades",
+                "severity": "Alta",
+                "status_source": null,
+                "status_target": "ATENCAO",
+                "local": "Livro de notas > Total do curso",
+                "cmid_source": null,
+                "cmid_target": null,
+                "link": "http://localhost:8094/grade/edit/tree/index.php?id=16",
+                "evidence_source": null,
+                "evidence_target": "grademax do total=0",
+                "guidance": null,
+                "key": "CL-12|t:livro de notas > total do curso"
+            },
+            {
+                "classification": "persistente",
+                "rule": "CL-23",
+                "title": "Certificado condicionado à Avaliação do curso e à nota mínima no total",
+                "category": "certification",
+                "severity": "Bloqueante",
+                "status_source": "NAO_CONFORME",
+                "status_target": "NAO_CONFORME",
+                "local": "Atividades do curso",
+                "cmid_source": null,
+                "cmid_target": null,
+                "link": "http://localhost:8094/backup/import.php?id=16",
+                "evidence_source": "nenhum certificado de conclusão (simplecertificate)",
+                "evidence_target": "nenhum certificado de conclusão (simplecertificate)",
+                "guidance": "Importar o certificado da Sala Padrão.",
+                "key": "CL-23|t:atividades do curso"
+            },
+            {
+                "classification": "persistente",
+                "rule": "X-CERT-01",
+                "title": "Alcançabilidade estática do certificado",
+                "category": "certification",
+                "severity": "Bloqueante",
+                "status_source": "NAO_CONFORME",
+                "status_target": "NAO_CONFORME",
+                "local": "Atividades do curso",
+                "cmid_source": null,
+                "cmid_target": null,
+                "link": null,
+                "evidence_source": "sem certificado de conclusão",
+                "evidence_target": "sem certificado de conclusão",
+                "guidance": "Verificação estática; a emissão real exige usuário de teste.",
+                "key": "X-CERT-01|t:atividades do curso"
+            },
+            {
+                "classification": "persistente",
+                "rule": "CL-11",
+                "title": "Pesquisa de Perfil presente e exigida pelo certificado",
+                "category": "institutional_resources",
+                "severity": "Alta",
+                "status_source": "NAO_CONFORME",
+                "status_target": "NAO_CONFORME",
+                "local": "Atividades do curso",
+                "cmid_source": null,
+                "cmid_target": null,
+                "link": "http://localhost:8094/backup/import.php?id=16",
+                "evidence_source": "nenhuma Pesquisa (feedback) ~ \"Pesquisa de Perfil\"",
+                "evidence_target": "nenhuma Pesquisa (feedback) ~ \"Pesquisa de Perfil\"",
+                "guidance": "Importar a Pesquisa de Perfil da Sala Padrão Oficial.",
+                "key": "CL-11|t:atividades do curso"
+            },
+            {
+                "classification": "persistente",
+                "rule": "CL-12",
+                "title": "Livro de notas: soma 100, agregação Natural, sem excluir vazias",
+                "category": "assessment_grades",
+                "severity": "Alta",
+                "status_source": "NAO_CONFORME",
+                "status_target": "NAO_CONFORME",
+                "local": "Livro de notas > Configurações",
+                "cmid_source": null,
+                "cmid_target": null,
+                "link": "http://localhost:8094/grade/edit/tree/index.php?id=16",
+                "evidence_source": "soma dos máximos=0 itens=",
+                "evidence_target": "soma dos máximos=0 itens=",
+                "guidance": "Ajustar as notas máximas das atividades.",
+                "key": "CL-12|t:livro de notas > configuracoes"
+            },
+            {
+                "classification": "persistente",
+                "rule": "CL-16",
+                "title": "Avaliação do curso restrita à conclusão de todas as atividades com nota",
+                "category": "completion_restrictions",
+                "severity": "Alta",
+                "status_source": "NAO_CONFORME",
+                "status_target": "NAO_CONFORME",
+                "local": "Atividades do curso",
+                "cmid_source": null,
+                "cmid_target": null,
+                "link": null,
+                "evidence_source": "nenhuma \"Avaliação do curso\"",
+                "evidence_target": "nenhuma \"Avaliação do curso\"",
+                "guidance": "Adicionar as restrições de conclusão faltantes.",
+                "key": "CL-16|t:atividades do curso"
+            },
+            {
+                "classification": "persistente",
+                "rule": "CL-04",
+                "title": "Sumário contém botões institucionais",
+                "category": "institutional_resources",
+                "severity": "Média",
+                "status_source": "NAO_CONFORME",
+                "status_target": "NAO_CONFORME",
+                "local": "Sumário do curso",
+                "cmid_source": null,
+                "cmid_target": null,
+                "link": "http://localhost:8094/course/edit.php?id=16",
+                "evidence_source": "link https://mooc.cefor.ifes.edu.br/moodle/login/signup.php ausente | link https://mooc.cefor.ifes.edu.br/moodle/course/index.php?categoryid=7 ausente",
+                "evidence_target": "link https://mooc.cefor.ifes.edu.br/moodle/login/signup.php ausente | link https://mooc.cefor.ifes.edu.br/moodle/course/index.php?categoryid=7 ausente",
+                "guidance": "Acrescentar o botão ao final do sumário (Editar configurações do curso > Descrição).",
+                "key": "CL-04|t:sumario do curso"
+            },
+            {
+                "classification": "persistente",
+                "rule": "CL-09",
+                "title": "Fórum institucional \"Espaço de interação\" presente e sem conclusão",
+                "category": "institutional_resources",
+                "severity": "Média",
+                "status_source": "NAO_CONFORME",
+                "status_target": "NAO_CONFORME",
+                "local": "Fóruns do curso",
+                "cmid_source": null,
+                "cmid_target": null,
+                "link": "http://localhost:8094/backup/import.php?id=16",
+                "evidence_source": "nenhum fórum com nome ~ \"Espaço de interação\"; existentes: [\"Avisos\"]",
+                "evidence_target": "nenhum fórum com nome ~ \"Espaço de interação\"; existentes: [\"Avisos\",\"Avisos\"]",
+                "guidance": "Importar o fórum da Sala Padrão. Verificação por nome canônico.",
+                "key": "CL-09|t:foruns do curso"
+            },
+            {
+                "classification": "persistente",
+                "rule": "CL-21",
+                "title": "Blocos padrão presentes na página do curso",
+                "category": "structure_blocks",
+                "severity": "Média",
+                "status_source": "NAO_CONFORME",
+                "status_target": "NAO_CONFORME",
+                "local": "Blocos da página do curso",
+                "cmid_source": null,
+                "cmid_target": null,
+                "link": "http://localhost:8094/course/view.php?id=16",
+                "evidence_source": "blocos=[] (fonte: block_manager) | bloco \"Atenção ao prazo\": ausente | bloco \"Dúvidas técnicas\": ausente | bloco \"Acessibilidade\": ausente",
+                "evidence_target": "blocos=[] (fonte: block_manager) | bloco \"Atenção ao prazo\": ausente | bloco \"Dúvidas técnicas\": ausente | bloco \"Acessibilidade\": ausente",
+                "guidance": "Adicionar o bloco HTML padrão (ou verificar o bloco de site correspondente).",
+                "key": "CL-21|t:blocos da pagina do curso"
+            },
+            {
+                "classification": "persistente",
+                "rule": "CL-22",
+                "title": "Licença para capacitação configurada",
+                "category": "institutional_resources",
+                "severity": "Média",
+                "status_source": "NAO_CONFORME",
+                "status_target": "NAO_CONFORME",
+                "local": "Área do curso (seção 0)",
+                "cmid_source": null,
+                "cmid_target": null,
+                "link": "http://localhost:8094/backup/import.php?id=16",
+                "evidence_source": "rótulo \"Licença para capacitação\": ausente",
+                "evidence_target": "rótulo \"Licença para capacitação\": ausente",
+                "guidance": "Importar os componentes da Licença para capacitação (rótulo, pesquisa e declaração) da Sala Padrão.",
+                "key": "CL-22|t:area do curso (secao 0)"
+            },
+            {
+                "classification": "persistente",
+                "rule": "CL-22",
+                "title": "Licença para capacitação configurada",
+                "category": "institutional_resources",
+                "severity": "Média",
+                "status_source": "NAO_CONFORME",
+                "status_target": "NAO_CONFORME",
+                "local": "Atividades do curso",
+                "cmid_source": null,
+                "cmid_target": null,
+                "link": "http://localhost:8094/backup/import.php?id=16",
+                "evidence_source": "pesquisa \"Licença para capacitação\": ausente | declaração \"Declaração licença para capacitação\": ausente",
+                "evidence_target": "pesquisa \"Licença para capacitação\": ausente | declaração \"Declaração licença para capacitação\": ausente",
+                "guidance": "Importar os componentes da Licença para capacitação (rótulo, pesquisa e declaração) da Sala Padrão.",
+                "key": "CL-22|t:atividades do curso"
+            }
+        ],
+        "counts": {
+            "pendencia_oferta": 0,
+            "novo_no_destino": 2,
+            "novo_em_atividade_adicional": 0,
+            "persistente": 10,
+            "indeterminado": 0,
+            "nao_verificavel_no_destino": 0,
+            "ausente_no_destino": 0,
+            "resolvido_no_destino": 0,
+            "nao_aplicavel_no_destino": 0
+        },
+        "source_policy_version": "2027-decisoes-2026-10-28",
+        "target_policy_version": "2027-decisoes-2026-10-28"
+    },
+    "manual_pairs": [],
+    "warnings": []
+}

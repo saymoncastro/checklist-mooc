@@ -80,9 +80,15 @@ class comparator {
         $t3 = microtime(true);
 
         $report = self::compare($src, $dst, $manual);
-        [$items, $counts] = audit_relation::relate($syear === null ? array_values(array_filter($sresults,
-            fn($r) => !in_array($r['rule'], self::CYCLE_RULES, true))) : $sresults, $tresults, $report['match'],
-            self::CYCLE_RULES);
+        [$items, $counts] = audit_relation::relate(
+            $syear === null ? array_values(array_filter(
+                $sresults,
+                fn($r) => !in_array($r['rule'], self::CYCLE_RULES, true)
+            )) : $sresults,
+            $tresults,
+            $report['match'],
+            self::CYCLE_RULES
+        );
         unset($report['match']);
         $t4 = microtime(true);
 
@@ -94,8 +100,11 @@ class comparator {
             'source_reoffer_year' => $syear,
             'source_basis' => $syear === null ? 'sem_contexto' : 'startdate',
             'cycle_rules' => self::CYCLE_RULES,
-            'note' => get_string($syear === null ? 'cmp_policy_note_nocontext' : 'cmp_policy_note', 'local_mooc_audit',
-                (object) ['source' => $syear, 'target' => $tpolicy['reoffer_year'], 'version' => $tpolicy['policy_version']]),
+            'note' => get_string(
+                $syear === null ? 'cmp_policy_note_nocontext' : 'cmp_policy_note',
+                'local_mooc_audit',
+                (object) ['source' => $syear, 'target' => $tpolicy['reoffer_year'], 'version' => $tpolicy['policy_version']]
+            ),
         ];
         $report['audit'] = ['items' => $items, 'counts' => $counts, 'source_policy_version' => $spolicy['policy_version'],
             'target_policy_version' => $tpolicy['policy_version']];
@@ -194,8 +203,11 @@ class comparator {
             }
             $extra[] = $e;
         }
-        $ambiguities = array_map(fn($a) => $a + ['explanation' => get_string('cmp_amb_' . $a['reason'], 'local_mooc_audit',
-            (object) ['n' => count($a['source']), 'm' => count($a['target'])])], $match['ambiguities']);
+        $ambiguities = array_map(fn($a) => $a + ['explanation' => get_string(
+            'cmp_amb_' . $a['reason'],
+            'local_mooc_audit',
+            (object) ['n' => count($a['source']), 'm' => count($a['target'])]
+        )], $match['ambiguities']);
 
         [$coursediffs, $ids] = differ::course($src, $dst, $ctx);
         $warnings = [];
@@ -205,7 +217,8 @@ class comparator {
                     'target' => $mp['target_cmid'], 'reason' => get_string('cmp_manual_' . $mp['reason'], 'local_mooc_audit')]);
             }
         }
-        if ($src['course']['startdate'] && $dst['course']['startdate'] && $src['course']['startdate'] > $dst['course']['startdate']) {
+        [$sstart, $tstart] = [$src['course']['startdate'], $dst['course']['startdate']];
+        if ($sstart && $tstart && $sstart > $tstart) {
             $warnings[] = get_string('cmp_inverted', 'local_mooc_audit');
         }
 
@@ -280,7 +293,8 @@ class comparator {
         foreach ($r['audit']['items'] as $i) {
             $target = in_array($i['classification'], ['pendencia_oferta', 'novo_no_destino', 'novo_em_atividade_adicional',
                 'persistente', 'indeterminado'], true);
-            $tofix = $tofix || ($target && $i['status_target'] === status::NAO_CONFORME && $i['classification'] !== 'indeterminado');
+            $tofix = $tofix || ($target && $i['status_target'] === status::NAO_CONFORME
+                && $i['classification'] !== 'indeterminado');
             $tocheck = $tocheck || $target || $i['classification'] === 'nao_verificavel_no_destino';
         }
         $informative = (bool) array_filter($r['matches'], fn($m) => $m['relevance'] === differ::INFO)
@@ -362,8 +376,13 @@ class comparator {
             . $j(array_diff_key($r['summary'], ['verdict' => 1]));
         $l[] = "--- {$str('cmp_section_pending')}";
         foreach ($r['audit']['items'] as $i) {
-            $l[] = sprintf('  [%s] %-9s %-11s %s', $str('cmp_class_' . $i['classification']), $i['rule'], $i['severity'] ?? '',
-                $i['title']);
+            $l[] = sprintf(
+                '  [%s] %-9s %-11s %s',
+                $str('cmp_class_' . $i['classification']),
+                $i['rule'],
+                $i['severity'] ?? '',
+                $i['title']
+            );
             $l[] = "      {$str('label_local')}: {$i['local']}" . ($i['link'] ? ' → ' . $i['link'] : '');
             $l[] = "      {$str('cmp_status')}: " . ($i['status_source'] ?? '—') . ' → ' . ($i['status_target'] ?? '—');
             if ($i['evidence_source'] !== null) {
@@ -397,8 +416,10 @@ class comparator {
         $l[] = "--- {$str('cmp_section_extra')}";
         foreach ($r['extra_in_target'] as $m) {
             $l[] = "  [{$str('cmp_kind_' . $m['kind'])}] {$m['modname']} \"{$m['name']}\" ({$str('label_section')} "
-                . "{$m['section']}, cmid {$m['cmid']})" . (isset($m['duplicate_of']) ? ' ' . $str('cmp_duplicate_of',
-                $m['duplicate_of']) : '');
+                . "{$m['section']}, cmid {$m['cmid']})" . (isset($m['duplicate_of']) ? ' ' . $str(
+                    'cmp_duplicate_of',
+                    $m['duplicate_of']
+                ) : '');
         }
         $l[] = "--- {$str('cmp_section_course')}";
         foreach ($r['course_diffs'] as $d) {

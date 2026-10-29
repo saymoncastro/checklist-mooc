@@ -301,8 +301,10 @@ class matcher {
                 $parts[] = "t:$k=$sig";
             }
         }
-        $files = array_map(fn($f) => "{$f['filearea']}:{$f['filepath']}{$f['filename']}:{$f['filesize']}",
-            $m['files']['list'] ?? []);
+        $files = array_map(
+            fn($f) => "{$f['filearea']}:{$f['filepath']}{$f['filename']}:{$f['filesize']}",
+            $m['files']['list'] ?? []
+        );
         sort($files);
         foreach ($files as $f) {
             $parts[] = "f:$f";

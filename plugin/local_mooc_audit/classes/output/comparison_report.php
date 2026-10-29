@@ -122,10 +122,12 @@ class comparison_report implements renderable, templatable {
         usort($modified, fn($x, $y) => differ::KIND_ORDER[$x['relevance']] <=> differ::KIND_ORDER[$y['relevance']]);
         $d->modified = array_map(fn($m) => $this->match($m, false), $modified);
         $d->hasmodified = (bool) $d->modified;
-        $d->extra = array_map(fn($e) => (object) array_merge($e, ['kindlabel' => $str('cmp_kind_' . $e['kind']),
+        $d->extra = array_map(
+            fn($e) => (object) array_merge($e, ['kindlabel' => $str('cmp_kind_' . $e['kind']),
             'kindclass' => self::KIND_CLASS[$e['kind']], 'explanation' => $str('cmp_code_' . $e['code']),
             'duplicate' => isset($e['duplicate_of']) ? $str('cmp_duplicate_of', $e['duplicate_of']) : null]),
-            $r['extra_in_target']);
+            $r['extra_in_target']
+        );
         $d->hasextra = (bool) $d->extra;
 
         $notexpected = array_values(array_filter($r['course_diffs'], fn($x) => $x['kind'] !== differ::EXPECTED));
@@ -240,7 +242,8 @@ class comparison_report implements renderable, templatable {
                 foreach ($a['target'] as $tgt) {
                     $options[] = (object) ['value' => $src['cmid'] . '-' . $tgt['cmid'],
                         'label' => get_string('label_section', 'local_mooc_audit') . " {$tgt['section']}, "
-                            . get_string('cmp_position', 'local_mooc_audit') . ' ' . ($tgt['position'] + 1) . " (id {$tgt['cmid']})"];
+                            . get_string('cmp_position', 'local_mooc_audit') . ' ' . ($tgt['position'] + 1)
+                            . " (id {$tgt['cmid']})"];
                 }
                 $pickers[] = (object) ['id' => "local_mooc_audit-amb-$i-{$src['cmid']}", 'source' => (object) $src,
                     'sourceurl' => (new moodle_url("/mod/{$a['modname']}/view.php", ['id' => $src['cmid']]))->out(false),
@@ -248,8 +251,10 @@ class comparison_report implements renderable, templatable {
             }
             $out[] = (object) array_merge($a, [
                 'reasonlabel' => $a['explanation'],
-                'settings' => get_string($a['settings_identical'] ? 'cmp_settings_identical' : 'cmp_settings_different',
-                    'local_mooc_audit'),
+                'settings' => get_string(
+                    $a['settings_identical'] ? 'cmp_settings_identical' : 'cmp_settings_different',
+                    'local_mooc_audit'
+                ),
                 'targets' => array_map(fn($t) => (object) array_merge($t, ['url' => (new moodle_url(
                     "/mod/{$a['modname']}/view.php",
                     ['id' => $t['cmid']]
@@ -276,8 +281,10 @@ class comparison_report implements renderable, templatable {
         $o->kindclass = self::KIND_CLASS[$m['relevance']];
         $o->renamed = $m['source_name'] !== $m['target_name'];
         $o->targeturl = (new moodle_url('/course/modedit.php', ['update' => $m['target_cmid']]))->out(false);
-        $o->diffs = $compact ? [] : array_map([$this, 'diff'], array_values(array_filter($m['diffs'],
-            fn($x) => $x['kind'] !== differ::EXPECTED)));
+        $o->diffs = $compact ? [] : array_map([$this, 'diff'], array_values(array_filter(
+            $m['diffs'],
+            fn($x) => $x['kind'] !== differ::EXPECTED
+        )));
         return $o;
     }
 

@@ -77,16 +77,16 @@ final class audit_relation_test extends \advanced_testcase {
     public function test_target_classes(): void {
         $nc = status::NAO_CONFORME;
         $src = [
-            $this->r('CL-13', $nc, 100),            // Persistent.
+            $this->r('CL-13', $nc, 100), // Persistent.
             $this->r('CL-17', status::CONFORME, 101), // New in the target.
-            $this->r('CL-06', status::CONFORME),    // Cycle: pending, whatever the source.
-            $this->r('CL-07', $nc),                 // Cycle problem in the source only: not listed.
+            $this->r('CL-06', status::CONFORME), // Cycle: pending, whatever the source.
+            $this->r('CL-07', $nc), // Cycle problem in the source only: not listed.
         ];
         $dst = [
             $this->r('CL-13', $nc, 300),
             $this->r('CL-17', status::ATENCAO, 301),
-            $this->r('X-CONT-01', $nc, 303),        // Additional activity.
-            $this->r('X-CONT-01', $nc, 305),        // Ambiguous activity.
+            $this->r('X-CONT-01', $nc, 303), // Additional activity.
+            $this->r('X-CONT-01', $nc, 305), // Ambiguous activity.
             $this->r('CL-06', $nc),
             $this->r('CL-07', status::CONFORME),
             $this->r('X-INT-03', status::NAO_VERIFICAVEL),
@@ -102,15 +102,27 @@ final class audit_relation_test extends \advanced_testcase {
     }
 
     /**
+     * A warning that became a non-conformity is new in the target; a non-conformity that became a warning persists.
+     */
+    public function test_worsening_is_new_and_improvement_persists(): void {
+        $src = [$this->r('CL-18', status::ATENCAO, 100), $this->r('CL-13', status::NAO_CONFORME, 101)];
+        $dst = [$this->r('CL-18', status::NAO_CONFORME, 300), $this->r('CL-13', status::ATENCAO, 301)];
+        $this->assertSame(
+            ['CL-18|100|300' => 'novo_no_destino', 'CL-13|101|301' => 'persistente'],
+            $this->classify($src, $dst)
+        );
+    }
+
+    /**
      * Source problems that do not appear in the target.
      */
     public function test_source_classes(): void {
         $nc = status::NAO_CONFORME;
         $src = [
-            $this->r('CL-13', $nc, 100),   // Resolved (target conformant).
-            $this->r('CL-19', $nc, 101),   // Resolved (no result at that location in the target).
+            $this->r('CL-13', $nc, 100), // Resolved (target conformant).
+            $this->r('CL-19', $nc, 101), // Resolved (no result at that location in the target).
             $this->r('X-CONT-01', $nc, 102), // Missing activity.
-            $this->r('CL-18', $nc, 104),   // Ambiguous activity.
+            $this->r('CL-18', $nc, 104), // Ambiguous activity.
             $this->r('CL-12', $nc, null, 'Livro de notas > categoria raiz'), // Not applicable in the target.
         ];
         $dst = [
@@ -137,16 +149,30 @@ final class audit_relation_test extends \advanced_testcase {
     public function test_keys_without_ids(): void {
         $pairs = [100 => 300];
         $reverse = [300 => 100];
-        $s = audit_relation::key($this->r('CL-08', 'x', null, 'Métodos de inscrição > Autoinscrição (id 24)'), 'source', $pairs,
-            $reverse);
-        $t = audit_relation::key($this->r('CL-08', 'x', null, 'Métodos de inscrição > Autoinscrição (id 97)'), 'target', $pairs,
-            $reverse);
+        $s = audit_relation::key(
+            $this->r('CL-08', 'x', null, 'Métodos de inscrição > Autoinscrição (id 24)'),
+            'source',
+            $pairs,
+            $reverse
+        );
+        $t = audit_relation::key(
+            $this->r('CL-08', 'x', null, 'Métodos de inscrição > Autoinscrição (id 97)'),
+            'target',
+            $pairs,
+            $reverse
+        );
         $this->assertSame($s, $t);
         $this->assertStringNotContainsString('24', $s);
-        $this->assertSame(audit_relation::key($this->r('CL-13', 'x', 100), 'source', $pairs, $reverse),
-            audit_relation::key($this->r('CL-13', 'x', 300), 'target', $pairs, $reverse));
-        $this->assertSame('CL-20|s:3', audit_relation::key($this->r('CL-20', 'x', null, 'Seção 3 "Topic 3"', 3), 'target', $pairs,
-            $reverse));
+        $this->assertSame(
+            audit_relation::key($this->r('CL-13', 'x', 100), 'source', $pairs, $reverse),
+            audit_relation::key($this->r('CL-13', 'x', 300), 'target', $pairs, $reverse)
+        );
+        $this->assertSame('CL-20|s:3', audit_relation::key(
+            $this->r('CL-20', 'x', null, 'Seção 3 "Topic 3"', 3),
+            'target',
+            $pairs,
+            $reverse
+        ));
     }
 
     /**

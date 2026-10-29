@@ -188,8 +188,14 @@ class differ {
             }
         }
         if ((int) $a['completionexpected'] !== (int) $b['completionexpected']) {
-            $diffs[] = self::d($m, 'completionexpected', helpers::d($a['completionexpected'] ?: null),
-                helpers::d($b['completionexpected'] ?: null), self::EXPECTED, 'date_shifted');
+            $diffs[] = self::d(
+                $m,
+                'completionexpected',
+                helpers::d($a['completionexpected'] ?: null),
+                helpers::d($b['completionexpected'] ?: null),
+                self::EXPECTED,
+                'date_shifted'
+            );
         }
 
         // Instance present on one side only.
@@ -217,8 +223,14 @@ class differ {
                 continue;
             }
             if (in_array($k, self::DATE_FIELDS, true)) {
-                $diffs[] = self::d($m, "extra.$k", helpers::d((int) $v ?: null), helpers::d((int) $w ?: null),
-                    self::EXPECTED, 'date_shifted');
+                $diffs[] = self::d(
+                    $m,
+                    "extra.$k",
+                    helpers::d((int) $v ?: null),
+                    helpers::d((int) $w ?: null),
+                    self::EXPECTED,
+                    'date_shifted'
+                );
             } else if (in_array($k, self::CONTENT_COUNTS, true)) {
                 $diffs[] = self::content_count($k, $v, $w, $b, $ctx);
             } else if (in_array($k, self::DISPLAY_FIELDS, true)) {
@@ -264,8 +276,15 @@ class differ {
         }
         $srcref = $ctx['srcbyinstance'][$type][$v] ?? null;
         $name = $srcref ? $srcref['name'] : (string) $v;
-        return [self::d('module', "extra.$k", $v ?: null, $w ?: null, self::RELEVANT, 'reference_unmapped',
-            ['ref' => $name]), false];
+        return [self::d(
+            'module',
+            "extra.$k",
+            $v ?: null,
+            $w ?: null,
+            self::RELEVANT,
+            'reference_unmapped',
+            ['ref' => $name]
+        ), false];
     }
 
     /**
@@ -293,8 +312,11 @@ class differ {
             }
             if ($deps) {
                 $d['dependents'] = $deps;
-                $d['explanation'] .= ' ' . get_string('cmp_dependents', 'local_mooc_audit',
-                    implode(', ', array_map(fn($x) => "{$x['modname']} \"{$x['name']}\"", $deps)));
+                $d['explanation'] .= ' ' . get_string(
+                    'cmp_dependents',
+                    'local_mooc_audit',
+                    implode(', ', array_map(fn($x) => "{$x['modname']} \"{$x['name']}\"", $deps))
+                );
             }
         }
         return $d;
@@ -326,12 +348,24 @@ class differ {
         $nb = self::normalise(self::empty_tree($tb), true);
         if (json_encode($na) !== json_encode($nb)) {
             if (!$unmapped) {
-                $out[] = self::d($scope, $field, self::describe($ta, $ctx['src']), self::describe($tb, $ctx['dst']),
-                    self::RELEVANT, 'availability_changed');
+                $out[] = self::d(
+                    $scope,
+                    $field,
+                    self::describe($ta, $ctx['src']),
+                    self::describe($tb, $ctx['dst']),
+                    self::RELEVANT,
+                    'availability_changed'
+                );
             }
         } else if (json_encode(self::normalise($remapped, false)) !== json_encode(self::normalise(self::empty_tree($tb), false))) {
-            $out[] = self::d($scope, $field, self::describe($ta, $ctx['src']), self::describe($tb, $ctx['dst']),
-                self::EXPECTED, 'date_shifted');
+            $out[] = self::d(
+                $scope,
+                $field,
+                self::describe($ta, $ctx['src']),
+                self::describe($tb, $ctx['dst']),
+                self::EXPECTED,
+                'date_shifted'
+            );
         }
         return $out;
     }
@@ -425,7 +459,8 @@ class differ {
         foreach (\local_mooc_audit\snapshot::walk_conditions($tree) as $c) {
             $type = (string) ($c['type'] ?? '?');
             if ($type === 'completion') {
-                $parts[] = get_string('cmp_cond_completion', 'local_mooc_audit', $s['modules'][(int) ($c['cm'] ?? 0)]['name'] ?? '?');
+                $name = $s['modules'][(int) ($c['cm'] ?? 0)]['name'] ?? '?';
+                $parts[] = get_string('cmp_cond_completion', 'local_mooc_audit', $name);
             } else if ($type === 'grade') {
                 $id = (int) ($c['id'] ?? 0);
                 $name = $id === (int) ($s['grade']['course_item']['id'] ?? -1) ? get_string('cmp_course_total', 'local_mooc_audit')
@@ -515,8 +550,14 @@ class differ {
         $svis = (int) ($ctx['src']['sections'][$a['sectionid']]['visible'] ?? 1);
         $tvis = (int) ($ctx['dst']['sections'][$b['sectionid']]['visible'] ?? 1);
         if ($b['files']['list'] && ($a['visible'] && $svis) && (!$b['visible'] || !$tvis)) {
-            $out[] = self::d('module', 'files', get_string('cmp_available', 'local_mooc_audit'),
-                get_string('cmp_unavailable', 'local_mooc_audit'), self::RELEVANT, 'file_unavailable');
+            $out[] = self::d(
+                'module',
+                'files',
+                get_string('cmp_available', 'local_mooc_audit'),
+                get_string('cmp_unavailable', 'local_mooc_audit'),
+                self::RELEVANT,
+                'file_unavailable'
+            );
         }
         return $out;
     }
@@ -584,8 +625,14 @@ class differ {
             }
         }
         if (($a['category']['name'] ?? null) !== ($b['category']['name'] ?? null)) {
-            $out[] = self::d('course', 'category', $a['category']['name'] ?? null, $b['category']['name'] ?? null,
-                self::EXPECTED, 'offer_setting');
+            $out[] = self::d(
+                'course',
+                'category',
+                $a['category']['name'] ?? null,
+                $b['category']['name'] ?? null,
+                self::EXPECTED,
+                'offer_setting'
+            );
         }
         foreach (self::COURSE_SETTINGS as $f) {
             if ($a[$f] != $b[$f]) {
@@ -596,13 +643,25 @@ class differ {
         $fb = $b['formatoptions'] ?? [];
         foreach (array_unique(array_merge(array_keys($fa), array_keys($fb))) as $f) {
             if (($fa[$f] ?? null) != ($fb[$f] ?? null)) {
-                $out[] = self::d('course', "formatoptions.$f", $fa[$f] ?? null, $fb[$f] ?? null, self::RELEVANT,
-                    'course_setting_changed');
+                $out[] = self::d(
+                    'course',
+                    "formatoptions.$f",
+                    $fa[$f] ?? null,
+                    $fb[$f] ?? null,
+                    self::RELEVANT,
+                    'course_setting_changed'
+                );
             }
         }
         if (matcher::text_signature($a['summary']) !== matcher::text_signature($b['summary'])) {
-            $out[] = self::d('course', 'summary', \core_text::substr(helpers::text($a['summary']), 0, 80),
-                \core_text::substr(helpers::text($b['summary']), 0, 80), self::INFO, 'text_changed');
+            $out[] = self::d(
+                'course',
+                'summary',
+                \core_text::substr(helpers::text($a['summary']), 0, 80),
+                \core_text::substr(helpers::text($b['summary']), 0, 80),
+                self::INFO,
+                'text_changed'
+            );
         }
         array_push($out, ...self::sections($src, $dst, $ctx));
         array_push($out, ...self::enrols($src['enrols'], $dst['enrols']));
@@ -636,11 +695,22 @@ class differ {
                 $out[] = self::d('section', "section[$n].name", $x['name'], $y['name'], self::INFO, 'section_renamed');
             }
             if ((int) $x['visible'] !== (int) $y['visible']) {
-                $out[] = self::d('section', "section[$n].visible", (int) $x['visible'], (int) $y['visible'], self::RELEVANT,
-                    'section_visibility_changed');
+                $out[] = self::d(
+                    'section',
+                    "section[$n].visible",
+                    (int) $x['visible'],
+                    (int) $y['visible'],
+                    self::RELEVANT,
+                    'section_visibility_changed'
+                );
             }
-            array_push($out, ...self::availability('section', "section[$n].availability", $x['availability'],
-                $y['availability'], $ctx));
+            array_push($out, ...self::availability(
+                'section',
+                "section[$n].availability",
+                $x['availability'],
+                $y['availability'],
+                $ctx
+            ));
         }
         return $out;
     }
@@ -676,13 +746,25 @@ class differ {
             }
             foreach (['enrolstartdate', 'enrolenddate'] as $f) {
                 if ($e[$f] != $b[$name][$f]) {
-                    $out[] = self::d('enrol', "$name.$f", helpers::d($e[$f] ?: null), helpers::d($b[$name][$f] ?: null),
-                        self::EXPECTED, 'offer_setting');
+                    $out[] = self::d(
+                        'enrol',
+                        "$name.$f",
+                        helpers::d($e[$f] ?: null),
+                        helpers::d($b[$name][$f] ?: null),
+                        self::EXPECTED,
+                        'offer_setting'
+                    );
                 }
             }
             if ($e['has_password'] !== $b[$name]['has_password']) {
-                $out[] = self::d('enrol', "$name.has_password", $e['has_password'], $b[$name]['has_password'], self::RELEVANT,
-                    'course_setting_changed');
+                $out[] = self::d(
+                    'enrol',
+                    "$name.has_password",
+                    $e['has_password'],
+                    $b[$name]['has_password'],
+                    self::RELEVANT,
+                    'course_setting_changed'
+                );
             }
         }
         foreach ($b as $name => $e) {
@@ -744,8 +826,14 @@ class differ {
         $ca = $src['grade']['course_item'];
         $cb = $dst['grade']['course_item'];
         if ($ca && $cb && (float) $ca['grademax'] !== (float) $cb['grademax']) {
-            $out[] = self::d('grade', 'course_total.grademax', $ca['grademax'], $cb['grademax'], self::RELEVANT,
-                'grade_item_changed');
+            $out[] = self::d(
+                'grade',
+                'course_total.grademax',
+                $ca['grademax'],
+                $cb['grademax'],
+                self::RELEVANT,
+                'grade_item_changed'
+            );
         }
         return $out;
     }

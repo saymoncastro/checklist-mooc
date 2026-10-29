@@ -1,6 +1,6 @@
 # local_mooc_audit — auditoria técnica de cursos MOOC dentro do Moodle 4.5
 
-Plugin local (versão 0.3.0, entregas das specs 001 e 002) que audita uma sala existente a partir do seu `courseid`, sem depender do MOOC Admin
+Plugin local (versão 0.4.0, entregas das specs 001, 002 e 003) que audita uma sala existente a partir do seu `courseid`, sem depender do MOOC Admin
 nem de arquivos `.mbz`. A **auditoria é somente leitura**; a **correção assistida** (spec 002) é um componente separado
 que só escreve após prévia, confirmação explícita e revalidação. Reaproveita o catálogo de regras e as decisões institucionais do projeto `checklist-mooc`.
 
@@ -18,6 +18,16 @@ impacto simulado, riscos/dependências/impedimentos, quem pode executar). Execut
 questionário (CL-13) e encerramento de questionário igual ao término do curso (CL-14). Orientadas: CL-14 dos demais
 tipos e critério de conclusão (CL-17). 118 testes PHPUnit, 6 cenários Behat, PHPCS limpo. Matriz das 29 regras em
 `specs/002-correcao-assistida/correction-matrix.md`; evidências em `plugin-results/0.3.0/`.
+
+**Estado (0.4.0, spec 003 — comparação entre ofertas, experimental):** página *Administração do site > Cursos >
+Comparar ofertas* (e link "Comparar com a oferta anterior" no relatório de auditoria), CLI e contrato JSON próprio
+`comparison` 1.0. Compara a sala da oferta anterior (origem) com a da nova oferta (destino) só pelos ids: atividades
+preservadas, ausentes, adicionais, modificadas e correspondências ambíguas (casamento em passes determinísticos, nunca
+por `cmid`; correspondência manual sem persistência); diferenças classificadas em esperadas, relevantes e informativas;
+relação entre as duas auditorias (persistente, novo no destino, pendência da nova oferta, resolvido/ausente no destino),
+com a origem avaliada no ano da sua própria oferta. Restrita a gerentes, com a capacidade nas duas salas; somente
+leitura. 161 testes PHPUnit, 9 cenários Behat, PHPCS limpo. Evidências e medições em `plugin-results/0.4.0/`;
+especificação em `specs/003-comparacao-ofertas/`.
 
 ## Instalação
 
@@ -51,13 +61,18 @@ php local/mooc_audit/cli/audit.php --courseid=3 --json --out=/tmp/curso3.json
 php local/mooc_audit/cli/audit.php --courseid=3 --userid=42          # visão de um estudante de teste
 php local/mooc_audit/cli/audit.php --courseid=3 --policy=politica.json
 
-# Comparação origem x destino (correspondência por tipo+seção+nome, nunca por cmid)
+# Comparação entre ofertas (origem = oferta anterior, destino = nova oferta); --json = contrato comparison 1.0
 php local/mooc_audit/cli/compare.php --source=8 --target=10
+php local/mooc_audit/cli/compare.php --source=8 --target=10 --json --out=/tmp/comparacao.json
+php local/mooc_audit/cli/compare.php --source=8 --target=10 --pairs=179-214   # correspondência manual (não gravada)
 
 # Página web (exige login e a capacidade no contexto do curso); também pelo menu do curso: Mais > Auditoria técnica
 /local/mooc_audit/index.php?courseid=3            # relatório (inventário, situação geral, inconformidades por gravidade/categoria, alertas, conformes, avisos)
 /local/mooc_audit/index.php?courseid=3&format=json
 /local/mooc_audit/correction.php?courseid=3&rule=CL-13&cmid=24   # prévia (GET, nunca grava); confirmar = POST com sesskey
+/local/mooc_audit/compare.php                                  # seleção (Administração do site > Cursos > Comparar ofertas)
+/local/mooc_audit/compare.php?source=8&target=10&confirm=1     # comparação (exige local/mooc_audit:compare nas duas salas)
+/local/mooc_audit/compare.php?source=8&target=10&confirm=1&format=json
 ```
 
 ### Correção assistida (spec 002)
@@ -86,7 +101,7 @@ Scripts **apenas para ambientes de teste** (recusam rodar fora de `localhost`): 
 gerador de questões do núcleo carrega classes do PHPUnit) e `cli/make_import.php` (cria sala vazia e importa com o
 mecanismo nativo `core_course_external::import_course`).
 
-## Estrutura (0.3.0)
+## Estrutura (0.4.0)
 
 | Arquivo | Papel |
 |---|---|
@@ -98,8 +113,14 @@ mecanismo nativo `core_course_external::import_course`).
 | `classes/local/{status,category,helpers,locator}.php` | Estados/gravidades, 8 categorias, helpers compartilhados, mapeamento finding → URL de correção (loci: configurações/página do módulo, configurações do curso, inscrição, livro de notas, blocos, seção, importação, nenhum) |
 | `classes/engine.php` | Execução isolada das regras, situação geral, contrato JSON 1.0 (`to_json()` é a única codificação, usada pela página e pelo CLI), renderização texto |
 | `schema/report-v1.0.schema.json` | JSON Schema do contrato 1.0 (a spec aponta para este arquivo por link simbólico: fonte única); validado por `tests/contract_test.php` |
-| `classes/comparator.php` | Comparador experimental origem × destino (inalterado; escopo da spec 003) |
+| `classes/comparator.php` | Comparação entre ofertas (spec 003): `run()` (dois retratos, auditoria do destino com a política vigente e da origem no ano dela, relação), `compare()` estrutural, `require_access()`, contrato `comparison` 1.0 (`to_json()`), texto da CLI |
+| `classes/local/comparison/matcher.php` | Correspondência sem ids: passes com unicidade nos dois lados (tipo+seção+nome, +conteúdo, tipo+nome, tipo+conteúdo, tipo+seção+posição), congelamento de ambiguidades, pares manuais, impressões de conteúdo e de configuração |
+| `classes/local/comparison/differ.php` | Diferenças por par e da sala, cada uma com tipo (esperada/relevante/informativa), código e explicação; restrições remapeadas, arquivos (registro/conteúdo/disponibilidade), glossário → jogos |
+| `classes/local/comparison/audit_relation.php` | Relaciona as auditorias pela chave de local sem ids; classes persistente, novo, pendência da oferta, resolvido, ausente etc. |
+| `compare.php`, `classes/form/compare_form.php`, `classes/output/comparison_report.php`, `templates/comparison*.mustache` | Página de seleção (POST com sesskey → URL GET reproduzível) e relatório da comparação |
+| `schema/comparison-v1.0.schema.json` | JSON Schema do contrato `comparison` 1.0 |
 | `cli/audit.php`, `cli/compare.php` | Linha de comando |
+| `cli/make_scenarios.php` | Somente laboratório: cenários A–G da comparação (gerador + importação nativa) |
 | `lib.php` | Callback `local_mooc_audit_extend_navigation_course()`: entrada "Auditoria técnica" no menu do curso para quem tem a capacidade |
 | `index.php` | Página do relatório no contexto do curso (`courseid` ou `id`; `format=json`); local de cada resultado é link para a página de correção quando existe; botão "Executar novamente"; sem id, formulário de compatibilidade |
 | `classes/output/report.php`, `renderer.php`, `templates/report*.mustache` | Dados do relatório para o template (agrupamento por gravidade → categoria, listas de alertas, não verificados, erros, conformes, avisos) e renderização |
@@ -125,6 +146,11 @@ mecanismo nativo `core_course_external::import_course`).
 | `tests/local/correction/*_test.php`, `tests/helper/correction_testcase.php`, `tests/fixtures/correction/` | Planejador, executor (sucesso, conflitos, permissões, estudantes, falha com rollback, releitura, reauditoria, trava), verificador, proposta, saída |
 | `tests/privacy/provider_test.php` | Metadados, exportação e anonimização |
 | `tests/behat/correction.feature` | Ver proposta, confirmar (com axe), cancelar, professor editor aplica, professor não editor vê mas não aplica |
+| `tests/local/comparison/*_test.php`, `tests/helper/snapshot_builder.php` | Correspondência, diferenças e relação entre auditorias sobre retratos sintéticos (sem banco) |
+| `tests/comparator_test.php` | Cenários A–G com cursos reais e importação por backup/restore; cada saída validada contra o schema |
+| `tests/compare_access_test.php`, `tests/compare_readonly_test.php`, `tests/comparison_contract_test.php`, `tests/comparison_output_test.php` | Capacidade nas duas salas e busca restrita; não modificação das duas salas e ausência de dados pessoais; contrato; página e texto |
+| `tests/helper/schema_validator.php` | Validador mínimo de JSON Schema (contratos 1.0 e comparison 1.0) |
+| `tests/behat/compare.feature` | Seleção pela administração, confirmação obrigatória, relatório (com axe), correspondência manual, link a partir da auditoria, professor editor sem acesso |
 | `tests/behat/audit_page.feature` | Gerente abre o relatório pelo menu do curso (com JavaScript e verificação de acessibilidade axe), reexecuta; professor editor abre o relatório; professor não editor e estudante não veem a entrada |
 
 Fluxo de desenvolvimento: `specs/001-auditoria-tecnica-operacional/` (Spec Kit) e `.specify/memory/constitution.md`.
@@ -157,7 +183,7 @@ mudam).
 ## Verificação
 
 ```bash
-vendor/bin/phpunit --testsuite local_mooc_audit_testsuite      # 118 testes
+vendor/bin/phpunit --testsuite local_mooc_audit_testsuite      # 161 testes
 php admin/tool/behat/cli/run.php --tags=@local_mooc_audit       # exige Selenium; ver moodle-env/README.md
 vendor/bin/phpcs --standard=moodle local/mooc_audit             # moodlehq/moodle-cs
 ```
@@ -178,4 +204,9 @@ vendor/bin/phpcs --standard=moodle local/mooc_audit             # moodlehq/moodl
 - Detecção de conflito: entre a releitura do valor dentro da transação e a gravação, uma edição simultânea pela tela de
   edição não usa a mesma trava (janela de milissegundos); a releitura pela API e a reauditoria acusariam a divergência.
 - Sem desfazer automático; o valor anterior está na trilha para reversão manual.
-- `cli/compare.php` (comparador origem × destino) segue experimental e fora do contrato 1.0 (spec 003).
+- Comparação entre ofertas (spec 003, experimental): a origem é avaliada com a política vigente no ano da sua data de
+  início (a política não tem versões por ano); a correspondência por conteúdo/posição tem confiança média;
+  correspondências manuais não são gravadas; nenhuma diferença é atribuída à importação (pode haver edição posterior);
+  resultados de regras sem local de atividade são agrupados por regra + local textual (vários blocos ausentes de
+  CL-21 formam um único item); sem histórico de comparações (spec 005). Detalhes em
+  `specs/003-comparacao-ofertas/results.md`.

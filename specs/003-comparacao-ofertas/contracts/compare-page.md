@@ -63,11 +63,11 @@ Nenhum botão de correção é exibido. Todo texto vindo do curso passa pelo esc
 ## CLI `cli/compare.php`
 
 ```
-php local/mooc_audit/cli/compare.php --source=ID --target=ID [--pair=SRC-TGT ...] [--json] [--out=FILE] [--policy=FILE]
+php local/mooc_audit/cli/compare.php --source=ID --target=ID [--pairs=SRC-TGT,SRC-TGT] [--json] [--out=FILE] [--policy=FILE]
 ```
 
 - Executa como administrador (como `cli/audit.php`), somente leitura.
 - Texto: mesmas seções da página, em linhas; `--json`: contrato `comparison` 1.0 (`comparator::to_json`).
 - `--policy`: JSON com sobreposições da política (aplicadas aos dois lados; o ano da origem continua vindo da sua
   data de início).
-- Código de saída 0 em sucesso; 1 para curso inválido.
+- Código de saída 0 em sucesso; diferente de 0 (`cli_error`) para curso inválido ou origem = destino.
