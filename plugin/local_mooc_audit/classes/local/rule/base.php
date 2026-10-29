@@ -66,6 +66,10 @@ abstract class base implements rule_interface {
     const LOCUS = self::LOCUS_MODULE_EDIT;
     /** @var string Normative or technical source. */
     const SOURCE = '';
+    /** @var bool The rule reads completion tracking settings (not verifiable when completion is disabled on the site). */
+    const REQUIRES_COMPLETION = false;
+    /** @var bool The rule reads access restrictions (not verifiable when restrictions are disabled on the site). */
+    const REQUIRES_AVAILABILITY = false;
 
     /**
      * Stable id.
@@ -104,6 +108,8 @@ abstract class base implements rule_interface {
             'locus' => static::LOCUS,
             'guidance' => get_string("rule_{$key}_guidance", 'local_mooc_audit'),
             'source' => static::SOURCE,
+            'requires_completion' => static::REQUIRES_COMPLETION,
+            'requires_availability' => static::REQUIRES_AVAILABILITY,
         ];
     }
 

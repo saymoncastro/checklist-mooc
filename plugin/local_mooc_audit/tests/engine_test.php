@@ -143,14 +143,18 @@ final class engine_test extends \advanced_testcase {
         [$b] = $this->getDataGenerator()->get_plugin_generator('local_mooc_audit')->create_course_b(2027);
         set_config('enablecompletion', 0);
         $report = engine::audit($b->id, ['reoffer_year' => 2027]);
+        $completionrules = ['CL-16', 'CL-17', 'CL-19', 'X-DEP-02', 'X-DEP-04', 'CL-23', 'X-CERT-01'];
         foreach ($report['results'] as $r) {
-            if (in_array($r['category'], [category::COMPLETION_RESTRICTIONS, category::CERTIFICATION], true)) {
+            if (in_array($r['rule'], $completionrules, true)) {
                 $this->assertSame(status::NAO_VERIFICAVEL, $r['status'], $r['rule']);
-                $this->assertNotEmpty($r['evidencia']);
+                $this->assertSame(get_string('site_completion_disabled', 'local_mooc_audit'), $r['evidencia']);
             } else {
                 $this->assertNotSame(status::NAO_VERIFICAVEL, $r['status'], $r['rule']);
             }
         }
+        // Rules that only read access restrictions still run (orphan module and grade references).
+        $this->assertSame([status::CONFORME], $this->statuses($report, 'X-DEP-01'));
+        $this->assertSame([status::CONFORME], $this->statuses($report, 'X-DEP-03'));
         // Other categories still report (e.g. CL-13 attempts); X-DEP-02/04 and CL-23 no longer count as blocking,
         // so the only blocking non conformity left is CL-18 (empty glossary used by a game).
         $this->assertArrayHasKey('NAO_CONFORME', $report['summary']['por_status']);
@@ -165,10 +169,13 @@ final class engine_test extends \advanced_testcase {
     public function test_render_text(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
-        $course = $this->getDataGenerator()->create_course();
+        $course = $this->getDataGenerator()->create_course(['enablecompletion' => 1]);
+        // A label with completion: CL-19 expects "0", which must not be dropped as an empty value.
+        $this->getDataGenerator()->create_module('label', ['course' => $course->id, 'completion' => COMPLETION_TRACKING_MANUAL]);
         set_config('policyjson', '{not json', 'local_mooc_audit');
         $report = engine::audit($course->id);
         $text = engine::render_text($report);
+        $this->assertStringContainsString('      ' . get_string('label_expected', 'local_mooc_audit') . ': 0' . "\n", $text);
         $this->assertStringContainsString(get_string('label_overall', 'local_mooc_audit') . ': '
             . get_string('overall_' . strtolower($report['summary']['overall_status']), 'local_mooc_audit'), $text);
         $this->assertStringContainsString(get_string('policy_invalid', 'local_mooc_audit', 'Syntax error'), $text);
@@ -249,6 +256,29 @@ final class engine_test extends \advanced_testcase {
             engine::summarize(array_filter($results, fn($r) => $r['rule'] !== 'T-ERR-01'))['overall_status'],
             $summary['overall_status']
         );
+    }
+
+    /**
+     * Access restrictions disabled at site level: only the rules that read restrictions become NAO_VERIFICAVEL; rules
+     * that read completion settings only (CL-17, CL-19) still report their non conformities.
+     */
+    public function test_site_availability_disabled(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        [$b] = $this->getDataGenerator()->get_plugin_generator('local_mooc_audit')->create_course_b(2027);
+        set_config('enableavailability', 0);
+        $report = engine::audit($b->id, ['reoffer_year' => 2027]);
+        $availabilityrules = ['CL-16', 'X-DEP-01', 'X-DEP-02', 'X-DEP-03', 'X-DEP-04', 'CL-23', 'X-CERT-01'];
+        foreach ($report['results'] as $r) {
+            if (in_array($r['rule'], $availabilityrules, true)) {
+                $this->assertSame(status::NAO_VERIFICAVEL, $r['status'], $r['rule']);
+                $this->assertSame(get_string('site_availability_disabled', 'local_mooc_audit'), $r['evidencia']);
+            } else {
+                $this->assertNotSame(status::NAO_VERIFICAVEL, $r['status'], $r['rule']);
+            }
+        }
+        $this->assertContains(status::NAO_CONFORME, $this->statuses($report, 'CL-17'));
+        $this->assertContains(status::NAO_CONFORME, $this->statuses($report, 'CL-19'));
     }
 
     /**

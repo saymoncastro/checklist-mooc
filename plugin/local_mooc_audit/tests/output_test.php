@@ -152,6 +152,24 @@ final class output_test extends \advanced_testcase {
     }
 
     /**
+     * Course and category names are escaped exactly once (format_string output goes through Mustache escaping).
+     */
+    public function test_names_escaped_once(): void {
+        global $PAGE;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $cat = $this->getDataGenerator()->create_category(['name' => 'Ofertas & Reofertas']);
+        $course = $this->getDataGenerator()->create_course(['fullname' => 'Arte & Cultura <b>MOOC</b>', 'category' => $cat->id]);
+        $audit = engine::audit($course->id);
+        $url = new \moodle_url('/local/mooc_audit/index.php', ['courseid' => $course->id]);
+        $html = $PAGE->get_renderer('local_mooc_audit')->render(new report($audit, $url));
+        $this->assertStringContainsString('Arte &amp; Cultura', $html);
+        $this->assertStringContainsString('Ofertas &amp; Reofertas', $html);
+        $this->assertStringNotContainsString('&amp;amp;', $html);
+        $this->assertStringNotContainsString('<b>MOOC</b>', $html, 'markup in names is not rendered as HTML');
+    }
+
+    /**
      * Course A: clean overall status, no non conformities, every rule in the conformant list.
      */
     public function test_export_course_a(): void {

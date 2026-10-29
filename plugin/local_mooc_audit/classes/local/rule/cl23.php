@@ -45,6 +45,10 @@ class cl23 extends base {
     const LOCUS = self::LOCUS_MODULE_EDIT;
     /** @var string */
     const SOURCE = 'Checklist item 23; availability/condition/grade';
+    /** @var bool Reads completion tracking settings. */
+    const REQUIRES_COMPLETION = true;
+    /** @var bool Reads access restrictions. */
+    const REQUIRES_AVAILABILITY = true;
 
     /**
      * Evaluate.

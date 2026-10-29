@@ -44,6 +44,8 @@ class cl19 extends base {
     const LOCUS = self::LOCUS_MODULE_EDIT;
     /** @var string */
     const SOURCE = 'Checklist item 19';
+    /** @var bool Reads completion tracking settings. */
+    const REQUIRES_COMPLETION = true;
 
     /**
      * Evaluate.

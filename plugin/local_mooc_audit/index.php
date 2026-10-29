@@ -70,7 +70,8 @@ $PAGE->set_pagelayout('incourse');
 $PAGE->set_title(get_string('pagetitle', 'local_mooc_audit', format_string($course->fullname)));
 $PAGE->set_heading(format_string($course->fullname));
 
-// Administrative view of the course (viewer 0): what is configured, not what one user sees.
+// Configuration view (no test viewer): rules ignore per-user availability, so the result does not depend on who
+// opens the page.
 $report = \local_mooc_audit\engine::audit($course->id, null, 0);
 
 if ($format === 'json') {

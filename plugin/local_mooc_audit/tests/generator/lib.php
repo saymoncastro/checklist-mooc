@@ -454,7 +454,7 @@ class local_mooc_audit_generator extends component_generator_base {
      * @param int $timeclose
      * @return array
      */
-    protected function quiz_data(string $name, int $attempts, float $grade, int $timeclose): array {
+    public function quiz_data(string $name, int $attempts, float $grade, int $timeclose): array {
         return ['name' => $name, 'introeditor' => ['text' => '<p>Tentativas permitidas: 2. Valor: 50 pontos.</p>',
             'format' => FORMAT_HTML, 'itemid' => 0],
             'attempts' => $attempts, 'grade' => $grade, 'grademethod' => QUIZ_GRADEHIGHEST, 'timeclose' => $timeclose,
@@ -480,7 +480,7 @@ class local_mooc_audit_generator extends component_generator_base {
      * @param string $aftersubmit
      * @return array
      */
-    protected function feedback_data(
+    public function feedback_data(
         string $name,
         int $anonymous,
         int $completionsubmit,
@@ -502,7 +502,7 @@ class local_mooc_audit_generator extends component_generator_base {
      * @param int $qrcode
      * @return array
      */
-    protected function certificate_data(string $name, string $text, int $qrcode): array {
+    public function certificate_data(string $name, string $text, int $qrcode): array {
         return ['name' => $name, 'certificatetext' => ['text' => $text, 'format' => FORMAT_HTML],
             'secondpagetext' => ['text' => '', 'format' => FORMAT_HTML],
             'width' => 297, 'height' => 210, 'certificatetextx' => 40, 'certificatetexty' => 80, 'coursename' => '',

@@ -45,6 +45,10 @@ class xcert01 extends base {
     const LOCUS = self::LOCUS_MODULE_EDIT;
     /** @var string */
     const SOURCE = 'Relatório de investigação §6.5';
+    /** @var bool Reads completion tracking settings. */
+    const REQUIRES_COMPLETION = true;
+    /** @var bool Reads access restrictions. */
+    const REQUIRES_AVAILABILITY = true;
 
     /**
      * Evaluate.
@@ -81,7 +85,9 @@ class xcert01 extends base {
                     $probs[] = helpers::label($t) . ' sem conclusão';
                 } else if ($t['visible'] == 0) {
                     $probs[] = helpers::label($t) . ' oculto';
-                } else if ($t['uservisible'] === false) {
+                } else if ($s['viewer_userid'] && $t['uservisible'] === false) {
+                    // Only meaningful for an explicit test viewer: with viewer 0 the snapshot reflects whoever runs
+                    // the audit, and an auditor without "ignore availability" would see every restricted link.
                     $probs[] = helpers::label($t) . ' indisponível para o usuário avaliado';
                 }
             }

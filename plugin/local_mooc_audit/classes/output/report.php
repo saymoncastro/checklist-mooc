@@ -87,7 +87,8 @@ class report implements renderable, templatable {
 
         $data = new stdClass();
         $data->course = (object) $r['course'];
-        $data->course->fullname = format_string($r['course']['fullname']);
+        // Mustache escapes {{ }} values: format without escaping here to avoid "&amp;amp;".
+        $data->course->fullname = format_string($r['course']['fullname'], true, ['escape' => false]);
         $data->engine = $r['engine'];
         $data->contract_version = $r['contract_version'];
         $data->policy_version = $r['policy_version'];
@@ -138,7 +139,7 @@ class report implements renderable, templatable {
         return (object) [
             'startdate' => $inv['startdate'] ?? '-',
             'enddate' => $inv['enddate'] ?? '-',
-            'category' => format_string($inv['category']['name'] ?? ''),
+            'category' => format_string($inv['category']['name'] ?? '', true, ['escape' => false]),
             'visible' => get_string($inv['visible'] ? 'yes' : 'no'),
             'sections' => $inv['sections'],
             'modules' => $inv['modules'],

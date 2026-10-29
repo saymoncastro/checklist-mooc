@@ -43,7 +43,7 @@ Meta: < 5 s. O site de teste roda com `debugdeveloper` e `perfdebug` ligados.
 
 ## SC-006, SC-008 e qualidade
 
-- PHPUnit: 71 testes, 1635 asserções, todos verdes (`plugin-results/phpunit-0.2.0.txt`); 29 arquivos de teste por regra.
+- PHPUnit: 75 testes, 1720 asserções, todos verdes (`plugin-results/phpunit-0.2.0.txt`); 29 arquivos de teste por regra.
 - `readonly_test`: 17 tabelas do curso B idênticas antes e depois de três auditorias; `timemodified`/`cacherev` iguais.
 - Behat: 2 cenários, 29 passos, Chrome via Selenium, inclusive verificação de acessibilidade axe (`plugin-results/behat-0.2.0.txt`).
 - PHPCS `moodlehq/moodle-cs`, padrão `moodle`: 0 erros, 0 avisos; `php -l` sem erros em todos os arquivos.

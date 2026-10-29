@@ -86,6 +86,10 @@ final class xcert01_test extends rule_testcase {
             't' => time() + 30 * DAYSECS]], 'showc' => [true]]);
         $this->assert_all_status(status::CONFORME, $this->rule('X-CERT-01', $course));
         $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        // Without a test viewer the result does not depend on who runs the audit (page opened by any auditor).
+        $this->setUser($student);
+        $this->assert_all_status(status::CONFORME, $this->rule('X-CERT-01', $course));
+        $this->setAdminUser();
         $r = $this->rule('X-CERT-01', $course, $student->id);
         $this->assert_all_status(status::NAO_CONFORME, $r);
         $this->assertStringContainsString('indisponível para o usuário', $r[0]['encontrado']);

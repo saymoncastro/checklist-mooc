@@ -53,9 +53,11 @@ if ($options['help'] || empty($options['courseid'])) {
 \core\session\manager::set_user(get_admin());
 $override = null;
 if ($options['policy'] !== '') {
-    $override = json_decode(file_get_contents($options['policy']), true);
-    if (!is_array($override)) {
-        cli_error('Arquivo de política inválido.');
+    $text = is_readable($options['policy']) ? file_get_contents($options['policy']) : false;
+    $error = get_string('filenotfound', 'error');
+    $override = $text === false ? null : \local_mooc_audit\policy::decode_object($text, $error);
+    if ($override === null) {
+        cli_error(get_string('policyjson_invalid', 'local_mooc_audit', $error));
     }
 }
 

@@ -37,10 +37,9 @@ class setting_policyjson extends admin_setting_configtextarea {
         if ($data === '') {
             return true;
         }
-        $decoded = json_decode($data, true);
-        if (!is_array($decoded)) {
-            return get_string('policyjson_invalid', 'local_mooc_audit', json_last_error() === JSON_ERROR_NONE
-                ? get_string('policyjson_notobject', 'local_mooc_audit') : json_last_error_msg());
+        $error = null;
+        if (\local_mooc_audit\policy::decode_object($data, $error) === null) {
+            return get_string('policyjson_invalid', 'local_mooc_audit', $error);
         }
         return true;
     }

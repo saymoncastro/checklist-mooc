@@ -6,7 +6,7 @@ nem de arquivos `.mbz`. Reaproveita o catálogo de regras e as decisões institu
 **Estado (0.2.0, maturidade ALPHA):** 29 regras em classes próprias, cada uma com teste PHPUnit de cenário conforme e
 não conforme; contrato JSON 1.0 com schema; página do relatório no contexto do curso (menu *Mais > Auditoria técnica*)
 com links de correção e reexecução; política institucional ajustável na administração. Validado em Moodle 4.5.15 /
-PHP 8.3 / PostgreSQL 17 em ambiente local: 71 testes PHPUnit, 2 cenários Behat com verificação de acessibilidade (axe),
+PHP 8.3 / PostgreSQL 17 em ambiente local: 75 testes PHPUnit, 2 cenários Behat com verificação de acessibilidade (axe),
 PHPCS padrão `moodle` sem erros nem avisos, e estados por regra idênticos aos da PoC nos cursos A, B, 55 e 670
 (`plugin-results/0.2.0/`). Antes da produção: decisão 10 (nomes canônicos), validação com bloco de site real e revisão
 da equipe técnica.
@@ -60,7 +60,7 @@ mecanismo nativo `core_course_external::import_course`).
 | `classes/local/catalog.php` | Lista explícita e ordenada das 29 regras |
 | `classes/local/{status,category,helpers,locator}.php` | Estados/gravidades, 8 categorias, helpers compartilhados, mapeamento finding → URL de correção (loci: configurações/página do módulo, configurações do curso, inscrição, livro de notas, blocos, seção, importação, nenhum) |
 | `classes/engine.php` | Execução isolada das regras, situação geral, contrato JSON 1.0 (`to_json()` é a única codificação, usada pela página e pelo CLI), renderização texto |
-| `schema/report-v1.0.schema.json` | JSON Schema do contrato 1.0 (cópia idêntica à de `specs/001-.../contracts/`); validado por `tests/contract_test.php` |
+| `schema/report-v1.0.schema.json` | JSON Schema do contrato 1.0 (a spec aponta para este arquivo por link simbólico: fonte única); validado por `tests/contract_test.php` |
 | `classes/comparator.php` | Comparador experimental origem × destino (inalterado; escopo da spec 003) |
 | `cli/audit.php`, `cli/compare.php` | Linha de comando |
 | `lib.php` | Callback `local_mooc_audit_extend_navigation_course()`: entrada "Auditoria técnica" no menu do curso para quem tem a capacidade |
@@ -98,7 +98,7 @@ Fluxo de desenvolvimento: `specs/001-auditoria-tecnica-operacional/` (Spec Kit) 
 ## Verificação
 
 ```bash
-vendor/bin/phpunit --testsuite local_mooc_audit_testsuite      # 71 testes
+vendor/bin/phpunit --testsuite local_mooc_audit_testsuite      # 75 testes
 php admin/tool/behat/cli/run.php --tags=@local_mooc_audit       # exige Selenium; ver moodle-env/README.md
 vendor/bin/phpcs --standard=moodle local/mooc_audit             # moodlehq/moodle-cs
 ```

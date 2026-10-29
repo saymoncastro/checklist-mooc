@@ -44,6 +44,8 @@ class cl17 extends base {
     const LOCUS = self::LOCUS_MODULE_EDIT;
     /** @var string */
     const SOURCE = 'Checklist item 17; decisão institucional 5 (critério por tipo)';
+    /** @var bool Reads completion tracking settings. */
+    const REQUIRES_COMPLETION = true;
 
     /**
      * Evaluate.

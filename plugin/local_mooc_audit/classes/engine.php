@@ -17,7 +17,6 @@
 namespace local_mooc_audit;
 
 use local_mooc_audit\local\catalog;
-use local_mooc_audit\local\category;
 use local_mooc_audit\local\locator;
 use local_mooc_audit\local\rule\base;
 use local_mooc_audit\local\rule\rule_interface;
@@ -41,7 +40,7 @@ class engine {
      *
      * @param int $courseid
      * @param array|null $policyoverride
-     * @param int $userid viewer for uservisible (0 = current user)
+     * @param int $userid test viewer whose availability is evaluated (0 = none: rules check the configuration only)
      * @param bool $includesnapshot include the full snapshot in the report
      * @return array report
      */
@@ -86,8 +85,9 @@ class engine {
     /**
      * Run every rule; an exception in one rule becomes an ERRO result and never aborts the audit.
      *
-     * When completion tracking or access restrictions are disabled at site level, the rules of the completion and
-     * certification categories cannot be verified and are replaced by a single NAO_VERIFICAVEL result each.
+     * A rule that reads completion tracking (or access restrictions) cannot be verified when that feature is disabled
+     * at site level: it is replaced by a single NAO_VERIFICAVEL result with the reason. Rules declare the dependency
+     * through REQUIRES_COMPLETION / REQUIRES_AVAILABILITY.
      *
      * @param array $snapshot
      * @param array $policy
@@ -96,12 +96,19 @@ class engine {
      */
     public static function run_rules(array $snapshot, array $policy, ?array $rules = null): array {
         $results = [];
-        $sitedisabled = empty($snapshot['site']['enablecompletion']) || empty($snapshot['site']['enableavailability']);
+        $nocompletion = empty($snapshot['site']['enablecompletion']);
+        $noavailability = empty($snapshot['site']['enableavailability']);
         foreach ($rules ?? catalog::instances() as $id => $rule) {
             $meta = $rule->meta();
-            if ($sitedisabled && in_array($meta['category'], [category::COMPLETION_RESTRICTIONS, category::CERTIFICATION], true)) {
+            $reason = null;
+            if ($nocompletion && !empty($meta['requires_completion'])) {
+                $reason = 'site_completion_disabled';
+            } else if ($noavailability && !empty($meta['requires_availability'])) {
+                $reason = 'site_availability_disabled';
+            }
+            if ($reason) {
                 $findings = [['status' => status::NAO_VERIFICAVEL, 'local' => null,
-                    'evidencia' => get_string('site_completion_disabled', 'local_mooc_audit'),
+                    'evidencia' => get_string($reason, 'local_mooc_audit'),
                     'gravidade' => null, 'locus' => base::LOCUS_NONE]];
             } else {
                 try {
@@ -242,13 +249,13 @@ class engine {
             $lines[] = sprintf('  [%-15s] %-9s %-11s %s', $r['status'], $r['rule'], $r['gravidade'], $r['titulo']);
             $lines[] = "      {$str('label_local')}: " . $r['local'] . ($r['link'] ? ' → ' . $r['link'] : '');
             $lines[] = "      {$str('label_evidence')}: " . $r['evidencia'];
-            if (!empty($r['encontrado'])) {
+            if ((string) $r['encontrado'] !== '') {
                 $lines[] = "      {$str('label_found')}: " . $r['encontrado'];
             }
-            if (!empty($r['esperado'])) {
+            if ((string) $r['esperado'] !== '') {
                 $lines[] = "      {$str('label_expected')}: " . $r['esperado'];
             }
-            if (!empty($r['orientacao'])) {
+            if ((string) $r['orientacao'] !== '') {
                 $lines[] = "      {$str('label_guidance')}: " . $r['orientacao'];
             }
         }

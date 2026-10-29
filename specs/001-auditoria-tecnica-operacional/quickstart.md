@@ -85,7 +85,7 @@ principal e continua na versão da PoC. Receitas em `moodle-env/README.md`.
 | Passo | Resultado |
 |---|---|
 | 1. Instalação | `install_database.php` com o plugin 0.2.0; nenhuma tabela própria |
-| 2. Suíte | OK (71 testes, 1635 asserções) — `plugin-results/phpunit-0.2.0.txt` |
+| 2. Suíte | OK (75 testes, 1720 asserções, após a revisão de código) — `plugin-results/phpunit-0.2.0.txt` |
 | 3. Lint e PHPCS | `php -l` sem erros; PHPCS `moodle` 0 erros, 0 avisos |
 | 4. Sintéticos e CLI | A: `SEM_INCONFORMIDADES`; B: `BLOQUEADA`; JSON com `contract_version` 1.0, `category`, `locus`, `link` |
 | 5.1–5.3 Página, links, reexecução | Verificados no navegador (curso B) e no Behat; links abrem a edição do módulo |
@@ -98,3 +98,12 @@ principal e continua na versão da PoC. Receitas em `moodle-env/README.md`.
 
 Desvios: o passo 5.3 não corrigiu o questionário no curso B (a correção manual foi exercitada apenas abrindo o link);
 o laboratório principal não foi atualizado para 0.2.0 para não alterar o ambiente de referência.
+
+### Revisão de código — 2026-10-29
+
+Oito achados corrigidos antes do PR: X-CERT-01 deixou de depender de quem abre a página (disponibilidade por usuário
+só com `--userid`); a política passou a validar o tipo de cada chave, nulos inclusive, e a exigir objeto JSON no
+setting, no carregamento e no `--policy`; nomes de curso e categoria escapados uma única vez; conclusão e restrições
+desabilitadas no site afetam só as regras que as leem (`REQUIRES_COMPLETION`/`REQUIRES_AVAILABILITY`); o texto do CLI
+mantém valores "0"; os testes por regra reutilizam os construtores do gerador; o schema da spec é um link simbólico
+para o do plugin. Estados por regra de A, B, 55 e 670 continuam idênticos aos registrados.

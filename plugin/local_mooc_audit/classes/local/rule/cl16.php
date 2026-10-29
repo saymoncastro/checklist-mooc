@@ -45,6 +45,10 @@ class cl16 extends base {
     const LOCUS = self::LOCUS_MODULE_EDIT;
     /** @var string */
     const SOURCE = 'Checklist item 16; decisão institucional 9 (toda atividade com nota máxima > 0)';
+    /** @var bool Reads completion tracking settings. */
+    const REQUIRES_COMPLETION = true;
+    /** @var bool Reads access restrictions. */
+    const REQUIRES_AVAILABILITY = true;
 
     /**
      * Evaluate.

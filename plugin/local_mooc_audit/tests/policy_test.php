@@ -117,6 +117,47 @@ final class policy_test extends \advanced_testcase {
     }
 
     /**
+     * Null and scalar type mismatches are rejected with a warning and the default is kept; automatic keys accept null
+     * or an integer only.
+     */
+    public function test_strict_types(): void {
+        $this->resetAfterTest();
+        set_config(
+            'policyjson',
+            json_encode(['min_quiz_attempts' => null, 'aggregateonlygraded_allowed' => 'false',
+            'reoffer_year' => '2027a', 'required_blocks' => null, 'course_total_max' => 90, 'certificate_min_grade' => 70]),
+            'local_mooc_audit'
+        );
+        $policy = policy::load();
+        $this->assertSame(2, $policy['min_quiz_attempts']);
+        $this->assertFalse($policy['aggregateonlygraded_allowed']);
+        $this->assertSame((int) date('Y') + 1, $policy['reoffer_year']);
+        $this->assertIsArray($policy['required_blocks']);
+        $this->assertSame(90, $policy['course_total_max'], 'an integer is accepted where the default is a float');
+        $this->assertSame(70, $policy['certificate_min_grade']);
+        $bad = ['min_quiz_attempts', 'aggregateonlygraded_allowed', 'reoffer_year', 'required_blocks'];
+        $this->assertSame(array_map(fn($k) => get_string('policy_badtype', 'local_mooc_audit', $k), $bad), $policy['warnings']);
+
+        $policy = policy::load(['reoffer_year' => [2027]]);
+        $this->assertSame((int) date('Y') + 1, $policy['reoffer_year']);
+        $this->assertContains(get_string('policy_badtype', 'local_mooc_audit', 'reoffer_year'), $policy['warnings']);
+    }
+
+    /**
+     * A JSON list stored in the setting is not a policy: defaults, warning, no "+admin" suffix.
+     */
+    public function test_list_is_not_a_policy(): void {
+        $this->resetAfterTest();
+        set_config('policyjson', '["min_quiz_attempts", 3]', 'local_mooc_audit');
+        $policy = policy::load();
+        $this->assertSame(policy::DEFAULT_VERSION, $policy['policy_version']);
+        $this->assertSame(2, $policy['min_quiz_attempts']);
+        $notobject = get_string('policy_invalid', 'local_mooc_audit', get_string('policyjson_notobject', 'local_mooc_audit'));
+        $this->assertSame([$notobject], $policy['warnings']);
+        $this->assertArrayNotHasKey(0, $policy);
+    }
+
+    /**
      * The admin setting rejects malformed JSON and non-objects before saving, and accepts empty or an object.
      */
     public function test_setting_validation(): void {
@@ -135,5 +176,8 @@ final class policy_test extends \advanced_testcase {
             get_string('policyjson_invalid', 'local_mooc_audit', get_string('policyjson_notobject', 'local_mooc_audit')),
             $setting->validate('"text"')
         );
+        $notobject = get_string('policyjson_invalid', 'local_mooc_audit', get_string('policyjson_notobject', 'local_mooc_audit'));
+        $this->assertSame($notobject, $setting->validate('[]'));
+        $this->assertSame($notobject, $setting->validate('["min_quiz_attempts", 3]'));
     }
 }

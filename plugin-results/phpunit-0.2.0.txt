@@ -24,6 +24,7 @@ engine_test (local_mooc_audit\engine_test)
  ✔ Render text
  ✔ Import locus for missing components
  ✔ Rule exception is isolated
+ ✔ Site availability disabled
  ✔ Policy warnings
 
 cl04_test (local_mooc_audit\local\rule\cl04_test)
@@ -134,6 +135,7 @@ locator_test (local_mooc_audit\locator_test)
 output_test (local_mooc_audit\output_test)
  ✔ Export and render course b
  ✔ Unverifiable errors and notices
+ ✔ Names escaped once
  ✔ Export course a
 
 policy_test (local_mooc_audit\policy_test)
@@ -142,11 +144,13 @@ policy_test (local_mooc_audit\policy_test)
  ✔ Admin override
  ✔ Override precedence
  ✔ Canonical name change applies to rules
+ ✔ Strict types
+ ✔ List is not a policy
  ✔ Setting validation
 
 readonly_test (local_mooc_audit\readonly_test)
  ✔ Audit does not modify the course
 
-Time: 00:44.844, Memory: 111.00 MB
+Time: 00:46.869, Memory: 121.00 MB
 
-OK (71 tests, 1635 assertions)
+OK (75 tests, 1720 assertions)

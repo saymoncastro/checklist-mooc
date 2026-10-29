@@ -167,18 +167,11 @@ abstract class rule_testcase extends \advanced_testcase {
         int $questions = 2,
         array $extra = []
     ): stdClass {
-        $data = array_merge(['name' => $name, 'introeditor' => ['text' => $intro, 'format' => FORMAT_HTML, 'itemid' => 0],
-            'attempts' => $attempts, 'grade' => $grade, 'grademethod' => QUIZ_GRADEHIGHEST, 'timeclose' => $timeclose,
-                'timeopen' => 0, 'timelimit' => 0,
-            'completion' => COMPLETION_TRACKING_AUTOMATIC, 'completiongradeitemnumber' => 0, 'completionusegrade' => 1,
-                'quizpassword' => '',
-            'preferredbehaviour' => 'deferredfeedback', 'questionsperpage' => 1, 'shuffleanswers' => 1, 'decimalpoints' => 2,
-                'questiondecimalpoints' => -1,
-            'overduehandling' => 'autosubmit', 'graceperiod' => 0, 'reviewattempt' => 69904, 'reviewcorrectness' => 4352,
-                'reviewmarks' => 4352,
-            'reviewspecificfeedback' => 4352, 'reviewgeneralfeedback' => 4352, 'reviewrightanswer' => 4352,
-                'reviewoverallfeedback' => 4352,
-            'reviewmaxmarks' => 69904], $extra);
+        $data = array_merge(
+            $this->gen()->quiz_data($name, $attempts, $grade, $timeclose),
+            ['introeditor' => ['text' => $intro, 'format' => FORMAT_HTML, 'itemid' => 0]],
+            $extra
+        );
         $q = $this->gen()->add_module($course, 'quiz', 1, $data);
         if ($questions) {
             $this->gen()->add_questions($q, $questions);
@@ -203,12 +196,8 @@ abstract class rule_testcase extends \advanced_testcase {
         int $completionsubmit = 1,
         bool $withitem = true
     ): stdClass {
-        $fb = $this->gen()->add_module($course, 'feedback', 1, ['name' => $name, 'anonymous' => 1,
-            'completionsubmit' => $completionsubmit, 'completion' => $completion,
-            'page_after_submit_editor' => ['text' => 'Obrigado', 'format' => FORMAT_HTML, 'itemid' => 0],
-                'page_after_submit' => 'Obrigado',
-            'page_after_submitformat' => FORMAT_HTML, 'site_after_submit' => '', 'multiple_submit' => 0, 'publish_stats' => 0,
-                'email_notification' => 0]);
+        $data = $this->gen()->feedback_data($name, 1, $completionsubmit, $completion);
+        $fb = $this->gen()->add_module($course, 'feedback', 1, $data);
         if ($withitem) {
             $this->gen()->add_feedback_item($fb->instance);
         }
@@ -231,16 +220,12 @@ abstract class rule_testcase extends \advanced_testcase {
         if (!\local_mooc_audit_generator::has_module('simplecertificate')) {
             $this->markTestSkipped('mod_simplecertificate not installed');
         }
-        return $this->gen()->add_module($course, 'simplecertificate', 1, array_merge(['name' => $name,
-            'certificatetext' => ['text' => 'Certificamos {USERNAME}.', 'format' => FORMAT_HTML],
-                'secondpagetext' => ['text' => '', 'format' => FORMAT_HTML],
-            'width' => 297, 'height' => 210, 'certificatetextx' => 40, 'certificatetexty' => 80, 'coursename' => '',
-                'certdate' => -1, 'certgrade' => 0,
-            'gradefmt' => 1, 'emailothers' => '', 'emailteachers' => 0, 'reportcert' => 0, 'delivery' => 0, 'requiredtime' => 0,
-                'printqrcode' => 0,
-            'qrcodefirstpage' => 0, 'codex' => 240, 'codey' => 150, 'enablesecondpage' => 0, 'secondpagex' => 40,
-                'secondpagey' => 3, 'certdatefmt' => '',
-            'timestartdatefmt' => '', 'outcome' => 0, 'certificateimage' => '', 'secondimage' => ''], $extra));
+        return $this->gen()->add_module(
+            $course,
+            'simplecertificate',
+            1,
+            array_merge($this->gen()->certificate_data($name, 'Certificamos {USERNAME}.', 0), $extra)
+        );
     }
 
     /**

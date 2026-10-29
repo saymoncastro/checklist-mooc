@@ -96,12 +96,14 @@ class policy {
         $warnings = [];
         $json = trim((string) get_config('local_mooc_audit', 'policyjson'));
         if ($json !== '') {
-            $decoded = json_decode($json, true);
-            if (is_array($decoded)) {
-                $policy = array_merge($policy, self::typed($decoded, $warnings));
-                $policy['policy_version'] = ($decoded['policy_version'] ?? $policy['policy_version']) . '+admin';
+            $error = null;
+            $decoded = self::decode_object($json, $error);
+            if ($decoded !== null) {
+                $values = self::typed($decoded, $warnings);
+                $policy = array_merge($policy, $values);
+                $policy['policy_version'] = ($values['policy_version'] ?? self::DEFAULT_VERSION) . '+admin';
             } else {
-                $warnings[] = get_string('policy_invalid', 'local_mooc_audit', json_last_error_msg());
+                $warnings[] = get_string('policy_invalid', 'local_mooc_audit', $error);
             }
         }
         if ($override) {
@@ -117,9 +119,52 @@ class policy {
     }
 
     /**
-     * Drop override values whose type differs from the default's type (array vs scalar), recording a warning.
-     * Unknown keys are kept (a newer policy may carry keys this version ignores); null is accepted for keys that
-     * default to null.
+     * Decode a JSON text that must be an object (not a list, not a scalar).
+     *
+     * @param string $json
+     * @param string|null $error by reference: the reason when the text is not a JSON object
+     * @return array|null the object as an associative array, or null when invalid
+     */
+    public static function decode_object(string $json, ?string &$error = null): ?array {
+        $decoded = json_decode($json);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            $error = json_last_error_msg();
+            return null;
+        }
+        if (!$decoded instanceof \stdClass) {
+            $error = get_string('policyjson_notobject', 'local_mooc_audit');
+            return null;
+        }
+        return json_decode($json, true);
+    }
+
+    /**
+     * Whether a value has the type of the default value of a known key.
+     *
+     * Keys that default to null (automatic values) accept null or an integer; any other key rejects null. Integers are
+     * accepted where the default is a float; lists and objects must stay arrays.
+     *
+     * @param mixed $default
+     * @param mixed $value
+     * @return bool
+     */
+    protected static function same_type($default, $value): bool {
+        if ($default === null) {
+            return $value === null || is_int($value);
+        }
+        return match (true) {
+            is_bool($default) => is_bool($value),
+            is_int($default) => is_int($value),
+            is_float($default) => is_int($value) || is_float($value),
+            is_string($default) => is_string($value),
+            is_array($default) => is_array($value),
+            default => false,
+        };
+    }
+
+    /**
+     * Drop override values whose type differs from the type of the default, recording a warning for each.
+     * Unknown keys are kept (a newer policy may carry keys this version ignores).
      *
      * @param array $values
      * @param array $warnings by reference
@@ -128,10 +173,10 @@ class policy {
     protected static function typed(array $values, array &$warnings): array {
         $defaults = self::defaults();
         foreach ($values as $k => $v) {
-            if (!array_key_exists($k, $defaults) || $defaults[$k] === null || $v === null) {
+            if (!array_key_exists($k, $defaults)) {
                 continue;
             }
-            if (is_array($defaults[$k]) !== is_array($v)) {
+            if (!self::same_type($defaults[$k], $v)) {
                 $warnings[] = get_string('policy_badtype', 'local_mooc_audit', $k);
                 unset($values[$k]);
             }

@@ -45,6 +45,10 @@ class xdep02 extends base {
     const LOCUS = self::LOCUS_MODULE_EDIT;
     /** @var string */
     const SOURCE = 'Relatório de investigação §6.4';
+    /** @var bool Reads completion tracking settings. */
+    const REQUIRES_COMPLETION = true;
+    /** @var bool Reads access restrictions. */
+    const REQUIRES_AVAILABILITY = true;
 
     /**
      * Evaluate.
