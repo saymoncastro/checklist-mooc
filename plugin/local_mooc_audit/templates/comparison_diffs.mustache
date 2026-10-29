@@ -1,0 +1,50 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_mooc_audit/comparison_diffs
+
+    Table of classified differences (comparison contract 1.0).
+
+    Context variables required for this template:
+    * diffs[] - objects with kindlabel, kindclass, field, source, target, explanation
+
+    Example context (json):
+    {
+        "diffs": [{"kindlabel": "Relevant", "kindclass": "badge-danger", "field": "extra.attempts", "source": "2", "target": "1",
+            "explanation": "Setting changed (extra.attempts: 2 → 1)."}]
+    }
+}}
+<table class="table table-sm table-bordered local_mooc_audit-diffs">
+    <thead>
+        <tr>
+            <th scope="col">{{#str}} cmp_kind, local_mooc_audit {{/str}}</th>
+            <th scope="col">{{#str}} cmp_field, local_mooc_audit {{/str}}</th>
+            <th scope="col">{{#str}} cmp_values, local_mooc_audit {{/str}}</th>
+            <th scope="col">{{#str}} cmp_explanation, local_mooc_audit {{/str}}</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#diffs}}
+        <tr class="local_mooc_audit-diff local_mooc_audit-diff-{{kind}}">
+            <td><span class="badge {{kindclass}}">{{kindlabel}}</span></td>
+            <td><code>{{field}}</code></td>
+            <td>{{source}} → {{target}}</td>
+            <td>{{explanation}}</td>
+        </tr>
+        {{/diffs}}
+    </tbody>
+</table>

@@ -62,8 +62,8 @@ Valores textuais são truncados a 160 caracteres; nunca contêm senhas (inscriç
 ## Ambiguity
 
 `reason` (`duplicado_no_destino` \| `duplicado_na_origem` \| `conteudo_equivalente` \| `mesmo_nome`), `modname`,
-`name`, `source` ({cmid, section, position}[]), `target` (idem), `settings_identical` (bool: multiconjunto das
-impressões de configuração idêntico nos dois lados), `explanation`.
+`name`, `source` ({cmid, section, position}[]), `target` (idem), `settings_identical` (bool: todos os módulos do grupo, nos
+dois lados, têm a mesma impressão de configuração), `explanation`.
 
 ## ModuleRef / ExtraModule
 

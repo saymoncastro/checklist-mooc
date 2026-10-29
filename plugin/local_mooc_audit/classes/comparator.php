@@ -16,345 +16,405 @@
 
 namespace local_mooc_audit;
 
+use local_mooc_audit\local\comparison\audit_relation;
+use local_mooc_audit\local\comparison\differ;
+use local_mooc_audit\local\comparison\matcher;
+use local_mooc_audit\local\locator;
+use local_mooc_audit\local\status;
 
 /**
- * Experimental comparator between a source course and an imported target course.
+ * Comparison between two offers of a course: source (previous offer) and target (new offer). Read-only.
  *
- * Modules are matched by stable attributes, never by cmid: (modname, section number, normalised name), then
- * (modname, normalised name), then (modname, section number, position within the section). Ambiguous matches
- * (several candidates) are reported explicitly.
+ * Works on the snapshots of the two courses and on the results of the existing rule catalogue (no second audit
+ * engine): modules are matched without internal ids (local\comparison\matcher), differences are classified as
+ * expected, relevant or informative (local\comparison\differ) and the two audits are related (local\comparison\
+ * audit_relation). The target is audited with the current policy, exactly as the individual audit; the source with
+ * the same policy but the reoffer year of its own start date, so that a course correct for its year is not reported
+ * as carrying problems of the next offer. Result: contract "comparison" 1.0 (schema/comparison-v1.0.schema.json).
  *
  * @package    local_mooc_audit
  * @copyright  2026 Cefor/Ifes
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class comparator {
-    /** @var array Course settings expected to change in a reoffer (reported as "expected differences"). */
-    const EXPECTED_COURSE_DIFFS = ['id', 'contextid', 'shortname', 'fullname', 'startdate', 'enddate', 'timecreated',
-        'timemodified', 'category'];
-
-    /** @var array Module attributes compared once two modules are matched. */
-    const MODULE_FIELDS = ['visible', 'visibleoncoursepage', 'completion', 'completionview', 'completiongradeitemnumber',
-        'completionpassgrade', 'sectionnumber'];
+    /** @var string Name of the contract. */
+    const CONTRACT = 'comparison';
+    /** @var string Version of the comparison contract (bumped only on incompatible changes). */
+    const CONTRACT_VERSION = '1.0';
+    /** @var string[] Rules of the offer cycle: their problems in the target are pending items of the new offer. */
+    const CYCLE_RULES = ['CL-05', 'CL-06', 'CL-07', 'CL-08', 'CL-14'];
 
     /**
-     * Compare two snapshots.
+     * Require the comparison capability in BOTH course contexts (allowed on one room only is not enough).
      *
-     * @param array $src
-     * @param array $dst
-     * @return array
+     * @param int $sourceid
+     * @param int $targetid
+     * @throws \required_capability_exception
      */
-    public static function compare(array $src, array $dst): array {
-        $report = ['source' => $src['course']['id'], 'target' => $dst['course']['id'], 'course_diffs' => [],
-            'expected_course_diffs' => [],
-            'matched' => [], 'missing_in_target' => [], 'extra_in_target' => [], 'ambiguous' => [], 'modified' => [],
-                'preserved' => 0, 'notes' => []];
+    public static function require_access(int $sourceid, int $targetid): void {
+        require_capability('local/mooc_audit:compare', \context_course::instance($sourceid));
+        require_capability('local/mooc_audit:compare', \context_course::instance($targetid));
+    }
 
-        foreach ($src['course'] as $k => $v) {
-            if (in_array($k, ['summary', 'formatoptions'])) {
-                $v = is_array($v) ? json_encode($v) : trim((string) $v);
-                $w = is_array($dst['course'][$k] ?? null) ? json_encode($dst['course'][$k]) : trim((string) ($dst['course'][$k]
-                    ?? ''));
-                if ($v !== $w) {
-                    $report['course_diffs'][] = ['field' => $k, 'source' => mb_substr($v, 0, 120), 'target' => mb_substr(
-                        $w,
-                        0,
-                        120
-                    )];
-                }
-                continue;
-            }
-            if (($dst['course'][$k] ?? null) != $v) {
-                $entry = ['field' => $k, 'source' => $v, 'target' => $dst['course'][$k] ?? null];
-                if (in_array($k, self::EXPECTED_COURSE_DIFFS)) {
-                    $report['expected_course_diffs'][] = $entry;
-                } else {
-                    $report['course_diffs'][] = $entry;
-                }
-            }
-        }
+    /**
+     * Compare two courses by id: snapshots, audits of both sides, structural comparison and relation.
+     *
+     * @param int $sourceid course of the previous offer
+     * @param int $targetid course of the new offer
+     * @param array $manual list of [source cmid, target cmid] chosen by the user (not persisted)
+     * @param array|null $policyoverride policy values applied to both sides (the source year still comes from its start)
+     * @return array contract comparison 1.0
+     */
+    public static function run(int $sourceid, int $targetid, array $manual = [], ?array $policyoverride = null): array {
+        $t0 = microtime(true);
+        $src = snapshot::build($sourceid, 0);
+        $t1 = microtime(true);
+        $dst = snapshot::build($targetid, 0);
+        $t2 = microtime(true);
 
-        // Index target modules by matching keys.
-        $byfull = [];
-        $byname = [];
-        $bypos = [];
-        foreach ($dst['modules'] as $m) {
-            $byfull[self::key_full($m)][] = $m['cmid'];
-            $byname[self::key_name($m)][] = $m['cmid'];
-            $bypos[self::key_pos($dst, $m)][] = $m['cmid'];
-        }
-        $used = [];
-        $map = []; // Source cmid => target cmid.
-        foreach ($src['modules'] as $m) {
-            $cands = array_values(array_diff($byfull[self::key_full($m)] ?? [], $used));
-            $how = 'tipo+seção+nome';
-            if (count($cands) !== 1) {
-                $cands2 = array_values(array_diff($byname[self::key_name($m)] ?? [], $used));
-                if (count($cands2) === 1) {
-                    $cands = $cands2;
-                    $how = 'tipo+nome';
-                } else if (count($cands) === 0 && count($cands2) === 0) {
-                    $cands3 = array_values(array_diff($bypos[self::key_pos($src, $m)] ?? [], $used));
-                    if (count($cands3) === 1 && $dst['modules'][$cands3[0]]['modname'] === $m['modname']) {
-                        $cands = $cands3;
-                        $how = 'tipo+seção+posição';
-                    }
-                } else if (count($cands2) > 1) {
-                    $cands = $cands2;
-                }
-            }
-            if (count($cands) === 1) {
-                $used[] = $cands[0];
-                $map[$m['cmid']] = $cands[0];
-                $report['matched'][] = ['source_cmid' => $m['cmid'], 'target_cmid' => $cands[0], 'modname' => $m['modname'],
-                    'name' => $m['name'], 'how' => $how];
-            } else if (count($cands) > 1) {
-                $report['ambiguous'][] = ['source_cmid' => $m['cmid'], 'modname' => $m['modname'], 'name' => $m['name'],
-                    'candidates' => $cands];
-            } else {
-                $report['missing_in_target'][] = ['source_cmid' => $m['cmid'], 'modname' => $m['modname'], 'name' => $m['name'],
-                    'section' => $m['sectionnumber']];
-            }
-        }
-        foreach ($dst['modules'] as $m) {
-            if (!in_array($m['cmid'], $used)) {
-                $report['extra_in_target'][] = ['target_cmid' => $m['cmid'], 'modname' => $m['modname'], 'name' => $m['name'],
-                    'section' => $m['sectionnumber']];
-            }
-        }
+        $tpolicy = policy::load($policyoverride);
+        $syear = $src['course']['startdate'] ? (int) userdate($src['course']['startdate'], '%Y', 99, false) : null;
+        $spolicy = policy::load(array_merge($policyoverride ?? [], ['reoffer_year' => $syear ?? (int) $tpolicy['reoffer_year']]));
+        $sresults = self::results($src, $spolicy);
+        $tresults = self::results($dst, $tpolicy);
+        $t3 = microtime(true);
 
-        // Compare matched pairs.
-        foreach ($map as $scm => $tcm) {
-            $a = $src['modules'][$scm];
-            $b = $dst['modules'][$tcm];
-            $diffs = [];
-            foreach (self::MODULE_FIELDS as $f) {
-                if ($a[$f] != $b[$f]) {
-                    $diffs[] = ['field' => $f, 'source' => $a[$f], 'target' => $b[$f]];
-                }
-            }
-            foreach ($a['extra'] as $k => $v) {
-                if (
-                    in_array($k, ['missing_instance', 'glossary_entries_available', 'glossary_category_entries',
-                    'main_library_id'])
-                ) {
-                    continue;
-                }
-                if (array_key_exists($k, $b['extra']) && $b['extra'][$k] != $v) {
-                    $diffs[] = ['field' => "extra.$k", 'source' => $v, 'target' => $b['extra'][$k]];
-                }
-            }
-            // Availability: remap source cmids/grade item ids through the match map before comparing.
-            $remapped = self::remap_availability($a['availability'], $map, $src, $dst);
-            if (json_encode(self::normalise_tree($remapped)) !== json_encode(self::normalise_tree($b['availability']))) {
-                $diffs[] = ['field' => 'availability', 'source' => $a['availability_raw'], 'target' => $b['availability_raw'],
-                    'source_remapped' => json_encode($remapped)];
-            }
-            $ga = array_map(fn($g) => [$g['itemnumber'], $g['gradetype'], $g['grademax']], $a['grade_items']);
-            $gb = array_map(fn($g) => [$g['itemnumber'], $g['gradetype'], $g['grademax']], $b['grade_items']);
-            if ($ga != $gb) {
-                $diffs[] = ['field' => 'grade_items', 'source' => $ga, 'target' => $gb];
-            }
-            $fa = array_map(
-                fn($f) => $f['filearea'] . ':' . $f['filepath'] . $f['filename'] . ':' . $f['filesize'],
-                $a['files']['list']
-            );
-            $fb = array_map(
-                fn($f) => $f['filearea'] . ':' . $f['filepath'] . $f['filename'] . ':' . $f['filesize'],
-                $b['files']['list']
-            );
-            sort($fa);
-            sort($fb);
-            if ($fa != $fb) {
-                $diffs[] = ['field' => 'files', 'source' => $fa, 'target' => $fb];
-            }
-            $ta = array_map(fn($t) => md5(trim((string) $t)), $a['texts']);
-            $tb = array_map(fn($t) => md5(trim((string) $t)), $b['texts']);
-            foreach ($ta as $k => $h) {
-                if (($tb[$k] ?? null) !== $h) {
-                    $diffs[] = ['field' => "texts.$k",
-                        'source' => mb_substr(\local_mooc_audit\local\helpers::text($a['texts'][$k]), 0, 80),
-                        'target' => mb_substr(\local_mooc_audit\local\helpers::text($b['texts'][$k] ?? ''), 0, 80)];
-                }
-            }
-            if ($diffs) {
-                $report['modified'][] = ['source_cmid' => $scm, 'target_cmid' => $tcm, 'modname' => $a['modname'],
-                    'name' => $a['name'], 'diffs' => $diffs,
-                    'problematic' => (bool) array_filter($diffs, fn($d) => !in_array($d['field'], ['texts.intro',
-                        'texts.content']) || true)];
-            } else {
-                $report['preserved']++;
-            }
-        }
+        $report = self::compare($src, $dst, $manual);
+        [$items, $counts] = audit_relation::relate($syear === null ? array_values(array_filter($sresults,
+            fn($r) => !in_array($r['rule'], self::CYCLE_RULES, true))) : $sresults, $tresults, $report['match'],
+            self::CYCLE_RULES);
+        unset($report['match']);
+        $t4 = microtime(true);
 
-        // Enrolment, blocks, grade settings.
-        $enrolkey = fn($e) => "{$e['enrol']}:status={$e['status']}:start={$e['enrolstartdate']}"
-            . ":end={$e['enrolenddate']}:new={$e['customint6']}";
-        $ea = array_map($enrolkey, $src['enrols']);
-        $eb = array_map($enrolkey, $dst['enrols']);
-        sort($ea);
-        sort($eb);
-        if ($ea != $eb) {
-            $report['course_diffs'][] = ['field' => 'enrols', 'source' => $ea, 'target' => $eb];
+        $report['source']['overall_status'] = engine::summarize($sresults)['overall_status'];
+        $report['target']['overall_status'] = engine::summarize($tresults)['overall_status'];
+        $report['policy'] = [
+            'version' => $tpolicy['policy_version'],
+            'target_reoffer_year' => (int) $tpolicy['reoffer_year'],
+            'source_reoffer_year' => $syear,
+            'source_basis' => $syear === null ? 'sem_contexto' : 'startdate',
+            'cycle_rules' => self::CYCLE_RULES,
+            'note' => get_string($syear === null ? 'cmp_policy_note_nocontext' : 'cmp_policy_note', 'local_mooc_audit',
+                (object) ['source' => $syear, 'target' => $tpolicy['reoffer_year'], 'version' => $tpolicy['policy_version']]),
+        ];
+        $report['audit'] = ['items' => $items, 'counts' => $counts, 'source_policy_version' => $spolicy['policy_version'],
+            'target_policy_version' => $tpolicy['policy_version']];
+        foreach (array_unique(array_merge($tpolicy['warnings'], $spolicy['warnings'])) as $w) {
+            $report['warnings'][] = get_string('label_policy', 'local_mooc_audit') . ': ' . $w;
         }
-        $ba = array_map(fn($b) => $b['name'] . ':' . ($b['title'] ?? ''), $src['blocks']);
-        $bb = array_map(fn($b) => $b['name'] . ':' . ($b['title'] ?? ''), $dst['blocks']);
-        sort($ba);
-        sort($bb);
-        if ($ba != $bb) {
-            $report['course_diffs'][] = ['field' => 'blocks', 'source' => $ba, 'target' => $bb];
+        foreach (['source' => $src, 'target' => $dst] as $side => $s) {
+            foreach ($s['warnings'] as $w) {
+                $report['warnings'][] = get_string("cmp_side_$side", 'local_mooc_audit') . ': '
+                    . (is_string($w) ? $w : json_encode($w, JSON_UNESCAPED_UNICODE));
+            }
         }
-        $ra = $src['grade']['categories'][$src['grade']['course_item']['iteminstance'] ?? 0] ?? null;
-        $rb = $dst['grade']['categories'][$dst['grade']['course_item']['iteminstance'] ?? 0] ?? null;
-        if ($ra && $rb && ($ra['aggregation'] != $rb['aggregation'] || $ra['aggregateonlygraded'] != $rb['aggregateonlygraded'])) {
-            $report['course_diffs'][] = ['field' => 'grade_root_category', 'source' => [$ra['aggregation'],
-                $ra['aggregateonlygraded']], 'target' => [$rb['aggregation'], $rb['aggregateonlygraded']]];
-        }
-        $report['summary'] = ['source_modules' => count($src['modules']), 'target_modules' => count($dst['modules']),
-            'matched' => count($map),
-            'preserved' => $report['preserved'], 'modified' => count($report['modified']),
-                'missing_in_target' => count($report['missing_in_target']),
-            'extra_in_target' => count($report['extra_in_target']), 'ambiguous' => count($report['ambiguous'])];
+        $report['summary'] = self::summary($report);
+        unset($report['expected_ids']);
+        $report['timing'] = [
+            'snapshot_source_s' => round($t1 - $t0, 3),
+            'snapshot_target_s' => round($t2 - $t1, 3),
+            'rules_s' => round($t3 - $t2, 3),
+            'compare_s' => round($t4 - $t3, 3),
+            'total_s' => round(microtime(true) - $t0, 3),
+            'memory_peak_mb' => round(memory_get_peak_usage(true) / 1048576, 1),
+        ];
         return $report;
     }
 
     /**
-     * Matching keys.
+     * Audit results of a snapshot with links to the course (same as engine::audit, without building it again).
      *
-     * @param array $m
-     * @return string
+     * @param array $s snapshot
+     * @param array $policy
+     * @return array
      */
-    protected static function key_full(array $m): string {
-        return $m['modname'] . '|' . $m['sectionnumber'] . '|' . \local_mooc_audit\local\helpers::norm($m['name']);
+    protected static function results(array $s, array $policy): array {
+        $results = engine::run_rules($s, $policy);
+        foreach ($results as &$r) {
+            $url = locator::url_for($r, $s['course']['id'], $s['modules'], $s['sections']);
+            $r['link'] = $url ? $url->out(false) : null;
+        }
+        return $results;
     }
 
     /**
-     * Type + name key.
+     * Structural comparison of two snapshots (no audit): matches, missing, extra, ambiguities, course differences.
      *
-     * @param array $m
-     * @return string
-     */
-    protected static function key_name(array $m): string {
-        return $m['modname'] . '|' . \local_mooc_audit\local\helpers::norm($m['name']);
-    }
-
-    /**
-     * Type + section + position key.
-     *
-     * @param array $s
-     * @param array $m
-     * @return string
-     */
-    protected static function key_pos(array $s, array $m): string {
-        $seq = $s['sections'][$m['sectionid']]['sequence'] ?? [];
-        $pos = array_search($m['cmid'], $seq);
-        return $m['modname'] . '|' . $m['sectionnumber'] . '|' . ($pos === false ? '?' : $pos);
-    }
-
-    /**
-     * Remap cm ids (through the match map) and grade item ids (course total) in an availability tree.
-     *
-     * @param array|null $tree
-     * @param array $map
      * @param array $src
      * @param array $dst
-     * @return array|null
+     * @param array $manual list of [source cmid, target cmid]
+     * @return array partial contract plus 'match' (raw matcher output, used by run())
      */
-    protected static function remap_availability(?array $tree, array $map, array $src, array $dst): ?array {
-        if (!$tree) {
-            return $tree;
+    public static function compare(array $src, array $dst, array $manual = []): array {
+        $match = matcher::match($src, $dst, $manual);
+        $map = array_map(fn($p) => $p['target'], $match['pairs']);
+        $ctx = differ::context($src, $dst, $map);
+
+        $matches = [];
+        foreach ($match['pairs'] as $scm => $p) {
+            $a = $src['modules'][$scm];
+            $b = $dst['modules'][$p['target']];
+            [$diffs, $expected] = differ::module_pair($a, $b, $ctx);
+            usort($diffs, fn($x, $y) => differ::KIND_ORDER[$x['kind']] <=> differ::KIND_ORDER[$y['kind']]);
+            $relevance = differ::relevance($diffs);
+            $matches[] = [
+                'source_cmid' => (int) $scm,
+                'target_cmid' => (int) $p['target'],
+                'modname' => $a['modname'],
+                'source_name' => (string) $a['name'],
+                'target_name' => (string) $b['name'],
+                'source_section' => (int) $a['sectionnumber'],
+                'target_section' => (int) $b['sectionnumber'],
+                'strategy' => $p['strategy'],
+                'confidence' => $p['confidence'],
+                'state' => in_array($relevance, [differ::RELEVANT, differ::INFO], true) ? 'modificada' : 'preservada',
+                'relevance' => $relevance,
+                'problematic' => $relevance === differ::RELEVANT,
+                'diffs' => $diffs,
+                'expected_count' => $expected,
+            ];
         }
-        $walk = function (array $node) use (&$walk, $map, $src, $dst) {
-            if (isset($node['c'])) {
-                $node['c'] = array_map($walk, $node['c']);
-                return $node;
+        usort($matches, fn($x, $y) => [$x['source_section'], matcher::position($src, $src['modules'][$x['source_cmid']])]
+            <=> [$y['source_section'], matcher::position($src, $src['modules'][$y['source_cmid']])]);
+
+        $ref = fn(array $m) => ['cmid' => (int) $m['cmid'], 'modname' => $m['modname'], 'name' => (string) $m['name'],
+            'section' => (int) $m['sectionnumber']];
+        $missing = array_map(fn($c) => $ref($src['modules'][$c]), $match['missing']);
+        $pairedbyname = [];
+        foreach ($match['pairs'] as $p) {
+            $pairedbyname[matcher::key_name($dst['modules'][$p['target']])] = (int) $p['target'];
+        }
+        $extra = [];
+        foreach ($match['extra'] as $c) {
+            $m = $dst['modules'][$c];
+            [$kind, $code] = differ::extra_kind($m);
+            $e = $ref($m) + ['kind' => $kind, 'code' => $code];
+            if (isset($pairedbyname[matcher::key_name($m)])) {
+                $e['duplicate_of'] = $pairedbyname[matcher::key_name($m)];
             }
-            if (($node['type'] ?? '') === 'completion' && isset($map[(int) $node['cm']])) {
-                $node['cm'] = $map[(int) $node['cm']];
+            $extra[] = $e;
+        }
+        $ambiguities = array_map(fn($a) => $a + ['explanation' => get_string('cmp_amb_' . $a['reason'], 'local_mooc_audit',
+            (object) ['n' => count($a['source']), 'm' => count($a['target'])])], $match['ambiguities']);
+
+        [$coursediffs, $ids] = differ::course($src, $dst, $ctx);
+        $warnings = [];
+        foreach ($match['manual'] as $mp) {
+            if (!$mp['accepted']) {
+                $warnings[] = get_string('cmp_manual_rejected', 'local_mooc_audit', (object) ['source' => $mp['source_cmid'],
+                    'target' => $mp['target_cmid'], 'reason' => get_string('cmp_manual_' . $mp['reason'], 'local_mooc_audit')]);
             }
-            if (($node['type'] ?? '') === 'grade') {
-                $sid = (int) ($node['id'] ?? 0);
-                if (($src['grade']['course_item']['id'] ?? null) === $sid && $dst['grade']['course_item']) {
-                    $node['id'] = $dst['grade']['course_item']['id'];
-                } else {
-                    // Module grade item: find the matched module owning it.
-                    foreach ($src['modules'] as $scm => $m) {
-                        foreach ($m['grade_items'] as $gi) {
-                            if ($gi['id'] === $sid && isset($map[$scm])) {
-                                foreach ($dst['modules'][$map[$scm]]['grade_items'] as $tgi) {
-                                    if ($tgi['itemnumber'] === $gi['itemnumber']) {
-                                        $node['id'] = $tgi['id'];
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            return $node;
-        };
-        return $walk($tree);
+        }
+        if ($src['course']['startdate'] && $dst['course']['startdate'] && $src['course']['startdate'] > $dst['course']['startdate']) {
+            $warnings[] = get_string('cmp_inverted', 'local_mooc_audit');
+        }
+
+        return [
+            'contract' => self::CONTRACT,
+            'contract_version' => self::CONTRACT_VERSION,
+            'engine' => 'local_mooc_audit ' . engine::VERSION,
+            'executed_at' => date('c'),
+            'timing' => [],
+            'source' => self::side($src),
+            'target' => self::side($dst),
+            'policy' => null,
+            'summary' => [],
+            'matches' => $matches,
+            'missing_in_target' => $missing,
+            'extra_in_target' => $extra,
+            'ambiguities' => $ambiguities,
+            'course_diffs' => $coursediffs,
+            'audit' => ['items' => [], 'counts' => [], 'source_policy_version' => '', 'target_policy_version' => ''],
+            'manual_pairs' => $match['manual'],
+            'warnings' => $warnings,
+            'expected_ids' => $ids,
+            'match' => $match,
+        ];
     }
 
     /**
-     * Normalise numeric strings so "9" and 9 compare equal.
+     * Identification of one side.
      *
-     * @param mixed $tree
-     * @return mixed
+     * @param array $s snapshot
+     * @return array
      */
-    protected static function normalise_tree($tree) {
-        if (is_array($tree)) {
-            $out = [];
-            foreach ($tree as $k => $v) {
-                $out[$k] = self::normalise_tree($v);
-            }
-            if (array_keys($out) !== range(0, count($out) - 1)) {
-                ksort($out); // Key order is irrelevant in availability JSON ("showc" may precede "c").
-            }
-            return $out;
-        }
-        return is_string($tree) && is_numeric($tree) ? $tree + 0 : $tree;
+    protected static function side(array $s): array {
+        $inv = engine::inventory($s);
+        return [
+            'id' => (int) $s['course']['id'],
+            'shortname' => (string) $s['course']['shortname'],
+            'fullname' => (string) $s['course']['fullname'],
+            'startdate' => $inv['startdate'],
+            'enddate' => $inv['enddate'],
+            'category' => $s['course']['category']['name'],
+            'sections' => $inv['sections'],
+            'modules' => $inv['modules'],
+            'modules_by_type' => (object) $inv['modules_by_type'],
+            'overall_status' => status::OVERALL_CLEAN,
+        ];
     }
 
     /**
-     * Plain-text rendering.
+     * Counts and verdict.
+     *
+     * @param array $r report
+     * @return array
+     */
+    protected static function summary(array $r): array {
+        $byconf = [];
+        $modified = 0;
+        $relevant = 0;
+        foreach ($r['matches'] as $m) {
+            $byconf[$m['confidence']] = ($byconf[$m['confidence']] ?? 0) + 1;
+            $modified += $m['state'] === 'modificada' ? 1 : 0;
+            $relevant += $m['problematic'] ? 1 : 0;
+        }
+        $coursediffs = count(array_filter($r['course_diffs'], fn($d) => $d['kind'] === differ::RELEVANT));
+        $extrarelevant = count(array_filter($r['extra_in_target'], fn($e) => $e['kind'] === differ::RELEVANT));
+        $duplicates = count(array_filter($r['ambiguities'], fn($a) => $a['reason'] === 'duplicado_no_destino'))
+            + count(array_filter($r['extra_in_target'], fn($e) => isset($e['duplicate_of'])));
+        $ambsrc = array_sum(array_map(fn($a) => count($a['source']), $r['ambiguities']));
+
+        $tofix = false;
+        $tocheck = false;
+        foreach ($r['audit']['items'] as $i) {
+            $target = in_array($i['classification'], ['pendencia_oferta', 'novo_no_destino', 'novo_em_atividade_adicional',
+                'persistente', 'indeterminado'], true);
+            $tofix = $tofix || ($target && $i['status_target'] === status::NAO_CONFORME && $i['classification'] !== 'indeterminado');
+            $tocheck = $tocheck || $target || $i['classification'] === 'nao_verificavel_no_destino';
+        }
+        $informative = (bool) array_filter($r['matches'], fn($m) => $m['relevance'] === differ::INFO)
+            || (bool) array_filter($r['course_diffs'], fn($d) => $d['kind'] === differ::INFO) || $r['extra_in_target'];
+        if ($r['missing_in_target'] || $relevant || $coursediffs || $extrarelevant || $tofix) {
+            $verdict = 'REVISAR';
+        } else if ($r['ambiguities'] || $tocheck || $informative) {
+            $verdict = 'CONFERIR';
+        } else {
+            $verdict = 'SEM_DIFERENCAS_RELEVANTES';
+        }
+        ksort($byconf);
+        return [
+            'source_modules' => $r['source']['modules'],
+            'target_modules' => $r['target']['modules'],
+            'preserved' => count($r['matches']) - $modified,
+            'modified' => $modified,
+            'modified_relevant' => $relevant,
+            'missing_in_target' => count($r['missing_in_target']),
+            'extra_in_target' => count($r['extra_in_target']),
+            'ambiguous_groups' => count($r['ambiguities']),
+            'ambiguous_source_modules' => $ambsrc,
+            'duplicates_in_target' => $duplicates,
+            'matches_by_confidence' => (object) $byconf,
+            'course_diffs_relevant' => $coursediffs,
+            'expected_identifier_changes' => ($r['expected_ids'] ?? 0) + array_sum(array_column($r['matches'], 'expected_count')),
+            'audit_counts' => (object) $r['audit']['counts'],
+            'verdict' => $verdict,
+        ];
+    }
+
+    /**
+     * Parse manual pairs given as "SRC-TGT" strings (URL or CLI); malformed entries are dropped.
+     *
+     * @param string[] $raw
+     * @return array list of [source cmid, target cmid]
+     */
+    public static function parse_pairs(array $raw): array {
+        $out = [];
+        foreach ($raw as $p) {
+            if (is_string($p) && preg_match('/^(\d+)-(\d+)$/', trim($p), $m)) {
+                $out[] = [(int) $m[1], (int) $m[2]];
+            }
+        }
+        return $out;
+    }
+
+    /**
+     * JSON serialisation (contract comparison 1.0): the single encoding used by the page and the CLI.
+     *
+     * @param array $report
+     * @return string
+     */
+    public static function to_json(array $report): string {
+        unset($report['expected_ids']);
+        return json_encode($report, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    }
+
+    /**
+     * Plain-text rendering (CLI), sections in the order of the page. Labels come from the language pack.
      *
      * @param array $r
      * @return string
      */
     public static function render_text(array $r): string {
-        $l = ["=== Comparação curso {$r['source']} (origem) → {$r['target']} (destino)", 'Resumo: ' . json_encode($r['summary'])];
-        foreach ($r['expected_course_diffs'] as $d) {
-            $l[] = '  [esperado]   ' . $d['field'] . ': ' . json_encode($d['source'], JSON_UNESCAPED_UNICODE) . ' → '
-                . json_encode($d['target'], JSON_UNESCAPED_UNICODE);
-        }
-        foreach ($r['course_diffs'] as $d) {
-            $l[] = '  [curso]      ' . $d['field'] . ': ' . json_encode($d['source'], JSON_UNESCAPED_UNICODE) . ' → '
-                . json_encode($d['target'], JSON_UNESCAPED_UNICODE);
-        }
-        foreach ($r['missing_in_target'] as $m) {
-            $l[] = "  [AUSENTE]    {$m['modname']} \"{$m['name']}\" (origem cmid {$m['source_cmid']}, seção {$m['section']})";
-        }
-        foreach ($r['extra_in_target'] as $m) {
-            $l[] = "  [ADICIONAL]  {$m['modname']} \"{$m['name']}\" (destino cmid {$m['target_cmid']}, seção {$m['section']})";
-        }
-        foreach ($r['ambiguous'] as $m) {
-            $l[] = "  [AMBÍGUO]    {$m['modname']} \"{$m['name']}\" (origem cmid {$m['source_cmid']}) candidatos "
-                . json_encode($m['candidates']);
-        }
-        foreach ($r['modified'] as $m) {
-            $l[] = "  [MODIFICADO] {$m['modname']} \"{$m['name']}\" ({$m['source_cmid']} → {$m['target_cmid']})";
-            foreach ($m['diffs'] as $d) {
-                $l[] = '       ' . $d['field'] . ': ' . mb_substr(json_encode($d['source'], JSON_UNESCAPED_UNICODE), 0, 160)
-                    . ' → ' . mb_substr(json_encode($d['target'], JSON_UNESCAPED_UNICODE), 0, 160);
+        $str = fn(string $key, $a = null) => get_string($key, 'local_mooc_audit', $a);
+        $j = fn($v) => json_encode($v, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        $s = $r['source'];
+        $t = $r['target'];
+        $l = [];
+        $l[] = "=== {$str('comparemenu')}: {$s['fullname']} [{$s['shortname']}] (id {$s['id']}) → {$t['fullname']}"
+            . " [{$t['shortname']}] (id {$t['id']}) — {$r['engine']}";
+        $l[] = "{$str('cmp_side_source')}: {$s['startdate']} → {$s['enddate']} | {$s['category']} | {$s['modules']}"
+            . " {$str('label_modules')} | " . $str('overall_' . strtolower($s['overall_status']));
+        $l[] = "{$str('cmp_side_target')}: {$t['startdate']} → {$t['enddate']} | {$t['category']} | {$t['modules']}"
+            . " {$str('label_modules')} | " . $str('overall_' . strtolower($t['overall_status']));
+        $l[] = "{$str('label_policy')}: {$r['policy']['note']}";
+        $l[] = "{$str('cmp_verdict')}: " . $str('cmp_verdict_' . strtolower($r['summary']['verdict'])) . ' | '
+            . $j(array_diff_key($r['summary'], ['verdict' => 1]));
+        $l[] = "--- {$str('cmp_section_pending')}";
+        foreach ($r['audit']['items'] as $i) {
+            $l[] = sprintf('  [%s] %-9s %-11s %s', $str('cmp_class_' . $i['classification']), $i['rule'], $i['severity'] ?? '',
+                $i['title']);
+            $l[] = "      {$str('label_local')}: {$i['local']}" . ($i['link'] ? ' → ' . $i['link'] : '');
+            $l[] = "      {$str('cmp_status')}: " . ($i['status_source'] ?? '—') . ' → ' . ($i['status_target'] ?? '—');
+            if ($i['evidence_source'] !== null) {
+                $l[] = "      {$str('cmp_evidence_source')}: {$i['evidence_source']}";
+            }
+            if ($i['evidence_target'] !== null) {
+                $l[] = "      {$str('cmp_evidence_target')}: {$i['evidence_target']}";
             }
         }
-        $hows = [];
-        foreach ($r['matched'] as $m) {
-            $hows[$m['how']] = ($hows[$m['how']] ?? 0) + 1;
+        $l[] = "--- {$str('cmp_section_missing')}";
+        foreach ($r['missing_in_target'] as $m) {
+            $l[] = "  {$m['modname']} \"{$m['name']}\" ({$str('label_section')} {$m['section']}, cmid {$m['cmid']})";
         }
-        $l[] = '  correspondências por estratégia: ' . json_encode($hows, JSON_UNESCAPED_UNICODE)
-            . "; preservados sem diferença: {$r['preserved']}";
+        $l[] = "--- {$str('cmp_section_ambiguous')}";
+        foreach ($r['ambiguities'] as $a) {
+            $l[] = "  {$a['modname']} \"{$a['name']}\": {$a['explanation']} " . $j(['origem' => array_column($a['source'], 'cmid'),
+                'destino' => array_column($a['target'], 'cmid'), 'configuracoes_iguais' => $a['settings_identical']]);
+        }
+        $l[] = "--- {$str('cmp_section_modified')}";
+        foreach ($r['matches'] as $m) {
+            if ($m['state'] !== 'modificada') {
+                continue;
+            }
+            $l[] = "  [{$str('cmp_kind_' . $m['relevance'])}] {$m['modname']} \"{$m['source_name']}\" ({$m['source_cmid']} → "
+                . "{$m['target_cmid']}, {$str('cmp_strategy_' . $m['strategy'])}, {$str('cmp_conf_' . $m['confidence'])})";
+            foreach ($m['diffs'] as $d) {
+                $l[] = "      [{$str('cmp_kind_' . $d['kind'])}] {$d['field']}: " . differ::show($d['source']) . ' → '
+                    . differ::show($d['target']) . " — {$d['explanation']}";
+            }
+        }
+        $l[] = "--- {$str('cmp_section_extra')}";
+        foreach ($r['extra_in_target'] as $m) {
+            $l[] = "  [{$str('cmp_kind_' . $m['kind'])}] {$m['modname']} \"{$m['name']}\" ({$str('label_section')} "
+                . "{$m['section']}, cmid {$m['cmid']})" . (isset($m['duplicate_of']) ? ' ' . $str('cmp_duplicate_of',
+                $m['duplicate_of']) : '');
+        }
+        $l[] = "--- {$str('cmp_section_course')}";
+        foreach ($r['course_diffs'] as $d) {
+            $l[] = "  [{$str('cmp_kind_' . $d['kind'])}] {$d['scope']}.{$d['field']}: " . differ::show($d['source']) . ' → '
+                . differ::show($d['target']) . " — {$d['explanation']}";
+        }
+        $l[] = "--- {$str('cmp_section_preserved')}";
+        $hows = [];
+        foreach ($r['matches'] as $m) {
+            $k = $str('cmp_strategy_' . $m['strategy']) . ' / ' . $str('cmp_conf_' . $m['confidence']);
+            $hows[$k] = ($hows[$k] ?? 0) + 1;
+        }
+        $l[] = '  ' . $j($hows);
+        foreach ($r['warnings'] as $w) {
+            $l[] = "  {$str('cmp_section_warnings')}: $w";
+        }
         return implode("\n", $l) . "\n";
     }
 }

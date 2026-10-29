@@ -63,6 +63,8 @@ class report implements renderable, templatable {
     protected moodle_url $pageurl;
     /** @var bool Offer "See correction proposal" on eligible results (viewer holds local/mooc_audit:preparecorrection). */
     protected bool $withcorrections;
+    /** @var moodle_url|null Link to compare this course with the previous offer (viewer holds local/mooc_audit:compare). */
+    protected ?moodle_url $compareurl;
 
     /**
      * Constructor.
@@ -70,11 +72,13 @@ class report implements renderable, templatable {
      * @param array $report report produced by the engine
      * @param moodle_url $pageurl URL of the current page
      * @param bool $withcorrections offer the correction proposal action on eligible results (specs/002)
+     * @param moodle_url|null $compareurl link to the comparison with the previous offer (specs/003)
      */
-    public function __construct(array $report, moodle_url $pageurl, bool $withcorrections = false) {
+    public function __construct(array $report, moodle_url $pageurl, bool $withcorrections = false, ?moodle_url $compareurl = null) {
         $this->report = $report;
         $this->pageurl = $pageurl;
         $this->withcorrections = $withcorrections;
+        $this->compareurl = $compareurl;
     }
 
     /**
@@ -106,6 +110,7 @@ class report implements renderable, templatable {
         $data->rerunbutton = $output->render(new single_button($rerun, get_string('rerun', 'local_mooc_audit'), 'get'));
         $json = new moodle_url($this->pageurl, ['format' => 'json']);
         $data->jsonurl = $json->out(false);
+        $data->compareurl = $this->compareurl ? $this->compareurl->out(false) : null;
 
         $data->inventory = $this->inventory($r['inventory']);
         $data->overall = $this->overall($r['summary']);

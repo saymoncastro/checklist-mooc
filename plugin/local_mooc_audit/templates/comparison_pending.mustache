@@ -1,0 +1,60 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_mooc_audit/comparison_pending
+
+    One class of the relation between the two audits (persistent, new in the target, pending item of the new offer...).
+
+    Context variables required for this template:
+    * code, label, description, count
+    * items[] - objects with rule, title, severitylabel, sourcelabel, targetlabel, targetclass, local, link, haslink,
+      evidence_source, evidence_target, guidance
+
+    Example context (json):
+    {
+        "code": "novo_no_destino", "label": "New in the target", "description": "The source was conformant here.", "count": 1,
+        "items": [{"rule": "CL-13", "title": "Quizzes with at least two attempts", "severitylabel": "High",
+            "sourcelabel": "Conformant", "targetlabel": "Non conformant", "targetclass": "badge-danger", "local": "quiz: Quiz 1",
+            "link": "#", "haslink": true, "evidence_source": null, "evidence_target": "attempts=1", "guidance": "Edit the quiz"}]
+    }
+}}
+<div class="local_mooc_audit-pending local_mooc_audit-class-{{code}}">
+    <h5>{{label}} <span class="badge badge-pill badge-secondary">{{count}}</span></h5>
+    <p class="small text-muted">{{description}}</p>
+    <table class="table table-sm table-striped">
+        <thead>
+            <tr>
+                <th scope="col">{{#str}} label_rule, local_mooc_audit {{/str}}</th>
+                <th scope="col">{{#str}} cmp_status, local_mooc_audit {{/str}}</th>
+                <th scope="col">{{#str}} label_local, local_mooc_audit {{/str}}</th>
+                <th scope="col">{{#str}} label_evidence, local_mooc_audit {{/str}}</th>
+                <th scope="col">{{#str}} label_guidance, local_mooc_audit {{/str}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#items}}
+            <tr>
+                <td><strong>{{rule}}</strong><br><small>{{title}}</small><br><small>{{severitylabel}}</small></td>
+                <td>{{sourcelabel}} → <span class="badge {{targetclass}}">{{targetlabel}}</span></td>
+                <td>{{#haslink}}<a href="{{link}}">{{local}}</a>{{/haslink}}{{^haslink}}{{local}}{{/haslink}}</td>
+                <td><dl class="mb-0 small">{{#evidence_source}}<dt>{{#str}} cmp_evidence_source, local_mooc_audit {{/str}}</dt><dd>{{evidence_source}}</dd>{{/evidence_source}}{{#evidence_target}}<dt>{{#str}} cmp_evidence_target, local_mooc_audit {{/str}}</dt><dd>{{evidence_target}}</dd>{{/evidence_target}}</dl></td>
+                <td>{{guidance}}</td>
+            </tr>
+            {{/items}}
+        </tbody>
+    </table>
+</div>

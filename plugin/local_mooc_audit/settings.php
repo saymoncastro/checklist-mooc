@@ -24,6 +24,14 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+// Comparison between offers (specs/003): visible to whoever holds the capability, without moodle/site:config.
+$ADMIN->add('courses', new admin_externalpage(
+    'local_mooc_audit_compare',
+    get_string('comparemenu', 'local_mooc_audit'),
+    new moodle_url('/local/mooc_audit/compare.php'),
+    'local/mooc_audit:compare'
+));
+
 if ($hassiteconfig) {
     $settings = new admin_settingpage('local_mooc_audit', get_string('pluginname', 'local_mooc_audit'));
     $ADMIN->add('localplugins', $settings);
@@ -65,5 +73,8 @@ if ($hassiteconfig) {
     $settings->add(new admin_setting_heading('local_mooc_audit/tools', '', html_writer::link(
         new moodle_url('/local/mooc_audit/index.php'),
         get_string('runaudit', 'local_mooc_audit')
+    ) . ' · ' . html_writer::link(
+        new moodle_url('/local/mooc_audit/compare.php'),
+        get_string('comparemenu', 'local_mooc_audit')
     )));
 }
