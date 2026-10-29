@@ -316,4 +316,18 @@ final class differ_test extends \advanced_testcase {
         }
         $this->assertSame([], $r['course_diffs']);
     }
+
+    /**
+     * A source that starts after the target is flagged as a possible inversion (never inverted automatically).
+     */
+    public function test_inverted_order_warning(): void {
+        $this->resetAfterTest();
+        [$a, $b] = $this->builders();
+        $a->patch('course', ['startdate' => 1830308400]);
+        $r = comparator::compare($a->get(), $b->get());
+        $this->assertContains(get_string('cmp_inverted', 'local_mooc_audit'), $r['warnings']);
+        $this->assertSame(10, $r['source']['id']);
+        $r = comparator::compare($b->get(), $a->get());
+        $this->assertNotContains(get_string('cmp_inverted', 'local_mooc_audit'), $r['warnings']);
+    }
 }
