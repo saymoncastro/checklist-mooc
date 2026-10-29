@@ -29,7 +29,6 @@ namespace local_mooc_audit;
  * @covers     \local_mooc_audit\engine
  */
 final class contract_test extends \advanced_testcase {
-
     /** @var array Decoded schema. */
     private array $schema;
 
@@ -87,7 +86,10 @@ final class contract_test extends \advanced_testcase {
                 return;
             }
         }
-        if (isset($schema['pattern']) && is_string($value) && !preg_match('/' . str_replace('/', '\/', $schema['pattern']) . '/u', $value)) {
+        if (
+            isset($schema['pattern']) && is_string($value) && !preg_match('/' . str_replace('/', '\/', $schema['pattern'])
+            . '/u', $value)
+        ) {
             $errors[] = "$path: \"$value\" does not match {$schema['pattern']}";
         }
         if (isset($schema['minLength']) && is_string($value) && mb_strlen($value) < $schema['minLength']) {
@@ -139,7 +141,8 @@ final class contract_test extends \advanced_testcase {
         $generator = $this->getDataGenerator()->get_plugin_generator('local_mooc_audit');
         [$a] = $generator->create_course_a(2027);
         [$b] = $generator->create_course_b(2027);
-        $poc = ['engine', 'policy_version', 'reoffer_year', 'executed_at', 'course', 'viewer_userid', 'timing', 'inventory', 'summary', 'results', 'warnings'];
+        $poc = ['engine', 'policy_version', 'reoffer_year', 'executed_at', 'course', 'viewer_userid', 'timing', 'inventory',
+            'summary', 'results', 'warnings'];
         foreach ([$a, $b] as $course) {
             $report = json_decode(engine::to_json(engine::audit($course->id, ['reoffer_year' => 2027])), true);
             $errors = [];

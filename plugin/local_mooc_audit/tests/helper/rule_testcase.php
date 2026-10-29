@@ -27,7 +27,6 @@ use stdClass;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class rule_testcase extends \advanced_testcase {
-
     /** @var int Reoffer year used by every scenario. */
     const YEAR = 2027;
 
@@ -60,7 +59,8 @@ abstract class rule_testcase extends \advanced_testcase {
         $this->resetAfterTest();
         $this->setAdminUser();
         return $this->getDataGenerator()->create_course(array_merge([
-            'enablecompletion' => 1, 'startdate' => $this->ts(self::YEAR . '-01-01 00:00'), 'enddate' => $this->ts(self::YEAR . '-12-31 23:59'),
+            'enablecompletion' => 1, 'startdate' => $this->ts(self::YEAR . '-01-01 00:00'), 'enddate' => $this->ts(self::YEAR
+                . '-12-31 23:59'),
             'category' => $this->gen()->target_category()->id, 'numsections' => 1, 'hiddensections' => 1,
         ], $extra));
     }
@@ -98,9 +98,10 @@ abstract class rule_testcase extends \advanced_testcase {
      * @param array $results
      * @param string $message
      */
-    protected function assertAll(string $status, array $results, string $message = ''): void {
+    protected function assert_all_status(string $status, array $results, string $message = ''): void {
         $this->assertNotEmpty($results, $message);
-        $this->assertSame(array_fill(0, count($results), $status), $this->statuses($results), $message . ' ' . json_encode(array_map(fn($r) => [$r['status'], $r['local'], $r['evidencia']], $results), JSON_UNESCAPED_UNICODE));
+        $this->assertSame(array_fill(0, count($results), $status), $this->statuses($results), $message . ' '
+            . json_encode(array_map(fn($r) => [$r['status'], $r['local'], $r['evidencia']], $results), JSON_UNESCAPED_UNICODE));
     }
 
     /**
@@ -119,7 +120,7 @@ abstract class rule_testcase extends \advanced_testcase {
      *
      * @param array $results
      */
-    protected function assertNcComplete(array $results): void {
+    protected function assert_nc_complete(array $results): void {
         foreach ($this->with($results, status::NAO_CONFORME) as $r) {
             $this->assertNotEmpty($r['local'], $r['rule']);
             $this->assertNotEmpty($r['evidencia'], $r['rule']);
@@ -137,8 +138,10 @@ abstract class rule_testcase extends \advanced_testcase {
      * @return stdClass create_module info (coursemodule, instance)
      */
     protected function page(stdClass $course, string $name, string $html = '<p>Texto.</p>', array $extra = []): stdClass {
-        return $this->gen()->add_module($course, 'page', 1, array_merge(['name' => $name, 'page' => ['text' => $html, 'format' => FORMAT_HTML, 'itemid' => 0],
-            'content' => $html, 'contentformat' => FORMAT_HTML, 'display' => RESOURCELIB_DISPLAY_OPEN, 'printintro' => 0, 'printlastmodified' => 0], $extra));
+        return $this->gen()->add_module($course, 'page', 1, array_merge(['name' => $name, 'page' => ['text' => $html,
+            'format' => FORMAT_HTML, 'itemid' => 0],
+            'content' => $html, 'contentformat' => FORMAT_HTML, 'display' => RESOURCELIB_DISPLAY_OPEN, 'printintro' => 0,
+                'printlastmodified' => 0], $extra));
     }
 
     /**
@@ -154,14 +157,27 @@ abstract class rule_testcase extends \advanced_testcase {
      * @param array $extra
      * @return stdClass create_module info
      */
-    protected function quiz(stdClass $course, string $name, int $attempts = 2, float $grade = 50, int $timeclose = 0, string $intro = '', int $questions = 2,
-            array $extra = []): stdClass {
+    protected function quiz(
+        stdClass $course,
+        string $name,
+        int $attempts = 2,
+        float $grade = 50,
+        int $timeclose = 0,
+        string $intro = '',
+        int $questions = 2,
+        array $extra = []
+    ): stdClass {
         $data = array_merge(['name' => $name, 'introeditor' => ['text' => $intro, 'format' => FORMAT_HTML, 'itemid' => 0],
-            'attempts' => $attempts, 'grade' => $grade, 'grademethod' => QUIZ_GRADEHIGHEST, 'timeclose' => $timeclose, 'timeopen' => 0, 'timelimit' => 0,
-            'completion' => COMPLETION_TRACKING_AUTOMATIC, 'completiongradeitemnumber' => 0, 'completionusegrade' => 1, 'quizpassword' => '',
-            'preferredbehaviour' => 'deferredfeedback', 'questionsperpage' => 1, 'shuffleanswers' => 1, 'decimalpoints' => 2, 'questiondecimalpoints' => -1,
-            'overduehandling' => 'autosubmit', 'graceperiod' => 0, 'reviewattempt' => 69904, 'reviewcorrectness' => 4352, 'reviewmarks' => 4352,
-            'reviewspecificfeedback' => 4352, 'reviewgeneralfeedback' => 4352, 'reviewrightanswer' => 4352, 'reviewoverallfeedback' => 4352,
+            'attempts' => $attempts, 'grade' => $grade, 'grademethod' => QUIZ_GRADEHIGHEST, 'timeclose' => $timeclose,
+                'timeopen' => 0, 'timelimit' => 0,
+            'completion' => COMPLETION_TRACKING_AUTOMATIC, 'completiongradeitemnumber' => 0, 'completionusegrade' => 1,
+                'quizpassword' => '',
+            'preferredbehaviour' => 'deferredfeedback', 'questionsperpage' => 1, 'shuffleanswers' => 1, 'decimalpoints' => 2,
+                'questiondecimalpoints' => -1,
+            'overduehandling' => 'autosubmit', 'graceperiod' => 0, 'reviewattempt' => 69904, 'reviewcorrectness' => 4352,
+                'reviewmarks' => 4352,
+            'reviewspecificfeedback' => 4352, 'reviewgeneralfeedback' => 4352, 'reviewrightanswer' => 4352,
+                'reviewoverallfeedback' => 4352,
             'reviewmaxmarks' => 69904], $extra);
         $q = $this->gen()->add_module($course, 'quiz', 1, $data);
         if ($questions) {
@@ -180,10 +196,19 @@ abstract class rule_testcase extends \advanced_testcase {
      * @param bool $withitem
      * @return stdClass create_module info
      */
-    protected function feedback(stdClass $course, string $name, int $completion = COMPLETION_TRACKING_AUTOMATIC, int $completionsubmit = 1, bool $withitem = true): stdClass {
-        $fb = $this->gen()->add_module($course, 'feedback', 1, ['name' => $name, 'anonymous' => 1, 'completionsubmit' => $completionsubmit, 'completion' => $completion,
-            'page_after_submit_editor' => ['text' => 'Obrigado', 'format' => FORMAT_HTML, 'itemid' => 0], 'page_after_submit' => 'Obrigado',
-            'page_after_submitformat' => FORMAT_HTML, 'site_after_submit' => '', 'multiple_submit' => 0, 'publish_stats' => 0, 'email_notification' => 0]);
+    protected function feedback(
+        stdClass $course,
+        string $name,
+        int $completion = COMPLETION_TRACKING_AUTOMATIC,
+        int $completionsubmit = 1,
+        bool $withitem = true
+    ): stdClass {
+        $fb = $this->gen()->add_module($course, 'feedback', 1, ['name' => $name, 'anonymous' => 1,
+            'completionsubmit' => $completionsubmit, 'completion' => $completion,
+            'page_after_submit_editor' => ['text' => 'Obrigado', 'format' => FORMAT_HTML, 'itemid' => 0],
+                'page_after_submit' => 'Obrigado',
+            'page_after_submitformat' => FORMAT_HTML, 'site_after_submit' => '', 'multiple_submit' => 0, 'publish_stats' => 0,
+                'email_notification' => 0]);
         if ($withitem) {
             $this->gen()->add_feedback_item($fb->instance);
         }
@@ -198,15 +223,23 @@ abstract class rule_testcase extends \advanced_testcase {
      * @param array $extra
      * @return stdClass create_module info
      */
-    protected function certificate(stdClass $course, string $name = 'Certificado digital de conclusão', array $extra = []): stdClass {
+    protected function certificate(
+        stdClass $course,
+        string $name = 'Certificado digital de conclusão',
+        array $extra = []
+    ): stdClass {
         if (!\local_mooc_audit_generator::has_module('simplecertificate')) {
             $this->markTestSkipped('mod_simplecertificate not installed');
         }
         return $this->gen()->add_module($course, 'simplecertificate', 1, array_merge(['name' => $name,
-            'certificatetext' => ['text' => 'Certificamos {USERNAME}.', 'format' => FORMAT_HTML], 'secondpagetext' => ['text' => '', 'format' => FORMAT_HTML],
-            'width' => 297, 'height' => 210, 'certificatetextx' => 40, 'certificatetexty' => 80, 'coursename' => '', 'certdate' => -1, 'certgrade' => 0,
-            'gradefmt' => 1, 'emailothers' => '', 'emailteachers' => 0, 'reportcert' => 0, 'delivery' => 0, 'requiredtime' => 0, 'printqrcode' => 0,
-            'qrcodefirstpage' => 0, 'codex' => 240, 'codey' => 150, 'enablesecondpage' => 0, 'secondpagex' => 40, 'secondpagey' => 3, 'certdatefmt' => '',
+            'certificatetext' => ['text' => 'Certificamos {USERNAME}.', 'format' => FORMAT_HTML],
+                'secondpagetext' => ['text' => '', 'format' => FORMAT_HTML],
+            'width' => 297, 'height' => 210, 'certificatetextx' => 40, 'certificatetexty' => 80, 'coursename' => '',
+                'certdate' => -1, 'certgrade' => 0,
+            'gradefmt' => 1, 'emailothers' => '', 'emailteachers' => 0, 'reportcert' => 0, 'delivery' => 0, 'requiredtime' => 0,
+                'printqrcode' => 0,
+            'qrcodefirstpage' => 0, 'codex' => 240, 'codey' => 150, 'enablesecondpage' => 0, 'secondpagex' => 40,
+                'secondpagey' => 3, 'certdatefmt' => '',
             'timestartdatefmt' => '', 'outcome' => 0, 'certificateimage' => '', 'secondimage' => ''], $extra));
     }
 

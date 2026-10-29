@@ -28,7 +28,6 @@ use local_mooc_audit\local\rule\base;
  * @covers     \local_mooc_audit\local\locator
  */
 final class locator_test extends \advanced_testcase {
-
     /** @var array Snapshot-like modules keyed by cmid. */
     private const MODULES = [40 => ['cmid' => 40, 'modname' => 'quiz'], 46 => ['cmid' => 46, 'modname' => 'simplecertificate']];
     /** @var array Snapshot-like sections. */

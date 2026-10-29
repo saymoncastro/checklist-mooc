@@ -43,9 +43,13 @@ if (!$courseid) {
     echo $OUTPUT->header();
     echo html_writer::start_tag('form', ['method' => 'get', 'class' => 'form-inline mb-3']);
     echo html_writer::label(get_string('courseid', 'local_mooc_audit'), 'courseid', true, ['class' => 'mr-2']);
-    echo html_writer::empty_tag('input', ['type' => 'number', 'name' => 'courseid', 'id' => 'courseid', 'min' => 1, 'required' => 'required',
+    echo html_writer::empty_tag('input', ['type' => 'number', 'name' => 'courseid', 'id' => 'courseid', 'min' => 1,
+        'required' => 'required',
         'class' => 'form-control mr-2']);
-    echo html_writer::empty_tag('input', ['type' => 'submit', 'class' => 'btn btn-primary', 'value' => get_string('runaudit', 'local_mooc_audit')]);
+    echo html_writer::empty_tag('input', ['type' => 'submit', 'class' => 'btn btn-primary', 'value' => get_string(
+        'runaudit',
+        'local_mooc_audit'
+    )]);
     echo html_writer::end_tag('form');
     echo $OUTPUT->footer();
     exit;

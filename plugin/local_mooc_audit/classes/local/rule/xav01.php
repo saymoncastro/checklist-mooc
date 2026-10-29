@@ -59,10 +59,16 @@ class xav01 extends base {
             if (preg_match('/valor\s*[:\-]?\s*(\d+(?:[.,]\d+)?)\s*pontos?/u', $intro, $mm)) {
                 $declared = (float) str_replace(',', '.', $mm[1]);
                 if (abs($declared - $gi['grademax']) > 0.001) {
-                    $out[] = $this->f(status::NAO_CONFORME, helpers::label($m), "enunciado declara {$mm[1]} pontos; nota máxima={$gi['grademax']}", ['cmid' => $m['cmid'], 'orientacao' => $this->guidance()]);
+                    $out[] = $this->f(
+                        status::NAO_CONFORME,
+                        helpers::label($m),
+                        "enunciado declara {$mm[1]} pontos; nota máxima={$gi['grademax']}",
+                        ['cmid' => $m['cmid'],
+                        'orientacao' => $this->guidance()]
+                    );
                 }
             }
         }
         return $out ?: [$this->f(status::CONFORME, 'Enunciados', 'sem divergências entre enunciado e pontuação')];
-        }
+    }
 }

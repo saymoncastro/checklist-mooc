@@ -29,7 +29,7 @@ define('CLI_SCRIPT', true);
 require(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir . '/clilib.php');
 
-list($options) = cli_get_params(['source' => 0, 'target' => 0, 'json' => false, 'out' => '', 'help' => false], ['h' => 'help']);
+[$options] = cli_get_params(['source' => 0, 'target' => 0, 'json' => false, 'out' => '', 'help' => false], ['h' => 'help']);
 if ($options['help'] || !$options['source'] || !$options['target']) {
     cli_writeln('Uso: --source=COURSEID --target=COURSEID [--json] [--out=FILE]');
     exit(0);
@@ -41,4 +41,5 @@ $report = \local_mooc_audit\comparator::compare($src, $dst);
 if ($options['out'] !== '') {
     file_put_contents($options['out'], json_encode($report, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
 }
-echo $options['json'] ? json_encode($report, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "\n" : \local_mooc_audit\comparator::render_text($report);
+echo $options['json'] ? json_encode($report, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "\n"
+    : \local_mooc_audit\comparator::render_text($report);

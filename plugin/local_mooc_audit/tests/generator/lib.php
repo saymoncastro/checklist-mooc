@@ -42,7 +42,6 @@ require_once($CFG->dirroot . '/mod/quiz/locallib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class local_mooc_audit_generator extends component_generator_base {
-
     /** @var string Name of the target category required by the default policy. */
     const CATEGORY_NAME = 'Inscrições Abertas';
 
@@ -106,7 +105,8 @@ class local_mooc_audit_generator extends component_generator_base {
         $mi = (object) array_merge([
             'modulename' => $modname, 'module' => $module->id, 'course' => $course->id, 'section' => $section, 'visible' => 1,
             'visibleoncoursepage' => 1, 'introeditor' => ['text' => '', 'format' => FORMAT_HTML, 'itemid' => 0], 'cmidnumber' => '',
-            'completion' => COMPLETION_TRACKING_NONE, 'completionview' => 0, 'completiongradeitemnumber' => null, 'availability' => null,
+            'completion' => COMPLETION_TRACKING_NONE, 'completionview' => 0, 'completiongradeitemnumber' => null,
+                'availability' => null,
             'groupmode' => 0, 'groupingid' => 0, 'showdescription' => 0,
         ], $data);
         return create_module($mi);
@@ -149,7 +149,8 @@ class local_mooc_audit_generator extends component_generator_base {
      */
     public function add_feedback_item(int $feedbackid): void {
         global $DB;
-        $DB->insert_record('feedback_item', (object) ['feedback' => $feedbackid, 'template' => 0, 'name' => 'Comentários', 'label' => '',
+        $DB->insert_record('feedback_item', (object) ['feedback' => $feedbackid, 'template' => 0, 'name' => 'Comentários',
+            'label' => '',
             'presentation' => '', 'typ' => 'textarea', 'hasvalue' => 1, 'position' => 1, 'required' => 0, 'dependitem' => 0,
             'dependvalue' => '', 'options' => '']);
     }
@@ -174,7 +175,14 @@ class local_mooc_audit_generator extends component_generator_base {
         $page->blocks->set_default_region('side-pre');
         $page->blocks->add_block($blockname, 'side-pre', 0, false, 'course-view-*');
         if ($config) {
-            $inst = $DB->get_records('block_instances', ['blockname' => $blockname, 'parentcontextid' => $context->id], 'id DESC', '*', 0, 1);
+            $inst = $DB->get_records(
+                'block_instances',
+                ['blockname' => $blockname, 'parentcontextid' => $context->id],
+                'id DESC',
+                '*',
+                0,
+                1
+            );
             $inst = reset($inst);
             $inst->configdata = base64_encode(serialize((object) $config));
             $DB->update_record('block_instances', $inst);
@@ -213,11 +221,13 @@ class local_mooc_audit_generator extends component_generator_base {
 
         $summary = '<p><strong>Nome do curso:</strong> ' . $fullname . '</p><p><strong>Carga horária:</strong> 30 horas</p>'
             . '<p><a href="https://mooc.cefor.ifes.edu.br/moodle/login/signup.php"><button>Criar Conta</button></a></p>'
-            . '<p><a href="https://mooc.cefor.ifes.edu.br/moodle/course/index.php?categoryid=7"><button>Turmas anteriores</button></a></p>';
+            . '<p><a href="https://mooc.cefor.ifes.edu.br/moodle/course/index.php?categoryid=7">'
+            . '<button>Turmas anteriores</button></a></p>';
         $course = create_course((object) [
             'fullname' => $fullname, 'shortname' => $shortname, 'category' => $catid, 'format' => 'topics', 'numsections' => 4,
             'startdate' => $broken ? $start - 365 * DAYSECS : $start, 'enddate' => $broken ? $start + 180 * DAYSECS : $end,
-            'visible' => 1, 'enablecompletion' => 1, 'showcompletionconditions' => 1, 'summary' => $summary, 'summaryformat' => FORMAT_HTML,
+            'visible' => 1, 'enablecompletion' => 1, 'showcompletionconditions' => 1, 'summary' => $summary,
+                'summaryformat' => FORMAT_HTML,
             'hiddensections' => $broken ? 0 : 1, 'lang' => 'pt_br',
         ]);
         $ids = [];
@@ -230,34 +240,60 @@ class local_mooc_audit_generator extends component_generator_base {
         }
 
         $pagedefaults = ['display' => RESOURCELIB_DISPLAY_OPEN, 'printintro' => 0, 'printlastmodified' => 0];
-        $page = function(string $name, string $html, array $extra = []) use ($pagedefaults) {
+        $page = function (string $name, string $html, array $extra = []) use ($pagedefaults) {
             return array_merge(['name' => $name, 'page' => ['text' => $html, 'format' => FORMAT_HTML, 'itemid' => 0],
                 'content' => $html, 'contentformat' => FORMAT_HTML], $pagedefaults, $extra);
         };
 
-        // Área do curso (seção 0).
+        // Seção 0: área do curso.
         $infohtml = '<p><strong>Nome do curso:</strong> ' . $fullname . '</p><p><strong>Carga horária:</strong> 30 horas</p>';
         $ids['info'] = $this->add_module($course, 'page', 0, $page('Informações sobre o curso', $infohtml))->coursemodule;
-        $ids['forum'] = $this->add_module($course, 'forum', 0, ['name' => 'Espaço de interação', 'type' => 'general', 'forcesubscribe' => 0,
-            'grade_forum' => 0, 'scale' => 0, 'assessed' => 0, 'completion' => $broken ? COMPLETION_TRACKING_MANUAL : COMPLETION_TRACKING_NONE,
-            'maxbytes' => 0, 'maxattachments' => 1, 'completionposts' => 0, 'completionreplies' => 0, 'completiondiscussions' => 0])->coursemodule;
-        $perfil = $this->add_module($course, 'feedback', 0, $this->feedback_data('Pesquisa de Perfil', 1, 1, COMPLETION_TRACKING_AUTOMATIC));
+        $ids['forum'] = $this->add_module($course, 'forum', 0, ['name' => 'Espaço de interação', 'type' => 'general',
+            'forcesubscribe' => 0,
+            'grade_forum' => 0, 'scale' => 0, 'assessed' => 0, 'completion' => $broken ? COMPLETION_TRACKING_MANUAL
+                : COMPLETION_TRACKING_NONE,
+            'maxbytes' => 0, 'maxattachments' => 1, 'completionposts' => 0, 'completionreplies' => 0,
+                'completiondiscussions' => 0])->coursemodule;
+        $perfil = $this->add_module($course, 'feedback', 0, $this->feedback_data(
+            'Pesquisa de Perfil',
+            1,
+            1,
+            COMPLETION_TRACKING_AUTOMATIC
+        ));
         $ids['perfil'] = $perfil->coursemodule;
         $this->add_feedback_item($perfil->instance);
-        $ids['licenca_label'] = $this->add_module($course, 'label', 0, ['introeditor' => ['text' => '<p>Licença para capacitação: se você é servidor público...</p>',
-            'format' => FORMAT_HTML, 'itemid' => 0], 'completion' => $broken ? COMPLETION_TRACKING_MANUAL : COMPLETION_TRACKING_NONE])->coursemodule;
+        $ids['licenca_label'] = $this->add_module(
+            $course,
+            'label',
+            0,
+            ['introeditor' => ['text' => '<p>Licença para capacitação: se você é servidor público...</p>',
+            'format' => FORMAT_HTML, 'itemid' => 0], 'completion' => $broken ? COMPLETION_TRACKING_MANUAL
+            : COMPLETION_TRACKING_NONE]
+        )->coursemodule;
 
         // Conteúdos.
-        $ids['pagina1'] = $this->add_module($course, 'page', 1, $page('Conceitos iniciais', '<p>Texto do conteúdo 1.</p>',
-            ['completion' => COMPLETION_TRACKING_AUTOMATIC, 'completionview' => 1]))->coursemodule;
-        $ids['pagina2'] = $this->add_module($course, 'page', 2, $page('Aprofundamento', '<p>Texto do conteúdo 2.</p>',
-            ['completion' => $broken ? COMPLETION_TRACKING_NONE : COMPLETION_TRACKING_AUTOMATIC, 'completionview' => $broken ? 0 : 1]))->coursemodule;
+        $ids['pagina1'] = $this->add_module($course, 'page', 1, $page(
+            'Conceitos iniciais',
+            '<p>Texto do conteúdo 1.</p>',
+            ['completion' => COMPLETION_TRACKING_AUTOMATIC, 'completionview' => 1]
+        ))->coursemodule;
+        $ids['pagina2'] = $this->add_module($course, 'page', 2, $page(
+            'Aprofundamento',
+            '<p>Texto do conteúdo 2.</p>',
+            ['completion' => $broken ? COMPLETION_TRACKING_NONE : COMPLETION_TRACKING_AUTOMATIC, 'completionview' => $broken ? 0
+                : 1]
+        ))->coursemodule;
         if ($broken) {
             $ids['pagina_vazia'] = $this->add_module($course, 'page', 2, $page('Página sem conteúdo', '<p></p>'))->coursemodule;
-            $ids['pagina_img'] = $this->add_module($course, 'page', 2, $page('Página com imagem perdida',
-                '<p><img src="@@PLUGINFILE@@/banner.png" alt="banner"></p>'))->coursemodule;
-            $ids['pagina_oculta'] = $this->add_module($course, 'page', 2, $page('Leitura obrigatória (oculta)', '<p>Obrigatória.</p>',
-                ['visible' => 0, 'completion' => COMPLETION_TRACKING_AUTOMATIC, 'completionview' => 1]))->coursemodule;
+            $ids['pagina_img'] = $this->add_module($course, 'page', 2, $page(
+                'Página com imagem perdida',
+                '<p><img src="@@PLUGINFILE@@/banner.png" alt="banner"></p>'
+            ))->coursemodule;
+            $ids['pagina_oculta'] = $this->add_module($course, 'page', 2, $page(
+                'Leitura obrigatória (oculta)',
+                '<p>Obrigatória.</p>',
+                ['visible' => 0, 'completion' => COMPLETION_TRACKING_AUTOMATIC, 'completionview' => 1]
+            ))->coursemodule;
         }
 
         // Avaliação: dois questionários (50 + 50 = 100; no curso B 50 + 40 = 90 e 1 tentativa no primeiro).
@@ -279,55 +315,93 @@ class local_mooc_audit_generator extends component_generator_base {
 
         // Glossário + jogo (curso B): glossário vazio como fonte de palavras cruzadas.
         if ($broken && self::has_module('game')) {
-            $gl = $this->add_module($course, 'glossary', 3, ['name' => 'Glossário de termos', 'displayformat' => 'dictionary', 'mainglossary' => 0,
-                'globalglossary' => 0, 'allowduplicatedentries' => 0, 'showspecial' => 1, 'showalphabet' => 1, 'showall' => 1, 'allowcomments' => 0,
-                'allowprintview' => 1, 'usedynalink' => 0, 'defaultapproval' => 1, 'entbypage' => 10, 'editalways' => 0, 'rsstype' => 0,
+            $gl = $this->add_module($course, 'glossary', 3, ['name' => 'Glossário de termos', 'displayformat' => 'dictionary',
+                'mainglossary' => 0,
+                'globalglossary' => 0, 'allowduplicatedentries' => 0, 'showspecial' => 1, 'showalphabet' => 1, 'showall' => 1,
+                    'allowcomments' => 0,
+                'allowprintview' => 1, 'usedynalink' => 0, 'defaultapproval' => 1, 'entbypage' => 10, 'editalways' => 0,
+                    'rsstype' => 0,
                 'rssarticles' => 0, 'assessed' => 0, 'scale' => 0]);
             $ids['glossario'] = $gl->coursemodule;
-            $game = $this->add_module($course, 'game', 3, ['name' => 'Palavras cruzadas', 'gamekind' => 'cross', 'sourcemodule' => 'glossary',
-                'glossaryid' => $gl->instance, 'glossarycategoryid' => 0, 'grade' => 10, 'grademethod' => 1, 'param1' => 0, 'param2' => 0, 'shuffle' => 1,
-                'timeopen' => 0, 'timeclose' => 0, 'completion' => COMPLETION_TRACKING_AUTOMATIC, 'completiongradeitemnumber' => 0, 'completionusegrade' => 1]);
+            $game = $this->add_module($course, 'game', 3, ['name' => 'Palavras cruzadas', 'gamekind' => 'cross',
+                'sourcemodule' => 'glossary',
+                'glossaryid' => $gl->instance, 'glossarycategoryid' => 0, 'grade' => 10, 'grademethod' => 1, 'param1' => 0,
+                    'param2' => 0, 'shuffle' => 1,
+                'timeopen' => 0, 'timeclose' => 0, 'completion' => COMPLETION_TRACKING_AUTOMATIC,
+                    'completiongradeitemnumber' => 0, 'completionusegrade' => 1]);
             $ids['jogo'] = $game->coursemodule;
         }
 
         // Certificado e conclusão.
-        $avaliacao = $this->add_module($course, 'feedback', 4, $this->feedback_data('Avaliação do curso', 1, 1, COMPLETION_TRACKING_AUTOMATIC));
+        $avaliacao = $this->add_module($course, 'feedback', 4, $this->feedback_data(
+            'Avaliação do curso',
+            1,
+            1,
+            COMPLETION_TRACKING_AUTOMATIC
+        ));
         $ids['avaliacao'] = $avaliacao->coursemodule;
         $this->add_feedback_item($avaliacao->instance);
         $req = $broken ? [$ids['quiz1']] : [$ids['quiz1'], $ids['quiz2']];
-        $this->set_availability($ids['avaliacao'], ['op' => '&', 'c' => array_map(fn($cm) => ['type' => 'completion', 'cm' => $cm, 'e' => 1], $req),
+        $this->set_availability($ids['avaliacao'], ['op' => '&', 'c' => array_map(fn($cm) => ['type' => 'completion',
+            'cm' => $cm, 'e' => 1], $req),
             'showc' => array_fill(0, count($req), true)]);
-        $licfb = $this->add_module($course, 'feedback', 4, $this->feedback_data('Licença para capacitação', 2, 0, COMPLETION_TRACKING_NONE, ''));
+        $licfb = $this->add_module($course, 'feedback', 4, $this->feedback_data(
+            'Licença para capacitação',
+            2,
+            0,
+            COMPLETION_TRACKING_NONE,
+            ''
+        ));
         $ids['licenca_fb'] = $licfb->coursemodule;
         $this->add_feedback_item($licfb->instance);
         if (self::has_module('simplecertificate')) {
             $courseitem = grade_item::fetch_course_item($course->id);
-            $cert = $this->add_module($course, 'simplecertificate', 4, $this->certificate_data('Certificado digital de conclusão',
-                'Certificamos que {USERNAME} concluiu {COURSENAME}.', 1));
+            $cert = $this->add_module($course, 'simplecertificate', 4, $this->certificate_data(
+                'Certificado digital de conclusão',
+                'Certificamos que {USERNAME} concluiu {COURSENAME}.',
+                1
+            ));
             $ids['certificado'] = $cert->coursemodule;
-            $c = [['type' => 'completion', 'cm' => $ids['avaliacao'], 'e' => 1], ['type' => 'completion', 'cm' => $ids['perfil'], 'e' => 1]];
+            $c = [['type' => 'completion', 'cm' => $ids['avaliacao'], 'e' => 1], ['type' => 'completion',
+                'cm' => $ids['perfil'], 'e' => 1]];
             if (!$broken) {
                 $c[] = ['type' => 'grade', 'id' => (int) $courseitem->id, 'min' => 60];
             } // Curso B: certificado sem a condição de nota.
             $this->set_availability($ids['certificado'], ['op' => '&', 'c' => $c, 'showc' => array_fill(0, count($c), true)]);
-            $decl = $this->add_module($course, 'simplecertificate', 4, $this->certificate_data('Declaração licença para capacitação',
-                'Declaração para {USERNAME}.', 0));
+            $decl = $this->add_module($course, 'simplecertificate', 4, $this->certificate_data(
+                'Declaração licença para capacitação',
+                'Declaração para {USERNAME}.',
+                0
+            ));
             $ids['declaracao'] = $decl->coursemodule;
         }
 
         // Curso B: dependência circular entre duas páginas e arquivo perdido.
         if ($broken) {
-            $pa = $this->add_module($course, 'page', 1, $page('Ciclo A', '<p>A</p>', ['completion' => COMPLETION_TRACKING_AUTOMATIC, 'completionview' => 1]))->coursemodule;
-            $pb = $this->add_module($course, 'page', 1, $page('Ciclo B', '<p>B</p>', ['completion' => COMPLETION_TRACKING_AUTOMATIC, 'completionview' => 1]))->coursemodule;
-            $this->set_availability($pa, ['op' => '&', 'c' => [['type' => 'completion', 'cm' => $pb, 'e' => 1]], 'showc' => [true]]);
-            $this->set_availability($pb, ['op' => '&', 'c' => [['type' => 'completion', 'cm' => $pa, 'e' => 1]], 'showc' => [true]]);
+            $pa = $this->add_module($course, 'page', 1, $page(
+                'Ciclo A',
+                '<p>A</p>',
+                ['completion' => COMPLETION_TRACKING_AUTOMATIC, 'completionview' => 1]
+            ))->coursemodule;
+            $pb = $this->add_module($course, 'page', 1, $page(
+                'Ciclo B',
+                '<p>B</p>',
+                ['completion' => COMPLETION_TRACKING_AUTOMATIC, 'completionview' => 1]
+            ))->coursemodule;
+            $this->set_availability($pa, ['op' => '&', 'c' => [['type' => 'completion', 'cm' => $pb, 'e' => 1]],
+                'showc' => [true]]);
+            $this->set_availability($pb, ['op' => '&', 'c' => [['type' => 'completion', 'cm' => $pa, 'e' => 1]],
+                'showc' => [true]]);
             $ids['cicloA'] = $pa;
             $ids['cicloB'] = $pb;
-            $res = $this->add_module($course, 'resource', 2, ['name' => 'Apostila (arquivo perdido)', 'display' => RESOURCELIB_DISPLAY_AUTO, 'printintro' => 0, 'files' => 0]);
+            $res = $this->add_module($course, 'resource', 2, ['name' => 'Apostila (arquivo perdido)',
+                'display' => RESOURCELIB_DISPLAY_AUTO, 'printintro' => 0, 'files' => 0]);
             $ids['apostila'] = $res->coursemodule;
             $fs = get_file_storage();
-            $file = $fs->create_file_from_string(['contextid' => context_module::instance($res->coursemodule)->id, 'component' => 'mod_resource',
-                'filearea' => 'content', 'itemid' => 0, 'filepath' => '/', 'filename' => 'apostila.txt'], 'conteudo de teste ' . $course->id);
+            $file = $fs->create_file_from_string(['contextid' => context_module::instance($res->coursemodule)->id,
+                'component' => 'mod_resource',
+                'filearea' => 'content', 'itemid' => 0, 'filepath' => '/', 'filename' => 'apostila.txt'], 'conteudo de teste '
+                    . $course->id);
             $ids['apostila_hash'] = $file->get_contenthash();
             $this->remove_file_content($file);
         }
@@ -336,10 +410,13 @@ class local_mooc_audit_generator extends component_generator_base {
         if ($DB->record_exists('block', ['name' => 'completion_progress'])) {
             $this->add_block($course, 'completion_progress');
         }
-        $this->add_block($course, 'html', ['title' => 'Atenção ao prazo!!!', 'text' => '<p>Em {QTD_DIAS_FIM} dias este curso se encerrará.</p>', 'format' => FORMAT_HTML]);
-        $this->add_block($course, 'html', ['title' => 'Dúvidas técnicas? Podemos ajudar!', 'text' => '<p>Suporte.</p>', 'format' => FORMAT_HTML]);
+        $this->add_block($course, 'html', ['title' => 'Atenção ao prazo!!!',
+            'text' => '<p>Em {QTD_DIAS_FIM} dias este curso se encerrará.</p>', 'format' => FORMAT_HTML]);
+        $this->add_block($course, 'html', ['title' => 'Dúvidas técnicas? Podemos ajudar!', 'text' => '<p>Suporte.</p>',
+            'format' => FORMAT_HTML]);
         if (!$broken) {
-            $this->add_block($course, 'html', ['title' => 'Acessibilidade', 'text' => '<p>Recursos de acessibilidade.</p>', 'format' => FORMAT_HTML]);
+            $this->add_block($course, 'html', ['title' => 'Acessibilidade', 'text' => '<p>Recursos de acessibilidade.</p>',
+                'format' => FORMAT_HTML]);
         }
 
         // Autoinscrição.
@@ -355,7 +432,8 @@ class local_mooc_audit_generator extends component_generator_base {
             $self = $DB->get_record('enrol', ['id' => $id]);
         }
         $plugin->update_instance($self, (object) ['status' => $broken ? ENROL_INSTANCE_DISABLED : ENROL_INSTANCE_ENABLED,
-            'enrolstartdate' => $broken ? 0 : $course->startdate, 'enrolenddate' => $broken ? 0 : $course->enddate, 'customint6' => 1, 'roleid' => 5,
+            'enrolstartdate' => $broken ? 0 : $course->startdate, 'enrolenddate' => $broken ? 0 : $course->enddate,
+                'customint6' => 1, 'roleid' => 5,
             'name' => '', 'expirynotify' => 0, 'expirythreshold' => $self->expirythreshold, 'notifyall' => 0]);
 
         // Livro de notas: curso A sem "excluir notas vazias" (o padrão do Moodle é 1); curso B com.
@@ -377,12 +455,18 @@ class local_mooc_audit_generator extends component_generator_base {
      * @return array
      */
     protected function quiz_data(string $name, int $attempts, float $grade, int $timeclose): array {
-        return ['name' => $name, 'introeditor' => ['text' => '<p>Tentativas permitidas: 2. Valor: 50 pontos.</p>', 'format' => FORMAT_HTML, 'itemid' => 0],
-            'attempts' => $attempts, 'grade' => $grade, 'grademethod' => QUIZ_GRADEHIGHEST, 'timeclose' => $timeclose, 'timeopen' => 0, 'timelimit' => 0,
-            'completion' => COMPLETION_TRACKING_AUTOMATIC, 'completiongradeitemnumber' => 0, 'completionusegrade' => 1, 'quizpassword' => '',
-            'preferredbehaviour' => 'deferredfeedback', 'questionsperpage' => 1, 'shuffleanswers' => 1, 'decimalpoints' => 2, 'questiondecimalpoints' => -1,
-            'overduehandling' => 'autosubmit', 'graceperiod' => 0, 'reviewattempt' => 69904, 'reviewcorrectness' => 4352, 'reviewmarks' => 4352,
-            'reviewspecificfeedback' => 4352, 'reviewgeneralfeedback' => 4352, 'reviewrightanswer' => 4352, 'reviewoverallfeedback' => 4352,
+        return ['name' => $name, 'introeditor' => ['text' => '<p>Tentativas permitidas: 2. Valor: 50 pontos.</p>',
+            'format' => FORMAT_HTML, 'itemid' => 0],
+            'attempts' => $attempts, 'grade' => $grade, 'grademethod' => QUIZ_GRADEHIGHEST, 'timeclose' => $timeclose,
+                'timeopen' => 0, 'timelimit' => 0,
+            'completion' => COMPLETION_TRACKING_AUTOMATIC, 'completiongradeitemnumber' => 0, 'completionusegrade' => 1,
+                'quizpassword' => '',
+            'preferredbehaviour' => 'deferredfeedback', 'questionsperpage' => 1, 'shuffleanswers' => 1, 'decimalpoints' => 2,
+                'questiondecimalpoints' => -1,
+            'overduehandling' => 'autosubmit', 'graceperiod' => 0, 'reviewattempt' => 69904, 'reviewcorrectness' => 4352,
+                'reviewmarks' => 4352,
+            'reviewspecificfeedback' => 4352, 'reviewgeneralfeedback' => 4352, 'reviewrightanswer' => 4352,
+                'reviewoverallfeedback' => 4352,
             'reviewmaxmarks' => 69904];
     }
 
@@ -396,10 +480,18 @@ class local_mooc_audit_generator extends component_generator_base {
      * @param string $aftersubmit
      * @return array
      */
-    protected function feedback_data(string $name, int $anonymous, int $completionsubmit, int $completion, string $aftersubmit = 'Obrigado'): array {
+    protected function feedback_data(
+        string $name,
+        int $anonymous,
+        int $completionsubmit,
+        int $completion,
+        string $aftersubmit = 'Obrigado'
+    ): array {
         return ['name' => $name, 'anonymous' => $anonymous, 'completionsubmit' => $completionsubmit, 'completion' => $completion,
-            'page_after_submit_editor' => ['text' => $aftersubmit, 'format' => FORMAT_HTML, 'itemid' => 0], 'page_after_submit' => $aftersubmit,
-            'page_after_submitformat' => FORMAT_HTML, 'site_after_submit' => '', 'multiple_submit' => 0, 'publish_stats' => 0, 'email_notification' => 0];
+            'page_after_submit_editor' => ['text' => $aftersubmit, 'format' => FORMAT_HTML, 'itemid' => 0],
+                'page_after_submit' => $aftersubmit,
+            'page_after_submitformat' => FORMAT_HTML, 'site_after_submit' => '', 'multiple_submit' => 0, 'publish_stats' => 0,
+                'email_notification' => 0];
     }
 
     /**
@@ -411,10 +503,14 @@ class local_mooc_audit_generator extends component_generator_base {
      * @return array
      */
     protected function certificate_data(string $name, string $text, int $qrcode): array {
-        return ['name' => $name, 'certificatetext' => ['text' => $text, 'format' => FORMAT_HTML], 'secondpagetext' => ['text' => '', 'format' => FORMAT_HTML],
-            'width' => 297, 'height' => 210, 'certificatetextx' => 40, 'certificatetexty' => 80, 'coursename' => '', 'certdate' => -1, 'certgrade' => 0,
-            'gradefmt' => 1, 'emailothers' => '', 'emailteachers' => 0, 'reportcert' => 0, 'delivery' => 0, 'requiredtime' => 0, 'printqrcode' => $qrcode,
-            'qrcodefirstpage' => 0, 'codex' => 240, 'codey' => 150, 'enablesecondpage' => 0, 'secondpagex' => 40, 'secondpagey' => 3, 'certdatefmt' => '',
+        return ['name' => $name, 'certificatetext' => ['text' => $text, 'format' => FORMAT_HTML],
+            'secondpagetext' => ['text' => '', 'format' => FORMAT_HTML],
+            'width' => 297, 'height' => 210, 'certificatetextx' => 40, 'certificatetexty' => 80, 'coursename' => '',
+                'certdate' => -1, 'certgrade' => 0,
+            'gradefmt' => 1, 'emailothers' => '', 'emailteachers' => 0, 'reportcert' => 0, 'delivery' => 0, 'requiredtime' => 0,
+                'printqrcode' => $qrcode,
+            'qrcodefirstpage' => 0, 'codex' => 240, 'codey' => 150, 'enablesecondpage' => 0, 'secondpagex' => 40,
+                'secondpagey' => 3, 'certdatefmt' => '',
             'timestartdatefmt' => '', 'outcome' => 0, 'certificateimage' => '', 'secondimage' => ''];
     }
 }

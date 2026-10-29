@@ -60,7 +60,11 @@ class cl07 extends base {
         $dm = userdate($ed, '%d/%m', 99, false);
         $year = (int) userdate($ed, '%Y', 99, false);
         $ok = in_array($dm, $p['allowed_end_dates']) && $year === (int) $p['reoffer_year'];
-        return [$this->f($ok ? status::CONFORME : status::NAO_CONFORME, 'Configurações do curso > Data de término', 'término=' . helpers::d($ed),
-            ['esperado' => implode('|', $p['allowed_end_dates']) . "/{$p['reoffer_year']}", 'orientacao' => $this->guidance()])];
-        }
+        return [$this->f(
+            $ok ? status::CONFORME : status::NAO_CONFORME,
+            'Configurações do curso > Data de término',
+            'término=' . helpers::d($ed),
+            ['esperado' => implode('|', $p['allowed_end_dates']) . "/{$p['reoffer_year']}", 'orientacao' => $this->guidance()]
+        )];
+    }
 }

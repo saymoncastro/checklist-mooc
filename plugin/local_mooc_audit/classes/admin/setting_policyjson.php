@@ -26,7 +26,6 @@ use admin_setting_configtextarea;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class setting_policyjson extends admin_setting_configtextarea {
-
     /**
      * Accept an empty value (defaults) or a JSON object; reject anything else with the decoder's message.
      *

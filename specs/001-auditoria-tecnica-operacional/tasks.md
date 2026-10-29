@@ -27,7 +27,11 @@ e concluída em 2026-10-29 (T067–T068: lista de chaves com tipo e padrão e JS
 `policy::defaults()` no setting; teste de nome canônico alterado → CL-09 pelo novo nome e versão `+admin`); fase 8
 autorizada e concluída em 2026-10-29 (T069–T096: 28 arquivos em `tests/rule/` sobre a base `tests/helper/rule_testcase.php`,
 cada um com cenário conforme e não conforme construído por API; T097 `readonly_test` antecipado da fase 9; T098 Behat
-fica para a fase 9 por exigir ambiente Selenium); fase 9 aguarda autorização (ver `docs/relatorio-adocao-sdd.md`).
+fica para a fase 9 por exigir ambiente Selenium); fase 9 autorizada e concluída em 2026-10-29 (T098 Behat com Selenium
+isolado e verificação axe; T099 PHPCS `moodle` sem erros nem avisos, testes de regra movidos para `tests/local/rule/`;
+T100 `plugin-results/phpunit-0.2.0.txt`; T101 `plugin-results/0.2.0/` com A, B, 55 e 670 idênticos à PoC e medições
+SC-002/SC-003; T102 README e nome do plugin; T103 catálogo; T104 execução registrada no quickstart). **Todas as
+tarefas da spec 001 concluídas.**
 
 ## Format: `[ID] [P?] [Story] Description`
 
@@ -220,13 +224,13 @@ produz), construídos por API; mínimos descritos por regra.
 ## Phase 9: Polish & Cross-Cutting Concerns
 
 - [x] T097 Criar `tests/readonly_test.php`: hashes de `course`, `course_sections`, `course_modules`, `grade_items`, `grade_categories`, `enrol`, `block_instances`, `files`, `quiz`, `feedback`, `glossary` (filtrados pelo curso) e `course.timemodified`/`cacherev` antes e depois de `engine::audit()` em B → idênticos
-- [ ] T098 [P] Criar `tests/behat/audit_page.feature` (@local_mooc_audit): gerente vê "Auditoria técnica" no menu do curso e abre o relatório com a situação geral; estudante não vê a entrada; passos verificam que as seções têm cabeçalhos e que os locais com link têm texto significativo (FR-023)
-- [ ] T099 [P] Rodar `php -l` em todos os `.php` e PHPCS padrão `moodle` no contêiner; corrigir avisos
-- [ ] T100 Rodar a suíte completa `vendor/bin/phpunit local/mooc_audit/tests` e registrar a saída em `plugin-results/phpunit-0.2.0.txt`
-- [ ] T101 [P] Executar o CLI nos cursos A, B, 2 (55) e 3 (670) e gravar `plugin-results/0.2.0/*.{txt,json}`; comparar estados por regra com `plugin-results/` da PoC (SC-007) e registrar diferenças; medir `timing.total_s` em um curso sintético com 150 módulos criado pelo gerador (SC-002 < 5 s) e a proporção de NAO_CONFORME/ATENCAO com `link` não nulo nos quatro cursos (SC-003 ≥ 90 %)
-- [ ] T102 [P] Atualizar `plugin/local_mooc_audit/README.md`: estrutura nova (`classes/local/rule/`), página na navegação do curso, contrato 1.0, limitações; remover "prova de conceito" do nome do plugin em `lang/*` (`pluginname` = "Auditoria MOOC")
-- [ ] T103 [P] Atualizar `docs/catalogo-regras.md` com status "Implementado e testado" e coluna de testes por regra; registrar correções de comportamento (se houver) e o id X-AV-04 embutido em CL-12
-- [ ] T104 Executar `specs/001-auditoria-tecnica-operacional/quickstart.md` ponta a ponta e anotar o resultado no fim do arquivo (data, versão, desvios)
+- [x] T098 [P] Criar `tests/behat/audit_page.feature` (@local_mooc_audit): gerente vê "Auditoria técnica" no menu do curso e abre o relatório com a situação geral; estudante não vê a entrada; passos verificam que as seções têm cabeçalhos e que os locais com link têm texto significativo (FR-023)
+- [x] T099 [P] Rodar `php -l` em todos os `.php` e PHPCS padrão `moodle` no contêiner; corrigir avisos
+- [x] T100 Rodar a suíte completa `vendor/bin/phpunit local/mooc_audit/tests` e registrar a saída em `plugin-results/phpunit-0.2.0.txt`
+- [x] T101 [P] Executar o CLI nos cursos A, B, 2 (55) e 3 (670) e gravar `plugin-results/0.2.0/*.{txt,json}`; comparar estados por regra com `plugin-results/` da PoC (SC-007) e registrar diferenças; medir `timing.total_s` em um curso sintético com 150 módulos criado pelo gerador (SC-002 < 5 s) e a proporção de NAO_CONFORME/ATENCAO com `link` não nulo nos quatro cursos (SC-003 ≥ 90 %)
+- [x] T102 [P] Atualizar `plugin/local_mooc_audit/README.md`: estrutura nova (`classes/local/rule/`), página na navegação do curso, contrato 1.0, limitações; remover "prova de conceito" do nome do plugin em `lang/*` (`pluginname` = "Auditoria MOOC")
+- [x] T103 [P] Atualizar `docs/catalogo-regras.md` com status "Implementado e testado" e coluna de testes por regra; registrar correções de comportamento (se houver) e o id X-AV-04 embutido em CL-12
+- [x] T104 Executar `specs/001-auditoria-tecnica-operacional/quickstart.md` ponta a ponta e anotar o resultado no fim do arquivo (data, versão, desvios)
 
 ---
 

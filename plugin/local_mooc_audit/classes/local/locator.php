@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 namespace local_mooc_audit\local;
 
 use local_mooc_audit\local\rule\base;
@@ -28,14 +29,14 @@ use moodle_url;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class locator {
-
     /**
      * Every locus a finding may declare.
      *
      * @return string[]
      */
     public static function loci(): array {
-        return [base::LOCUS_MODULE_EDIT, base::LOCUS_MODULE_VIEW, base::LOCUS_COURSE_SETTINGS, base::LOCUS_ENROL, base::LOCUS_GRADEBOOK,
+        return [base::LOCUS_MODULE_EDIT, base::LOCUS_MODULE_VIEW, base::LOCUS_COURSE_SETTINGS, base::LOCUS_ENROL,
+            base::LOCUS_GRADEBOOK,
             base::LOCUS_BLOCKS, base::LOCUS_SECTION, base::LOCUS_IMPORT, base::LOCUS_NONE];
     }
 

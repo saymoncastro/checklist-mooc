@@ -26,7 +26,6 @@ use local_mooc_audit\local\rule\rule_interface;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class catalog {
-
     /** @var string[] Rule classes in evaluation order. */
     const RULES = [
         rule\cl04::class,

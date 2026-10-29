@@ -27,7 +27,6 @@ namespace local_mooc_audit\local\rule;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 interface rule_interface {
-
     /**
      * Stable identifier (CL-nn for checklist items, X-AREA-nn for additional checks).
      *

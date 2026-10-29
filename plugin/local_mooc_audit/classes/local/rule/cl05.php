@@ -55,7 +55,11 @@ class cl05 extends base {
     public function evaluate(array $s, array $p): array {
         $cat = $s['course']['category']['name'];
         $ok = helpers::norm($cat) === helpers::norm($p['target_category_name']);
-        return [$this->f($ok ? status::CONFORME : status::NAO_CONFORME, 'Configurações do curso > Categoria', "categoria=\"$cat\"",
-            ['esperado' => $p['target_category_name'], 'orientacao' => $this->guidance()])];
-        }
+        return [$this->f(
+            $ok ? status::CONFORME : status::NAO_CONFORME,
+            'Configurações do curso > Categoria',
+            "categoria=\"$cat\"",
+            ['esperado' => $p['target_category_name'], 'orientacao' => $this->guidance()]
+        )];
+    }
 }

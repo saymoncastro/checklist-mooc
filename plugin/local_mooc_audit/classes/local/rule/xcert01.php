@@ -89,13 +89,17 @@ class xcert01 extends base {
             foreach (snapshot::walk_conditions($c['availability']) as $cond) {
                 $types[$cond['type']] = ($types[$cond['type']] ?? 0) + 1;
             }
-            $out[] = $this->f($probs ? status::NAO_CONFORME : status::CONFORME, helpers::label($c), 'cadeia transitiva de conclusão: ' . count($chain) . ' módulos; tipos de condição: ' . json_encode($types),
+            $out[] = $this->f(
+                $probs ? status::NAO_CONFORME : status::CONFORME,
+                helpers::label($c),
+                'cadeia transitiva de conclusão: ' . count($chain) . ' módulos; tipos de condição: ' . json_encode($types),
                 ['cmid' => $c['cmid'], 'encontrado' => $probs ? implode('; ', $probs) : 'cadeia estaticamente satisfazível',
-                'orientacao' => $this->guidance()]);
+                'orientacao' => $this->guidance()]
+            );
             if ($c['visible'] == 0) {
                 $out[] = $this->f(status::NAO_CONFORME, helpers::label($c), 'certificado oculto', ['cmid' => $c['cmid']]);
             }
         }
         return $out ?: [$this->f(status::NAO_CONFORME, 'Atividades do curso', 'sem certificado de conclusão')];
-        }
+    }
 }

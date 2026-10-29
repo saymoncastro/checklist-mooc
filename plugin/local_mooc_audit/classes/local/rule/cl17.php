@@ -59,7 +59,8 @@ class cl17 extends base {
             $counts[$m['completion']] = ($counts[$m['completion']] ?? 0) + 1;
             $exp = $p['completion_expected'][$m['modname']] ?? null;
             if ($m['completion'] == 1) {
-                $out[] = $this->f(status::NAO_CONFORME, helpers::label($m), 'conclusão MANUAL', ['cmid' => $m['cmid'], 'esperado' => 'automática (ou nenhuma, para rótulos/fóruns institucionais)',
+                $out[] = $this->f(status::NAO_CONFORME, helpers::label($m), 'conclusão MANUAL', ['cmid' => $m['cmid'],
+                    'esperado' => 'automática (ou nenhuma, para rótulos/fóruns institucionais)',
                     'orientacao' => $this->guidance()]);
                 continue;
             }
@@ -72,19 +73,37 @@ class cl17 extends base {
                 if ($m['completiongradeitemnumber'] !== null) {
                     $crit[] = 'grade';
                 }
-                foreach (['completionsubmit' => 'submit', 'completionentries' => 'entries', 'completionposts' => 'posts', 'completiondiscussions' => 'posts',
-                    'completionreplies' => 'posts', 'completionminattempts' => 'attempts', 'completionattemptsexhausted' => 'attempts', 'completionpass' => 'grade'] as $k => $v) {
+                foreach (
+                    ['completionsubmit' => 'submit', 'completionentries' => 'entries', 'completionposts' => 'posts',
+                        'completiondiscussions' => 'posts',
+                    'completionreplies' => 'posts', 'completionminattempts' => 'attempts',
+                        'completionattemptsexhausted' => 'attempts', 'completionpass' => 'grade'] as $k => $v
+                ) {
                     if (!empty($x[$k])) {
                         $crit[] = $v;
                     }
                 }
                 $crit = array_values(array_unique($crit));
                 if (!$crit) {
-                    $out[] = $this->f(status::ATENCAO, helpers::label($m), 'conclusão automática sem nenhum critério', ['cmid' => $m['cmid']]);
-                } else if ($exp && $exp !== 'none' && !in_array(explode('_', $exp)[0], $crit) && !($exp === 'posts_or_none' && in_array('posts', $crit))
-                        && !($exp === 'submit_or_grade' && (in_array('submit', $crit) || in_array('grade', $crit)))) {
-                    $out[] = $this->f(status::ATENCAO, helpers::label($m), 'critérios=' . implode('+', $crit), ['cmid' => $m['cmid'], 'esperado' => "critério '$exp' para {$m['modname']}",
-                        'gravidade' => status::BAIXA, 'orientacao' => $this->g('criteria')]);
+                    $out[] = $this->f(
+                        status::ATENCAO,
+                        helpers::label($m),
+                        'conclusão automática sem nenhum critério',
+                        ['cmid' => $m['cmid']]
+                    );
+                } else if (
+                    $exp && $exp !== 'none' && !in_array(explode('_', $exp)[0], $crit) && !($exp === 'posts_or_none'
+                        && in_array('posts', $crit))
+                        && !($exp === 'submit_or_grade' && (in_array('submit', $crit) || in_array('grade', $crit)))
+                ) {
+                    $out[] = $this->f(
+                        status::ATENCAO,
+                        helpers::label($m),
+                        'critérios=' . implode('+', $crit),
+                        ['cmid' => $m['cmid'], 'esperado' => "critério '$exp' para {$m['modname']}",
+                        'gravidade' => status::BAIXA,
+                        'orientacao' => $this->g('criteria')]
+                    );
                 }
                 if ($exp === 'none' && $m['modname'] === 'label') {
                     // Reported by CL-19.
@@ -92,8 +111,12 @@ class cl17 extends base {
                 }
             }
         }
-        array_unshift($out, $this->f($counts[1] ? status::ATENCAO : status::CONFORME, 'Conclusão de atividades', "nenhuma={$counts[0]} manual={$counts[1]} automática={$counts[2]}",
-            ['gravidade' => status::INFORMATIVA]));
+        array_unshift($out, $this->f(
+            $counts[1] ? status::ATENCAO : status::CONFORME,
+            'Conclusão de atividades',
+            "nenhuma={$counts[0]} manual={$counts[1]} automática={$counts[2]}",
+            ['gravidade' => status::INFORMATIVA]
+        ));
         return $out;
-        }
+    }
 }

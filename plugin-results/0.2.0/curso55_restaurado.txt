@@ -1,0 +1,76 @@
+=== Educador Maker: Primeiros Passos [EMPP] (id 6) — local_mooc_audit 0.2.0 / Política 2027-decisoes-2026-10-28 (Ano da reoferta 2027)
+Período: 2020-08-11 04:00 → 2021-01-01 02:59 | Categoria: Categoria 1 | Visível: 1 | tempo: 0.115s
+Seções: 8 | Módulos: 73 {"book":3,"choice":1,"data":1,"feedback":1,"forum":8,"game":4,"glossary":1,"label":21,"page":10,"quiz":4,"simplecertificate":1,"url":18} | Arquivos: 120 (sem conteúdo no armazenamento: 0)
+Blocos: ["completion_progress","html","html"] | Métodos de inscrição: ["manual","guest(off)","self(off)"]
+Situação geral: Bloqueada | {"CONFORME":46,"NAO_CONFORME":16} | Inconformidades por gravidade: {"Baixa":1,"Alta":5,"Média":9,"Bloqueante":1}
+  [NAO_CONFORME   ] CL-18     Bloqueante  Glossário: proibido se colaborativo; vazio se fonte de jogos
+      Local: glossary "Glossário - Cultura Maker (#fazer #compartilhar)" (cmid=62) → http://localhost:8092/mod/glossary/view.php?id=62
+      Evidência: glossário com 0 entradas; fonte de 3 jogos: game "Palavras cruzadas: Cultura Maker (#fazer #errar #aprender)" (cmid=71) [entradas na categoria: 0]; game "Jogo da Forca: Espaços Maker (#fazer #errar #aprender)" (cmid=83) [entradas na categoria: 0]; game "Jogo da Forca:  Mentalidade Maker (#fazer #errar #aprender)" (cmid=98) [entradas na categoria: 0]
+      Esperado: entradas disponíveis para os jogos
+      Orientação: As entradas não vêm em backup/importação sem usuários: repovoar (importar XML do glossário) ou trocar a fonte dos jogos para o banco de questões.
+  [NAO_CONFORME   ] CL-06     Alta        Data de início correta (01/01 do ano da reoferta)
+      Local: Configurações do curso > Data de início → http://localhost:8092/course/edit.php?id=6
+      Evidência: início=11/08/2020 04:00 fim=01/01/2021 02:59
+      Encontrado: ano=2020 ≠ 2027; dia/mês=11/08 ≠ 01/01
+      Esperado: 01/01/2027
+      Orientação: Ajustar a data de início da oferta.
+  [NAO_CONFORME   ] CL-07     Alta        Data de término correta (31/12 do ano da reoferta)
+      Local: Configurações do curso > Data de término → http://localhost:8092/course/edit.php?id=6
+      Evidência: término=01/01/2021 02:59
+      Esperado: 31/12/2027
+      Orientação: Ajustar a data de término conforme o calendário do Cefor.
+  [NAO_CONFORME   ] CL-08     Alta        Autoinscrição habilitada com período correto
+      Local: Métodos de inscrição > Autoinscrição (id 15) → http://localhost:8092/enrol/instances.php?id=6
+      Evidência: status=1 novas_inscricoes=1 início=(não definida) fim=(não definida)
+      Encontrado: método desabilitado; datas de inscrição não definidas
+      Orientação: Editar a Autoinscrição: habilitar, permitir novas inscrições e alinhar as datas com as do curso.
+  [NAO_CONFORME   ] CL-11     Alta        Pesquisa de Perfil presente e exigida pelo certificado
+      Local: Atividades do curso → http://localhost:8092/backup/import.php?id=6
+      Evidência: nenhuma Pesquisa (feedback) ~ "Pesquisa de Perfil"
+      Orientação: Importar a Pesquisa de Perfil da Sala Padrão Oficial.
+  [NAO_CONFORME   ] CL-12     Alta        Livro de notas: soma 100, agregação Natural, sem excluir vazias
+      Local: Livro de notas > categoria raiz → http://localhost:8092/grade/edit/tree/index.php?id=6
+      Evidência: aggregateonlygraded=1 (excluir notas vazias)
+      Orientação: Desmarcar "Excluir notas vazias": com ela ligada, a condição de 60 pontos do certificado é relativa só às atividades já avaliadas.
+  [NAO_CONFORME   ] CL-09     Média      Fórum institucional "Espaço de interação" presente e sem conclusão
+      Local: Fóruns do curso → http://localhost:8092/backup/import.php?id=6
+      Evidência: nenhum fórum com nome ~ "Espaço de interação"; existentes: ["Avisos!","Estabeleça laços e construa redes! (#compartilhar)","Apresente-se aos seus colegas! (#fazer #compartilhar)","Quem de nós se vê como maker? (#fazer #compartilhar #divertir #aprender)","Desafio: Torre de Espaguete (#fazer #compartilhar #divertir #aprender)","Desafio: Carro movido a vento (#fazer #compartilhar #divertir #aprender)","Teste: \"Você é um verdadeiro maker?\" (#fazer #compartilhar #divertir)","Desafio: Cartazes Divertidos  (#fazer #compartilhar #divertir #aprender)"]
+      Orientação: Importar o fórum da Sala Padrão. Verificação por nome canônico.
+  [NAO_CONFORME   ] CL-14     Média      Atividades avaliativas com data de encerramento
+      Local: game "Palavras cruzadas: Cultura Maker (#fazer #errar #aprender)" (cmid=71) → http://localhost:8092/course/modedit.php?update=71
+      Evidência: data de encerramento não definida
+      Orientação: Definir a data de encerramento.
+  [NAO_CONFORME   ] CL-14     Média      Atividades avaliativas com data de encerramento
+      Local: game "Jogo da Forca: Espaços Maker (#fazer #errar #aprender)" (cmid=83) → http://localhost:8092/course/modedit.php?update=83
+      Evidência: data de encerramento não definida
+      Orientação: Definir a data de encerramento.
+  [NAO_CONFORME   ] CL-14     Média      Atividades avaliativas com data de encerramento
+      Local: game "Jogo da Forca:  Mentalidade Maker (#fazer #errar #aprender)" (cmid=98) → http://localhost:8092/course/modedit.php?update=98
+      Evidência: data de encerramento não definida
+      Orientação: Definir a data de encerramento.
+  [NAO_CONFORME   ] CL-14     Média      Atividades avaliativas com data de encerramento
+      Local: game "Jogo Sopa de Letras (#fazer #errar #aprender)" (cmid=112) → http://localhost:8092/course/modedit.php?update=112
+      Evidência: data de encerramento não definida
+      Orientação: Definir a data de encerramento.
+  [NAO_CONFORME   ] CL-21     Média      Blocos padrão presentes na página do curso
+      Local: Blocos da página do curso → http://localhost:8092/course/view.php?id=6
+      Evidência: bloco "Acessibilidade": ausente
+      Orientação: Adicionar o bloco HTML padrão (ou verificar o bloco de site correspondente).
+  [NAO_CONFORME   ] CL-22     Média      Licença para capacitação configurada
+      Local: Área do curso (seção 0) → http://localhost:8092/backup/import.php?id=6
+      Evidência: rótulo "Licença para capacitação": ausente
+      Orientação: Importar os componentes da Licença para capacitação (rótulo, pesquisa e declaração) da Sala Padrão.
+  [NAO_CONFORME   ] CL-22     Média      Licença para capacitação configurada
+      Local: Atividades do curso → http://localhost:8092/backup/import.php?id=6
+      Evidência: pesquisa "Licença para capacitação": ausente
+      Orientação: Importar os componentes da Licença para capacitação (rótulo, pesquisa e declaração) da Sala Padrão.
+  [NAO_CONFORME   ] CL-22     Média      Licença para capacitação configurada
+      Local: Atividades do curso → http://localhost:8092/backup/import.php?id=6
+      Evidência: declaração "Declaração licença para capacitação": ausente
+      Orientação: Importar os componentes da Licença para capacitação (rótulo, pesquisa e declaração) da Sala Padrão.
+  [NAO_CONFORME   ] CL-05     Baixa       Categoria do curso = categoria de inscrições abertas
+      Local: Configurações do curso > Categoria → http://localhost:8092/course/edit.php?id=6
+      Evidência: categoria="Categoria 1"
+      Esperado: Inscrições Abertas
+      Orientação: Mover o curso para a categoria da oferta.
+  (regras conformes omitidas: CL-04, CL-13, CL-16, CL-17, CL-19, CL-20, CL-23, X-AV-01, X-CERT-01, X-CONT-01, X-CONT-04, X-DEP-01, X-DEP-02, X-DEP-03, X-DEP-04, X-INT-02, X-INT-03, X-STR-01)

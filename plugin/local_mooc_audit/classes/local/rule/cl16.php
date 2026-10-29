@@ -75,13 +75,20 @@ class cl16 extends base {
                 $missing[] = helpers::label($m);
             }
         }
-        $out = [$this->f($missing ? status::NAO_CONFORME : status::CONFORME, helpers::label($e), 'exige conclusão de cmids ' . json_encode($req),
-            ['cmid' => $e['cmid'], 'encontrado' => $missing ? 'faltam: ' . implode('; ', $missing) : 'todas as ' . count($graded) . ' atividades com nota exigidas',
-            'esperado' => 'conclusão de todas as atividades com nota', 'orientacao' => $this->guidance()])];
+        $out = [$this->f(
+            $missing ? status::NAO_CONFORME : status::CONFORME,
+            helpers::label($e),
+            'exige conclusão de cmids ' . json_encode($req),
+            ['cmid' => $e['cmid'], 'encontrado' => $missing ? 'faltam: ' . implode('; ', $missing) : 'todas as '
+                . count($graded) . ' atividades com nota exigidas',
+            'esperado' => 'conclusão de todas as atividades com nota',
+            'orientacao' => $this->guidance()]
+        )];
         $op = $e['availability']['op'] ?? '&';
         if ($op !== '&') {
-            $out[] = $this->f(status::ATENCAO, helpers::label($e), "operador raiz=$op", ['cmid' => $e['cmid'], 'esperado' => '& (todas)']);
+            $out[] = $this->f(status::ATENCAO, helpers::label($e), "operador raiz=$op", ['cmid' => $e['cmid'],
+                'esperado' => '& (todas)']);
         }
         return $out;
-        }
+    }
 }

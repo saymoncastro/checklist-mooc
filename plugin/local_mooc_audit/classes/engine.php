@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 namespace local_mooc_audit;
 
 use local_mooc_audit\local\catalog;
@@ -44,7 +45,12 @@ class engine {
      * @param bool $includesnapshot include the full snapshot in the report
      * @return array report
      */
-    public static function audit(int $courseid, ?array $policyoverride = null, int $userid = 0, bool $includesnapshot = false): array {
+    public static function audit(
+        int $courseid,
+        ?array $policyoverride = null,
+        int $userid = 0,
+        bool $includesnapshot = false
+    ): array {
         $policy = policy::load($policyoverride);
         $t0 = microtime(true);
         $snapshot = snapshot::build($courseid, $userid);
@@ -62,7 +68,8 @@ class engine {
             'policy_warnings' => $policy['warnings'] ?? [],
             'reoffer_year' => $policy['reoffer_year'],
             'executed_at' => date('c'),
-            'course' => ['id' => $snapshot['course']['id'], 'shortname' => $snapshot['course']['shortname'], 'fullname' => $snapshot['course']['fullname']],
+            'course' => ['id' => $snapshot['course']['id'], 'shortname' => $snapshot['course']['shortname'],
+                'fullname' => $snapshot['course']['fullname']],
             'viewer_userid' => $userid,
             'timing' => ['snapshot_s' => round($tsnap, 3), 'total_s' => round(microtime(true) - $t0, 3)],
             'inventory' => self::inventory($snapshot),
@@ -93,19 +100,22 @@ class engine {
         foreach ($rules ?? catalog::instances() as $id => $rule) {
             $meta = $rule->meta();
             if ($sitedisabled && in_array($meta['category'], [category::COMPLETION_RESTRICTIONS, category::CERTIFICATION], true)) {
-                $findings = [['status' => status::NAO_VERIFICAVEL, 'local' => null, 'evidencia' => get_string('site_completion_disabled', 'local_mooc_audit'),
+                $findings = [['status' => status::NAO_VERIFICAVEL, 'local' => null,
+                    'evidencia' => get_string('site_completion_disabled', 'local_mooc_audit'),
                     'gravidade' => null, 'locus' => base::LOCUS_NONE]];
             } else {
                 try {
                     $findings = $rule->evaluate($snapshot, $policy);
                 } catch (\Throwable $e) {
                     $findings = [['status' => status::ERRO, 'local' => null,
-                        'evidencia' => get_string('rule_error', 'local_mooc_audit', get_class($e) . ': ' . $e->getMessage()), 'gravidade' => null,
+                        'evidencia' => get_string('rule_error', 'local_mooc_audit', get_class($e) . ': ' . $e->getMessage()),
+                            'gravidade' => null,
                         'locus' => base::LOCUS_NONE]];
                 }
             }
             foreach ($findings as $f) {
-                $f = array_merge(['local' => null, 'evidencia' => null, 'encontrado' => null, 'esperado' => null, 'orientacao' => null,
+                $f = array_merge(['local' => null, 'evidencia' => null, 'encontrado' => null, 'esperado' => null,
+                    'orientacao' => null,
                     'gravidade' => null, 'cmid' => null, 'locus' => null, 'section' => null], $f);
                 $f['rule'] = $id;
                 $f['titulo'] = $meta['title'];
@@ -182,7 +192,8 @@ class engine {
         } else {
             $overall = status::OVERALL_CLEAN;
         }
-        return ['por_status' => $bystatus, 'nao_conformes_por_gravidade' => $bysev, 'regras' => catalog::count(), 'overall_status' => $overall];
+        return ['por_status' => $bystatus, 'nao_conformes_por_gravidade' => $bysev, 'regras' => catalog::count(),
+            'overall_status' => $overall];
     }
 
     /**
@@ -209,13 +220,18 @@ class engine {
             <=> [status::status_rank($b['status']), status::severity_rank($b['gravidade']), $b['rule']]);
         $inv = $report['inventory'];
         $lines = [];
-        $lines[] = "=== {$report['course']['fullname']} [{$report['course']['shortname']}] (id {$report['course']['id']}) — {$report['engine']}"
-            . " / {$str('label_policy')} {$report['policy_version']} ({$str('label_reoffer_year')} {$report['reoffer_year']})";
-        $lines[] = "{$str('label_period')}: {$inv['startdate']} → {$inv['enddate']} | {$str('label_category')}: {$inv['category']['name']}"
+        $c = $report['course'];
+        $lines[] = "=== {$c['fullname']} [{$c['shortname']}] (id {$c['id']}) — {$report['engine']}"
+            . " / {$str('label_policy')} {$report['policy_version']}"
+            . " ({$str('label_reoffer_year')} {$report['reoffer_year']})";
+        $lines[] = "{$str('label_period')}: {$inv['startdate']} → {$inv['enddate']}"
+            . " | {$str('label_category')}: {$inv['category']['name']}"
             . " | {$str('label_visible')}: {$inv['visible']} | {$str('label_time')}: {$report['timing']['total_s']}s";
-        $lines[] = "{$str('label_sections')}: {$inv['sections']} | {$str('label_modules')}: {$inv['modules']} " . json_encode($inv['modules_by_type'])
+        $lines[] = "{$str('label_sections')}: {$inv['sections']} | {$str('label_modules')}: {$inv['modules']} "
+            . json_encode($inv['modules_by_type'])
             . " | {$str('label_files')}: {$inv['files']} ({$str('label_files_missing')}: {$inv['files_missing_in_storage']})";
-        $lines[] = "{$str('label_blocks')}: " . json_encode($inv['blocks']) . " | {$str('label_enrols')}: " . json_encode($inv['enrols']);
+        $lines[] = "{$str('label_blocks')}: " . json_encode($inv['blocks']) . " | {$str('label_enrols')}: "
+            . json_encode($inv['enrols']);
         $lines[] = "{$str('label_overall')}: " . $str('overall_' . strtolower($report['summary']['overall_status']))
             . ' | ' . json_encode($report['summary']['por_status'])
             . " | {$str('label_bysev')}: " . json_encode($report['summary']['nao_conformes_por_gravidade'], JSON_UNESCAPED_UNICODE);

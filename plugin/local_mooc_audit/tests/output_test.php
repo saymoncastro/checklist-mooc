@@ -29,7 +29,6 @@ use local_mooc_audit\output\report;
  * @covers     \local_mooc_audit\output\renderer
  */
 final class output_test extends \advanced_testcase {
-
     /**
      * Course B: non conformities grouped by severity then category, warnings, conformant list, overall status; the
      * template renders without missing strings and shows the evidence untruncated.
@@ -80,9 +79,13 @@ final class output_test extends \advanced_testcase {
         $this->assertStringContainsString(get_string('overall_bloqueada', 'local_mooc_audit'), $html);
         $this->assertStringContainsString('<th', $html);
         // Locations with a destination are links (CL-13 → module settings); without one, plain text (X-DEP-04).
-        $cl13 = array_values(array_filter($audit['results'], fn($r) => $r['rule'] === 'CL-13' && $r['status'] === status::NAO_CONFORME));
+        $cl13 = array_values(array_filter($audit['results'], fn($r) => $r['rule'] === 'CL-13'
+            && $r['status'] === status::NAO_CONFORME));
         $this->assertStringContainsString('<a href="' . s($cl13[0]['link']) . '"', $html);
-        $this->assertStringContainsString(get_string('link_title', 'local_mooc_audit', get_string('locus_module_edit', 'local_mooc_audit')), $html);
+        $this->assertStringContainsString(get_string('link_title', 'local_mooc_audit', get_string(
+            'locus_module_edit',
+            'local_mooc_audit'
+        )), $html);
         $this->assertStringContainsString(get_string('rerun', 'local_mooc_audit'), $html);
         $this->assertStringContainsString('<form method="get"', $html);
         // Evidence is rendered in full (the PoC truncated it at 300 characters).
@@ -107,16 +110,25 @@ final class output_test extends \advanced_testcase {
         set_config('enablecompletion', 0);
         set_config('policyjson', '{bad', 'local_mooc_audit');
         $audit = engine::audit($course->id);
-        $audit['results'][] = ['rule' => 'T-ERR-01', 'titulo' => 'Broken rule', 'status' => status::ERRO, 'category' => 'plugins_environment',
-            'gravidade' => status::MEDIA, 'local' => null, 'evidencia' => 'RuntimeException: boom', 'encontrado' => null, 'esperado' => null,
-            'orientacao' => null, 'cmid' => null, 'locus' => 'none', 'link' => null, 'tipo' => 'tecnica', 'origem' => 'test', 'classe' => 'A'];
+        $audit['results'][] = ['rule' => 'T-ERR-01', 'titulo' => 'Broken rule', 'status' => status::ERRO,
+            'category' => 'plugins_environment',
+            'gravidade' => status::MEDIA, 'local' => null, 'evidencia' => 'RuntimeException: boom', 'encontrado' => null,
+                'esperado' => null,
+            'orientacao' => null, 'cmid' => null, 'locus' => 'none', 'link' => null, 'tipo' => 'tecnica', 'origem' => 'test',
+                'classe' => 'A'];
         $audit['warnings'][] = 'block_manager falhou';
         $audit['summary'] = engine::summarize($audit['results']);
         $renderer = $PAGE->get_renderer('local_mooc_audit');
-        $data = (new report($audit, new \moodle_url('/local/mooc_audit/index.php', ['courseid' => $course->id])))->export_for_template($renderer);
+        $data = (new report($audit, new \moodle_url(
+            '/local/mooc_audit/index.php',
+            ['courseid' => $course->id]
+        )))->export_for_template($renderer);
 
         $this->assertTrue($data->unverifiable->hasnv);
-        $this->assertContains(get_string('site_completion_disabled', 'local_mooc_audit'), array_column($data->unverifiable->nv, 'evidencia'));
+        $this->assertContains(get_string('site_completion_disabled', 'local_mooc_audit'), array_column(
+            $data->unverifiable->nv,
+            'evidencia'
+        ));
         foreach ($data->unverifiable->nv as $item) {
             $this->assertNotEmpty($item->evidencia, $item->rule);
         }

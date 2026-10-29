@@ -24,7 +24,6 @@ namespace local_mooc_audit\local;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class helpers {
-
     /**
      * Normalise text for comparisons (lowercase, no accents, collapsed spaces).
      *
@@ -105,7 +104,7 @@ class helpers {
      * @return array
      */
     public static function certs(array $s, array $p): array {
-        return array_values(array_filter(self::mods($s, $p['required_certificate_module']), function($m) use ($p) {
+        return array_values(array_filter(self::mods($s, $p['required_certificate_module']), function ($m) use ($p) {
             return strpos(self::norm($m['name']), self::norm($p['licence_certificate_name'])) === false;
         }));
     }

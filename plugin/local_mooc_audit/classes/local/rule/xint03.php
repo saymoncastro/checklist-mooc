@@ -57,15 +57,22 @@ class xint03 extends base {
         $std = \core_plugin_manager::standard_plugins_list('mod') ?: [];
         foreach ($s['plugins']['used']['mod'] as $mod) {
             $installed = isset($s['plugins']['installed']['mod'][$mod]);
-            $out[] = $this->f($installed ? status::CONFORME : status::NAO_CONFORME, "módulo $mod", ($installed ? 'instalado (versão ' . $s['plugins']['installed']['mod'][$mod] . ')' : 'NÃO instalado')
-                . (in_array($mod, $std) ? '' : ' — plugin de terceiros'), ['gravidade' => in_array($mod, $std) ? status::INFORMATIVA : status::ALTA]);
+            $out[] = $this->f($installed ? status::CONFORME : status::NAO_CONFORME, "módulo $mod", ($installed
+                ? 'instalado (versão ' . $s['plugins']['installed']['mod'][$mod] . ')' : 'NÃO instalado')
+                . (in_array($mod, $std) ? '' : ' — plugin de terceiros'), ['gravidade' => in_array($mod, $std)
+                    ? status::INFORMATIVA : status::ALTA]);
         }
         $stdav = \core_plugin_manager::standard_plugins_list('availability') ?: [];
         foreach ($s['plugins']['used']['availability'] as $type) {
             $installed = isset($s['plugins']['installed']['availability'][$type]);
-            $out[] = $this->f($installed ? status::CONFORME : status::NAO_CONFORME, "condição de acesso \"$type\"", $installed ? 'plugin availability_' . $type . ' instalado' : 'plugin availability_' . $type . ' AUSENTE: condições deste tipo são ignoradas silenciosamente',
-                ['gravidade' => in_array($type, $stdav) ? status::INFORMATIVA : status::ALTA]);
+            $out[] = $this->f(
+                $installed ? status::CONFORME : status::NAO_CONFORME,
+                "condição de acesso \"$type\"",
+                $installed ? 'plugin availability_' . $type . ' instalado' : 'plugin availability_' . $type
+                    . ' AUSENTE: condições deste tipo são ignoradas silenciosamente',
+                ['gravidade' => in_array($type, $stdav) ? status::INFORMATIVA : status::ALTA]
+            );
         }
         return $out ?: [$this->f(status::NAO_APLICAVEL, 'Plugins', 'curso sem módulos nem condições de acesso')];
-        }
+    }
 }

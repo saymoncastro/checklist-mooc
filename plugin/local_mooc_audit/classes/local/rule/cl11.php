@@ -56,18 +56,31 @@ class cl11 extends base {
     public function evaluate(array $s, array $p): array {
         $prof = helpers::mods($s, 'feedback', $p['required_feedback_profile']);
         if (!$prof) {
-            return [$this->f(status::NAO_CONFORME, 'Atividades do curso', 'nenhuma Pesquisa (feedback) ~ "' . $p['required_feedback_profile'] . '"',
-                ['orientacao' => $this->g('import'), 'locus' => self::LOCUS_IMPORT])];
+            return [$this->f(
+                status::NAO_CONFORME,
+                'Atividades do curso',
+                'nenhuma Pesquisa (feedback) ~ "' . $p['required_feedback_profile'] . '"',
+                ['orientacao' => $this->g('import'), 'locus' => self::LOCUS_IMPORT]
+            )];
         }
         $pm = $prof[0];
         $out = [$this->f(status::CONFORME, helpers::label($pm), 'presente', ['cmid' => $pm['cmid']])];
         if ($pm['completion'] != 2 || ($pm['extra']['completionsubmit'] ?? 0) != 1) {
-            $out[] = $this->f(status::NAO_CONFORME, helpers::label($pm), "completion={$pm['completion']} completionsubmit=" . ($pm['extra']['completionsubmit'] ?? 'n/a'),
-                ['cmid' => $pm['cmid'], 'esperado' => 'conclusão automática ao enviar', 'orientacao' => $this->g('completion')]);
+            $out[] = $this->f(
+                status::NAO_CONFORME,
+                helpers::label($pm),
+                "completion={$pm['completion']} completionsubmit=" . ($pm['extra']['completionsubmit'] ?? 'n/a'),
+                ['cmid' => $pm['cmid'], 'esperado' => 'conclusão automática ao enviar', 'orientacao' => $this->g('completion')]
+            );
         }
         $certs = helpers::certs($s, $p);
         if (!$certs) {
-            $out[] = $this->f(status::NAO_CONFORME, 'Atividades do curso', 'nenhum certificado de conclusão', ['locus' => self::LOCUS_IMPORT]);
+            $out[] = $this->f(
+                status::NAO_CONFORME,
+                'Atividades do curso',
+                'nenhum certificado de conclusão',
+                ['locus' => self::LOCUS_IMPORT]
+            );
         }
         foreach ($certs as $c) {
             $cms = [];
@@ -77,10 +90,14 @@ class cl11 extends base {
                 }
             }
             $ok = in_array($pm['cmid'], $cms);
-            $out[] = $this->f($ok ? status::CONFORME : status::NAO_CONFORME, helpers::label($c), 'restrições de conclusão: cmids ' . json_encode($cms),
+            $out[] = $this->f(
+                $ok ? status::CONFORME : status::NAO_CONFORME,
+                helpers::label($c),
+                'restrições de conclusão: cmids ' . json_encode($cms),
                 ['cmid' => $c['cmid'], 'esperado' => "exigir conclusão de cm={$pm['cmid']} (Pesquisa de Perfil)",
-                'orientacao' => $this->guidance()]);
+                'orientacao' => $this->guidance()]
+            );
         }
         return $out;
-        }
+    }
 }

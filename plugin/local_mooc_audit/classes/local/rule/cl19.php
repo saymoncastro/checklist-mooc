@@ -56,9 +56,14 @@ class cl19 extends base {
         $out = [];
         foreach (helpers::mods($s, 'label') as $m) {
             if ($m['completion'] != 0) {
-                $out[] = $this->f(status::NAO_CONFORME, helpers::label($m), "completion={$m['completion']}", ['cmid' => $m['cmid'], 'esperado' => '0', 'orientacao' => $this->guidance()]);
+                $out[] = $this->f(
+                    status::NAO_CONFORME,
+                    helpers::label($m),
+                    "completion={$m['completion']}",
+                    ['cmid' => $m['cmid'], 'esperado' => '0', 'orientacao' => $this->guidance()]
+                );
             }
         }
         return $out ?: [$this->f(status::CONFORME, 'Rótulos', 'nenhum rótulo com conclusão habilitada')];
-        }
+    }
 }

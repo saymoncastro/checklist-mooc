@@ -62,16 +62,27 @@ class xdep02 extends base {
                 }
                 $t = $s['modules'][(int) $c['cm']];
                 if ($t['completion'] == 0) {
-                    $out[] = $this->f(status::NAO_CONFORME, helpers::label($m), 'exige conclusão de ' . helpers::label($t) . ' que NÃO tem acompanhamento de conclusão', ['cmid' => $m['cmid'],
+                    $out[] = $this->f(status::NAO_CONFORME, helpers::label($m), 'exige conclusão de ' . helpers::label($t)
+                        . ' que NÃO tem acompanhamento de conclusão', ['cmid' => $m['cmid'],
                         'orientacao' => $this->guidance()]);
                 } else if ($t['visible'] == 0) {
-                    $out[] = $this->f(status::ATENCAO, helpers::label($m), 'exige conclusão de módulo OCULTO ' . helpers::label($t), ['cmid' => $m['cmid'], 'gravidade' => status::ALTA]);
+                    $out[] = $this->f(status::ATENCAO, helpers::label($m), 'exige conclusão de módulo OCULTO '
+                        . helpers::label($t), ['cmid' => $m['cmid'], 'gravidade' => status::ALTA]);
                 }
                 if (in_array($c['e'] ?? 1, [2, 3]) && !$t['grade_items']) {
-                    $out[] = $this->f(status::NAO_CONFORME, helpers::label($m), 'exige conclusão com aprovação/reprovação de módulo sem nota ' . helpers::label($t), ['cmid' => $m['cmid']]);
+                    $out[] = $this->f(
+                        status::NAO_CONFORME,
+                        helpers::label($m),
+                        'exige conclusão com aprovação/reprovação de módulo sem nota ' . helpers::label($t),
+                        ['cmid' => $m['cmid']]
+                    );
                 }
             }
         }
-        return $out ?: [$this->f(status::CONFORME, 'Restrições de acesso', 'todas as condições de conclusão apontam para módulos com conclusão habilitada e visíveis')];
-        }
+        return $out ?: [$this->f(
+            status::CONFORME,
+            'Restrições de acesso',
+            'todas as condições de conclusão apontam para módulos com conclusão habilitada e visíveis'
+        )];
+    }
 }

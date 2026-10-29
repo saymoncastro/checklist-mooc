@@ -57,9 +57,13 @@ class cl04 extends base {
         $summary = html_entity_decode((string) $s['course']['summary']);
         foreach ($p['summary_required_links'] as $link) {
             $ok = strpos($summary, $link) !== false;
-            $out[] = $this->f($ok ? status::CONFORME : status::NAO_CONFORME, 'Sumário do curso', "link $link " . ($ok ? 'presente' : 'ausente'),
-                ['orientacao' => $this->guidance()]);
+            $out[] = $this->f(
+                $ok ? status::CONFORME : status::NAO_CONFORME,
+                'Sumário do curso',
+                "link $link " . ($ok ? 'presente' : 'ausente'),
+                ['orientacao' => $this->guidance()]
+            );
         }
         return $out;
-        }
+    }
 }

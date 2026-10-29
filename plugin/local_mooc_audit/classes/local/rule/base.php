@@ -26,7 +26,6 @@ use local_mooc_audit\local\status;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class base implements rule_interface {
-
     /** @var string Rule type: depends on an institutional decision (parameters in the policy). */
     const TYPE_INSTITUTIONAL = 'institucional';
     /** @var string Rule type: universal technical check. */
@@ -118,8 +117,11 @@ abstract class base implements rule_interface {
      * @return array
      */
     protected function f(string $status, ?string $local = null, ?string $evidencia = null, array $extra = []): array {
-        return array_merge(['status' => $status, 'local' => $local, 'evidencia' => $evidencia, 'encontrado' => null,
-            'esperado' => null, 'orientacao' => null, 'gravidade' => null, 'cmid' => null, 'locus' => null, 'section' => null], $extra);
+        return array_merge(
+            ['status' => $status, 'local' => $local, 'evidencia' => $evidencia, 'encontrado' => null,
+            'esperado' => null, 'orientacao' => null, 'gravidade' => null, 'cmid' => null, 'locus' => null, 'section' => null],
+            $extra
+        );
     }
 
     /**

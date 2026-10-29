@@ -55,8 +55,12 @@ class cl20 extends base {
     public function evaluate(array $s, array $p): array {
         $out = [];
         $hs = $s['course']['formatoptions']['hiddensections'] ?? null;
-        $out[] = $this->f((string) $hs === '1' ? status::CONFORME : status::NAO_CONFORME, 'Configurações do curso > Formato > Seções escondidas', "hiddensections=" . var_export($hs, true),
-            ['esperado' => '1 (completamente invisíveis)']);
+        $out[] = $this->f(
+            (string) $hs === '1' ? status::CONFORME : status::NAO_CONFORME,
+            'Configurações do curso > Formato > Seções escondidas',
+            "hiddensections=" . var_export($hs, true),
+            ['esperado' => '1 (completamente invisíveis)']
+        );
         foreach ($s['sections'] as $sec) {
             if ($sec['number'] == 0) {
                 continue;
@@ -64,17 +68,29 @@ class cl20 extends base {
             $mods = array_filter($sec['sequence'], fn($c) => isset($s['modules'][$c]));
             $lbl = "Seção {$sec['number']} \"{$sec['name']}\"";
             if (!$mods) {
-                $out[] = $this->f(status::ATENCAO, $lbl, 'seção sem módulos', ['orientacao' => $this->g('emptysection'), 'locus' => self::LOCUS_SECTION, 'section' => $sec['number']]);
+                $out[] = $this->f(status::ATENCAO, $lbl, 'seção sem módulos', ['orientacao' => $this->g('emptysection'),
+                    'locus' => self::LOCUS_SECTION, 'section' => $sec['number']]);
             } else if (count(array_filter($mods, fn($c) => $s['modules'][$c]['modname'] !== 'label')) === 0) {
-                $out[] = $this->f(status::ATENCAO, $lbl, 'seção só com rótulos', ['gravidade' => status::BAIXA, 'locus' => self::LOCUS_SECTION, 'section' => $sec['number']]);
+                $out[] = $this->f(status::ATENCAO, $lbl, 'seção só com rótulos', ['gravidade' => status::BAIXA,
+                    'locus' => self::LOCUS_SECTION, 'section' => $sec['number']]);
             }
             if ($sec['rawname'] !== null && preg_match($p['generic_section_names'], helpers::norm($sec['rawname']))) {
-                $out[] = $this->f(status::ATENCAO, $lbl, 'nome genérico "' . $sec['rawname'] . '"', ['orientacao' => $this->g('genericname'), 'locus' => self::LOCUS_SECTION, 'section' => $sec['number']]);
+                $out[] = $this->f(
+                    status::ATENCAO,
+                    $lbl,
+                    'nome genérico "' . $sec['rawname'] . '"',
+                    ['orientacao' => $this->g('genericname'), 'locus' => self::LOCUS_SECTION, 'section' => $sec['number']]
+                );
             }
             if (!$sec['visible'] && array_filter($mods, fn($c) => $s['modules'][$c]['completion'])) {
-                $out[] = $this->f(status::ATENCAO, $lbl, 'seção oculta com atividades que têm conclusão', ['gravidade' => status::MEDIA, 'locus' => self::LOCUS_SECTION, 'section' => $sec['number']]);
+                $out[] = $this->f(
+                    status::ATENCAO,
+                    $lbl,
+                    'seção oculta com atividades que têm conclusão',
+                    ['gravidade' => status::MEDIA, 'locus' => self::LOCUS_SECTION, 'section' => $sec['number']]
+                );
             }
         }
         return $out;
-        }
+    }
 }

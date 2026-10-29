@@ -60,20 +60,33 @@ class cl18 extends base {
                 $out[] = $this->f(status::CONFORME, 'Atividades do curso', "nenhum módulo $mod");
             }
             foreach ($gs as $g) {
-                $deps = array_filter(helpers::mods($s, 'game'), fn($m) => ($m['extra']['sourcemodule'] ?? '') === 'glossary' && (int) ($m['extra']['glossaryid'] ?? 0) === $g['instanceid']);
+                $deps = array_filter(helpers::mods($s, 'game'), fn($m) => ($m['extra']['sourcemodule'] ?? '') === 'glossary'
+                    && (int) ($m['extra']['glossaryid'] ?? 0) === $g['instanceid']);
                 $entries = (int) ($g['extra']['entries'] ?? 0);
                 if ($deps) {
-                    $names = array_map(fn($m) => helpers::label($m) . ' [entradas na categoria: ' . ($m['extra']['glossary_category_entries'] ?? 'n/a') . ']', $deps);
+                    $names = array_map(fn($m) => helpers::label($m) . ' [entradas na categoria: '
+                        . ($m['extra']['glossary_category_entries'] ?? 'n/a') . ']', $deps);
                     $st = $entries === 0 ? status::NAO_CONFORME : status::ATENCAO;
-                    $out[] = $this->f($st, helpers::label($g), "glossário com $entries entradas; fonte de " . count($deps) . ' jogos: ' . implode('; ', $names),
-                        ['cmid' => $g['cmid'], 'gravidade' => $entries === 0 ? status::BLOQUEANTE : status::MEDIA, 'esperado' => 'entradas disponíveis para os jogos',
-                        'orientacao' => $this->g('repopulate'), 'locus' => self::LOCUS_MODULE_VIEW]);
+                    $out[] = $this->f(
+                        $st,
+                        helpers::label($g),
+                        "glossário com $entries entradas; fonte de " . count($deps) . ' jogos: ' . implode('; ', $names),
+                        ['cmid' => $g['cmid'], 'gravidade' => $entries === 0 ? status::BLOQUEANTE : status::MEDIA,
+                            'esperado' => 'entradas disponíveis para os jogos',
+                        'orientacao' => $this->g('repopulate'),
+                        'locus' => self::LOCUS_MODULE_VIEW]
+                    );
                 } else {
-                    $out[] = $this->f(status::NAO_CONFORME, helpers::label($g), "módulo $mod presente ($entries entradas) sem uso por jogos", ['cmid' => $g['cmid'],
-                        'orientacao' => $this->guidance()]);
+                    $out[] = $this->f(
+                        status::NAO_CONFORME,
+                        helpers::label($g),
+                        "módulo $mod presente ($entries entradas) sem uso por jogos",
+                        ['cmid' => $g['cmid'],
+                        'orientacao' => $this->guidance()]
+                    );
                 }
             }
         }
         return $out;
-        }
+    }
 }

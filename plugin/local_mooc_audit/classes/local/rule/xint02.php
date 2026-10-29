@@ -58,10 +58,19 @@ class xint02 extends base {
         foreach ($s['modules'] as $m) {
             $total += $m['files']['count'];
             foreach ($m['files']['missing_in_storage'] as $fe) {
-                $out[] = $this->f(status::NAO_CONFORME, helpers::label($m), "arquivo \"{$fe['filename']}\" ({$fe['component']}/{$fe['filearea']}, {$fe['filesize']} bytes" . ($fe['is_reference'] ? ', alias' : '') . ') registrado mas sem conteúdo legível no armazenamento',
-                    ['cmid' => $m['cmid'], 'orientacao' => $this->guidance()]);
+                $out[] = $this->f(
+                    status::NAO_CONFORME,
+                    helpers::label($m),
+                    "arquivo \"{$fe['filename']}\" ({$fe['component']}/{$fe['filearea']}, {$fe['filesize']} bytes"
+                        . ($fe['is_reference'] ? ', alias' : '') . ') registrado mas sem conteúdo legível no armazenamento',
+                    ['cmid' => $m['cmid'], 'orientacao' => $this->guidance()]
+                );
             }
         }
-        return $out ?: [$this->f(status::CONFORME, 'Arquivos dos módulos', "$total arquivos com conteúdo legível no armazenamento")];
-        }
+        return $out ?: [$this->f(
+            status::CONFORME,
+            'Arquivos dos módulos',
+            "$total arquivos com conteúdo legível no armazenamento"
+        )];
+    }
 }

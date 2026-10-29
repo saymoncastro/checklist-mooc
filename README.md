@@ -47,8 +47,12 @@ python3 -I poc/mbz_inspect.py caminho/do/backup.mbz --out resultado.json
   vigente: plugin local Moodle com motor interno**, independente do MOOC Admin e de `.mbz`
   (`RELATORIO-POC-PLUGIN-MOODLE.md`). O protótipo Python permanece como oráculo das regras.
 - **2026-10-28 (SDD):** adoção do GitHub Spec Kit; constituição v1.0.0; baseline, catálogo, visão de produto, backlog;
-  especificação 001 com plano, tarefas e análise, **aguardando autorização institucional para implementar**
-  (`docs/relatorio-adocao-sdd.md`).
+  especificação 001 com plano, tarefas e análise (`docs/relatorio-adocao-sdd.md`).
+- **2026-10-29 (spec 001 implementada):** plugin 0.2.0 com as 29 regras em classes próprias e teste por regra, página
+  do relatório no menu do curso com links de correção e reexecução, contrato JSON 1.0 com schema, política ajustável
+  na administração. 71 testes PHPUnit, 2 cenários Behat com axe, PHPCS sem avisos; estados idênticos à PoC em A, B, 55
+  e 670 (`plugin-results/0.2.0/`). Pendências institucionais: decisão 10 (nomes canônicos), permissão de proponentes,
+  validação com bloco de site real.
 
 ## Fluxo de desenvolvimento (Spec Kit)
 

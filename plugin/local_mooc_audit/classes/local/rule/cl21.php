@@ -57,13 +57,21 @@ class cl21 extends base {
         $names = array_map(fn($b) => $b['name'] . ($b['inherited'] ? '(site/categoria)' : ''), $s['blocks']);
         $titles = array_map(fn($b) => helpers::norm($b['title']), $s['blocks']);
         $hasprogress = (bool) array_filter($s['blocks'], fn($b) => $b['name'] === 'completion_progress');
-        $out[] = $this->f($hasprogress ? status::CONFORME : status::NAO_CONFORME, 'Blocos da página do curso', 'blocos=' . json_encode($names, JSON_UNESCAPED_UNICODE) . ' (fonte: ' . $s['blocks_source'] . ')',
-            ['esperado' => 'bloco Progresso de Conclusão presente']);
+        $out[] = $this->f(
+            $hasprogress ? status::CONFORME : status::NAO_CONFORME,
+            'Blocos da página do curso',
+            'blocos=' . json_encode($names, JSON_UNESCAPED_UNICODE) . ' (fonte: ' . $s['blocks_source'] . ')',
+            ['esperado' => 'bloco Progresso de Conclusão presente']
+        );
         foreach ($p['required_blocks']['html'] as $t) {
             $ok = (bool) array_filter($titles, fn($x) => strpos($x, helpers::norm($t)) !== false);
-            $out[] = $this->f($ok ? status::CONFORME : status::NAO_CONFORME, 'Blocos da página do curso', "bloco \"$t\": " . ($ok ? 'presente' : 'ausente'),
-                ['orientacao' => $ok ? null : $this->guidance()]);
+            $out[] = $this->f(
+                $ok ? status::CONFORME : status::NAO_CONFORME,
+                'Blocos da página do curso',
+                "bloco \"$t\": " . ($ok ? 'presente' : 'ausente'),
+                ['orientacao' => $ok ? null : $this->guidance()]
+            );
         }
         return $out;
-        }
+    }
 }

@@ -62,8 +62,12 @@ class cl12 extends base {
             $det[] = "{$m['modname']}:{$m['cmid']}=" . rtrim(rtrim(number_format($gi['grademax'], 2, '.', ''), '0'), '.');
         }
         $ok = abs($total - (float) $p['course_total_max']) < 0.001;
-        $out[] = $this->f($ok ? status::CONFORME : status::NAO_CONFORME, 'Livro de notas > Configurações', 'soma dos máximos=' . $total . ' itens=' . implode(', ', $det),
-            ['esperado' => (string) $p['course_total_max'], 'orientacao' => $this->guidance()]);
+        $out[] = $this->f(
+            $ok ? status::CONFORME : status::NAO_CONFORME,
+            'Livro de notas > Configurações',
+            'soma dos máximos=' . $total . ' itens=' . implode(', ', $det),
+            ['esperado' => (string) $p['course_total_max'], 'orientacao' => $this->guidance()]
+        );
         $ci = $s['grade']['course_item'];
         if (!$ci) {
             $out[] = $this->f(status::NAO_VERIFICAVEL, 'Livro de notas', 'item de total do curso não encontrado');
@@ -72,25 +76,45 @@ class cl12 extends base {
         $root = $s['grade']['categories'][$ci['iteminstance']] ?? null;
         if ($root) {
             if ((int) $root['aggregation'] !== (int) $p['required_aggregation']) {
-                $out[] = $this->f(status::NAO_CONFORME, 'Livro de notas > categoria raiz', "aggregation={$root['aggregation']}", ['esperado' => $p['required_aggregation'] . ' (Natural)',
-                    'orientacao' => $this->g('aggregation')]);
+                $out[] = $this->f(
+                    status::NAO_CONFORME,
+                    'Livro de notas > categoria raiz',
+                    "aggregation={$root['aggregation']}",
+                    ['esperado' => $p['required_aggregation'] . ' (Natural)',
+                    'orientacao' => $this->g('aggregation')]
+                );
             } else {
                 $out[] = $this->f(status::CONFORME, 'Livro de notas > categoria raiz', 'aggregation=13 (Natural)');
             }
             if ($root['aggregateonlygraded'] && !$p['aggregateonlygraded_allowed']) {
-                $out[] = $this->f(status::NAO_CONFORME, 'Livro de notas > categoria raiz', 'aggregateonlygraded=1 (excluir notas vazias)', ['esperado' => '0',
-                    'orientacao' => $this->g('onlygraded')]);
+                $out[] = $this->f(
+                    status::NAO_CONFORME,
+                    'Livro de notas > categoria raiz',
+                    'aggregateonlygraded=1 (excluir notas vazias)',
+                    ['esperado' => '0',
+                    'orientacao' => $this->g('onlygraded')]
+                );
             } else {
                 $out[] = $this->f(status::CONFORME, 'Livro de notas > categoria raiz', 'aggregateonlygraded=0');
             }
         }
         if (abs($ci['grademax'] - (float) $p['course_total_max']) > 0.001) {
-            $out[] = $this->f(status::ATENCAO, 'Livro de notas > Total do curso', "grademax do total={$ci['grademax']}", ['esperado' => (string) $p['course_total_max']]);
+            $out[] = $this->f(
+                status::ATENCAO,
+                'Livro de notas > Total do curso',
+                "grademax do total={$ci['grademax']}",
+                ['esperado' => (string) $p['course_total_max']]
+            );
         }
         $sub = array_filter($graded, fn($x) => $x[1]['categoryid'] != $ci['iteminstance']);
         if ($sub) {
-            $out[] = $this->f(status::ATENCAO, 'Livro de notas', count($sub) . ' itens em subcategorias', ['orientacao' => $this->g('subcats')]);
+            $out[] = $this->f(
+                status::ATENCAO,
+                'Livro de notas',
+                count($sub) . ' itens em subcategorias',
+                ['orientacao' => $this->g('subcats')]
+            );
         }
         return $out;
-        }
+    }
 }

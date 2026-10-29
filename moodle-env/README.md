@@ -104,6 +104,28 @@ docker exec moocaudit-wt-web chown -R www-data:www-data /var/www/moodledata
 
 Site: http://localhost:8092 (admin / `Admin123!`, apenas local). Remover: `docker rm -f moocaudit-wt-web`.
 
+Para **rodar o Behat** do plugin sem tocar o laboratório nem contêineres de outros projetos: um Selenium próprio na
+rede `moocaudit_default` com o apelido `selenium`, que resolve `webserver` para o contêiner web do worktree, e o nome
+`webserver` apontado para o próprio contêiner web (o `behat_wwwroot` do `config.php` é `http://webserver`):
+
+```bash
+IP=$(docker inspect moocaudit-wt-web --format '{{(index .NetworkSettings.Networks "moocaudit_default").IPAddress}}')
+docker run -d --name moocaudit-wt-selenium --network moocaudit_default --network-alias selenium \
+  --add-host "webserver:$IP" --shm-size=2g selenium/standalone-chrome:4
+docker exec moocaudit-wt-web bash -c 'echo "127.0.0.1 webserver" >> /etc/hosts; mkdir -p /var/www/behatdata /var/www/behatfaildumps; chown www-data /var/www/behatdata /var/www/behatfaildumps'
+docker exec -e MOODLE_DOCKER_BROWSER=chrome -w /var/www/html moocaudit-wt-web php admin/tool/behat/cli/init.php
+docker exec -e MOODLE_DOCKER_BROWSER=chrome -w /var/www/html moocaudit-wt-web php admin/tool/behat/cli/run.php --tags=@local_mooc_audit
+```
+
+PHPCS (`moodlehq/moodle-cs`) fora da árvore do Moodle, no contêiner de testes:
+
+```bash
+docker exec moocaudit-wt bash -c 'mkdir -p /tmp/cs && cd /tmp/cs && php -r "copy(\"https://getcomposer.org/download/latest-stable/composer.phar\", \"composer.phar\");" \
+  && php composer.phar config --no-interaction allow-plugins.dealerdirect/phpcodesniffer-composer-installer true \
+  && php composer.phar require --no-interaction moodlehq/moodle-cs'
+docker exec -w /var/www/html moocaudit-wt /tmp/cs/vendor/bin/phpcs --standard=moodle local/mooc_audit
+```
+
 Para regravar as expectativas de caracterização após uma mudança de comportamento documentada:
 `docker exec -e LOCAL_MOOC_AUDIT_WRITE_EXPECTED=1 -w /var/www/html moocaudit-wt vendor/bin/phpunit local/mooc_audit/tests/characterization_test.php`.
-Remover depois: `docker rm -f moocaudit-wt moocaudit-wt-web && docker exec moocaudit-db-1 dropdb -U moodle moodle_wt`.
+Remover depois: `docker rm -f moocaudit-wt moocaudit-wt-web moocaudit-wt-selenium && docker exec moocaudit-db-1 dropdb -U moodle moodle_wt`.

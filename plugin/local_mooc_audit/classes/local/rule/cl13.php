@@ -56,20 +56,36 @@ class cl13 extends base {
         $out = [];
         foreach (helpers::mods($s, 'quiz') as $m) {
             $a = (int) ($m['extra']['attempts'] ?? 0);
-            $ok = $p['attempts_rule'] === 'exact' ? $a === (int) $p['min_quiz_attempts'] : ($a === 0 || $a >= (int) $p['min_quiz_attempts']);
-            $out[] = $this->f($ok ? status::CONFORME : status::NAO_CONFORME, helpers::label($m), "tentativas permitidas=$a",
-                ['cmid' => $m['cmid'], 'esperado' => ($p['attempts_rule'] === 'exact' ? '= ' : '≥ ') . $p['min_quiz_attempts'] . ' (0 = ilimitadas)',
-                'orientacao' => $this->guidance()]);
+            $ok = $p['attempts_rule'] === 'exact' ? $a === (int) $p['min_quiz_attempts'] : ($a === 0
+                || $a >= (int) $p['min_quiz_attempts']);
+            $out[] = $this->f(
+                $ok ? status::CONFORME : status::NAO_CONFORME,
+                helpers::label($m),
+                "tentativas permitidas=$a",
+                ['cmid' => $m['cmid'], 'esperado' => ($p['attempts_rule'] === 'exact' ? '= ' : '≥ ') . $p['min_quiz_attempts']
+                    . ' (0 = ilimitadas)',
+                'orientacao' => $this->guidance()]
+            );
             $intro = helpers::norm(helpers::text($m['texts']['intro'] ?? ''));
             if (preg_match('/tentativas?\s*(?:permitidas?)?\s*[:\-]?\s*(\d+)/u', $intro, $mm)) {
                 if ((int) $mm[1] !== $a) {
-                    $out[] = $this->f(status::NAO_CONFORME, helpers::label($m), "enunciado declara {$mm[1]} tentativas; configurado=$a", ['cmid' => $m['cmid'],
-                        'orientacao' => $this->g('intro')]);
+                    $out[] = $this->f(
+                        status::NAO_CONFORME,
+                        helpers::label($m),
+                        "enunciado declara {$mm[1]} tentativas; configurado=$a",
+                        ['cmid' => $m['cmid'],
+                        'orientacao' => $this->g('intro')]
+                    );
                 }
             } else if ($intro !== '') {
-                $out[] = $this->f(status::ATENCAO, helpers::label($m), 'enunciado não menciona o número de tentativas', ['cmid' => $m['cmid'], 'gravidade' => status::BAIXA]);
+                $out[] = $this->f(
+                    status::ATENCAO,
+                    helpers::label($m),
+                    'enunciado não menciona o número de tentativas',
+                    ['cmid' => $m['cmid'], 'gravidade' => status::BAIXA]
+                );
             }
         }
         return $out ?: [$this->f(status::NAO_APLICAVEL, 'Questionários', 'curso sem questionários')];
-        }
+    }
 }

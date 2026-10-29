@@ -58,17 +58,29 @@ class xdep01 extends base {
         foreach ($s['modules'] as $m) {
             foreach (snapshot::walk_conditions($m['availability']) as $c) {
                 if (($c['type'] ?? '') === 'completion' && !isset($s['modules'][(int) $c['cm']])) {
-                    $out[] = $this->f(status::NAO_CONFORME, helpers::label($m), "condição completion cm={$c['cm']} não existe no curso", ['cmid' => $m['cmid'], 'orientacao' => $this->guidance()]);
+                    $out[] = $this->f(
+                        status::NAO_CONFORME,
+                        helpers::label($m),
+                        "condição completion cm={$c['cm']} não existe no curso",
+                        ['cmid' => $m['cmid'],
+                        'orientacao' => $this->guidance()]
+                    );
                 }
             }
         }
         foreach ($s['sections'] as $sec) {
             foreach (snapshot::walk_conditions($sec['availability']) as $c) {
                 if (($c['type'] ?? '') === 'completion' && !isset($s['modules'][(int) $c['cm']])) {
-                    $out[] = $this->f(status::NAO_CONFORME, "Seção {$sec['number']}", "condição completion cm={$c['cm']} não existe no curso", ['locus' => self::LOCUS_SECTION, 'section' => $sec['number']]);
+                    $out[] = $this->f(
+                        status::NAO_CONFORME,
+                        "Seção {$sec['number']}",
+                        "condição completion cm={$c['cm']} não existe no curso",
+                        ['locus' => self::LOCUS_SECTION,
+                        'section' => $sec['number']]
+                    );
                 }
             }
         }
         return $out ?: [$this->f(status::CONFORME, 'Restrições de acesso', 'todas as referências a módulos existem')];
-        }
+    }
 }

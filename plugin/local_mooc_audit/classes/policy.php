@@ -45,7 +45,7 @@ class policy {
             'required_start_date' => '01/01',
             'allowed_end_dates' => ['31/12'],
             'min_days_between_start_and_end' => 30,
-            // "backup" style results for offer settings are not relevant here: the plugin always looks at a live room.
+            // Offer settings are read from the live room, never from a backup.
             'target_category_name' => 'Inscrições Abertas',
             // Decision 1: at least two attempts (0 = unlimited accepted).
             'min_quiz_attempts' => 2,

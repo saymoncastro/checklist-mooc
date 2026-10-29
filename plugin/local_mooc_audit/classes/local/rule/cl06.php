@@ -70,8 +70,13 @@ class cl06 extends base {
         if ($ed && ($ed - $sd) < $p['min_days_between_start_and_end'] * DAYSECS) {
             $probs[] = 'menos de ' . $p['min_days_between_start_and_end'] . ' dias antes do fim';
         }
-        return [$this->f($probs ? status::NAO_CONFORME : status::CONFORME, 'Configurações do curso > Data de início',
-            'início=' . helpers::d($sd) . ' fim=' . helpers::d($ed), ['encontrado' => implode('; ', $probs) ?: 'ok',
-            'esperado' => "{$p['required_start_date']}/{$p['reoffer_year']}", 'orientacao' => $this->guidance()])];
-        }
+        return [$this->f(
+            $probs ? status::NAO_CONFORME : status::CONFORME,
+            'Configurações do curso > Data de início',
+            'início=' . helpers::d($sd) . ' fim=' . helpers::d($ed),
+            ['encontrado' => implode('; ', $probs) ?: 'ok',
+            'esperado' => "{$p['required_start_date']}/{$p['reoffer_year']}",
+            'orientacao' => $this->guidance()]
+        )];
+    }
 }

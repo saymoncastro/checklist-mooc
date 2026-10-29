@@ -25,7 +25,6 @@ namespace local_mooc_audit;
  * @covers     ::local_mooc_audit_extend_navigation_course
  */
 final class access_test extends \advanced_testcase {
-
     /**
      * Enrolled student and teacher do not hold local/mooc_audit:audit by default; a manager does.
      */

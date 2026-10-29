@@ -42,12 +42,13 @@ if (!class_exists('PHPUnit\\Framework\\TestCase') && is_readable($CFG->dirroot .
     require_once($CFG->dirroot . '/vendor/autoload.php');
 }
 if (!class_exists('PHPUnit\\Framework\\TestCase')) {
-    cli_error('PHPUnit is required to build the fixture courses (run "composer install" at the Moodle root of the development site).');
+    cli_error('PHPUnit is required to build the fixture courses '
+        . '(run "composer install" at the Moodle root of the development site).');
 }
 require_once($CFG->libdir . '/testing/generator/lib.php');
 require_once(__DIR__ . '/../tests/generator/lib.php');
 
-list($options) = cli_get_params(['year' => 0, 'help' => false], ['h' => 'help']);
+[$options] = cli_get_params(['year' => 0, 'help' => false], ['h' => 'help']);
 if ($options['help']) {
     cli_writeln('Cria os cursos de teste A (referência) e B (inconsistente). Opção --year=AAAA (padrão: ano seguinte).');
     exit(0);
@@ -67,5 +68,7 @@ $generator = new local_mooc_audit_generator(new testing_data_generator());
 [$a, $idsa] = $generator->create_course_a($year);
 [$b, $idsb] = $generator->create_course_b($year);
 
-cli_writeln(json_encode(['A' => ['courseid' => $a->id, 'cmids' => $idsa], 'B' => ['courseid' => $b->id, 'cmids' => $idsb]],
-    JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+cli_writeln(json_encode(
+    ['A' => ['courseid' => $a->id, 'cmids' => $idsa], 'B' => ['courseid' => $b->id, 'cmids' => $idsb]],
+    JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE
+));

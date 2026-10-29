@@ -64,7 +64,7 @@ class xdep04 extends base {
         }
         $color = [];
         $cycles = [];
-        $dfs = function($u, $path) use (&$dfs, &$color, &$cycles, $g) {
+        $dfs = function ($u, $path) use (&$dfs, &$color, &$cycles, $g) {
             $color[$u] = 1;
             $path[] = $u;
             foreach ($g[$u] ?? [] as $v) {
@@ -82,9 +82,15 @@ class xdep04 extends base {
             }
         }
         if ($cycles) {
-            return array_map(fn($c) => $this->f(status::NAO_CONFORME, 'Grafo de restrições', 'ciclo: ' . implode(' → ', $c), ['orientacao' => $this->guidance()]), $cycles);
+            return array_map(fn($c) => $this->f(
+                status::NAO_CONFORME,
+                'Grafo de restrições',
+                'ciclo: ' . implode(' → ', $c),
+                ['orientacao' => $this->guidance()]
+            ), $cycles);
         }
         $edges = array_sum(array_map('count', $g));
-        return [$this->f(status::CONFORME, 'Grafo de restrições', count($g) . " módulos com condições, $edges arestas, sem ciclos")];
-        }
+        return [$this->f(status::CONFORME, 'Grafo de restrições', count($g)
+            . " módulos com condições, $edges arestas, sem ciclos")];
+    }
 }

@@ -66,12 +66,16 @@ class xcont04 extends base {
                 foreach (array_unique($mm[1]) as $ref) {
                     $path = rawurldecode(preg_replace('/[?#].*$/', '', $ref));
                     if (!isset($paths[$path])) {
-                        $out[] = $this->f(status::NAO_CONFORME, helpers::label($m) . " campo $field", "@@PLUGINFILE@@$ref não encontrado entre os arquivos do módulo",
-                            ['cmid' => $m['cmid'], 'orientacao' => $this->guidance()]);
+                        $out[] = $this->f(
+                            status::NAO_CONFORME,
+                            helpers::label($m) . " campo $field",
+                            "@@PLUGINFILE@@$ref não encontrado entre os arquivos do módulo",
+                            ['cmid' => $m['cmid'], 'orientacao' => $this->guidance()]
+                        );
                     }
                 }
             }
         }
         return $out ?: [$this->f(status::CONFORME, 'Conteúdos', 'todas as referências @@PLUGINFILE@@ resolvidas')];
-        }
+    }
 }

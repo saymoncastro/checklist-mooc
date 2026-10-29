@@ -53,10 +53,17 @@ if ($hassiteconfig) {
         '',
         PARAM_RAW
     ));
-    $settings->add(new admin_setting_heading('local_mooc_audit/policydefaults',
+    $settings->add(new admin_setting_heading(
+        'local_mooc_audit/policydefaults',
         get_string('policyjson_defaults', 'local_mooc_audit'),
-        html_writer::tag('pre', s(json_encode($defaults, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)),
-            ['class' => 'small'])));
+        html_writer::tag(
+            'pre',
+            s(json_encode($defaults, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)),
+            ['class' => 'small']
+        )
+    ));
     $settings->add(new admin_setting_heading('local_mooc_audit/tools', '', html_writer::link(
-        new moodle_url('/local/mooc_audit/index.php'), get_string('runaudit', 'local_mooc_audit'))));
+        new moodle_url('/local/mooc_audit/index.php'),
+        get_string('runaudit', 'local_mooc_audit')
+    )));
 }

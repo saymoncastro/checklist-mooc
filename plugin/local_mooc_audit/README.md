@@ -1,10 +1,15 @@
-# local_mooc_audit — prova de conceito de auditoria técnica de cursos MOOC dentro do Moodle 4.5
+# local_mooc_audit — auditoria técnica de cursos MOOC dentro do Moodle 4.5
 
-Plugin local **somente leitura** (versão 0.2.0, em evolução pela spec 001) que audita uma sala existente a partir do seu `courseid`, sem depender do MOOC Admin
+Plugin local **somente leitura** (versão 0.2.0, entrega da spec 001) que audita uma sala existente a partir do seu `courseid`, sem depender do MOOC Admin
 nem de arquivos `.mbz`. Reaproveita o catálogo de regras e as decisões institucionais do projeto `checklist-mooc`.
 
-**Estado:** PoC reorganizada (0.2.0): regras em classes próprias com teste por regra, catálogo com metadados, contrato JSON 1.0, caracterização dos cursos A/B, página do relatório no contexto do curso (menu *Mais > Auditoria técnica*). Validado em Moodle 4.5.15 / PHP 8.3 / PostgreSQL 17 em ambiente local.
-Não instalar em produção sem revisão.
+**Estado (0.2.0, maturidade ALPHA):** 29 regras em classes próprias, cada uma com teste PHPUnit de cenário conforme e
+não conforme; contrato JSON 1.0 com schema; página do relatório no contexto do curso (menu *Mais > Auditoria técnica*)
+com links de correção e reexecução; política institucional ajustável na administração. Validado em Moodle 4.5.15 /
+PHP 8.3 / PostgreSQL 17 em ambiente local: 71 testes PHPUnit, 2 cenários Behat com verificação de acessibilidade (axe),
+PHPCS padrão `moodle` sem erros nem avisos, e estados por regra idênticos aos da PoC nos cursos A, B, 55 e 670
+(`plugin-results/0.2.0/`). Antes da produção: decisão 10 (nomes canônicos), validação com bloco de site real e revisão
+da equipe técnica.
 
 ## Instalação
 
@@ -67,11 +72,12 @@ mecanismo nativo `core_course_external::import_course`).
 | `tests/contract_test.php` | Relatórios de A/B válidos contra o schema (validador mínimo sem biblioteca), campos da PoC preservados, ida e volta do JSON |
 | `tests/policy_test.php` | Padrões, override do administrador e por arquivo, tipos errados, ano de reoferta automático, validação do setting, nome canônico alterado aplicado a CL-09 |
 | `tests/helper/rule_testcase.php` | Base dos testes por regra: curso na categoria da oferta com datas da reoferta, construtores de página/questionário/pesquisa/certificado e árvores de restrição |
-| `tests/rule/*_test.php` | Um arquivo por regra (29): cenários conforme, não conforme e, quando a regra os produz, atenção/não se aplica/não verificável, construídos por API (ex.: X-INT-03 com condição de plugin inexistente; X-CERT-01 com visão de estudante) |
+| `tests/local/rule/*_test.php` | Um arquivo por regra (29): cenários conforme, não conforme e, quando a regra os produz, atenção/não se aplica/não verificável, construídos por API (ex.: X-INT-03 com condição de plugin inexistente; X-CERT-01 com visão de estudante) |
 | `tests/readonly_test.php` | Hashes de 17 tabelas do curso B antes e depois de três auditorias (admin, estudante, texto) idênticos; `timemodified`/`cacherev` inalterados |
 | `tests/locator_test.php` | URL esperada por locus; identificadores ausentes → sem link |
 | `tests/access_test.php` | Capacidade por arquétipo (estudante/professor não; gerente sim), definição sem risco declarado, nó de navegação só com a capacidade |
 | `tests/output_test.php` | Dados do template e renderização da página (cursos A/B) |
+| `tests/behat/audit_page.feature` | Gerente abre o relatório pelo menu do curso (com JavaScript e verificação de acessibilidade axe), reexecuta; professor e estudante não veem a entrada |
 
 Fluxo de desenvolvimento: `specs/001-auditoria-tecnica-operacional/` (Spec Kit) e `.specify/memory/constitution.md`.
 
@@ -89,6 +95,14 @@ Fluxo de desenvolvimento: `specs/001-auditoria-tecnica-operacional/` (Spec Kit) 
 | Conclusão de curso | `completion_info` | API |
 | **Configurações específicas por módulo** (tentativas, datas, `completionsubmit`, fonte de jogos, texto do certificado…) | `$DB->get_record('<modname>', …)` com **lista branca de colunas** + `count_records` (`quiz_slots`, `feedback_item`, `glossary_entries`, `book_chapters`, `hvp_libraries`) | **DML justificado:** não existe API cross-módulo para ler configurações; são tabelas estáveis de cada módulo; nenhuma escrita |
 
+## Verificação
+
+```bash
+vendor/bin/phpunit --testsuite local_mooc_audit_testsuite      # 71 testes
+php admin/tool/behat/cli/run.php --tags=@local_mooc_audit       # exige Selenium; ver moodle-env/README.md
+vendor/bin/phpcs --standard=moodle local/mooc_audit             # moodlehq/moodle-cs
+```
+
 ## Limitações conhecidas
 
 - Regras por nome canônico (fórum, pesquisas, certificado) dependem dos nomes oficiais (decisão 10 pendente).
@@ -97,3 +111,6 @@ Fluxo de desenvolvimento: `specs/001-auditoria-tecnica-operacional/` (Spec Kit) 
 - O plugin não vê o pacote `.mbz`: corrupção de backup e arquivos ausentes *no pacote* só são detectáveis antes da
   restauração. Ver `RELATORIO-POC-PLUGIN-MOODLE.md`.
 - Textos de evidência das regras ainda são gerados em português no código (orientações e títulos já estão em `lang/`).
+- Módulo com nome vazio não aparece no `modinfo` do Moodle; X-STR-01 só detecta nomes formados por espaços ou marcação.
+- Sem persistência: cada execução é recalculada; histórico e acompanhamento são da spec 005.
+- `cli/compare.php` (comparador origem × destino) segue experimental e fora do contrato 1.0 (spec 003).

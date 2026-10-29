@@ -56,7 +56,12 @@ class cl08 extends base {
         $out = [];
         $selfs = array_filter($s['enrols'], fn($e) => $e['enrol'] === 'self');
         if (!$selfs) {
-            return [$this->f(status::NAO_CONFORME, 'Métodos de inscrição', 'nenhuma instância de autoinscrição', ['orientacao' => $this->g('add')])];
+            return [$this->f(
+                status::NAO_CONFORME,
+                'Métodos de inscrição',
+                'nenhuma instância de autoinscrição',
+                ['orientacao' => $this->g('add')]
+            )];
         }
         $sd = $s['course']['startdate'];
         $ed = $s['course']['enddate'];
@@ -78,16 +83,24 @@ class cl08 extends base {
                     $probs[] = 'fim da inscrição ≠ fim do curso';
                 }
             }
-            $out[] = $this->f($probs ? status::NAO_CONFORME : status::CONFORME, "Métodos de inscrição > Autoinscrição (id {$e['id']})",
-                "status={$e['status']} novas_inscricoes={$e['customint6']} início=" . helpers::d($e['enrolstartdate']) . ' fim=' . helpers::d($e['enrolenddate']),
-                ['encontrado' => implode('; ', $probs) ?: 'ok', 'orientacao' => $this->guidance()]);
+            $out[] = $this->f(
+                $probs ? status::NAO_CONFORME : status::CONFORME,
+                "Métodos de inscrição > Autoinscrição (id {$e['id']})",
+                "status={$e['status']} novas_inscricoes={$e['customint6']} início=" . helpers::d($e['enrolstartdate']) . ' fim='
+                    . helpers::d($e['enrolenddate']),
+                ['encontrado' => implode('; ', $probs) ?: 'ok', 'orientacao' => $this->guidance()]
+            );
         }
         foreach ($s['enrols'] as $e) {
             if ($e['enrol'] === 'guest' && $e['status'] == 0) {
-                $out[] = $this->f(status::ATENCAO, 'Métodos de inscrição > Acesso de visitante', 'habilitado' . ($e['has_password'] ? ' com senha' : ''),
-                    ['gravidade' => status::INFORMATIVA, 'orientacao' => $this->g('guest')]);
+                $out[] = $this->f(
+                    status::ATENCAO,
+                    'Métodos de inscrição > Acesso de visitante',
+                    'habilitado' . ($e['has_password'] ? ' com senha' : ''),
+                    ['gravidade' => status::INFORMATIVA, 'orientacao' => $this->g('guest')]
+                );
             }
         }
         return $out;
-        }
+    }
 }

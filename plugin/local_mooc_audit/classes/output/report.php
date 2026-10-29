@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 namespace local_mooc_audit\output;
 
 use local_mooc_audit\local\category;
@@ -38,7 +39,6 @@ use templatable;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class report implements renderable, templatable {
-
     /** @var string[] Bootstrap badge class of each state. */
     const STATUS_CLASS = [
         status::NAO_CONFORME => 'badge-danger',
@@ -239,7 +239,10 @@ class report implements renderable, templatable {
             'statuslabel' => get_string(status::string_key($res['status']), 'local_mooc_audit'),
             'statusclass' => self::STATUS_CLASS[$res['status']] ?? 'badge-secondary',
             'severity' => $res['gravidade'],
-            'severitylabel' => $res['gravidade'] ? get_string(status::severity_string_key($res['gravidade']), 'local_mooc_audit') : '',
+            'severitylabel' => $res['gravidade'] ? get_string(
+                status::severity_string_key($res['gravidade']),
+                'local_mooc_audit'
+            ) : '',
             'local' => $res['local'],
             'link' => $res['link'],
             'haslink' => !empty($res['link']),
@@ -250,7 +253,8 @@ class report implements renderable, templatable {
             'orientacao' => $res['orientacao'],
             'hasfound' => $res['encontrado'] !== null && $res['encontrado'] !== '',
             'hasexpected' => $res['esperado'] !== null && $res['esperado'] !== '',
-            'hasdetails' => ($res['encontrado'] !== null && $res['encontrado'] !== '') || ($res['esperado'] !== null && $res['esperado'] !== ''),
+            'hasdetails' => ($res['encontrado'] !== null && $res['encontrado'] !== '') || ($res['esperado'] !== null
+                && $res['esperado'] !== ''),
         ];
     }
 
@@ -267,7 +271,8 @@ class report implements renderable, templatable {
         $rules = [];
         foreach ($results as $res) {
             if (!isset($rules[$res['rule']])) {
-                $rules[$res['rule']] = (object) ['rule' => $res['rule'], 'title' => $res['titulo'], 'category' => category::title($res['category']),
+                $rules[$res['rule']] = (object) ['rule' => $res['rule'], 'title' => $res['titulo'],
+                    'category' => category::title($res['category']),
                     'only' => true];
             }
             if ($res['status'] !== status::CONFORME) {

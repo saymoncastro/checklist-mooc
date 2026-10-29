@@ -25,7 +25,6 @@ namespace local_mooc_audit;
  * @covers     \local_mooc_audit\engine
  */
 final class readonly_test extends \advanced_testcase {
-
     /**
      * Hash of every record of the tables that describe the course.
      *
@@ -35,7 +34,12 @@ final class readonly_test extends \advanced_testcase {
     private function hashes(int $courseid): array {
         global $DB;
         $context = \context_course::instance($courseid);
-        $cmcontexts = $DB->get_fieldset_select('context', 'id', 'contextlevel = ? AND ' . $DB->sql_like('path', '?'), [CONTEXT_MODULE, $context->path . '/%']);
+        $cmcontexts = $DB->get_fieldset_select(
+            'context',
+            'id',
+            'contextlevel = ? AND ' . $DB->sql_like('path', '?'),
+            [CONTEXT_MODULE, $context->path . '/%']
+        );
         $contexts = array_merge([$context->id], $cmcontexts);
         [$insql, $inparams] = $DB->get_in_or_equal($contexts);
         $queries = [

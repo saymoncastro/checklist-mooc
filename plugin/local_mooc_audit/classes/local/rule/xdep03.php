@@ -58,10 +58,15 @@ class xdep03 extends base {
         foreach ($s['modules'] as $m) {
             foreach (snapshot::walk_conditions($m['availability']) as $c) {
                 if (($c['type'] ?? '') === 'grade' && !isset($s['grade']['all_items'][(int) ($c['id'] ?? 0)])) {
-                    $out[] = $this->f(status::NAO_CONFORME, helpers::label($m), 'condição de nota aponta para item inexistente id=' . ($c['id'] ?? 'null'), ['cmid' => $m['cmid']]);
+                    $out[] = $this->f(
+                        status::NAO_CONFORME,
+                        helpers::label($m),
+                        'condição de nota aponta para item inexistente id=' . ($c['id'] ?? 'null'),
+                        ['cmid' => $m['cmid']]
+                    );
                 }
             }
         }
         return $out ?: [$this->f(status::CONFORME, 'Restrições de acesso', 'todas as condições de nota resolvidas')];
-        }
+    }
 }

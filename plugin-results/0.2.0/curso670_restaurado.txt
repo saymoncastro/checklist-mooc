@@ -1,0 +1,99 @@
+=== Acessibilidade e Tecnologia [AcessibilideTecnologias_2026] (id 7) — local_mooc_audit 0.2.0 / Política 2027-decisoes-2026-10-28 (Ano da reoferta 2027)
+Período: 2026-01-01 03:00 → 2027-01-01 02:59 | Categoria: Categoria 1 | Visível: 1 | tempo: 0.1s
+Seções: 8 | Módulos: 66 {"book":1,"feedback":3,"forum":4,"label":4,"page":27,"quiz":4,"resource":21,"simplecertificate":2} | Arquivos: 38 (sem conteúdo no armazenamento: 0)
+Blocos: ["completion_progress","html","html"] | Métodos de inscrição: ["manual","guest(off)","self(off)"]
+Situação geral: Requer correções | {"CONFORME":48,"NAO_CONFORME":16,"ATENCAO":6} | Inconformidades por gravidade: {"Baixa":1,"Alta":7,"Média":8}
+  [NAO_CONFORME   ] CL-06     Alta        Data de início correta (01/01 do ano da reoferta)
+      Local: Configurações do curso > Data de início → http://localhost:8092/course/edit.php?id=7
+      Evidência: início=01/01/2026 03:00 fim=01/01/2027 02:59
+      Encontrado: ano=2026 ≠ 2027
+      Esperado: 01/01/2027
+      Orientação: Ajustar a data de início da oferta.
+  [NAO_CONFORME   ] CL-07     Alta        Data de término correta (31/12 do ano da reoferta)
+      Local: Configurações do curso > Data de término → http://localhost:8092/course/edit.php?id=7
+      Evidência: término=01/01/2027 02:59
+      Esperado: 31/12/2027
+      Orientação: Ajustar a data de término conforme o calendário do Cefor.
+  [NAO_CONFORME   ] CL-08     Alta        Autoinscrição habilitada com período correto
+      Local: Métodos de inscrição > Autoinscrição (id 18) → http://localhost:8092/enrol/instances.php?id=7
+      Evidência: status=1 novas_inscricoes=1 início=(não definida) fim=(não definida)
+      Encontrado: método desabilitado; datas de inscrição não definidas
+      Orientação: Editar a Autoinscrição: habilitar, permitir novas inscrições e alinhar as datas com as do curso.
+  [NAO_CONFORME   ] X-CONT-01 Alta        Recursos vazios (página/rótulo sem conteúdo, questionário sem questões, arquivo sem arquivo)
+      Local: resource "Manual de Acessibilidade em documentos digitais" (cmid=164) → http://localhost:8092/course/modedit.php?update=164
+      Evidência: recurso de arquivo sem nenhum arquivo associado
+      Orientação: Reenviar o arquivo. Na restauração do curso 670 isto ocorreu com aliases para "Arquivos do servidor" que não foram incluídos no backup.
+  [NAO_CONFORME   ] X-CONT-01 Alta        Recursos vazios (página/rótulo sem conteúdo, questionário sem questões, arquivo sem arquivo)
+      Local: resource "O uso pedagógico dos recursos de Tecnologia Assistiva" (cmid=168) → http://localhost:8092/course/modedit.php?update=168
+      Evidência: recurso de arquivo sem nenhum arquivo associado
+      Orientação: Reenviar o arquivo. Na restauração do curso 670 isto ocorreu com aliases para "Arquivos do servidor" que não foram incluídos no backup.
+  [NAO_CONFORME   ] X-CONT-01 Alta        Recursos vazios (página/rótulo sem conteúdo, questionário sem questões, arquivo sem arquivo)
+      Local: resource "Políticas públicas de educação inclusiva: reflexões acerca da educação e da sociedade à luz da Teoria Crítica" (cmid=183) → http://localhost:8092/course/modedit.php?update=183
+      Evidência: recurso de arquivo sem nenhum arquivo associado
+      Orientação: Reenviar o arquivo. Na restauração do curso 670 isto ocorreu com aliases para "Arquivos do servidor" que não foram incluídos no backup.
+  [NAO_CONFORME   ] X-CONT-01 Alta        Recursos vazios (página/rótulo sem conteúdo, questionário sem questões, arquivo sem arquivo)
+      Local: resource "Processo de inclusão: a importância da escuta-olhar psicopedagógicos e o uso das TDICs" (cmid=184) → http://localhost:8092/course/modedit.php?update=184
+      Evidência: recurso de arquivo sem nenhum arquivo associado
+      Orientação: Reenviar o arquivo. Na restauração do curso 670 isto ocorreu com aliases para "Arquivos do servidor" que não foram incluídos no backup.
+  [NAO_CONFORME   ] CL-21     Média      Blocos padrão presentes na página do curso
+      Local: Blocos da página do curso → http://localhost:8092/course/view.php?id=7
+      Evidência: bloco "Acessibilidade": ausente
+      Orientação: Adicionar o bloco HTML padrão (ou verificar o bloco de site correspondente).
+  [NAO_CONFORME   ] X-CONT-04 Média      Referências @@PLUGINFILE@@ sem arquivo correspondente
+      Local: page "Principais Conceitos no Contexto da Inclusão" (cmid=134) campo content → http://localhost:8092/course/modedit.php?update=134
+      Evidência: @@PLUGINFILE@@/Manual%20de%20Acessibilidade%20em%20Documentos%20Digitais%20%281%29.pdf não encontrado entre os arquivos do módulo
+      Orientação: Imagem/arquivo quebrado: reenviar no editor. Típico de aliases não restaurados ("unable to restore alias").
+  [NAO_CONFORME   ] X-CONT-04 Média      Referências @@PLUGINFILE@@ sem arquivo correspondente
+      Local: page "Principais Conceitos no Contexto da Inclusão" (cmid=134) campo content → http://localhost:8092/course/modedit.php?update=134
+      Evidência: @@PLUGINFILE@@/Pol%C3%ADticas%20p%C3%BAblicas%20de%20educa%C3%A7%C3%A3o%20inclusiva.pdf não encontrado entre os arquivos do módulo
+      Orientação: Imagem/arquivo quebrado: reenviar no editor. Típico de aliases não restaurados ("unable to restore alias").
+  [NAO_CONFORME   ] X-CONT-04 Média      Referências @@PLUGINFILE@@ sem arquivo correspondente
+      Local: page "Principais Conceitos no Contexto da Inclusão" (cmid=134) campo content → http://localhost:8092/course/modedit.php?update=134
+      Evidência: @@PLUGINFILE@@/Processo%20de%20inclus%C3%A3o%20-%20olhar%20psicopedag%C3%B3gico%20e%20o%20uso%20das%20TDICs.pdf não encontrado entre os arquivos do módulo
+      Orientação: Imagem/arquivo quebrado: reenviar no editor. Típico de aliases não restaurados ("unable to restore alias").
+  [NAO_CONFORME   ] X-CONT-04 Média      Referências @@PLUGINFILE@@ sem arquivo correspondente
+      Local: book "Acessibilidade em Documentos Digitais" (cmid=148) campo chapter[0] → http://localhost:8092/course/modedit.php?update=148
+      Evidência: @@PLUGINFILE@@/Manual%20de%20Acessibilidade%20em%20Documentos%20Digitais%20%281%29.pdf não encontrado entre os arquivos do módulo
+      Orientação: Imagem/arquivo quebrado: reenviar no editor. Típico de aliases não restaurados ("unable to restore alias").
+  [NAO_CONFORME   ] X-CONT-04 Média      Referências @@PLUGINFILE@@ sem arquivo correspondente
+      Local: book "Acessibilidade em Documentos Digitais" (cmid=148) campo chapter[5] → http://localhost:8092/course/modedit.php?update=148
+      Evidência: @@PLUGINFILE@@/Manual%20de%20Acessibilidade%20em%20Documentos%20Digitais%20%281%29.pdf não encontrado entre os arquivos do módulo
+      Orientação: Imagem/arquivo quebrado: reenviar no editor. Típico de aliases não restaurados ("unable to restore alias").
+  [NAO_CONFORME   ] X-CONT-04 Média      Referências @@PLUGINFILE@@ sem arquivo correspondente
+      Local: book "Acessibilidade em Documentos Digitais" (cmid=148) campo chapter[5] → http://localhost:8092/course/modedit.php?update=148
+      Evidência: @@PLUGINFILE@@/Livro%20-%20O%20Uso%20Pedag%C3%B3gico%20dos%20Recursos%20de%20Tecnologia%20Assistiva%20%281%29.pdf não encontrado entre os arquivos do módulo
+      Orientação: Imagem/arquivo quebrado: reenviar no editor. Típico de aliases não restaurados ("unable to restore alias").
+  [NAO_CONFORME   ] X-CONT-04 Média      Referências @@PLUGINFILE@@ sem arquivo correspondente
+      Local: page "Tecnologia Assistiva: conceito, características e aplicações" (cmid=159) campo content → http://localhost:8092/course/modedit.php?update=159
+      Evidência: @@PLUGINFILE@@/Manual%20de%20Acessibilidade%20em%20Documentos%20Digitais.pdf não encontrado entre os arquivos do módulo
+      Orientação: Imagem/arquivo quebrado: reenviar no editor. Típico de aliases não restaurados ("unable to restore alias").
+  [NAO_CONFORME   ] CL-05     Baixa       Categoria do curso = categoria de inscrições abertas
+      Local: Configurações do curso > Categoria → http://localhost:8092/course/edit.php?id=7
+      Evidência: categoria="Categoria 1"
+      Esperado: Inscrições Abertas
+      Orientação: Mover o curso para a categoria da oferta.
+  [ATENCAO        ] CL-20     Baixa       Seções: ocultas invisíveis, sem seções vazias ou com nome genérico
+      Local: Seção 2 "Topic 2" → http://localhost:8092/course/section.php?id=31
+      Evidência: nome genérico "Topic 2"
+      Orientação: Nomear a seção conforme o conteúdo.
+  [ATENCAO        ] CL-20     Baixa       Seções: ocultas invisíveis, sem seções vazias ou com nome genérico
+      Local: Seção 3 "Tópico 3" → http://localhost:8092/course/section.php?id=32
+      Evidência: nome genérico "Tópico 3"
+      Orientação: Nomear a seção conforme o conteúdo.
+  [ATENCAO        ] CL-20     Baixa       Seções: ocultas invisíveis, sem seções vazias ou com nome genérico
+      Local: Seção 4 "Tópico 4" → http://localhost:8092/course/section.php?id=33
+      Evidência: nome genérico "Tópico 4"
+      Orientação: Nomear a seção conforme o conteúdo.
+  [ATENCAO        ] CL-20     Baixa       Seções: ocultas invisíveis, sem seções vazias ou com nome genérico
+      Local: Seção 5 "Topic 5" → http://localhost:8092/course/section.php?id=34
+      Evidência: nome genérico "Topic 5"
+      Orientação: Nomear a seção conforme o conteúdo.
+  [ATENCAO        ] CL-20     Baixa       Seções: ocultas invisíveis, sem seções vazias ou com nome genérico
+      Local: Seção 6 "Topic 6" → http://localhost:8092/course/section.php?id=35
+      Evidência: nome genérico "Topic 6"
+      Orientação: Nomear a seção conforme o conteúdo.
+  [ATENCAO        ] CL-20     Baixa       Seções: ocultas invisíveis, sem seções vazias ou com nome genérico
+      Local: Seção 7 "Topic 7" → http://localhost:8092/course/section.php?id=36
+      Evidência: nome genérico "Topic 7"
+      Orientação: Nomear a seção conforme o conteúdo.
+  (regras conformes omitidas: CL-04, CL-09, CL-11, CL-12, CL-13, CL-14, CL-16, CL-17, CL-18, CL-19, CL-22, CL-23, X-AV-01, X-CERT-01, X-DEP-01, X-DEP-02, X-DEP-03, X-DEP-04, X-INT-02, X-INT-03, X-STR-01)

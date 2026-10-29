@@ -112,7 +112,8 @@ class status {
      * @return string
      */
     public static function severity_string_key(string $severity): string {
-        $map = [self::BLOQUEANTE => 'blocking', self::ALTA => 'high', self::MEDIA => 'medium', self::BAIXA => 'low', self::INFORMATIVA => 'info'];
+        $map = [self::BLOQUEANTE => 'blocking', self::ALTA => 'high', self::MEDIA => 'medium', self::BAIXA => 'low',
+            self::INFORMATIVA => 'info'];
         return 'severity_' . ($map[$severity] ?? 'unknown');
     }
 }

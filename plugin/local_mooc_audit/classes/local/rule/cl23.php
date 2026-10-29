@@ -56,7 +56,8 @@ class cl23 extends base {
     public function evaluate(array $s, array $p): array {
         $certs = helpers::certs($s, $p);
         if (!$certs) {
-            return [$this->f(status::NAO_CONFORME, 'Atividades do curso', 'nenhum certificado de conclusão (' . $p['required_certificate_module'] . ')', ['orientacao' => $this->g('import'), 'locus' => self::LOCUS_IMPORT])];
+            return [$this->f(status::NAO_CONFORME, 'Atividades do curso', 'nenhum certificado de conclusão ('
+                . $p['required_certificate_module'] . ')', ['orientacao' => $this->g('import'), 'locus' => self::LOCUS_IMPORT])];
         }
         $ev = helpers::mods($s, 'feedback', $p['required_feedback_evaluation']);
         $ci = $s['grade']['course_item'];
@@ -73,21 +74,39 @@ class cl23 extends base {
                 }
             }
             $okev = $ev && in_array($ev[0]['cmid'], $comp);
-            $out[] = $this->f($okev ? status::CONFORME : status::NAO_CONFORME, helpers::label($c), 'exige conclusão de cmids ' . json_encode($comp),
-                ['cmid' => $c['cmid'], 'esperado' => 'exigir a Avaliação do curso' . ($ev ? " (cm={$ev[0]['cmid']})" : ' (inexistente no curso)')]);
-            $g60 = array_values(array_filter($grades, fn($g) => isset($g['min']) && (float) $g['min'] >= (float) $p['certificate_min_grade']));
+            $out[] = $this->f(
+                $okev ? status::CONFORME : status::NAO_CONFORME,
+                helpers::label($c),
+                'exige conclusão de cmids ' . json_encode($comp),
+                ['cmid' => $c['cmid'], 'esperado' => 'exigir a Avaliação do curso' . ($ev ? " (cm={$ev[0]['cmid']})"
+                    : ' (inexistente no curso)')]
+            );
+            $g60 = array_values(array_filter($grades, fn($g) => isset($g['min'])
+                && (float) $g['min'] >= (float) $p['certificate_min_grade']));
             if (!$g60) {
-                $out[] = $this->f(status::NAO_CONFORME, helpers::label($c), 'condições de nota=' . json_encode($grades), ['cmid' => $c['cmid'], 'esperado' => 'nota ≥ ' . $p['certificate_min_grade'] . ' no total do curso']);
+                $out[] = $this->f(
+                    status::NAO_CONFORME,
+                    helpers::label($c),
+                    'condições de nota=' . json_encode($grades),
+                    ['cmid' => $c['cmid'], 'esperado' => 'nota ≥ ' . $p['certificate_min_grade'] . ' no total do curso']
+                );
             } else if ($ci && (int) $g60[0]['id'] !== (int) $ci['id']) {
-                $out[] = $this->f(status::NAO_CONFORME, helpers::label($c), 'condição de nota aponta para o item ' . $g60[0]['id'], ['cmid' => $c['cmid'], 'esperado' => "item Total do curso (id {$ci['id']})",
+                $out[] = $this->f(status::NAO_CONFORME, helpers::label($c), 'condição de nota aponta para o item '
+                    . $g60[0]['id'], ['cmid' => $c['cmid'], 'esperado' => "item Total do curso (id {$ci['id']})",
                     'orientacao' => $this->g('courseitem')]);
             } else {
-                $out[] = $this->f(status::CONFORME, helpers::label($c), 'nota ≥ ' . $g60[0]['min'] . ' no Total do curso (item ' . $g60[0]['id'] . ')', ['cmid' => $c['cmid']]);
+                $out[] = $this->f(status::CONFORME, helpers::label($c), 'nota ≥ ' . $g60[0]['min'] . ' no Total do curso (item '
+                    . $g60[0]['id'] . ')', ['cmid' => $c['cmid']]);
             }
             if (($c['availability']['op'] ?? '&') !== '&') {
-                $out[] = $this->f(status::NAO_CONFORME, helpers::label($c), 'operador raiz=' . $c['availability']['op'], ['cmid' => $c['cmid'], 'esperado' => '&']);
+                $out[] = $this->f(
+                    status::NAO_CONFORME,
+                    helpers::label($c),
+                    'operador raiz=' . $c['availability']['op'],
+                    ['cmid' => $c['cmid'], 'esperado' => '&']
+                );
             }
         }
         return $out;
-        }
+    }
 }

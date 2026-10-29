@@ -1,0 +1,6 @@
+=== Curso A — referência [MOOC_TESTE_A] (id 4) — local_mooc_audit 0.2.0 / Política 2027-decisoes-2026-10-28 (Ano da reoferta 2027)
+Período: 2027-01-01 00:00 → 2027-12-31 23:59 | Categoria: Inscrições Abertas | Visível: 1 | tempo: 0.088s
+Seções: 5 | Módulos: 13 {"feedback":3,"forum":2,"label":1,"page":3,"quiz":2,"simplecertificate":2} | Arquivos: 0 (sem conteúdo no armazenamento: 0)
+Blocos: ["completion_progress","html","html","html"] | Métodos de inscrição: ["manual","guest(off)","self"]
+Situação geral: Sem inconformidades | {"CONFORME":48} | Inconformidades por gravidade: []
+  (regras conformes omitidas: CL-04, CL-05, CL-06, CL-07, CL-08, CL-09, CL-11, CL-12, CL-13, CL-14, CL-16, CL-17, CL-18, CL-19, CL-20, CL-21, CL-22, CL-23, X-AV-01, X-CERT-01, X-CONT-01, X-CONT-04, X-DEP-01, X-DEP-02, X-DEP-03, X-DEP-04, X-INT-02, X-INT-03, X-STR-01)

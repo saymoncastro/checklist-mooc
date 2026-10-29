@@ -35,6 +35,12 @@ function local_mooc_audit_extend_navigation_course(navigation_node $navigation, 
         return;
     }
     $url = new moodle_url('/local/mooc_audit/index.php', ['courseid' => $course->id]);
-    $navigation->add(get_string('auditmenu', 'local_mooc_audit'), $url, navigation_node::TYPE_SETTING, null,
-        'local_mooc_audit', new pix_icon('i/report', ''));
+    $navigation->add(
+        get_string('auditmenu', 'local_mooc_audit'),
+        $url,
+        navigation_node::TYPE_SETTING,
+        null,
+        'local_mooc_audit',
+        new pix_icon('i/report', '')
+    );
 }

@@ -26,7 +26,6 @@ namespace local_mooc_audit;
  * @covers     \local_mooc_audit\admin\setting_policyjson
  */
 final class policy_test extends \advanced_testcase {
-
     /**
      * No setting: defaults, no warnings, reoffer year = reference year + 1.
      */
@@ -108,7 +107,8 @@ final class policy_test extends \advanced_testcase {
         $this->assertSame([\local_mooc_audit\local\status::NAO_CONFORME], array_column($cl09($report), 'status'));
         $this->assertSame('import', $cl09($report)[0]['locus']);
 
-        set_config('policyjson', json_encode(['required_forum_name' => 'Fórum de dúvidas', 'policy_version' => '2027-decisao-10']), 'local_mooc_audit');
+        set_config('policyjson', json_encode(['required_forum_name' => 'Fórum de dúvidas',
+            'policy_version' => '2027-decisao-10']), 'local_mooc_audit');
         $report = engine::audit($course->id, ['reoffer_year' => 2027]);
         $this->assertSame('2027-decisao-10+admin', $report['policy_version']);
         $this->assertSame([], $report['policy_warnings']);
@@ -127,9 +127,13 @@ final class policy_test extends \advanced_testcase {
         $this->assertTrue($setting->validate('{"min_quiz_attempts": 3}'));
         $this->assertTrue($setting->validate('{}'));
         $this->assertSame(get_string('policyjson_invalid', 'local_mooc_audit', 'Syntax error'), $setting->validate('{not json'));
-        $this->assertSame(get_string('policyjson_invalid', 'local_mooc_audit', get_string('policyjson_notobject', 'local_mooc_audit')),
-            $setting->validate('42'));
-        $this->assertSame(get_string('policyjson_invalid', 'local_mooc_audit', get_string('policyjson_notobject', 'local_mooc_audit')),
-            $setting->validate('"text"'));
+        $this->assertSame(
+            get_string('policyjson_invalid', 'local_mooc_audit', get_string('policyjson_notobject', 'local_mooc_audit')),
+            $setting->validate('42')
+        );
+        $this->assertSame(
+            get_string('policyjson_invalid', 'local_mooc_audit', get_string('policyjson_notobject', 'local_mooc_audit')),
+            $setting->validate('"text"')
+        );
     }
 }

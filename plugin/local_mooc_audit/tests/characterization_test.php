@@ -29,7 +29,6 @@ namespace local_mooc_audit;
  * @covers     \local_mooc_audit\engine
  */
 final class characterization_test extends \advanced_testcase {
-
     /** @var int Reoffer year used by the fixtures and the policy. */
     const YEAR = 2027;
 
@@ -67,7 +66,8 @@ final class characterization_test extends \advanced_testcase {
         $actual = self::signature($report);
         $file = __DIR__ . "/fixtures/expected_$which.json";
         if (getenv('LOCAL_MOOC_AUDIT_WRITE_EXPECTED')) {
-            file_put_contents($file, json_encode($actual, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "\n");
+            file_put_contents($file, json_encode($actual, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
+                . "\n");
             $this->assertFileExists($file);
             return $report;
         }

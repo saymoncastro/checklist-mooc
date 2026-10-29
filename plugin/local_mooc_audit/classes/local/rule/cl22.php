@@ -54,15 +54,28 @@ class cl22 extends base {
      */
     public function evaluate(array $s, array $p): array {
         $out = [];
-        $labels = array_filter(helpers::mods($s, 'label'), fn($m) => $m['sectionnumber'] == 0 && strpos(helpers::norm(helpers::text($m['texts']['intro'] ?? '')), helpers::norm($p['licence_label_text'])) !== false);
-        $out[] = $this->f($labels ? status::CONFORME : status::NAO_CONFORME, 'Área do curso (seção 0)', 'rótulo "' . $p['licence_label_text'] . '": ' . ($labels ? 'presente' : 'ausente'),
-            ['locus' => $labels ? self::LOCUS_NONE : self::LOCUS_IMPORT]);
+        $labels = array_filter(helpers::mods($s, 'label'), fn($m) => $m['sectionnumber'] == 0
+            && strpos(helpers::norm(helpers::text($m['texts']['intro'] ?? '')), helpers::norm($p['licence_label_text'])) !== false);
+        $out[] = $this->f(
+            $labels ? status::CONFORME : status::NAO_CONFORME,
+            'Área do curso (seção 0)',
+            'rótulo "' . $p['licence_label_text'] . '": ' . ($labels ? 'presente' : 'ausente'),
+            ['locus' => $labels ? self::LOCUS_NONE : self::LOCUS_IMPORT]
+        );
         $fb = helpers::mods($s, 'feedback', $p['licence_feedback_name']);
-        $out[] = $this->f($fb ? status::CONFORME : status::NAO_CONFORME, 'Atividades do curso', 'pesquisa "' . $p['licence_feedback_name'] . '": ' . ($fb ? 'presente' : 'ausente'),
-            ['locus' => $fb ? self::LOCUS_NONE : self::LOCUS_IMPORT]);
+        $out[] = $this->f(
+            $fb ? status::CONFORME : status::NAO_CONFORME,
+            'Atividades do curso',
+            'pesquisa "' . $p['licence_feedback_name'] . '": ' . ($fb ? 'presente' : 'ausente'),
+            ['locus' => $fb ? self::LOCUS_NONE : self::LOCUS_IMPORT]
+        );
         $dc = helpers::mods($s, $p['required_certificate_module'], $p['licence_certificate_name']);
-        $out[] = $this->f($dc ? status::CONFORME : status::NAO_CONFORME, 'Atividades do curso', 'declaração "' . $p['licence_certificate_name'] . '": ' . ($dc ? 'presente' : 'ausente'),
-            ['locus' => $dc ? self::LOCUS_NONE : self::LOCUS_IMPORT]);
+        $out[] = $this->f(
+            $dc ? status::CONFORME : status::NAO_CONFORME,
+            'Atividades do curso',
+            'declaração "' . $p['licence_certificate_name'] . '": ' . ($dc ? 'presente' : 'ausente'),
+            ['locus' => $dc ? self::LOCUS_NONE : self::LOCUS_IMPORT]
+        );
         return $out;
-        }
+    }
 }

@@ -58,27 +58,39 @@ class xcont01 extends base {
             if (in_array($m['modname'], ['page', 'label', 'book'])) {
                 $all = html_entity_decode(implode(' ', $m['texts']));
                 if (helpers::text($all) === '' && !preg_match('/<(img|iframe|video|audio|a)\b/i', $all)) {
-                    $out[] = $this->f(status::NAO_CONFORME, helpers::label($m), 'sem texto e sem mídia/links', ['cmid' => $m['cmid'], 'orientacao' => $this->guidance()]);
+                    $out[] = $this->f(
+                        status::NAO_CONFORME,
+                        helpers::label($m),
+                        'sem texto e sem mídia/links',
+                        ['cmid' => $m['cmid'], 'orientacao' => $this->guidance()]
+                    );
                 }
                 if ($m['modname'] === 'book' && empty($m['extra']['chapters'])) {
                     $out[] = $this->f(status::NAO_CONFORME, helpers::label($m), 'livro sem capítulos', ['cmid' => $m['cmid']]);
                 }
             }
             if ($m['modname'] === 'quiz' && ($m['extra']['slots'] ?? 0) == 0) {
-                $out[] = $this->f(status::NAO_CONFORME, helpers::label($m), 'questionário sem questões', ['cmid' => $m['cmid'], 'gravidade' => status::ALTA,
+                $out[] = $this->f(status::NAO_CONFORME, helpers::label($m), 'questionário sem questões', ['cmid' => $m['cmid'],
+                    'gravidade' => status::ALTA,
                     'locus' => self::LOCUS_MODULE_VIEW]);
             }
             if ($m['modname'] === 'feedback' && ($m['extra']['items'] ?? 0) == 0) {
-                $out[] = $this->f(status::NAO_CONFORME, helpers::label($m), 'pesquisa sem itens', ['cmid' => $m['cmid'], 'locus' => self::LOCUS_MODULE_VIEW]);
+                $out[] = $this->f(status::NAO_CONFORME, helpers::label($m), 'pesquisa sem itens', ['cmid' => $m['cmid'],
+                    'locus' => self::LOCUS_MODULE_VIEW]);
             }
             if (in_array($m['modname'], ['resource', 'folder'])) {
                 $content = array_filter($m['files']['list'], fn($fe) => $fe['filearea'] === 'content');
                 if (!$content) {
-                    $out[] = $this->f(status::NAO_CONFORME, helpers::label($m), 'recurso de arquivo sem nenhum arquivo associado', ['cmid' => $m['cmid'], 'gravidade' => status::ALTA,
-                        'orientacao' => $this->g('reupload')]);
+                    $out[] = $this->f(
+                        status::NAO_CONFORME,
+                        helpers::label($m),
+                        'recurso de arquivo sem nenhum arquivo associado',
+                        ['cmid' => $m['cmid'], 'gravidade' => status::ALTA,
+                        'orientacao' => $this->g('reupload')]
+                    );
                 }
             }
         }
         return $out ?: [$this->f(status::CONFORME, 'Recursos', 'nenhum recurso vazio detectado')];
-        }
+    }
 }

@@ -9,17 +9,17 @@ Pré-requisitos: ambiente `moodle-env/` em execução (`moocaudit-webserver-1`),
 ./moodle-local/mphp.sh admin/cli/upgrade.php --non-interactive
 ```
 
-Esperado: versão `2026102900` (release 0.2.0) instalada; nenhuma tabela criada.
+Esperado: versão `2026102901` (release 0.2.0) instalada; nenhuma tabela criada.
 
 ## 2. Suíte automatizada (portão)
 
 ```bash
-docker exec -i -w /var/www/html moocaudit-webserver-1 vendor/bin/phpunit local/mooc_audit/tests
+docker exec -i -w /var/www/html moocaudit-webserver-1 vendor/bin/phpunit --testsuite local_mooc_audit_testsuite
 ```
 
 Esperado: todos os testes verdes, incluindo `characterization_test` (A: 0 não conformes; B: estados por regra iguais
 a `tests/fixtures/expected_B.json`), `readonly_test`, `access_test`, `policy_test`, `locator_test` e os 29
-`tests/rule/*_test.php`. Testes que dependem de `mod_game`/`mod_simplecertificate` são pulados se o módulo não
+`tests/local/rule/*_test.php`. Testes que dependem de `mod_game`/`mod_simplecertificate` são pulados se o módulo não
 estiver instalado (no laboratório estão).
 
 ## 3. Lint e padrão de código
@@ -28,7 +28,8 @@ estiver instalado (no laboratório estão).
 for f in $(find plugin/local_mooc_audit -name '*.php'); do docker exec -i moocaudit-webserver-1 php -l < "$f"; done
 ```
 
-PHPCS padrão `moodle` quando disponível no contêiner (`vendor/bin/phpcs --standard=moodle local/mooc_audit`).
+PHPCS padrão `moodle` (`moodlehq/moodle-cs`, instalado à parte, por exemplo em `/tmp/cs` com Composer):
+`/tmp/cs/vendor/bin/phpcs --standard=moodle local/mooc_audit` → nenhum erro nem aviso.
 
 ## 4. Cursos sintéticos e CLI
 
@@ -56,8 +57,9 @@ Esperado no JSON: `contract_version: "1.0"`, `summary.overall_status: "BLOQUEADA
    política `…+admin`.
 
 ```bash
-# Behat (opcional)
-docker exec -i -w /var/www/html moocaudit-webserver-1 vendor/bin/behat --config /var/www/behatdata/behatrun/behat/behat.yml --tags @local_mooc_audit
+# Behat (exige um contêiner Selenium alcançável como "selenium" e o site como "webserver"; ver moodle-env/README.md)
+docker exec -e MOODLE_DOCKER_BROWSER=chrome -w /var/www/html <contêiner web> php admin/tool/behat/cli/init.php
+docker exec -e MOODLE_DOCKER_BROWSER=chrome -w /var/www/html <contêiner web> php admin/tool/behat/cli/run.php --tags=@local_mooc_audit
 ```
 
 ## 6. Cursos institucionais restaurados (validação complementar, não versionada)
@@ -73,3 +75,26 @@ Esperado: mesmos estados por regra que os registrados em `plugin-results/` (apen
 
 US1 (passos 5.2), US2 (5.3), US3 (5.4, 5.5, testes `policy_test`/`engine_test`), US4 (4), US5 (5.5), SC-006/008 (2),
 SC-007 (2 e 6), SC-009 (grep por strings fixas: `grep -rn "'[A-ZÁ-Ú][a-záéíóú]* " plugin/local_mooc_audit/classes/output plugin/local_mooc_audit/index.php` deve retornar vazio).
+
+## Execução registrada — 2026-10-29, plugin 0.2.0 (versão 2026102901)
+
+Ambiente: contêineres do worktree (`moocaudit-wt` para PHPUnit, `moocaudit-wt-web` na porta 8092 com banco
+`moodle_wt`, `moocaudit-wt-selenium` para Behat), e não o laboratório `moocaudit-webserver-1`, que monta a cópia
+principal e continua na versão da PoC. Receitas em `moodle-env/README.md`.
+
+| Passo | Resultado |
+|---|---|
+| 1. Instalação | `install_database.php` com o plugin 0.2.0; nenhuma tabela própria |
+| 2. Suíte | OK (71 testes, 1635 asserções) — `plugin-results/phpunit-0.2.0.txt` |
+| 3. Lint e PHPCS | `php -l` sem erros; PHPCS `moodle` 0 erros, 0 avisos |
+| 4. Sintéticos e CLI | A: `SEM_INCONFORMIDADES`; B: `BLOQUEADA`; JSON com `contract_version` 1.0, `category`, `locus`, `link` |
+| 5.1–5.3 Página, links, reexecução | Verificados no navegador (curso B) e no Behat; links abrem a edição do módulo |
+| 5.4 Estudante e professor | Sem a entrada no menu (Behat, `access_test`) |
+| 5.5 Política | JSON inválido recusado ao salvar; nome canônico alterado aplicado a CL-09 (`policy_test`) |
+| Behat | 2 cenários, 29 passos, verificação de acessibilidade axe — `plugin-results/behat-0.2.0.txt` |
+| 6. Restaurados | 55 e 670 restaurados dos `.mbz` no site do worktree: estados por regra idênticos à PoC |
+| SC-002 / SC-003 | 151 módulos: motor 0,09–0,12 s, página 1,3 s; links em 97,1 % das NC/ATENCAO — `plugin-results/0.2.0/medicoes.md` |
+| SC-009 | `grep` por strings fixas em `classes/output` e `index.php`: vazio |
+
+Desvios: o passo 5.3 não corrigiu o questionário no curso B (a correção manual foi exercitada apenas abrindo o link);
+o laboratório principal não foi atualizado para 0.2.0 para não alterar o ambiente de referência.

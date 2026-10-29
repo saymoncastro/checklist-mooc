@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version metadata for local_mooc_audit (prova de conceito).
+ * Version metadata for local_mooc_audit.
  *
  * @package    local_mooc_audit
  * @copyright  2026 Cefor/Ifes
