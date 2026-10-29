@@ -97,6 +97,22 @@ class facts {
     }
 
     /**
+     * Grades recorded for the grade items of a module instance (read at write time, without a snapshot).
+     *
+     * @param string $modname
+     * @param int $instanceid
+     * @return int
+     */
+    public static function instance_grades(string $modname, int $instanceid): int {
+        global $DB;
+        return $DB->count_records_sql(
+            'SELECT COUNT(1) FROM {grade_grades} g JOIN {grade_items} i ON i.id = g.itemid
+              WHERE i.itemtype = :type AND i.itemmodule = :modname AND i.iteminstance = :instance AND g.finalgrade IS NOT NULL',
+            ['type' => 'mod', 'modname' => $modname, 'instance' => $instanceid]
+        );
+    }
+
+    /**
      * Actively enrolled users who hold a capability in the activity (e.g. students who can attempt a quiz).
      *
      * @param int $cmid
@@ -145,6 +161,6 @@ class facts {
      */
     public static function roles_with(\context $context, array $capabilities): array {
         $names = get_role_names_with_caps_in_context($context, $capabilities);
-        return array_values(array_map(fn($n) => format_string($n), $names));
+        return array_values(array_map(fn($n) => format_string($n, true, ['escape' => false]), $names));
     }
 }

@@ -218,21 +218,19 @@ final class executor_test extends correction_testcase {
     }
 
     /**
-     * The value stored at write time differs from the confirmed one (edited in the same instant): conflict, rollback.
+     * A planner that returns the proposal of the preview, as if nothing had changed since (to reach the checks made
+     * inside the write transaction).
+     *
+     * @param proposal $p
+     * @return planner
      */
-    public function test_value_changed_inside_the_transaction(): void {
-        global $DB;
-        $course = $this->ccourse();
-        $q = $this->quiz($course, 'Q', 1, 50, 0, '<p>Tentativas permitidas: 2.</p>');
-        $p = $this->plan($course, 'CL-13', $q->coursemodule);
-        // Simulate a concurrent edit that keeps every fingerprinted value (no cache rebuild, same timemodified).
-        $DB->set_field('quiz', 'attempts', 3, ['id' => $q->instance]);
+    private function stale_planner(proposal $p): planner {
         $planner = new class extends planner {
             /** @var proposal|null */
             public ?proposal $fixed = null;
 
             /**
-             * The proposal of the preview, as if nothing had changed.
+             * The fixed proposal.
              *
              * @param int $courseid
              * @param string $ruleid
@@ -245,9 +243,57 @@ final class executor_test extends correction_testcase {
             }
         };
         $planner->fixed = $p;
-        $r = (new executor($planner))->execute($course->id, 'CL-13', $q->coursemodule, $p->fingerprint(), $this->policy());
+        return $planner;
+    }
+
+    /**
+     * The value stored at write time differs from the confirmed one (edited in the same instant): conflict, rollback.
+     */
+    public function test_value_changed_inside_the_transaction(): void {
+        global $DB;
+        $this->preventResetByRollback();
+        $course = $this->ccourse();
+        $q = $this->quiz($course, 'Q', 1, 50, 0, '<p>Tentativas permitidas: 2.</p>');
+        $p = $this->plan($course, 'CL-13', $q->coursemodule);
+        // Simulate a concurrent edit that keeps every fingerprinted value (no cache rebuild, same timemodified).
+        $DB->set_field('quiz', 'attempts', 3, ['id' => $q->instance]);
+        $r = (new executor($this->stale_planner($p)))->execute(
+            $course->id,
+            'CL-13',
+            $q->coursemodule,
+            $p->fingerprint(),
+            $this->policy()
+        );
         $this->assertSame(executor::CONFLICT, $r['status']);
         $this->assertEquals(3, $this->quizrow($q)->attempts);
+        $this->assertSame([], $this->trail());
+    }
+
+    /**
+     * A student starts an attempt between the (re)planning and the write: the write transaction re-checks student data
+     * and stops (CL-13 and CL-14).
+     */
+    public function test_student_attempt_appearing_before_the_write(): void {
+        $this->preventResetByRollback();
+        $course = $this->ccourse();
+        $q = $this->quiz($course, 'Q', 1, 50, 0, '<p>Tentativas permitidas: 2.</p>');
+        $p13 = $this->plan($course, 'CL-13', $q->coursemodule);
+        $p14 = $this->plan($course, 'CL-14', $q->coursemodule);
+        $this->assertTrue($p13->is_executable() && $p14->is_executable());
+        $this->student_attempt($course, $q);
+        foreach ([$p13, $p14] as $p) {
+            $r = (new executor($this->stale_planner($p)))->execute(
+                $course->id,
+                $p->ruleid,
+                $q->coursemodule,
+                $p->fingerprint(),
+                $this->policy()
+            );
+            $this->assertSame(executor::CONFLICT, $r['status'], $p->ruleid);
+        }
+        $row = $this->quizrow($q);
+        $this->assertEquals(1, $row->attempts);
+        $this->assertEquals(0, $row->timeclose);
         $this->assertSame([], $this->trail());
     }
 
@@ -349,9 +395,10 @@ final class executor_test extends correction_testcase {
     }
 
     /**
-     * The value cannot be read back through the module API: failure, not success.
+     * The value cannot be read back through the module API: failure, rolled back, not success.
      */
     public function test_value_not_read_back_is_a_failure(): void {
+        $this->preventResetByRollback();
         $course = $this->ccourse();
         $q = $this->quiz($course, 'Q', 1, 50, 0, '<p>Tentativas permitidas: 2.</p>');
         $planner = new planner([new unreadable_write()]);
@@ -360,6 +407,7 @@ final class executor_test extends correction_testcase {
         $this->assertSame(executor::FAILED, $r['status']);
         $this->assertSame(get_string('fix_notpersisted', 'local_mooc_audit'), $r['message']);
         $this->assertSame(trail::FAILED, $this->trail()[0]->outcome);
+        $this->assertEquals(1, $this->quizrow($q)->attempts, 'rolled back: nothing kept');
     }
 
     /**

@@ -1,0 +1,8 @@
+ id | cmid | ruleid |   field   | oldvalue |  newvalue  | outcome | reaudit  | userid |         quando         
+----+------+--------+-----------+----------+------------+---------+----------+--------+------------------------
+  1 |   24 | CL-13  | attempts  | 1        | 2          | applied | resolved |      2 | 2026-10-29 12:55:40+00
+  2 |   24 | CL-14  | timeclose | 0        | 1830297540 | applied | resolved |      2 | 2026-10-29 12:56:52+00
+  3 |   36 | CL-13  | attempts  | 1        | 2          | applied | resolved |      2 | 2026-10-29 13:07:12+00
+  4 |   36 | CL-14  | timeclose | 0        | 1830297540 | applied | resolved |      2 | 2026-10-29 13:07:12+00
+(4 rows)
+

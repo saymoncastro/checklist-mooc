@@ -17,6 +17,7 @@
 namespace local_mooc_audit\local\correction\strategy;
 
 use local_mooc_audit\local\correction\conflict_exception;
+use local_mooc_audit\local\correction\facts;
 use local_mooc_audit\local\correction\proposal;
 use moodle_url;
 
@@ -75,7 +76,8 @@ abstract class base {
     }
 
     /**
-     * Write the proposed value. Called inside a transaction, after every check. Guided strategies cannot apply.
+     * Write the proposed value. Called inside a transaction, after every check; the executor then calls persisted() in
+     * the same transaction and after_commit() once committed. Guided strategies cannot apply.
      *
      * @param proposal $p
      * @param \cm_info $cm
@@ -165,12 +167,26 @@ abstract class base {
     }
 
     /**
+     * Refuse to go on when students attempted the quiz or have a grade since the proposal was built (the plan counts
+     * them, but a student may start an attempt between the plan and the write).
+     *
+     * @param \cm_info $cm
+     * @throws conflict_exception
+     */
+    protected function assert_no_student_data(\cm_info $cm): void {
+        if (facts::quiz_attempts((int) $cm->instance) || facts::instance_grades($cm->modname, (int) $cm->instance)) {
+            throw new conflict_exception('student data appeared after the preview');
+        }
+    }
+
+    /**
      * What Moodle does after a module setting changes outside the form: refresh the course cache (new cacherev) and log
-     * the standard course_module_updated event.
+     * the standard course_module_updated event. Called by the executor after the commit, so that a rollback never
+     * leaves a cache entry at a new course revision.
      *
      * @param \cm_info $cm
      */
-    protected function after_write(\cm_info $cm): void {
+    public function after_commit(\cm_info $cm): void {
         \course_modinfo::purge_course_module_cache($cm->course, $cm->id);
         rebuild_course_cache($cm->course, true);
         \core\event\course_module_updated::create_from_cm($cm)->trigger();

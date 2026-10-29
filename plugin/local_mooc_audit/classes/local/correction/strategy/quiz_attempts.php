@@ -121,8 +121,8 @@ class quiz_attempts extends base {
     public function apply(proposal $p, \cm_info $cm): void {
         global $DB;
         $this->assert_current('quiz', (int) $cm->instance, 'attempts', $p->current);
+        $this->assert_no_student_data($cm);
         $DB->update_record('quiz', (object) ['id' => $cm->instance, 'attempts' => (int) $p->proposed, 'timemodified' => time()]);
-        $this->after_write($cm);
     }
 
     /**

@@ -118,12 +118,12 @@ class quiz_timeclose extends base {
         require_once($CFG->dirroot . '/mod/quiz/lib.php');
         require_once($CFG->dirroot . '/mod/quiz/locallib.php');
         $this->assert_current('quiz', (int) $cm->instance, 'timeclose', $p->current);
+        $this->assert_no_student_data($cm);
         $DB->update_record('quiz', (object) ['id' => $cm->instance, 'timeclose' => (int) $p->proposed, 'timemodified' => time()]);
         $quiz = $DB->get_record('quiz', ['id' => $cm->instance], '*', MUST_EXIST);
         $quiz->coursemodule = $cm->id;
         quiz_update_open_attempts(['quizid' => $quiz->id]);
         quiz_update_events($quiz);
-        $this->after_write($cm);
     }
 
     /**

@@ -30,8 +30,10 @@ class correction_applied extends \core\event\base {
      * Init.
      */
     protected function init() {
-        $this->data['crud'] = 'u';
-        $this->data['edulevel'] = self::LEVEL_OTHER;
+        // The object is the trail row created for the correction; the change of the activity itself is logged by
+        // core\event\course_module_updated.
+        $this->data['crud'] = 'c';
+        $this->data['edulevel'] = self::LEVEL_TEACHING;
         $this->data['objecttable'] = 'local_mooc_audit_fix';
     }
 

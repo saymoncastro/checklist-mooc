@@ -168,7 +168,7 @@ class planner {
         $p->state['cacherev'] = facts::cacherev($courseid);
         $coursecontext = \context_course::instance($courseid);
         $modcontext = \context_module::instance($cmid);
-        $p->roles = facts::roles_with($coursecontext, ['local/mooc_audit:applycorrection']);
+        $p->roles = facts::roles_with($coursecontext, ['local/mooc_audit:applycorrection', 'moodle/course:manageactivities']);
         $p->canexecute = has_capability('local/mooc_audit:applycorrection', $coursecontext)
             && has_capability('moodle/course:manageactivities', $modcontext);
         return $p;

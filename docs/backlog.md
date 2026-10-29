@@ -24,7 +24,7 @@ regras prioritárias consolidadas com teste por regra, relatório por categoria 
 links, reexecução, tratamento de resultados incompletos, contrato JSON versionado. Sem correção, lote, API ou
 histórico (persistência mínima somente se a especificação a justificar).
 
-## 002 — Correção assistida (proposta de escopo)
+## 002 — Correção assistida (especificada em `specs/002-correcao-assistida/`; incremento experimental 0.3.0 entregue para revisão)
 
 - Orientações contextualizadas por inconformidade (passo a passo na interface do Moodle, com link direto).
 - Para um subconjunto de regras determinísticas (datas do curso, autoinscrição, `hiddensections`, conclusão de

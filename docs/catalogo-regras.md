@@ -10,6 +10,11 @@ cada uma com teste PHPUnit próprio cobrindo cenário conforme e não conforme. 
 os estados e gravidades por regra dos cursos A, B, 55 e 670 são idênticos aos da PoC
 (`plugin-results/0.2.0/` × `plugin-results/`). X-AV-04 continua embutida em CL-12 e X-STR-02 em CL-20.
 
+**Atualização 2026-10-29 (spec 002, plugin 0.3.0):** cada regra recebeu uma categoria de correção — A (executável
+mediante confirmação), B (orientada) ou C (depende de recurso externo/decisão institucional) — em
+`specs/002-correcao-assistida/correction-matrix.md`. Implementadas: CL-13 (tentativas, A), CL-14 (encerramento de
+questionário, A; demais tipos, B) e CL-17 (critério de conclusão, B). O comportamento das 29 regras não mudou.
+
 Este catálogo é a **referência de escopo** do produto. Os 29 itens do checklist não representam todo o escopo; o
 catálogo ampliado (X-*) e as verificações só possíveis na sala ativa (ENV-*) fazem parte dele.
 

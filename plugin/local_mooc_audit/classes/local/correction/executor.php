@@ -24,9 +24,10 @@ use local_mooc_audit\engine;
  *
  * Order (any failed check ends without writing): capabilities (plugin capability in the course, core
  * manageactivities in the activity) → activity exists → per-activity lock → proposal rebuilt from the database →
- * fingerprint equal to the confirmed one → executable → write in a transaction (the strategy re-reads the stored value
- * first) → value read back through the module API → full re-audit compared with the state before → trail row and log
- * event. Success is reported only for an applied correction whose value was read back.
+ * fingerprint equal to the confirmed one → executable → in one transaction: the strategy re-reads the stored value and
+ * the student data, writes, and the value is read back through the module API (any mismatch rolls back) → commit →
+ * cache refresh and course_module_updated → full re-audit compared with the state before → trail row and log event.
+ * Success is reported only for an applied correction whose value was read back.
  *
  * @package    local_mooc_audit
  * @copyright  2026 Cefor/Ifes
@@ -115,10 +116,16 @@ class executor {
         }
         $strategy = $this->planner->strategy_for($p);
 
+        $cm = get_fast_modinfo($courseid)->get_cm($cmid);
         try {
             $transaction = $DB->start_delegated_transaction();
             try {
-                $strategy->apply($p, get_fast_modinfo($courseid)->get_cm($cmid));
+                $strategy->apply($p, $cm);
+                // Moodle must read the new value through the module API before the write is kept: a mismatch rolls
+                // everything back, so a failure never leaves a change behind.
+                if (!$strategy->persisted($p, $cm)) {
+                    throw new \moodle_exception('fix_notpersisted', 'local_mooc_audit');
+                }
                 $transaction->allow_commit();
             } catch (\Throwable $e) {
                 $transaction->rollback($e);
@@ -126,25 +133,20 @@ class executor {
         } catch (conflict_exception $e) {
             return $this->result(self::CONFLICT, $p, ['message' => $e->getMessage()]);
         } catch (\Throwable $e) {
-            $message = self::short($e);
-            $id = trail::record($p, trail::FAILED, verifier::SKIPPED, ['error' => $message]);
-            return $this->result(self::FAILED, $p, ['message' => $message, 'fixid' => $id]);
-        }
-
-        // Moodle must read the new value (fresh modinfo: the write incremented the course revision).
-        try {
-            $persisted = $strategy->persisted($p, get_fast_modinfo($courseid)->get_cm($cmid));
-        } catch (\Throwable $e) {
-            $persisted = false;
-        }
-        if (!$persisted) {
-            $message = get_string('fix_notpersisted', 'local_mooc_audit');
+            $notpersisted = $e instanceof \moodle_exception && $e->errorcode === 'fix_notpersisted';
+            $message = $notpersisted ? $e->getMessage() : self::short($e);
             $id = trail::record($p, trail::FAILED, verifier::SKIPPED, ['error' => $message]);
             return $this->result(self::FAILED, $p, ['message' => $message, 'fixid' => $id]);
         }
 
         $comparison = null;
         $message = '';
+        // Cache refresh and standard event only after the commit (a rollback must not leave a cache at a new revision).
+        try {
+            $strategy->after_commit($cm);
+        } catch (\Throwable $e) {
+            $message = self::short($e);
+        }
         try {
             $after = $this->reaudit($courseid, $policyoverride);
             $comparison = verifier::compare($p->baseline, $after['results'], $ruleid, $cmid);
@@ -152,7 +154,7 @@ class executor {
             $details = ['resolved' => $comparison['resolved'], 'introduced' => $comparison['introduced']];
         } catch (\Throwable $e) {
             $reaudit = verifier::ERROR;
-            $message = self::short($e);
+            $message = trim($message . ' ' . self::short($e));
             $details = ['error' => $message];
         }
         $id = trail::record($p, trail::APPLIED, $reaudit, $details);
