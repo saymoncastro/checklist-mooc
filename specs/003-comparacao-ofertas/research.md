@@ -133,8 +133,11 @@ o pior estado (`status_rank`). "Problema" = `NAO_CONFORME` ou `ATENCAO`. Classif
 **Decisão**: `require_login()`; `require_capability('local/mooc_audit:compare', context_course)` para **cada** curso;
 a página de seleção exige a capacidade no contexto do sistema **ou** em alguma categoria/curso (usa
 `get_user_capability_course('local/mooc_audit:compare', null, true, '', '', 1)` para saber se há algum curso). O
-seletor usa o elemento de formulário `course` do Moodle (autocomplete com pesquisa por nome/sigla e
-`requiredcapabilities => ['local/mooc_audit:compare']`), e os parâmetros `source`/`target` aceitam ids diretamente.
+seletor é um `autocomplete` com as opções montadas no servidor por `compare_form::course_options()` (cursos de
+`get_user_capability_course`, rótulo "sigla — nome (início AAAA, id N)"). **Revisão após teste na interface**: o
+elemento `course` do Moodle exibe só o nome completo quando `courselistshortnames` está desligado, e as salas 2026 e
+2027 de uma reoferta ficavam indistinguíveis; a lista estática resolve sem depender da configuração do site. Os
+parâmetros `source`/`target` continuam aceitando ids diretamente.
 Sem capacidade nova; `compare` continua `captype read`, `CONTEXT_SYSTEM`, arquétipo `manager`.
 
 ## R9 — Navegação

@@ -21,10 +21,12 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/formslib.php');
 
 /**
- * Selection of the two offers to compare (GET form: the comparison writes nothing and its URL can be shared).
+ * Selection of the two offers to compare (posted with sesskey, then redirected to the GET URL of the comparison).
  *
- * The course pickers search by name or short name and list only courses where the user holds
- * local/mooc_audit:compare; the page checks the capability again in both course contexts.
+ * The pickers list only courses where the user holds local/mooc_audit:compare (the page checks the capability again in
+ * both course contexts). Each course is shown as "short name — full name (start year, id)", whatever the site setting
+ * "courselistshortnames" says: the previous and the new offer usually share the full name, and only the short name,
+ * the year and the id tell them apart. Typing any of these parts filters the list.
  *
  * @package    local_mooc_audit
  * @copyright  2026 Cefor/Ifes
@@ -36,13 +38,47 @@ class compare_form extends \moodleform {
      */
     protected function definition() {
         $mform = $this->_form;
-        $options = ['requiredcapabilities' => ['local/mooc_audit:compare'], 'multiple' => false, 'includefrontpage' => false];
-        $mform->addElement('course', 'source', get_string('cmp_source', 'local_mooc_audit'), $options);
-        $mform->addRule('source', null, 'required', null, 'client');
-        $mform->addElement('course', 'target', get_string('cmp_target', 'local_mooc_audit'), $options);
-        $mform->addRule('target', null, 'required', null, 'client');
+        $courses = [0 => ''] + self::course_options();
+        $attributes = ['multiple' => false, 'noselectionstring' => get_string('cmp_choose_course', 'local_mooc_audit'),
+            'placeholder' => get_string('cmp_search_course', 'local_mooc_audit')];
+        foreach (['source', 'target'] as $field) {
+            $mform->addElement('autocomplete', $field, get_string("cmp_$field", 'local_mooc_audit'), $courses, $attributes);
+            $mform->setType($field, PARAM_INT);
+            $mform->addRule($field, null, 'required', null, 'client');
+        }
         $mform->addElement('advcheckbox', 'confirm', '', get_string('cmp_confirm', 'local_mooc_audit'));
         $this->add_action_buttons(false, get_string('cmp_submit', 'local_mooc_audit'));
+    }
+
+    /**
+     * Courses the current user may compare, as "short name — full name (start year, id)", most recent start first.
+     *
+     * @param int|null $userid default: current user
+     * @return string[] course id => label
+     */
+    public static function course_options(?int $userid = null): array {
+        $courses = get_user_capability_course(
+            'local/mooc_audit:compare',
+            $userid,
+            true,
+            'shortname, fullname, startdate',
+            'startdate DESC, fullname ASC'
+        ) ?: [];
+        $tz = \core_date::get_server_timezone();
+        $out = [];
+        foreach ($courses as $c) {
+            if ((int) $c->id === (int) SITEID) {
+                continue;
+            }
+            $context = \context_course::instance($c->id);
+            $out[(int) $c->id] = get_string('cmp_course_option', 'local_mooc_audit', (object) [
+                'shortname' => format_string($c->shortname, true, ['context' => $context, 'escape' => false]),
+                'fullname' => format_string($c->fullname, true, ['context' => $context, 'escape' => false]),
+                'start' => $c->startdate ? userdate($c->startdate, '%Y', $tz, false) : '—',
+                'id' => (int) $c->id,
+            ]);
+        }
+        return $out;
     }
 
     /**

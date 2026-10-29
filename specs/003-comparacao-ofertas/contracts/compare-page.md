@@ -27,9 +27,11 @@ Sem `source`, `target` e `confirm=1` válidos a página mostra só o formulário
 
 ### Formulário (`classes/form/compare_form.php`)
 
-- "Sala de origem (oferta anterior)": autocomplete de cursos (nome/sigla; também aceita o id digitado na URL),
-  restrito a cursos com a capacidade.
-- "Sala de destino (nova oferta)": idem.
+- "Sala de origem (oferta anterior)": lista pesquisável dos cursos em que o usuário tem a capacidade, cada um exibido
+  como **"sigla — nome completo (início AAAA, id N)"**, independentemente da opção do site "Exibir nomes de curso
+  estendidos" (`courselistshortnames`): a oferta anterior e a nova costumam ter o mesmo nome completo, e só sigla, ano
+  e id as distinguem. Digitar qualquer parte (sigla, nome, ano, id) filtra a lista; ordem: início mais recente primeiro.
+- "Sala de destino (nova oferta)": idem (pré-preenchida quando a página é aberta pelo link do relatório de auditoria).
 - Caixa obrigatória "Confirmo que a origem é a oferta anterior e o destino é a nova oferta".
 - Botão **Comparar ofertas** (método GET, para que o resultado tenha URL reproduzível; a página não escreve nada).
 

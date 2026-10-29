@@ -13,7 +13,7 @@ e #3 já mesclados) · **Ambiente:** site isolado `moocaudit-s3-web` (porta 8094
 | 3 | Contrato JSON `comparison` 1.0 | [contracts/comparison-v1.0.schema.json](contracts/comparison-v1.0.schema.json) (= `plugin/local_mooc_audit/schema/`), [data-model.md](data-model.md) |
 | 4 | Comparador evoluído e testado | `classes/comparator.php`, `classes/local/comparison/{matcher,differ,audit_relation}.php` |
 | 5 | Interface no Moodle | `compare.php` (Administração do site > Cursos > Comparar ofertas; link no relatório de auditoria), [contracts/compare-page.md](contracts/compare-page.md) |
-| 6 | Testes PHPUnit e Behat | 50 testes PHPUnit novos (168 no total), `tests/behat/compare.feature` (4 cenários; 10 no total) |
+| 6 | Testes PHPUnit e Behat | 51 testes PHPUnit novos (169 no total), `tests/behat/compare.feature` (4 cenários; 10 no total) |
 | 7 | Evidências dos cenários experimentais | `plugin-results/0.4.0/cenario_{A..G}.{txt,json}`, `cli/make_scenarios.php` |
 | 8 | Resultados de comparação | §3 abaixo e `plugin-results/0.4.0/medicoes.md` |
 | 9 | Revisão de segurança | §5 |
@@ -98,6 +98,14 @@ dados pessoais. Achados e tratamento (commit "Corrige os achados da revisão da 
 | 7 | Baixa | Curso inexistente respondia diferente de curso sem permissão | `require_access` responde igual nos dois casos. Teste `test_missing_course_same_answer` |
 | 8 | Baixa | Ano da origem dependia do fuso horário de quem abre a página | Ano calculado no fuso do servidor |
 | 9 | Baixa | Só a primeira instância de cada método de inscrição era comparada | Menos instâncias no destino → `enrol_count_changed` (relevante) |
+
+### 5.3 Ajuste após uso da interface
+
+No teste da tela de seleção, salas com o mesmo nome completo (a oferta anterior e a nova) apareciam idênticas na lista,
+porque o seletor padrão do Moodle só mostra a sigla com a opção do site "Exibir nomes de curso estendidos". O seletor
+passou a mostrar sempre **"sigla — nome (início AAAA, id N)"**, filtrável por qualquer parte, sem depender dessa opção
+(teste `compare_access_test::test_course_options_labels`). Limitação: a lista é montada no servidor com todos os cursos
+que o usuário pode comparar; adequada a centenas ou poucos milhares de salas.
 
 ### 5.2 Achados do `/code-review` (nível alto)
 

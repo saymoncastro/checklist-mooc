@@ -129,4 +129,38 @@ final class compare_access_test extends \advanced_testcase {
         $this->assertFalse($this->allowed($course->id, 999999));
         $this->assertFalse($this->allowed(SITEID, $course->id));
     }
+
+    /**
+     * The course pickers show short name, full name, start year and id whatever the site setting, and list only the
+     * courses the user may compare (never the site course).
+     *
+     * @covers \local_mooc_audit\form\compare_form::course_options
+     */
+    public function test_course_options_labels(): void {
+        global $DB, $CFG;
+        require_once($CFG->dirroot . '/local/mooc_audit/classes/form/compare_form.php');
+        $this->resetAfterTest();
+        set_config('courselistshortnames', 0);
+        $gen = $this->getDataGenerator();
+        $cat = $gen->create_category();
+        $tz = new \DateTimeZone(\core_date::get_server_timezone());
+        $old = $gen->create_course(['category' => $cat->id, 'fullname' => 'Acessibilidade e Tecnologia', 'shortname' => 'AT_2026',
+            'startdate' => (new \DateTime('2026-01-01 00:00', $tz))->getTimestamp()]);
+        $new = $gen->create_course(['category' => $cat->id, 'fullname' => 'Acessibilidade e Tecnologia', 'shortname' => 'AT_2027',
+            'startdate' => (new \DateTime('2027-01-01 00:00', $tz))->getTimestamp()]);
+        $gen->create_course(['fullname' => 'Fora da categoria']);
+        $catmanager = $gen->create_user();
+        role_assign(
+            $DB->get_field('role', 'id', ['shortname' => 'manager']),
+            $catmanager->id,
+            \context_coursecat::instance($cat->id)->id
+        );
+        $this->setUser($catmanager);
+        $options = form\compare_form::course_options();
+        $this->assertSame([(int) $new->id, (int) $old->id], array_keys($options), 'most recent start first, own courses only');
+        $this->assertSame("AT_2027 — Acessibilidade e Tecnologia (start 2027, id {$new->id})", $options[$new->id]);
+        $this->assertSame("AT_2026 — Acessibilidade e Tecnologia (start 2026, id {$old->id})", $options[$old->id]);
+        $this->setAdminUser();
+        $this->assertArrayNotHasKey(SITEID, form\compare_form::course_options());
+    }
 }
