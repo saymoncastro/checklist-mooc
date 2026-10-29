@@ -38,8 +38,8 @@ Montados por `cli/make_scenarios.php --year=2027`; origem 2026, destino 2027. Sa
 
 | Cenário | Origem → destino | Veredito | Preserv. | Modif. (relev.) | Ausentes | Ambíguas | Pendências (classes) | Tempo |
 |---|---|---|---|---|---|---|---|---|
-| A importação correta | 6 → 7 | Conferir | 12 | 0 | 0 | 1 (Avisos) | 2 pendência da oferta (CL-14) | 0,14 s |
-| B sala com problemas | 8 → 9 | Revisar | 20 | 0 | 0 | 1 (Avisos) | 21 persistentes, 3 pendências, 1 resolvido | 0,15 s |
+| A importação correta | 6 → 7 | Revisar (só CL-14) | 12 | 0 | 0 | 1 (Avisos) | 2 pendência da oferta (CL-14) | 0,14 s |
+| B sala com problemas | 8 → 9 | Revisar | 20 | 0 | 0 | 1 (Avisos) | 21 persistentes, 3 pendências, 1 resolvido; `hiddensections` relevante | 0,15 s |
 | C glossário de jogo | 10 → 11 | Revisar | 1 | 2 (2) | 0 | 1 (Avisos) | CL-18 novo no destino (ATENÇÃO → NÃO CONFORME) | 0,08 s |
 | D avaliação alterada | 6 → 12 | Revisar | 11 | 1 (1) | 0 | 1 (Avisos) | 5 novos (CL-12, CL-13, CL-17 ×2, X-AV-01), 2 pendências | 0,12 s |
 | E arquivos | 13 → 14 | Revisar | 0 | 3 (3) | 0 | 1 (Avisos) | 5 novos (X-CONT-01, X-INT-02, X-STR-01, CL-12 ×2) | 0,08 s |

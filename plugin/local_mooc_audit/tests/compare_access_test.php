@@ -113,4 +113,15 @@ final class compare_access_test extends \advanced_testcase {
         $this->setUser($teacher);
         $this->assertEmpty(get_user_capability_course('local/mooc_audit:compare', null, true, '', 'id'));
     }
+
+    /**
+     * A missing course gets the same answer as a course without permission (course ids are not revealed).
+     */
+    public function test_missing_course_same_answer(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $course = $this->getDataGenerator()->create_course();
+        $this->assertFalse($this->allowed($course->id, 999999));
+        $this->assertFalse($this->allowed(SITEID, $course->id));
+    }
 }

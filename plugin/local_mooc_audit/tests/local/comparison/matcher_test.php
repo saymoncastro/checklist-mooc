@@ -299,4 +299,19 @@ final class matcher_test extends \advanced_testcase {
         $this->assertNotSame(matcher::settings_fingerprint($s['modules'][$c1]), matcher::settings_fingerprint($s['modules'][$c2]));
         $this->assertSame('veja aqui [view.php]', matcher::text_signature('<p>Veja <a href="x/view.php?id=1">aqui</a></p>'));
     }
+
+    /**
+     * Modules without content never match by the empty fingerprint: one empty forum in the source and, in the target,
+     * an empty one and one with an introduction stay ambiguous.
+     */
+    public function test_empty_fingerprint_never_disambiguates(): void {
+        $this->resetAfterTest();
+        [$a, $b] = $this->builders();
+        $a->add('forum', 'Dúvidas', 0);
+        $b->add('forum', 'Dúvidas', 0);
+        $b->add('forum', 'Dúvidas', 0, ['texts' => ['intro' => 'Tire suas dúvidas aqui']]);
+        $r = matcher::match($a->get(), $b->get());
+        $this->assertSame([], $r['pairs']);
+        $this->assertSame('duplicado_no_destino', $r['ambiguities'][0]['reason']);
+    }
 }

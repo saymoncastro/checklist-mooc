@@ -2,7 +2,7 @@
 Origem (oferta anterior): 2026-01-01 00:00 → 2026-12-31 23:59 | Inscrições Abertas | 5 Módulos | Bloqueada
 Destino (nova oferta): 2027-01-01 00:00 → 2027-12-31 23:59 | Inscrições Abertas | 6 Módulos | Bloqueada
 Política: Destino avaliado pela política 2027-decisoes-2026-10-28 para a reoferta 2027; origem avaliada pela mesma política no contexto da sua própria oferta (2026), para não tratar como herdado o que só mudou de ano.
-Resultado da comparação: Revisar a nova sala: há atividades ausentes, diferenças relevantes ou inconformidades | {"source_modules":5,"target_modules":6,"preserved":2,"modified":0,"modified_relevant":0,"missing_in_target":0,"extra_in_target":0,"ambiguous_groups":2,"ambiguous_source_modules":3,"duplicates_in_target":1,"matches_by_confidence":{"alta":2},"course_diffs_relevant":0,"expected_identifier_changes":6,"audit_counts":{"pendencia_oferta":0,"novo_no_destino":2,"novo_em_atividade_adicional":0,"persistente":10,"indeterminado":0,"nao_verificavel_no_destino":0,"ausente_no_destino":0,"resolvido_no_destino":0,"nao_aplicavel_no_destino":0}}
+Resultado da comparação: Revisar a nova sala: há atividades ausentes, diferenças relevantes ou inconformidades | {"source_modules":5,"target_modules":6,"preserved":2,"modified":0,"modified_relevant":0,"missing_in_target":0,"extra_in_target":0,"ambiguous_groups":2,"ambiguous_source_modules":3,"duplicates_in_target":1,"matches_by_confidence":{"alta":2},"course_diffs_relevant":0,"expected_identifier_changes":6,"audit_counts":{"pendencia_oferta":0,"novo_no_destino":2,"novo_em_atividade_adicional":0,"persistente":14,"indeterminado":0,"nao_verificavel_no_destino":0,"ausente_no_destino":0,"resolvido_no_destino":0,"nao_aplicavel_no_destino":0}}
 --- Pendências da sala de destino
   [Novo no destino] CL-12     Alta        Livro de notas: soma 100, agregação Natural, sem excluir vazias
       Local: Livro de notas > categoria raiz → http://localhost:8094/grade/edit/tree/index.php?id=16
@@ -50,8 +50,23 @@ Resultado da comparação: Revisar a nova sala: há atividades ausentes, diferen
   [Persistente (já estava na origem)] CL-21     Média      Blocos padrão presentes na página do curso
       Local: Blocos da página do curso → http://localhost:8094/course/view.php?id=16
       Estado origem → destino: NAO_CONFORME → NAO_CONFORME
-      Evidência na origem: blocos=[] (fonte: block_manager) | bloco "Atenção ao prazo": ausente | bloco "Dúvidas técnicas": ausente | bloco "Acessibilidade": ausente
-      Evidência no destino: blocos=[] (fonte: block_manager) | bloco "Atenção ao prazo": ausente | bloco "Dúvidas técnicas": ausente | bloco "Acessibilidade": ausente
+      Evidência na origem: bloco "Acessibilidade": ausente
+      Evidência no destino: bloco "Acessibilidade": ausente
+  [Persistente (já estava na origem)] CL-21     Média      Blocos padrão presentes na página do curso
+      Local: Blocos da página do curso → http://localhost:8094/course/view.php?id=16
+      Estado origem → destino: NAO_CONFORME → NAO_CONFORME
+      Evidência na origem: bloco "Atenção ao prazo": ausente
+      Evidência no destino: bloco "Atenção ao prazo": ausente
+  [Persistente (já estava na origem)] CL-21     Média      Blocos padrão presentes na página do curso
+      Local: Blocos da página do curso → http://localhost:8094/course/view.php?id=16
+      Estado origem → destino: NAO_CONFORME → NAO_CONFORME
+      Evidência na origem: bloco "Dúvidas técnicas": ausente
+      Evidência no destino: bloco "Dúvidas técnicas": ausente
+  [Persistente (já estava na origem)] CL-21     Média      Blocos padrão presentes na página do curso
+      Local: Blocos da página do curso → http://localhost:8094/course/view.php?id=16
+      Estado origem → destino: NAO_CONFORME → NAO_CONFORME
+      Evidência na origem: blocos=[] (fonte: block_manager)
+      Evidência no destino: blocos=[] (fonte: block_manager)
   [Persistente (já estava na origem)] CL-22     Média      Licença para capacitação configurada
       Local: Área do curso (seção 0) → http://localhost:8094/backup/import.php?id=16
       Estado origem → destino: NAO_CONFORME → NAO_CONFORME
@@ -60,8 +75,13 @@ Resultado da comparação: Revisar a nova sala: há atividades ausentes, diferen
   [Persistente (já estava na origem)] CL-22     Média      Licença para capacitação configurada
       Local: Atividades do curso → http://localhost:8094/backup/import.php?id=16
       Estado origem → destino: NAO_CONFORME → NAO_CONFORME
-      Evidência na origem: pesquisa "Licença para capacitação": ausente | declaração "Declaração licença para capacitação": ausente
-      Evidência no destino: pesquisa "Licença para capacitação": ausente | declaração "Declaração licença para capacitação": ausente
+      Evidência na origem: declaração "Declaração licença para capacitação": ausente
+      Evidência no destino: declaração "Declaração licença para capacitação": ausente
+  [Persistente (já estava na origem)] CL-22     Média      Licença para capacitação configurada
+      Local: Atividades do curso → http://localhost:8094/backup/import.php?id=16
+      Estado origem → destino: NAO_CONFORME → NAO_CONFORME
+      Evidência na origem: pesquisa "Licença para capacitação": ausente
+      Evidência no destino: pesquisa "Licença para capacitação": ausente
 --- Atividades ausentes no destino
 --- Correspondências ambíguas
   forum "Avisos": Uma atividade na origem e 2 com o mesmo tipo e nome no destino (duplicidade): confira qual deve permanecer; nenhuma foi escolhida automaticamente. {"origem":[173],"destino":[178,179],"configuracoes_iguais":true}

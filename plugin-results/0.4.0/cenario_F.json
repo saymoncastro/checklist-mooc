@@ -2,13 +2,13 @@
     "contract": "comparison",
     "contract_version": "1.0",
     "engine": "local_mooc_audit 0.4.0",
-    "executed_at": "2026-10-29T15:26:55+00:00",
+    "executed_at": "2026-10-29T15:41:44+00:00",
     "timing": {
-        "snapshot_source_s": 0.042,
-        "snapshot_target_s": 0.008,
-        "rules_s": 0.017,
-        "compare_s": 0.013,
-        "total_s": 0.08,
+        "snapshot_source_s": 0.037,
+        "snapshot_target_s": 0.004,
+        "rules_s": 0.015,
+        "compare_s": 0.016,
+        "total_s": 0.072,
         "memory_peak_mb": 24
     },
     "source": {
@@ -75,7 +75,7 @@
             "pendencia_oferta": 0,
             "novo_no_destino": 2,
             "novo_em_atividade_adicional": 0,
-            "persistente": 10,
+            "persistente": 14,
             "indeterminado": 0,
             "nao_verificavel_no_destino": 0,
             "ausente_no_destino": 0,
@@ -252,7 +252,7 @@
                 "evidence_source": null,
                 "evidence_target": "aggregateonlygraded=1 (excluir notas vazias)",
                 "guidance": "Desmarcar \"Excluir notas vazias\": com ela ligada, a condição de 60 pontos do certificado é relativa só às atividades já avaliadas.",
-                "key": "CL-12|t:livro de notas > categoria raiz"
+                "key": "CL-12|t:livro de notas > categoria raiz|aggregateonlygraded"
             },
             {
                 "classification": "novo_no_destino",
@@ -371,7 +371,7 @@
                 "evidence_source": "link https://mooc.cefor.ifes.edu.br/moodle/login/signup.php ausente | link https://mooc.cefor.ifes.edu.br/moodle/course/index.php?categoryid=7 ausente",
                 "evidence_target": "link https://mooc.cefor.ifes.edu.br/moodle/login/signup.php ausente | link https://mooc.cefor.ifes.edu.br/moodle/course/index.php?categoryid=7 ausente",
                 "guidance": "Acrescentar o botão ao final do sumário (Editar configurações do curso > Descrição).",
-                "key": "CL-04|t:sumario do curso"
+                "key": "CL-04|t:sumario do curso|link https"
             },
             {
                 "classification": "persistente",
@@ -402,10 +402,61 @@
                 "cmid_source": null,
                 "cmid_target": null,
                 "link": "http://localhost:8094/course/view.php?id=16",
-                "evidence_source": "blocos=[] (fonte: block_manager) | bloco \"Atenção ao prazo\": ausente | bloco \"Dúvidas técnicas\": ausente | bloco \"Acessibilidade\": ausente",
-                "evidence_target": "blocos=[] (fonte: block_manager) | bloco \"Atenção ao prazo\": ausente | bloco \"Dúvidas técnicas\": ausente | bloco \"Acessibilidade\": ausente",
+                "evidence_source": "bloco \"Acessibilidade\": ausente",
+                "evidence_target": "bloco \"Acessibilidade\": ausente",
                 "guidance": "Adicionar o bloco HTML padrão (ou verificar o bloco de site correspondente).",
-                "key": "CL-21|t:blocos da pagina do curso"
+                "key": "CL-21|t:blocos da pagina do curso|bloco \"acessibilidade\""
+            },
+            {
+                "classification": "persistente",
+                "rule": "CL-21",
+                "title": "Blocos padrão presentes na página do curso",
+                "category": "structure_blocks",
+                "severity": "Média",
+                "status_source": "NAO_CONFORME",
+                "status_target": "NAO_CONFORME",
+                "local": "Blocos da página do curso",
+                "cmid_source": null,
+                "cmid_target": null,
+                "link": "http://localhost:8094/course/view.php?id=16",
+                "evidence_source": "bloco \"Atenção ao prazo\": ausente",
+                "evidence_target": "bloco \"Atenção ao prazo\": ausente",
+                "guidance": "Adicionar o bloco HTML padrão (ou verificar o bloco de site correspondente).",
+                "key": "CL-21|t:blocos da pagina do curso|bloco \"atencao ao prazo\""
+            },
+            {
+                "classification": "persistente",
+                "rule": "CL-21",
+                "title": "Blocos padrão presentes na página do curso",
+                "category": "structure_blocks",
+                "severity": "Média",
+                "status_source": "NAO_CONFORME",
+                "status_target": "NAO_CONFORME",
+                "local": "Blocos da página do curso",
+                "cmid_source": null,
+                "cmid_target": null,
+                "link": "http://localhost:8094/course/view.php?id=16",
+                "evidence_source": "bloco \"Dúvidas técnicas\": ausente",
+                "evidence_target": "bloco \"Dúvidas técnicas\": ausente",
+                "guidance": "Adicionar o bloco HTML padrão (ou verificar o bloco de site correspondente).",
+                "key": "CL-21|t:blocos da pagina do curso|bloco \"duvidas tecnicas\""
+            },
+            {
+                "classification": "persistente",
+                "rule": "CL-21",
+                "title": "Blocos padrão presentes na página do curso",
+                "category": "structure_blocks",
+                "severity": "Média",
+                "status_source": "NAO_CONFORME",
+                "status_target": "NAO_CONFORME",
+                "local": "Blocos da página do curso",
+                "cmid_source": null,
+                "cmid_target": null,
+                "link": "http://localhost:8094/course/view.php?id=16",
+                "evidence_source": "blocos=[] (fonte: block_manager)",
+                "evidence_target": "blocos=[] (fonte: block_manager)",
+                "guidance": "Adicionar o bloco HTML padrão (ou verificar o bloco de site correspondente).",
+                "key": "CL-21|t:blocos da pagina do curso|blocos"
             },
             {
                 "classification": "persistente",
@@ -436,17 +487,34 @@
                 "cmid_source": null,
                 "cmid_target": null,
                 "link": "http://localhost:8094/backup/import.php?id=16",
-                "evidence_source": "pesquisa \"Licença para capacitação\": ausente | declaração \"Declaração licença para capacitação\": ausente",
-                "evidence_target": "pesquisa \"Licença para capacitação\": ausente | declaração \"Declaração licença para capacitação\": ausente",
+                "evidence_source": "declaração \"Declaração licença para capacitação\": ausente",
+                "evidence_target": "declaração \"Declaração licença para capacitação\": ausente",
                 "guidance": "Importar os componentes da Licença para capacitação (rótulo, pesquisa e declaração) da Sala Padrão.",
-                "key": "CL-22|t:atividades do curso"
+                "key": "CL-22|t:atividades do curso|declaracao \"declaracao licenca para capacitacao\""
+            },
+            {
+                "classification": "persistente",
+                "rule": "CL-22",
+                "title": "Licença para capacitação configurada",
+                "category": "institutional_resources",
+                "severity": "Média",
+                "status_source": "NAO_CONFORME",
+                "status_target": "NAO_CONFORME",
+                "local": "Atividades do curso",
+                "cmid_source": null,
+                "cmid_target": null,
+                "link": "http://localhost:8094/backup/import.php?id=16",
+                "evidence_source": "pesquisa \"Licença para capacitação\": ausente",
+                "evidence_target": "pesquisa \"Licença para capacitação\": ausente",
+                "guidance": "Importar os componentes da Licença para capacitação (rótulo, pesquisa e declaração) da Sala Padrão.",
+                "key": "CL-22|t:atividades do curso|pesquisa \"licenca para capacitacao\""
             }
         ],
         "counts": {
             "pendencia_oferta": 0,
             "novo_no_destino": 2,
             "novo_em_atividade_adicional": 0,
-            "persistente": 10,
+            "persistente": 14,
             "indeterminado": 0,
             "nao_verificavel_no_destino": 0,
             "ausente_no_destino": 0,

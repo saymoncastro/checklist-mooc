@@ -2,13 +2,13 @@
     "contract": "comparison",
     "contract_version": "1.0",
     "engine": "local_mooc_audit 0.4.0",
-    "executed_at": "2026-10-29T15:26:56+00:00",
+    "executed_at": "2026-10-29T15:41:44+00:00",
     "timing": {
-        "snapshot_source_s": 0.071,
-        "snapshot_target_s": 0.018,
-        "rules_s": 0.026,
-        "compare_s": 0.017,
-        "total_s": 0.132,
+        "snapshot_source_s": 0.056,
+        "snapshot_target_s": 0.012,
+        "rules_s": 0.022,
+        "compare_s": 0.019,
+        "total_s": 0.109,
         "memory_peak_mb": 30
     },
     "source": {

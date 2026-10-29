@@ -26,7 +26,7 @@ preservadas, ausentes, adicionais, modificadas e correspondências ambíguas (ca
 por `cmid`; correspondência manual sem persistência); diferenças classificadas em esperadas, relevantes e informativas;
 relação entre as duas auditorias (persistente, novo no destino, pendência da nova oferta, resolvido/ausente no destino),
 com a origem avaliada no ano da sua própria oferta. Restrita a gerentes, com a capacidade nas duas salas; somente
-leitura. 161 testes PHPUnit, 9 cenários Behat, PHPCS limpo. Evidências e medições em `plugin-results/0.4.0/`;
+leitura. 166 testes PHPUnit, 9 cenários Behat, PHPCS limpo. Evidências e medições em `plugin-results/0.4.0/`;
 especificação em `specs/003-comparacao-ofertas/`.
 
 ## Instalação
@@ -183,7 +183,7 @@ mudam).
 ## Verificação
 
 ```bash
-vendor/bin/phpunit --testsuite local_mooc_audit_testsuite      # 161 testes
+vendor/bin/phpunit --testsuite local_mooc_audit_testsuite      # 166 testes
 php admin/tool/behat/cli/run.php --tags=@local_mooc_audit       # exige Selenium; ver moodle-env/README.md
 vendor/bin/phpcs --standard=moodle local/mooc_audit             # moodlehq/moodle-cs
 ```

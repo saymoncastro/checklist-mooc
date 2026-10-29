@@ -716,8 +716,9 @@ class differ {
     }
 
     /**
-     * Enrolment methods by plugin name (first instance of each). Dates and status are offer settings (checked by CL-08
-     * in the target); a missing method is relevant. Passwords are compared only as presence.
+     * Enrolment methods by plugin name (first instance of each, plus the number of instances). Enrolment dates, and the
+     * status and "new enrolments" of self enrolment, are offer settings (checked by CL-08 in the target); the role, the
+     * status of any other method, a missing method or fewer instances are relevant. Passwords only as presence.
      *
      * @param array $ea
      * @param array $eb
@@ -733,15 +734,29 @@ class differ {
         };
         $a = $first($ea);
         $b = $first($eb);
+        $counts = fn(array $list) => array_count_values(array_column($list, 'enrol'));
+        $ca = $counts($ea);
+        $cb = $counts($eb);
         $out = [];
         foreach ($a as $name => $e) {
             if (!isset($b[$name])) {
                 $out[] = self::d('enrol', $name, $name, null, self::RELEVANT, 'enrol_missing');
                 continue;
             }
+            if ($cb[$name] < $ca[$name]) {
+                $out[] = self::d('enrol', "$name.instances", $ca[$name], $cb[$name], self::RELEVANT, 'enrol_count_changed');
+            }
             foreach (['status', 'customint6', 'roleid'] as $f) {
                 if ($e[$f] != $b[$name][$f]) {
-                    $out[] = self::d('enrol', "$name.$f", $e[$f], $b[$name][$f], self::EXPECTED, 'offer_setting');
+                    $offer = $name === 'self' && $f !== 'roleid';
+                    $out[] = self::d(
+                        'enrol',
+                        "$name.$f",
+                        $e[$f],
+                        $b[$name][$f],
+                        $offer ? self::EXPECTED : self::RELEVANT,
+                        $offer ? 'offer_setting' : 'course_setting_changed'
+                    );
                 }
             }
             foreach (['enrolstartdate', 'enrolenddate'] as $f) {

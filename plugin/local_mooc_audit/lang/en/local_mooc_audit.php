@@ -20,7 +20,9 @@
  * @package    local_mooc_audit
  * @copyright  2026 Cefor/Ifes
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */$string['auditmenu'] = 'Technical audit';
+ */
+
+$string['auditmenu'] = 'Technical audit';
 $string['category_assessment_grades'] = 'Assessment and grades';
 $string['category_certification'] = 'Certification';
 $string['category_completion_restrictions'] = 'Completion and restrictions';
@@ -69,6 +71,7 @@ $string['cmp_code_course_setting_changed'] = 'Course setting changed ({$a->field
 $string['cmp_code_date_shifted'] = 'Date changed ({$a->source} → {$a->target}): expected in a new offer; the new date is checked against the policy.';
 $string['cmp_code_display_changed'] = 'Display option changed ({$a->field}).';
 $string['cmp_code_enrol_added'] = 'Enrolment method present only in the target.';
+$string['cmp_code_enrol_count_changed'] = 'The target has fewer instances of the method {$a->field} ({$a->source} → {$a->target}).';
 $string['cmp_code_enrol_missing'] = 'Enrolment method {$a->source} exists in the source and not in the target.';
 $string['cmp_code_extra_graded'] = 'Activity only in the target, graded or tracked by completion: it may change the course total or the completion chain.';
 $string['cmp_code_extra_resource'] = 'Activity only in the target, neither graded nor tracked by completion.';

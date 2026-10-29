@@ -86,7 +86,7 @@ class matcher {
         }
 
         $full = fn(array $s, array $m) => self::key_full($m);
-        $fullcontent = fn(array $s, array $m) => self::key_full($m) . '|' . (self::fingerprint($m) ?? '-');
+        $fullcontent = fn(array $s, array $m) => ($fp = self::fingerprint($m)) === null ? null : self::key_full($m) . '|' . $fp;
         $name = fn(array $s, array $m) => self::key_name($m);
         $content = fn(array $s, array $m) => ($fp = self::fingerprint($m)) === null ? null : $m['modname'] . '|' . $fp;
         $position = fn(array $s, array $m) => $m['modname'] . '|' . $m['sectionnumber'] . '|' . self::position($s, $m);

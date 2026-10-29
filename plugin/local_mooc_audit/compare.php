@@ -61,11 +61,6 @@ if ($data = $form->get_data()) {
 
 $error = null;
 if ($sourceid && $targetid && $confirm) {
-    foreach ([$sourceid, $targetid] as $id) {
-        if ($id == SITEID || !$DB->record_exists('course', ['id' => $id])) {
-            throw new moodle_exception('invalidcourseid');
-        }
-    }
     if ($sourceid === $targetid) {
         $error = get_string('cmp_same_course', 'local_mooc_audit');
     } else {

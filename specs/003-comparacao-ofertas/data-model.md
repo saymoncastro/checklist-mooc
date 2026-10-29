@@ -83,7 +83,7 @@ dois lados, têm a mesma impressão de configuração), `explanation`.
 | `status_source`, `status_target` | pior estado do grupo em cada lado, ou null |
 | `local`, `cmid_source`, `cmid_target`, `link` | link para a sala de destino (locator da Spec 001) |
 | `evidence_source`, `evidence_target`, `guidance` | — |
-| `key` | chave de local (research R7) |
+| `key` | chave de local (research R7); quando a regra tem vários achados no mesmo local textual, acrescida do assunto da evidência |
 
 Regras de classificação (determinísticas, nesta ordem):
 1. regra do ciclo e problema no destino → `pendencia_oferta`;
@@ -101,7 +101,7 @@ Regras de classificação (determinísticas, nesta ordem):
 `source_modules`, `target_modules`, `preserved`, `modified`, `modified_relevant`, `missing_in_target`,
 `extra_in_target`, `ambiguous_groups`, `ambiguous_source_modules`, `duplicates_in_target`, `matches_by_confidence`,
 `course_diffs_relevant`, `audit_counts` (por classe), `verdict`:
-- `REVISAR` se houver ausente, diferença relevante, item novo/persistente `NAO_CONFORME` ou pendência da oferta;
+- `REVISAR` se houver ausente, diferença relevante, item novo/persistente `NAO_CONFORME` ou qualquer pendência da oferta;
 - `CONFERIR` se só houver ambiguidades, alertas (`ATENCAO`) ou diferenças informativas;
 - `SEM_DIFERENCAS_RELEVANTES` caso contrário.
 O veredito descreve a comparação, não substitui o estado geral da auditoria do destino (exibido ao lado).

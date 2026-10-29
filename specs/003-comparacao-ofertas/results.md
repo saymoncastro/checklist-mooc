@@ -13,7 +13,7 @@ e #3 já mesclados) · **Ambiente:** site isolado `moocaudit-s3-web` (porta 8094
 | 3 | Contrato JSON `comparison` 1.0 | [contracts/comparison-v1.0.schema.json](contracts/comparison-v1.0.schema.json) (= `plugin/local_mooc_audit/schema/`), [data-model.md](data-model.md) |
 | 4 | Comparador evoluído e testado | `classes/comparator.php`, `classes/local/comparison/{matcher,differ,audit_relation}.php` |
 | 5 | Interface no Moodle | `compare.php` (Administração do site > Cursos > Comparar ofertas; link no relatório de auditoria), [contracts/compare-page.md](contracts/compare-page.md) |
-| 6 | Testes PHPUnit e Behat | 43 testes PHPUnit novos (161 no total), `tests/behat/compare.feature` (3 cenários; 9 no total) |
+| 6 | Testes PHPUnit e Behat | 48 testes PHPUnit novos (166 no total), `tests/behat/compare.feature` (3 cenários; 9 no total) |
 | 7 | Evidências dos cenários experimentais | `plugin-results/0.4.0/cenario_{A..G}.{txt,json}`, `cli/make_scenarios.php` |
 | 8 | Resultados de comparação | §3 abaixo e `plugin-results/0.4.0/medicoes.md` |
 | 9 | Revisão de segurança | §5 |
@@ -48,7 +48,7 @@ Origem = oferta 2026; destino = importação nativa para 2027; política `2027-d
 
 | Cenário | O que se esperava | O que a comparação mostrou |
 |---|---|---|
-| **A** importação correta | Preservadas e ids alterados reconhecidos | 12 preservadas (confiança alta), 0 ausentes; fórum "Avisos" ambíguo (duplicado no destino, 2 candidatos, nenhum escolhido); sigla/datas/inscrição como **esperadas**; 32 identificadores remapeados contados sem ruído. Achado: os encerramentos dos questionários continuam em 31/12/2026 → **CL-14 como pendência da nova oferta** (não como herdado) |
+| **A** importação correta | Preservadas e ids alterados reconhecidos | Veredito "Revisar" só por causa dos encerramentos; 12 preservadas (confiança alta), 0 ausentes; fórum "Avisos" ambíguo (duplicado no destino, 2 candidatos, nenhum escolhido); sigla/datas/inscrição como **esperadas**; 32 identificadores remapeados contados sem ruído. Achado: os encerramentos dos questionários continuam em 31/12/2026 → **CL-14 como pendência da nova oferta** (não como herdado) |
 | **B** avisos duplicado + problemas | Duplicidade registrada, sem correspondência arbitrária | Ambiguidade `duplicado_no_destino`; 21 inconformidades **persistentes** (X-DEP-04, CL-12, CL-13, X-INT-02…); CL-06/CL-07 da origem (2026) **não** aparecem como herdadas; 1 resolvida no destino (seções ocultas) |
 | **C** glossário de jogo | Entradas perdidas ligadas ao jogo | Glossário: `entradas 3 → 0` relevante, "usado como fonte por: game Palavras cruzadas"; jogo: `entradas disponíveis 3 → 0`; `glossaryid` remapeado reconhecido como esperado; CL-18 **novo no destino** (ATENÇÃO na origem → NÃO CONFORME) |
 | **D** avaliação alterada | Diferenças com evidência | Questionário 1: tentativas 2 → 1, nota 50 → 40, item de nota 50 → 40, conclusão automática → manual, todas relevantes; CL-13, CL-12, CL-17, X-AV-01 **novos no destino** |
@@ -84,7 +84,20 @@ Revisão independente (subagente sem acesso às conclusões acima): ver §5.1.
 
 ### 5.1 Achados da revisão independente
 
-(preenchido após a revisão)
+A revisão (somente leitura, sobre o diff de `plugin/`) não encontrou problema grave de acesso, XSS, CSRF, escrita ou
+dados pessoais. Achados e tratamento (commit "Corrige os achados da revisão da spec 003"):
+
+| # | Severidade | Achado | Tratamento |
+|---|---|---|---|
+| 1 | Média | `status`/`customint6`/`roleid` de **todos** os métodos de inscrição classificados como esperados: habilitar acesso de visitante ou mudar o papel da autoinscrição ficaria escondido | Esperado só para estado/novas inscrições da autoinscrição e datas; papel e estado de outros métodos → relevantes. Teste `differ_test::test_enrolment_classification` |
+| 2 | Média | Achados da mesma regra no mesmo local textual (CL-22 pesquisa × declaração; CL-21 blocos) fundidos em um item persistente | Quando uma regra tem mais de um achado no mesmo local, a chave inclui o assunto da evidência ("pesquisa …", "bloco …"). Teste `test_findings_sharing_a_location_are_told_apart` |
+| 3 | Média | `make_scenarios.php` (apaga e cria cursos) com guarda "localhost OU debug" | Agora exige **localhost E debug de desenvolvedor**; cabeçalho declara que não faz parte de pacote de produção |
+| 4 | Baixa | Pendência da oferta só com ATENÇÃO não levava a "Revisar" | Toda pendência da nova oferta leva a "Revisar" (como no data-model). Cenário A passa a "Revisar" por causa do CL-14 |
+| 5 | Baixa | Passo 2 usava impressão vazia: um fórum vazio casava com outro vazio entre dois candidatos | Impressão vazia nunca é chave de correspondência. Teste `test_empty_fingerprint_never_disambiguates` |
+| 6 | Baixa | Mesma posição exibida em base 0 e base 1 | Posição sempre em base 1 ("—" fora da sequência) |
+| 7 | Baixa | Curso inexistente respondia diferente de curso sem permissão | `require_access` responde igual nos dois casos. Teste `test_missing_course_same_answer` |
+| 8 | Baixa | Ano da origem dependia do fuso horário de quem abre a página | Ano calculado no fuso do servidor |
+| 9 | Baixa | Só a primeira instância de cada método de inscrição era comparada | Menos instâncias no destino → `enrol_count_changed` (relevante) |
 
 ## 6. Limitações
 
@@ -99,9 +112,9 @@ Revisão independente (subagente sem acesso às conclusões acima): ver §5.1.
    (princípio VI).
 5. **Grupos equivalentes**: cópias idênticas de mesmo nome ficam ambíguas até a confirmação manual; a confirmação não
    é gravada (vale para a URL).
-6. **Agrupamento de resultados sem atividade**: resultados de uma regra no mesmo local textual (ex.: vários blocos
-   ausentes no CL-21) formam um item; a evidência dos dois lados é mostrada, mas o item não diferencia "um bloco a
-   mais faltando".
+6. **Agrupamento de resultados sem atividade**: quando uma regra tem vários achados no mesmo local textual, eles são
+   separados pelo assunto da evidência (texto antes de ":" ou "="); uma regra que mudar o formato da evidência entre
+   versões pode separar o que era o mesmo problema.
 7. **Livro de notas não materializado** (salas sintéticas sem nota, cenários E/F): o CL-12 pode aparecer como novo no
    destino porque a restauração cria a categoria raiz que a origem nunca teve. Não ocorre em salas reais.
 8. **Textos**: comparação por assinatura (texto visível + nomes de arquivos referenciados), sem diff palavra a palavra;

@@ -330,4 +330,33 @@ final class differ_test extends \advanced_testcase {
         $r = comparator::compare($b->get(), $a->get());
         $this->assertNotContains(get_string('cmp_inverted', 'local_mooc_audit'), $r['warnings']);
     }
+
+    /**
+     * Enrolment: dates and self enrolment status are offer settings; the role, the status of other methods and fewer
+     * instances are relevant.
+     */
+    public function test_enrolment_classification(): void {
+        $this->resetAfterTest();
+        [$a, $b] = $this->builders();
+        $guest = ['id' => 1, 'enrol' => 'guest', 'status' => 1, 'name' => '', 'enrolstartdate' => 0, 'enrolenddate' => 0,
+            'customint6' => null, 'roleid' => 0, 'has_password' => false];
+        $self = $a->get()['enrols'][0];
+        $a->patch('enrols', [0 => array_merge($self, ['status' => 1, 'enrolstartdate' => 0]), 1 => $guest,
+            2 => array_merge($self, ['id' => 2])]);
+        $b->patch('enrols', [0 => array_merge($self, ['roleid' => 3]), 1 => array_merge($guest, ['status' => 0])]);
+        $r = comparator::compare($a->get(), $b->get());
+        $kinds = [];
+        foreach ($r['course_diffs'] as $d) {
+            if ($d['scope'] === 'enrol') {
+                $kinds[$d['field']] = $d['kind'];
+            }
+        }
+        $this->assertSame([
+            'self.instances' => 'relevante',
+            'self.status' => 'esperada',
+            'self.roleid' => 'relevante',
+            'self.enrolstartdate' => 'esperada',
+            'guest.status' => 'relevante',
+        ], $kinds);
+    }
 }

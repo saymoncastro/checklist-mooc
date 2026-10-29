@@ -242,7 +242,7 @@ class comparison_report implements renderable, templatable {
                 foreach ($a['target'] as $tgt) {
                     $options[] = (object) ['value' => $src['cmid'] . '-' . $tgt['cmid'],
                         'label' => get_string('label_section', 'local_mooc_audit') . " {$tgt['section']}, "
-                            . get_string('cmp_position', 'local_mooc_audit') . ' ' . ($tgt['position'] + 1)
+                            . get_string('cmp_position', 'local_mooc_audit') . ' ' . self::position($tgt)
                             . " (id {$tgt['cmid']})"];
                 }
                 $pickers[] = (object) ['id' => "local_mooc_audit-amb-$i-{$src['cmid']}", 'source' => (object) $src,
@@ -255,14 +255,24 @@ class comparison_report implements renderable, templatable {
                     $a['settings_identical'] ? 'cmp_settings_identical' : 'cmp_settings_different',
                     'local_mooc_audit'
                 ),
-                'targets' => array_map(fn($t) => (object) array_merge($t, ['url' => (new moodle_url(
-                    "/mod/{$a['modname']}/view.php",
-                    ['id' => $t['cmid']]
-                ))->out(false)]), $a['target']),
+                'targets' => array_map(fn($t) => (object) array_merge($t, [
+                    'positionlabel' => self::position($t),
+                    'url' => (new moodle_url("/mod/{$a['modname']}/view.php", ['id' => $t['cmid']]))->out(false),
+                ]), $a['target']),
                 'pickers' => $pickers,
             ]);
         }
         return [$out, $hidden];
+    }
+
+    /**
+     * Position of a candidate as shown to people: 1-based, "—" when the module is not in its section sequence.
+     *
+     * @param array $ref module location (section, position)
+     * @return string
+     */
+    protected static function position(array $ref): string {
+        return $ref['position'] >= 0 ? (string) ($ref['position'] + 1) : '—';
     }
 
     /**

@@ -201,4 +201,23 @@ final class audit_relation_test extends \advanced_testcase {
         $offer = array_keys(array_filter(catalog::instances(), fn($r) => $r->meta()['category'] === 'offer_enrol'));
         $this->assertSame([], array_diff($offer, comparator::CYCLE_RULES), 'every offer/enrolment rule is a cycle rule');
     }
+
+    /**
+     * Several findings of one rule at the same location text (CL-22 survey and declaration) are told apart by the
+     * subject of their evidence: a resolved one and a new one, not one persistent item.
+     */
+    public function test_findings_sharing_a_location_are_told_apart(): void {
+        $f = fn($status, $evidence) => array_merge(
+            $this->r('CL-22', $status, null, 'Atividades do curso'),
+            ['evidencia' => $evidence]
+        );
+        $src = [$f(status::NAO_CONFORME, 'pesquisa "Licença para capacitação": ausente'),
+            $f(status::CONFORME, 'declaração "Declaração licença para capacitação": presente')];
+        $dst = [$f(status::CONFORME, 'pesquisa "Licença para capacitação": presente'),
+            $f(status::NAO_CONFORME, 'declaração "Declaração licença para capacitação": ausente')];
+        [$items] = audit_relation::relate($src, $dst, self::MATCH, comparator::CYCLE_RULES);
+        $this->assertEqualsCanonicalizing(['novo_no_destino', 'resolvido_no_destino'], array_column($items, 'classification'));
+        $this->assertSame('bloco "acessibilidade"', audit_relation::subject('bloco "Acessibilidade": ausente'));
+        $this->assertSame('blocos', audit_relation::subject('blocos=["html"] (fonte: block_manager)'));
+    }
 }

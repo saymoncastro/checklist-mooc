@@ -67,7 +67,8 @@ ATENÇÃO) e geraria pares arbitrários; algoritmo húngaro com pesos — ótimo
 |---|---|---|
 | ids de curso, contexto, módulo, instância, item de nota; referência remapeada ao par | esperada | `identifier_remapped` (só contado) |
 | datas de módulo (`timeopen`, `timeclose`, `duedate`, `cutoffdate`, `allowsubmissionsfromdate`, `timeavailableto`, `completionexpected`) e condições de data em restrições | esperada | `date_shifted` |
-| `fullname`, `shortname`, `startdate`, `enddate`, `category`, `visible` do curso; datas/estado da autoinscrição | esperada (avaliada pela política no destino) | `offer_setting` |
+| `fullname`, `shortname`, `startdate`, `enddate`, `category`, `visible` do curso; datas de inscrição; estado e novas inscrições da autoinscrição | esperada (avaliada pela política no destino) | `offer_setting` |
+| papel de inscrição; estado de outros métodos (visitante etc.); menos instâncias de um método | relevante | `course_setting_changed` / `enrol_count_changed` |
 | nome do módulo | informativa | `renamed` |
 | seção / posição | informativa | `moved` |
 | texto alterado (não vazio) | informativa | `text_changed` |

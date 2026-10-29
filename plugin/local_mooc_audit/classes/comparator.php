@@ -45,15 +45,27 @@ class comparator {
     const CYCLE_RULES = ['CL-05', 'CL-06', 'CL-07', 'CL-08', 'CL-14'];
 
     /**
-     * Require the comparison capability in BOTH course contexts (allowed on one room only is not enough).
+     * Require the comparison capability in BOTH course contexts (allowed on one room only is not enough). A missing
+     * course gets the same exception, so that the answer does not reveal whether a course id exists.
      *
      * @param int $sourceid
      * @param int $targetid
      * @throws \required_capability_exception
      */
     public static function require_access(int $sourceid, int $targetid): void {
-        require_capability('local/mooc_audit:compare', \context_course::instance($sourceid));
-        require_capability('local/mooc_audit:compare', \context_course::instance($targetid));
+        global $DB;
+        foreach ([$sourceid, $targetid] as $id) {
+            if ($id == SITEID || !$DB->record_exists('course', ['id' => $id])) {
+                // Same answer as a missing capability: the page does not reveal which course ids exist.
+                throw new \required_capability_exception(
+                    \context_system::instance(),
+                    'local/mooc_audit:compare',
+                    'nopermissions',
+                    ''
+                );
+            }
+            require_capability('local/mooc_audit:compare', \context_course::instance($id));
+        }
     }
 
     /**
@@ -73,7 +85,12 @@ class comparator {
         $t2 = microtime(true);
 
         $tpolicy = policy::load($policyoverride);
-        $syear = $src['course']['startdate'] ? (int) userdate($src['course']['startdate'], '%Y', 99, false) : null;
+        $syear = $src['course']['startdate'] ? (int) userdate(
+            $src['course']['startdate'],
+            '%Y',
+            \core_date::get_server_timezone(),
+            false
+        ) : null;
         $spolicy = policy::load(array_merge($policyoverride ?? [], ['reoffer_year' => $syear ?? (int) $tpolicy['reoffer_year']]));
         $sresults = self::results($src, $spolicy);
         $tresults = self::results($dst, $tpolicy);
@@ -293,8 +310,8 @@ class comparator {
         foreach ($r['audit']['items'] as $i) {
             $target = in_array($i['classification'], ['pendencia_oferta', 'novo_no_destino', 'novo_em_atividade_adicional',
                 'persistente', 'indeterminado'], true);
-            $tofix = $tofix || ($target && $i['status_target'] === status::NAO_CONFORME
-                && $i['classification'] !== 'indeterminado');
+            $tofix = $tofix || $i['classification'] === 'pendencia_oferta' || ($target
+                && $i['status_target'] === status::NAO_CONFORME && $i['classification'] !== 'indeterminado');
             $tocheck = $tocheck || $target || $i['classification'] === 'nao_verificavel_no_destino';
         }
         $informative = (bool) array_filter($r['matches'], fn($m) => $m['relevance'] === differ::INFO)

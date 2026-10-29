@@ -29,7 +29,8 @@
  *
  * php local/mooc_audit/cli/make_scenarios.php --year=2027
  *
- * Refuses to run unless the site is a local/dev site. Courses with the same short names are deleted first. Prints the
+ * Refuses to run unless the site is local (wwwroot with localhost) AND developer debugging is on. Courses with the
+ * same short names (CEN_*) are deleted first. Not part of a production package. Prints the
  * pairs source → target as JSON.
  *
  * @package    local_mooc_audit
@@ -57,8 +58,9 @@ if ($options['help']) {
         . ' as salas de origem são do ano anterior.');
     exit(0);
 }
-if (strpos($CFG->wwwroot, 'localhost') === false && empty($CFG->debugdeveloper)) {
-    cli_error('Recusado: este script só roda em ambiente local de desenvolvimento.');
+// Stricter than make_fixtures.php because it deletes courses: local wwwroot AND developer debugging, both required.
+if (strpos($CFG->wwwroot, 'localhost') === false || empty($CFG->debugdeveloper)) {
+    cli_error('Recusado: este script só roda em ambiente local de desenvolvimento (wwwroot localhost e debug de desenvolvedor).');
 }
 \core\session\manager::set_user(get_admin());
 $year = (int) ($options['year'] ?: (date('Y') + 1));

@@ -73,18 +73,63 @@ class audit_relation {
     }
 
     /**
+     * Subject of an evidence, without digits: the text before its first ":" or "=" (e.g. 'bloco "acessibilidade"' in
+     * 'bloco "Acessibilidade": ausente', 'pesquisa "licenca..."'). Distinguishes several findings of one rule at the
+     * same location text (CL-21 blocks, CL-22 survey and declaration).
+     *
+     * @param string|null $evidence
+     * @return string
+     */
+    public static function subject(?string $evidence): string {
+        $e = preg_replace('/\d+/', '', (string) $evidence);
+        $cut = strcspn($e, ':=');
+        return trim(helpers::norm(substr($e, 0, $cut)));
+    }
+
+    /**
+     * Keys of the results that share a text location with another result of the same rule on either side; those keys
+     * get the evidence subject appended.
+     *
+     * @param array $srcresults
+     * @param array $dstresults
+     * @param array $pairs
+     * @param array $reverse
+     * @return array key => true
+     */
+    protected static function shared_keys(array $srcresults, array $dstresults, array $pairs, array $reverse): array {
+        $shared = [];
+        foreach (['source' => $srcresults, 'target' => $dstresults] as $side => $results) {
+            $count = [];
+            foreach ($results as $r) {
+                $k = self::key($r, $side, $pairs, $reverse);
+                $count[$k] = ($count[$k] ?? 0) + 1;
+            }
+            foreach ($count as $k => $n) {
+                if ($n > 1 && strpos($k, '|t:') !== false) {
+                    $shared[$k] = true;
+                }
+            }
+        }
+        return $shared;
+    }
+
+    /**
      * Group results by key: worst state, its result as representative, evidences joined.
      *
      * @param array $results
      * @param string $side
      * @param array $pairs
      * @param array $reverse
+     * @param array $shared keys split by evidence subject (shared_keys())
      * @return array key => group
      */
-    protected static function group(array $results, string $side, array $pairs, array $reverse): array {
+    protected static function group(array $results, string $side, array $pairs, array $reverse, array $shared = []): array {
         $out = [];
         foreach ($results as $r) {
             $k = self::key($r, $side, $pairs, $reverse);
+            if (isset($shared[$k])) {
+                $k .= '|' . self::subject($r['evidencia']);
+            }
             if (!isset($out[$k]) || status::status_rank($r['status']) < status::status_rank($out[$k]['status'])) {
                 $ev = $out[$k]['evidences'] ?? [];
                 $out[$k] = ['status' => $r['status'], 'result' => $r, 'evidences' => $ev];
@@ -121,8 +166,9 @@ class audit_relation {
         $missing = array_flip($match['missing']);
         $extra = array_flip($match['extra']);
 
-        $gs = self::group($srcresults, 'source', $pairs, $reverse);
-        $gt = self::group($dstresults, 'target', $pairs, $reverse);
+        $shared = self::shared_keys($srcresults, $dstresults, $pairs, $reverse);
+        $gs = self::group($srcresults, 'source', $pairs, $reverse, $shared);
+        $gt = self::group($dstresults, 'target', $pairs, $reverse, $shared);
         $items = [];
 
         foreach ($gt as $k => $t) {

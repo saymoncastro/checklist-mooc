@@ -83,7 +83,7 @@ contrato `comparison` 1.0, CLI e página.
 - [X] T034 Medir desempenho com duas salas de 151 módulos (script de medição em `plugin-results/0.4.0/make151.php`), 3 execuções, `plugin-results/0.4.0/medicoes.md`
 - [X] T035 `version.php` 0.4.0 (2026102906), `engine::VERSION` 0.4.0, README do plugin, `docs/backlog.md`, `docs/catalogo-regras.md` (seção de comparação)
 - [X] T036 PHPUnit completo, Behat completo (Specs 001–003), PHPCS `moodle`, `php -l`; registrar em `plugin-results/0.4.0/`
-- [ ] T037 Revisão de segurança e de código; registro em `specs/003-comparacao-ofertas/results.md` com limitações e respostas às perguntas finais
+- [X] T037 Revisão de segurança e de código; registro em `specs/003-comparacao-ofertas/results.md` com limitações e respostas às perguntas finais
 - [X] T038 `/speckit-analyze` → `specs/003-comparacao-ofertas/analysis.md`
 - [ ] T039 Abrir PR para revisão (sem merge)
 

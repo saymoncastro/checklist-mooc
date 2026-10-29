@@ -20,7 +20,9 @@
  * @package    local_mooc_audit
  * @copyright  2026 Cefor/Ifes
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */$string['auditmenu'] = 'Auditoria técnica';
+ */
+
+$string['auditmenu'] = 'Auditoria técnica';
 $string['category_assessment_grades'] = 'Avaliação e notas';
 $string['category_certification'] = 'Certificação';
 $string['category_completion_restrictions'] = 'Conclusão e restrições';
@@ -69,6 +71,7 @@ $string['cmp_code_course_setting_changed'] = 'Configuração da sala alterada ({
 $string['cmp_code_date_shifted'] = 'Data alterada ({$a->source} → {$a->target}): esperado em uma nova oferta; a conformidade da nova data é verificada pela política.';
 $string['cmp_code_display_changed'] = 'Opção de exibição alterada ({$a->field}).';
 $string['cmp_code_enrol_added'] = 'Método de inscrição presente só no destino.';
+$string['cmp_code_enrol_count_changed'] = 'O destino tem menos instâncias do método {$a->field} ({$a->source} → {$a->target}).';
 $string['cmp_code_enrol_missing'] = 'O método de inscrição {$a->source} existe na origem e não existe no destino.';
 $string['cmp_code_extra_graded'] = 'Atividade só no destino, com nota ou acompanhamento de conclusão: pode mudar o total do curso ou a cadeia de conclusão.';
 $string['cmp_code_extra_resource'] = 'Atividade só no destino, sem nota nem conclusão.';
