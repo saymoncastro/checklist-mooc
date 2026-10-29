@@ -274,6 +274,22 @@ class differ {
         if ($v !== 0 && $mapped !== null && $mapped === $w) {
             return [null, $v !== $w];
         }
+        if ($v === 0) {
+            // The original had no such source: the target now uses one.
+            $tgtref = null;
+            foreach ($ctx['dst']['modules'] as $o) {
+                $tgtref = $o['modname'] === $type && (int) $o['instanceid'] === $w ? $o : $tgtref;
+            }
+            return [self::d(
+                'module',
+                "extra.$k",
+                null,
+                $w,
+                self::RELEVANT,
+                'reference_added',
+                ['ref' => $tgtref ? $tgtref['name'] : (string) $w]
+            ), false];
+        }
         $srcref = $ctx['srcbyinstance'][$type][$v] ?? null;
         $name = $srcref ? $srcref['name'] : (string) $v;
         return [self::d(
@@ -624,12 +640,14 @@ class differ {
                 $out[] = self::d('course', $f, $show($a[$f]), $show($b[$f]), self::EXPECTED, 'offer_setting');
             }
         }
-        if (($a['category']['name'] ?? null) !== ($b['category']['name'] ?? null)) {
+        // Same site: the category id identifies it (two categories may share a name, e.g. under different parents).
+        if (($a['category']['id'] ?? null) !== ($b['category']['id'] ?? null)) {
+            $label = fn($c) => ($c['name'] ?? '?') . ' (id ' . ($c['id'] ?? '?') . ')';
             $out[] = self::d(
                 'course',
                 'category',
-                $a['category']['name'] ?? null,
-                $b['category']['name'] ?? null,
+                $label($a['category']),
+                $label($b['category']),
                 self::EXPECTED,
                 'offer_setting'
             );

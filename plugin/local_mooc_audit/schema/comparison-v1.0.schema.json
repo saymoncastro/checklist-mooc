@@ -34,13 +34,14 @@
       "type": "object",
       "required": ["source_modules", "target_modules", "preserved", "modified", "modified_relevant", "missing_in_target",
         "extra_in_target", "ambiguous_groups", "ambiguous_source_modules", "duplicates_in_target", "matches_by_confidence",
-        "course_diffs_relevant", "audit_counts", "verdict"],
+        "course_diffs_relevant", "audit_counts", "possibly_inverted", "verdict"],
       "properties": {
         "matches_by_confidence": {"type": "object", "additionalProperties": {"type": "integer"}},
         "audit_counts": {"type": "object", "additionalProperties": {"type": "integer"}},
+        "possibly_inverted": {"type": "boolean"},
         "verdict": {"enum": ["REVISAR", "CONFERIR", "SEM_DIFERENCAS_RELEVANTES"]}
       },
-      "additionalProperties": {"type": ["integer", "object", "string"]}
+      "additionalProperties": {"type": ["integer", "object", "string", "boolean"]}
     },
     "matches": {"type": "array", "items": {"$ref": "#/$defs/match"}},
     "missing_in_target": {"type": "array", "items": {"$ref": "#/$defs/moduleref"}},

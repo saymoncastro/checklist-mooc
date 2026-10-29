@@ -67,6 +67,11 @@ final class compare_access_test extends \advanced_testcase {
         $gen->enrol_user($student->id, $old->id, 'student');
         $gen->enrol_user($student->id, $new->id, 'student');
 
+        $this->assertSame('site', comparator::page_access((int) $sitemanager->id));
+        $this->assertSame('courses', comparator::page_access((int) $catmanager->id));
+        $this->assertNull(comparator::page_access((int) $teacher->id));
+        $this->assertNull(comparator::page_access((int) $student->id));
+
         $this->setUser($sitemanager);
         $this->assertTrue($this->allowed($old->id, $new->id));
         $this->assertTrue($this->allowed($old->id, $other->id));

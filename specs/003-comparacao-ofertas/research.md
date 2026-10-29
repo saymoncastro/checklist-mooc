@@ -80,7 +80,7 @@ ATENÇÃO) e geraria pares arbitrários; algoritmo húngaro com pesos — ótimo
 | itens de nota (`gradetype`, `grademax`, `gradepass`, `hidden`, quantidade) | relevante | `grade_item_changed` |
 | avaliação (`attempts`, `grade`, `grademethod`, `sumgrades`, `timelimit`, `anonymous`, `type`, …) | relevante | `setting_changed` |
 | contagens de conteúdo (`slots`, `items`, `entries`, `categories`, `chapters`, `glossary_entries_available`) diminuídas | relevante | `content_lost` (aumento: informativa `content_added`) |
-| referência de jogo (`glossaryid`, `quizid`, `bookid`) apontando para o correspondente | esperada | `identifier_remapped`; sem correspondente → relevante `reference_unmapped` |
+| referência de jogo (`glossaryid`, `quizid`, `bookid`) apontando para o correspondente | esperada | `identifier_remapped`; sem correspondente → relevante `reference_unmapped`; fonte nova no destino → relevante `reference_added` |
 | arquivo sem registro no destino / conteúdo ausente no armazenamento / módulo com arquivos indisponível ao estudante | relevante | `file_record_missing` / `file_content_missing` / `file_unavailable` |
 | arquivo novo no destino | informativa | `file_added` |
 | instância ausente em um lado | relevante | `instance_missing` |
@@ -115,9 +115,10 @@ destino → `file_record_missing`; presente mas `readable === false` no destino 
 
 **Decisão**: destino com `policy::load()` (idêntico à auditoria individual). Origem com
 `policy::load(['reoffer_year' => ano da data de início da origem])`, ano calculado como no CL-06
-(`userdate($startdate, '%Y', 99, false)`). Sem data de início → regras do ciclo da origem marcadas `sem_contexto` e
-ignoradas na classificação. Regras do ciclo: `CL-05`, `CL-06`, `CL-07`, `CL-08`, `CL-14` (constante
-`comparator::CYCLE_RULES`, com teste que impede divergência silenciosa). **Alternativa**: pedir ao usuário as duas
+(`userdate($startdate, '%Y', fuso do servidor, false)`). Sem data de início → regras do ciclo da origem marcadas `sem_contexto` e
+ignoradas na classificação. Regras do ciclo: `CL-05`, `CL-06`, `CL-07`, `CL-08`, `CL-14` (metadado
+`OFFER_CYCLE` de cada regra, lido por `comparator::cycle_rules()`; teste garante que toda regra de oferta/inscrição o
+declara). **Alternativa**: pedir ao usuário as duas
 políticas — a política não tem versões por ano; registrado como [validar].
 
 ## R7 — Chave de local para relacionar auditorias

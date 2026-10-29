@@ -44,6 +44,8 @@ class cl08 extends base {
     const LOCUS = self::LOCUS_ENROL;
     /** @var string */
     const SOURCE = 'Checklist item 8; decisão institucional 3';
+    /** @var bool Depends on the dates/category/enrolment of the offer (specs/003). */
+    const OFFER_CYCLE = true;
 
     /**
      * Evaluate.

@@ -85,18 +85,22 @@ class matcher {
             }
         }
 
-        $full = fn(array $s, array $m) => self::key_full($m);
-        $fullcontent = fn(array $s, array $m) => ($fp = self::fingerprint($m)) === null ? null : self::key_full($m) . '|' . $fp;
-        $name = fn(array $s, array $m) => self::key_name($m);
-        $content = fn(array $s, array $m) => ($fp = self::fingerprint($m)) === null ? null : $m['modname'] . '|' . $fp;
-        $position = fn(array $s, array $m) => $m['modname'] . '|' . $m['sectionnumber'] . '|' . self::position($s, $m);
+        // Content fingerprints computed once per module (they parse every text).
+        $fps = ['s' => array_map([self::class, 'fingerprint'], $src['modules']),
+            't' => array_map([self::class, 'fingerprint'], $dst['modules'])];
+        $full = fn(array $s, array $m, ?string $fp) => self::key_full($m);
+        $fullcontent = fn(array $s, array $m, ?string $fp) => $fp === null ? null : self::key_full($m) . '|' . $fp;
+        $name = fn(array $s, array $m, ?string $fp) => self::key_name($m);
+        $content = fn(array $s, array $m, ?string $fp) => $fp === null ? null : $m['modname'] . '|' . $fp;
+        $position = fn(array $s, array $m, ?string $fp) => $m['modname'] . '|' . $m['sectionnumber'] . '|'
+            . self::position($s, $m);
 
-        self::unique_pass($src, $dst, $us, $ut, $full, 'type_section_name', self::HIGH, $pairs);
-        self::unique_pass($src, $dst, $us, $ut, $fullcontent, 'type_section_name_content', self::HIGH, $pairs);
-        self::unique_pass($src, $dst, $us, $ut, $name, 'type_name', self::HIGH, $pairs);
-        $ambiguities = self::freeze($src, $dst, $us, $ut);
-        self::unique_pass($src, $dst, $us, $ut, $content, 'type_content', self::MEDIUM, $pairs);
-        self::unique_pass($src, $dst, $us, $ut, $position, 'type_section_position', self::MEDIUM, $pairs);
+        self::unique_pass($src, $dst, $us, $ut, $fps, $full, 'type_section_name', self::HIGH, $pairs);
+        self::unique_pass($src, $dst, $us, $ut, $fps, $fullcontent, 'type_section_name_content', self::HIGH, $pairs);
+        self::unique_pass($src, $dst, $us, $ut, $fps, $name, 'type_name', self::HIGH, $pairs);
+        $ambiguities = self::freeze($src, $dst, $us, $ut, $fps);
+        self::unique_pass($src, $dst, $us, $ut, $fps, $content, 'type_content', self::MEDIUM, $pairs);
+        self::unique_pass($src, $dst, $us, $ut, $fps, $position, 'type_section_position', self::MEDIUM, $pairs);
 
         ksort($pairs);
         $missing = array_keys($us);
@@ -114,7 +118,8 @@ class matcher {
      * @param array $dst
      * @param array $us unmatched source cmids (by reference)
      * @param array $ut unmatched target cmids (by reference)
-     * @param callable $key fn(snapshot, module): ?string (null = module not eligible for this pass)
+     * @param array $fps content fingerprints: ['s' => cmid => ?string, 't' => cmid => ?string]
+     * @param callable $key fn(snapshot, module, fingerprint): ?string (null = module not eligible for this pass)
      * @param string $strategy
      * @param string $confidence
      * @param array $pairs by reference
@@ -124,13 +129,14 @@ class matcher {
         array $dst,
         array &$us,
         array &$ut,
+        array $fps,
         callable $key,
         string $strategy,
         string $confidence,
         array &$pairs
     ): void {
-        $is = self::index($src, $us, $key);
-        $it = self::index($dst, $ut, $key);
+        $is = self::index($src, $us, $key, $fps['s']);
+        $it = self::index($dst, $ut, $key, $fps['t']);
         foreach ($is as $k => $scms) {
             if (count($scms) === 1 && count($it[$k] ?? []) === 1) {
                 $pairs[$scms[0]] = ['target' => $it[$k][0], 'strategy' => $strategy, 'confidence' => $confidence];
@@ -144,13 +150,14 @@ class matcher {
      *
      * @param array $s snapshot
      * @param array $unmatched cmid => true
-     * @param callable $key
+     * @param callable $key fn(snapshot, module, fingerprint): ?string
+     * @param array $fps cmid => content fingerprint of this side
      * @return array key => cmid[]
      */
-    protected static function index(array $s, array $unmatched, callable $key): array {
+    protected static function index(array $s, array $unmatched, callable $key, array $fps): array {
         $out = [];
         foreach (array_keys($unmatched) as $cmid) {
-            $k = $key($s, $s['modules'][$cmid]);
+            $k = $key($s, $s['modules'][$cmid], $fps[$cmid] ?? null);
             if ($k !== null) {
                 $out[$k][] = $cmid;
             }
@@ -170,33 +177,34 @@ class matcher {
      * @param array $dst
      * @param array $us by reference
      * @param array $ut by reference
+     * @param array $fps content fingerprints of both sides (see unique_pass())
      * @return array ambiguities
      */
-    protected static function freeze(array $src, array $dst, array &$us, array &$ut): array {
-        $name = fn(array $s, array $m) => self::key_name($m);
-        $is = self::index($src, $us, $name);
-        $it = self::index($dst, $ut, $name);
+    protected static function freeze(array $src, array $dst, array &$us, array &$ut, array $fps): array {
+        $name = fn(array $s, array $m, ?string $fp) => self::key_name($m);
+        $is = self::index($src, $us, $name, $fps['s']);
+        $it = self::index($dst, $ut, $name, $fps['t']);
         $out = [];
         foreach ($is as $k => $scms) {
             if (empty($it[$k])) {
                 continue;
             }
             $tcms = $it[$k];
-            $fps = [];
+            $contents = [];
             $sets = [];
             foreach ($scms as $c) {
-                $fps[self::fingerprint($src['modules'][$c]) ?? '-'] = true;
+                $contents[$fps['s'][$c] ?? '-'] = true;
                 $sets[self::settings_fingerprint($src['modules'][$c])] = true;
             }
             foreach ($tcms as $c) {
-                $fps[self::fingerprint($dst['modules'][$c]) ?? '-'] = true;
+                $contents[$fps['t'][$c] ?? '-'] = true;
                 $sets[self::settings_fingerprint($dst['modules'][$c])] = true;
             }
             if (count($scms) === 1 && count($tcms) > 1) {
                 $reason = 'duplicado_no_destino';
             } else if (count($scms) > 1 && count($tcms) === 1) {
                 $reason = 'duplicado_na_origem';
-            } else if (count($fps) === 1) {
+            } else if (count($contents) === 1) {
                 $reason = 'conteudo_equivalente';
             } else {
                 $reason = 'mesmo_nome';
@@ -266,18 +274,30 @@ class matcher {
     }
 
     /**
-     * Comparable signature of an HTML text: visible text plus the file names it embeds or links (ids and query
-     * strings removed, so that remapped links do not count as a change).
+     * Comparable signature of an HTML text: visible text plus what it embeds or links. Links into this Moodle (relative,
+     * files of the module or the site host) keep only the file name, so that ids remapped by the import do not count as a
+     * change; external links keep host, path and query, because the query often identifies the content (YouTube
+     * watch?v=, Drive ?id=).
      *
      * @param string|null $html
      * @return string
      */
     public static function text_signature(?string $html): string {
+        global $CFG;
         $html = (string) $html;
+        $sitehost = strtolower((string) parse_url($CFG->wwwroot, PHP_URL_HOST));
         $refs = [];
         if (preg_match_all('/(?:src|href)\s*=\s*["\']([^"\']+)["\']/i', $html, $mm)) {
             foreach ($mm[1] as $url) {
-                $refs[] = basename((string) parse_url(html_entity_decode($url), PHP_URL_PATH));
+                $parts = parse_url(html_entity_decode($url)) ?: [];
+                $host = strtolower($parts['host'] ?? '');
+                if ($host === '' || $host === $sitehost) {
+                    $refs[] = basename((string) ($parts['path'] ?? ''));
+                } else {
+                    parse_str($parts['query'] ?? '', $query);
+                    ksort($query);
+                    $refs[] = $host . ($parts['path'] ?? '') . ($query ? '?' . http_build_query($query) : '');
+                }
             }
         }
         sort($refs);

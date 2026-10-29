@@ -314,4 +314,28 @@ final class matcher_test extends \advanced_testcase {
         $this->assertSame([], $r['pairs']);
         $this->assertSame('duplicado_no_destino', $r['ambiguities'][0]['reason']);
     }
+
+    /**
+     * External links keep their query (it identifies the video); links into this site keep only the file name.
+     */
+    public function test_external_links_keep_their_query(): void {
+        global $CFG;
+        $this->resetAfterTest();
+        [$a, $b] = $this->builders();
+        $video = fn($id) => ['texts' => ['content' => "<p>Aula</p><a href=\"https://www.youtube.com/watch?v=$id\">vídeo</a>"]];
+        $a->add('page', 'Aula 1', 1, $video('AAA'));
+        $a->add('page', 'Aula 1', 1, $video('LIBRAS'));
+        $b->add('page', 'Aula 1', 1, $video('LIBRAS'));
+        $b->add('page', 'Aula 1', 1, $video('AAA'));
+        $r = matcher::match($a->get(), $b->get());
+        $this->assertSame([100 => 301, 101 => 300], array_map(fn($p) => $p['target'], $r['pairs']));
+        $this->assertNotSame(
+            matcher::text_signature('<a href="https://youtu.be.example/watch?v=1">x</a>'),
+            matcher::text_signature('<a href="https://youtu.be.example/watch?v=2">x</a>')
+        );
+        $this->assertSame(
+            matcher::text_signature('<a href="' . $CFG->wwwroot . '/mod/page/view.php?id=1">x</a>'),
+            matcher::text_signature('<a href="' . $CFG->wwwroot . '/mod/page/view.php?id=2">x</a>')
+        );
+    }
 }

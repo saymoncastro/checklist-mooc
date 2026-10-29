@@ -16,6 +16,11 @@
 
 namespace local_mooc_audit;
 
+defined('MOODLE_INTERNAL') || die();
+
+global $CFG;
+require_once($CFG->dirroot . '/local/mooc_audit/tests/helper/course_tables.php');
+
 /**
  * The audit never modifies the course (FR-005): table contents before and after an audit are identical.
  *
@@ -25,52 +30,6 @@ namespace local_mooc_audit;
  * @covers     \local_mooc_audit\engine
  */
 final class readonly_test extends \advanced_testcase {
-    /**
-     * Hash of every record of the tables that describe the course.
-     *
-     * @param int $courseid
-     * @return string[] table => hash
-     */
-    private function hashes(int $courseid): array {
-        global $DB;
-        $context = \context_course::instance($courseid);
-        $cmcontexts = $DB->get_fieldset_select(
-            'context',
-            'id',
-            'contextlevel = ? AND ' . $DB->sql_like('path', '?'),
-            [CONTEXT_MODULE, $context->path . '/%']
-        );
-        $contexts = array_merge([$context->id], $cmcontexts);
-        [$insql, $inparams] = $DB->get_in_or_equal($contexts);
-        $queries = [
-            'course' => ['id = ?', [$courseid]],
-            'course_sections' => ['course = ?', [$courseid]],
-            'course_modules' => ['course = ?', [$courseid]],
-            'course_format_options' => ['courseid = ?', [$courseid]],
-            'grade_items' => ['courseid = ?', [$courseid]],
-            'grade_categories' => ['courseid = ?', [$courseid]],
-            'enrol' => ['courseid = ?', [$courseid]],
-            'block_instances' => ["parentcontextid $insql", $inparams],
-            'files' => ["contextid $insql", $inparams],
-            'quiz' => ['course = ?', [$courseid]],
-            'feedback' => ['course = ?', [$courseid]],
-            'page' => ['course = ?', [$courseid]],
-            'forum' => ['course = ?', [$courseid]],
-            'resource' => ['course = ?', [$courseid]],
-            'course_completion_criteria' => ['course = ?', [$courseid]],
-            'context' => ["id $insql", $inparams],
-        ];
-        if ($DB->get_manager()->table_exists('glossary')) {
-            $queries['glossary'] = ['course = ?', [$courseid]];
-        }
-        $out = [];
-        foreach ($queries as $table => [$where, $params]) {
-            $records = $DB->get_records_select($table, $where, $params, 'id');
-            $out[$table] = md5(json_encode($records));
-        }
-        return $out;
-    }
-
     /**
      * Course B (every rule firing) audited twice, with and without a student viewer: nothing changes, including
      * course.timemodified and cacherev.
@@ -87,7 +46,7 @@ final class readonly_test extends \advanced_testcase {
         foreach (get_fast_modinfo($b)->get_cms() as $cm) {
             \context_module::instance($cm->id);
         }
-        $before = $this->hashes($b->id);
+        $before = tests\course_tables::hashes($b->id);
         $course = $DB->get_record('course', ['id' => $b->id]);
 
         $this->waitForSecond();
@@ -95,9 +54,9 @@ final class readonly_test extends \advanced_testcase {
         engine::audit($b->id, ['reoffer_year' => 2027], $student->id, true);
         engine::render_text(engine::audit($b->id));
 
-        $after = $this->hashes($b->id);
+        $after = tests\course_tables::hashes($b->id);
         $this->assertSame($before, $after);
-        $this->assertCount(17, $before);
+        $this->assertGreaterThanOrEqual(18, count($before));
         $this->assertSame($course->timemodified, $DB->get_field('course', 'timemodified', ['id' => $b->id]));
         $this->assertSame($course->cacherev, $DB->get_field('course', 'cacherev', ['id' => $b->id]));
     }
@@ -118,7 +77,7 @@ final class readonly_test extends \advanced_testcase {
         foreach (get_fast_modinfo($b)->get_cms() as $cm) {
             \context_module::instance($cm->id);
         }
-        $before = $this->hashes($b->id);
+        $before = tests\course_tables::hashes($b->id);
         $cacherev = $DB->get_field('course', 'cacherev', ['id' => $b->id]);
         $events = $DB->count_records('event');
 
@@ -142,7 +101,7 @@ final class readonly_test extends \advanced_testcase {
         $sink->close();
 
         $this->assertGreaterThanOrEqual(6, $planned);
-        $this->assertSame($before, $this->hashes($b->id));
+        $this->assertSame($before, tests\course_tables::hashes($b->id));
         $this->assertSame($cacherev, $DB->get_field('course', 'cacherev', ['id' => $b->id]));
         $this->assertSame($events, $DB->count_records('event'));
         $this->assertSame(0, $DB->count_records('local_mooc_audit_fix'));

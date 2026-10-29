@@ -33,7 +33,7 @@ Nenhuma tabela nova. Todas as entidades existem só em memória durante a requis
 ## PolicyContext
 
 `version` (da política vigente), `target_reoffer_year`, `source_reoffer_year` (ano da data de início da origem ou
-null), `source_basis` (`startdate` | `sem_contexto`), `cycle_rules` (lista de ids), `note` (frase que declara que a
+null), `source_basis` (`startdate` | `sem_contexto`), `cycle_rules` (ids das regras com metadado `OFFER_CYCLE`), `note` (frase que declara que a
 origem é avaliada com a política vigente no ano da própria origem).
 
 ## Match
@@ -100,7 +100,7 @@ Regras de classificação (determinísticas, nesta ordem):
 
 `source_modules`, `target_modules`, `preserved`, `modified`, `modified_relevant`, `missing_in_target`,
 `extra_in_target`, `ambiguous_groups`, `ambiguous_source_modules`, `duplicates_in_target`, `matches_by_confidence`,
-`course_diffs_relevant`, `audit_counts` (por classe), `verdict`:
+`course_diffs_relevant`, `audit_counts` (por classe), `possibly_inverted` (origem começa depois do destino), `verdict`:
 - `REVISAR` se houver ausente, diferença relevante, item novo/persistente `NAO_CONFORME` ou qualquer pendência da oferta;
 - `CONFERIR` se só houver ambiguidades, alertas (`ATENCAO`) ou diferenças informativas;
 - `SEM_DIFERENCAS_RELEVANTES` caso contrário.

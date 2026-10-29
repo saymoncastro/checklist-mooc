@@ -140,7 +140,7 @@ final class comparator_test extends \advanced_testcase {
         foreach (['X-DEP-04', 'CL-12', 'X-CONT-01', 'CL-13', 'X-INT-02'] as $rule) {
             $this->assertContains($rule, $persistent);
         }
-        $this->assertSame([], array_intersect($persistent, comparator::CYCLE_RULES));
+        $this->assertSame([], array_intersect($persistent, comparator::cycle_rules()));
         $this->assertSame([], $r['missing_in_target']);
         $news = array_filter($r['ambiguities'], fn($x) => $x['reason'] === 'duplicado_no_destino');
         if ($news) {
@@ -273,12 +273,12 @@ final class comparator_test extends \advanced_testcase {
         foreach (['CL-06', 'CL-07'] as $rule) {
             $this->assertContains($rule, $pending);
         }
-        $this->assertSame([], array_intersect($this->items($r, 'persistente'), comparator::CYCLE_RULES));
+        $this->assertSame([], array_intersect($this->items($r, 'persistente'), comparator::cycle_rules()));
         $this->assertSame('REVISAR', $r['summary']['verdict']);
         $this->assertStringContainsString('2026', $r['policy']['note']);
 
         // The source audited in its own year is conformant on the cycle rules: no item comes from it.
-        $this->assertSame([], array_filter($r['audit']['items'], fn($i) => in_array($i['rule'], comparator::CYCLE_RULES, true)
+        $this->assertSame([], array_filter($r['audit']['items'], fn($i) => in_array($i['rule'], comparator::cycle_rules(), true)
             && $i['classification'] !== 'pendencia_oferta'));
     }
 

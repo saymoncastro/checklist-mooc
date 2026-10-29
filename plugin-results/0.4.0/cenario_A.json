@@ -2,14 +2,14 @@
     "contract": "comparison",
     "contract_version": "1.0",
     "engine": "local_mooc_audit 0.4.0",
-    "executed_at": "2026-10-29T15:41:40+00:00",
+    "executed_at": "2026-10-29T16:45:21+00:00",
     "timing": {
-        "snapshot_source_s": 0.22,
-        "snapshot_target_s": 0.009,
-        "rules_s": 0.023,
-        "compare_s": 0.018,
-        "total_s": 0.27,
-        "memory_peak_mb": 48.5
+        "snapshot_source_s": 0.075,
+        "snapshot_target_s": 0.015,
+        "rules_s": 0.025,
+        "compare_s": 0.024,
+        "total_s": 0.138,
+        "memory_peak_mb": 30
     },
     "source": {
         "id": 6,
@@ -90,6 +90,7 @@
             "resolvido_no_destino": 0,
             "nao_aplicavel_no_destino": 0
         },
+        "possibly_inverted": false,
         "verdict": "REVISAR"
     },
     "matches": [

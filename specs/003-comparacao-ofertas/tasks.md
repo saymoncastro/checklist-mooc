@@ -46,7 +46,7 @@ contrato `comparison` 1.0, CLI e página.
 
 **Independent Test**: B 2026 → importação 2027: problemas estruturais persistentes; CL-06/07 sem "persistente".
 
-- [X] T019 [P] [US2] Testes em `tests/local/comparison/audit_relation_test.php`: cada classe do data-model (persistente, novo, novo em adicional, indeterminado, pendência de oferta, não verificável, resolvido, ausente, não aplicável), chave de local sem ids, regra do ciclo nunca persistente, constante `CYCLE_RULES`
+- [X] T019 [P] [US2] Testes em `tests/local/comparison/audit_relation_test.php`: cada classe do data-model (persistente, novo, novo em adicional, indeterminado, pendência de oferta, não verificável, resolvido, ausente, não aplicável), chave de local sem ids, regra do ciclo nunca persistente, metadado `OFFER_CYCLE`
 - [X] T020 [US2] Implementar `classes/local/comparison/audit_relation.php` (chave R7, ordem de classificação do data-model)
 - [X] T021 [US2] Em `comparator::run()`: política do destino = `policy::load($override)`; da origem = mesma com `reoffer_year` do ano de início da origem (`userdate(..., '%Y', 99, false)`), `sem_contexto` sem data; links pelo `locator`; bloco `policy` do contrato
 - [X] T022 [US2] Seção "Pendências da sala de destino" no template e na saída de texto

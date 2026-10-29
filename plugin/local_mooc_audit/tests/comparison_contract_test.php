@@ -58,6 +58,7 @@ final class comparison_contract_test extends \advanced_testcase {
         $this->assertSame([], $this->validator()->errors($report));
         $this->assertSame(['comparison', '1.0'], [$report['contract'], $report['contract_version']]);
         $this->assertCount(1, $report['missing_in_target']);
+        $this->assertFalse($report['summary']['possibly_inverted']);
 
         $report['contract_version'] = '1.1';
         $report['summary']['verdict'] = 'OK';

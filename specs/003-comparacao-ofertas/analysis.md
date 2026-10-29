@@ -32,7 +32,7 @@ testes da branch · **Constituição:** v1.0.0
 | FR-023–024 contrato | T004, T017 | `comparison_contract_test`, validação em todos os cenários, `contract_test` |
 | FR-025–027 segurança | T029 | `compare_readonly_test`, `comparison_output_test` (escape, sem correção) |
 | SC-005 desempenho | T034 | `plugin-results/0.4.0/medicoes.md` |
-| SC-007 regressão | T036 | PHPUnit 166 (118 anteriores + 48 novos), Behat 9 cenários |
+| SC-007 regressão | T036 | PHPUnit 168 (118 anteriores + 50 novos), Behat 10 cenários |
 
 Requisitos sem tarefa: nenhum. Tarefas sem requisito: T001–T003 (infraestrutura), T032–T035 (evidências e entrega).
 

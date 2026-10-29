@@ -16,6 +16,11 @@
 
 namespace local_mooc_audit;
 
+defined('MOODLE_INTERNAL') || die();
+
+global $CFG;
+require_once($CFG->dirroot . '/local/mooc_audit/tests/helper/course_tables.php');
+
 /**
  * The comparison never modifies either course (specs/003 FR-025, constitution III) and contains no personal data
  * (FR-026): same tables, timemodified and cacherev of both courses before and after comparing; no user id, name,
@@ -27,41 +32,6 @@ namespace local_mooc_audit;
  * @covers     \local_mooc_audit\comparator
  */
 final class compare_readonly_test extends \advanced_testcase {
-    /**
-     * Hash of every record of the tables that describe a course (same tables as readonly_test).
-     *
-     * @param int $courseid
-     * @return string[]
-     */
-    private function hashes(int $courseid): array {
-        global $DB;
-        $context = \context_course::instance($courseid);
-        $contexts = array_merge([$context->id], $DB->get_fieldset_select(
-            'context',
-            'id',
-            'contextlevel = ? AND ' . $DB->sql_like('path', '?'),
-            [CONTEXT_MODULE, $context->path . '/%']
-        ));
-        [$insql, $inparams] = $DB->get_in_or_equal($contexts);
-        $queries = [
-            'course' => ['id = ?', [$courseid]], 'course_sections' => ['course = ?', [$courseid]],
-            'course_modules' => ['course = ?', [$courseid]], 'course_format_options' => ['courseid = ?', [$courseid]],
-            'grade_items' => ['courseid = ?', [$courseid]], 'grade_categories' => ['courseid = ?', [$courseid]],
-            'grade_grades' => ["itemid IN (SELECT id FROM {grade_items} WHERE courseid = ?)", [$courseid]],
-            'enrol' => ['courseid = ?', [$courseid]], 'block_instances' => ["parentcontextid $insql", $inparams],
-            'files' => ["contextid $insql", $inparams], 'quiz' => ['course = ?', [$courseid]],
-            'quiz_attempts' => ['quiz IN (SELECT id FROM {quiz} WHERE course = ?)', [$courseid]],
-            'feedback' => ['course = ?', [$courseid]], 'page' => ['course = ?', [$courseid]],
-            'forum' => ['course = ?', [$courseid]], 'resource' => ['course = ?', [$courseid]],
-            'course_completion_criteria' => ['course = ?', [$courseid]], 'context' => ["id $insql", $inparams],
-        ];
-        $out = [];
-        foreach ($queries as $table => [$where, $params]) {
-            $out[$table] = md5(json_encode($DB->get_records_select($table, $where, $params, 'id')));
-        }
-        return $out;
-    }
-
     /**
      * Course B and its import, with an enrolled student who has an attempt and a grade, compared through run(), the
      * text output, the JSON and the report renderer: nothing changes and no personal data leaks.
@@ -90,7 +60,7 @@ final class compare_readonly_test extends \advanced_testcase {
                 \context_module::instance($cm->id);
             }
         }
-        $before = [$this->hashes($b->id), $this->hashes($t->id)];
+        $before = [tests\course_tables::hashes($b->id), tests\course_tables::hashes($t->id)];
         $courses = $DB->get_records_list('course', 'id', [$b->id, $t->id], '', 'id, timemodified, cacherev');
 
         $this->waitForSecond();
@@ -105,7 +75,7 @@ final class compare_readonly_test extends \advanced_testcase {
         $events = $sink->get_events();
         $sink->close();
 
-        $this->assertSame($before, [$this->hashes($b->id), $this->hashes($t->id)]);
+        $this->assertSame($before, [tests\course_tables::hashes($b->id), tests\course_tables::hashes($t->id)]);
         $this->assertEquals($courses, $DB->get_records_list('course', 'id', [$b->id, $t->id], '', 'id, timemodified, cacherev'));
         $this->assertSame([], $events);
         foreach ([$text, $json, $html] as $out) {

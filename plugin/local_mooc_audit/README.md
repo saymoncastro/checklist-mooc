@@ -26,7 +26,7 @@ preservadas, ausentes, adicionais, modificadas e correspondências ambíguas (ca
 por `cmid`; correspondência manual sem persistência); diferenças classificadas em esperadas, relevantes e informativas;
 relação entre as duas auditorias (persistente, novo no destino, pendência da nova oferta, resolvido/ausente no destino),
 com a origem avaliada no ano da sua própria oferta. Restrita a gerentes, com a capacidade nas duas salas; somente
-leitura. 166 testes PHPUnit, 9 cenários Behat, PHPCS limpo. Evidências e medições em `plugin-results/0.4.0/`;
+leitura. 168 testes PHPUnit, 10 cenários Behat, PHPCS limpo. Evidências e medições em `plugin-results/0.4.0/`;
 especificação em `specs/003-comparacao-ofertas/`.
 
 ## Instalação
@@ -131,7 +131,7 @@ mecanismo nativo `core_course_external::import_course`).
 | `tests/policy_test.php` | Padrões, override do administrador e por arquivo, tipos errados, ano de reoferta automático, validação do setting, nome canônico alterado aplicado a CL-09 |
 | `tests/helper/rule_testcase.php` | Base dos testes por regra: curso na categoria da oferta com datas da reoferta, construtores de página/questionário/pesquisa/certificado e árvores de restrição |
 | `tests/local/rule/*_test.php` | Um arquivo por regra (29): cenários conforme, não conforme e, quando a regra os produz, atenção/não se aplica/não verificável, construídos por API (ex.: X-INT-03 com condição de plugin inexistente; X-CERT-01 com visão de estudante) |
-| `tests/readonly_test.php` | Hashes de 17 tabelas do curso B antes e depois de três auditorias (admin, estudante, texto) idênticos; `timemodified`/`cacherev` inalterados; idem ao abrir todas as propostas e o relatório com ações (sem evento, sem linha na trilha) |
+| `tests/readonly_test.php` | Hashes das tabelas do curso B (helper `tests/helper/course_tables.php`) antes e depois de três auditorias (admin, estudante, texto) idênticos; `timemodified`/`cacherev` inalterados; idem ao abrir todas as propostas e o relatório com ações (sem evento, sem linha na trilha) |
 | `tests/locator_test.php` | URL esperada por locus; identificadores ausentes → sem link |
 | `tests/access_test.php` | Capacidade de auditoria por arquétipo (estudante/professor não editor não; professor editor/gerente sim), definição sem risco declarado, nó de navegação só com a capacidade; capacidades de correção (gerente e professor editor sim; professor não editor e estudante não; `applycorrection` write com `RISK_CONFIG`) |
 | `tests/output_test.php` | Dados do template e renderização da página (cursos A/B) |
@@ -183,7 +183,7 @@ mudam).
 ## Verificação
 
 ```bash
-vendor/bin/phpunit --testsuite local_mooc_audit_testsuite      # 166 testes
+vendor/bin/phpunit --testsuite local_mooc_audit_testsuite      # 168 testes
 php admin/tool/behat/cli/run.php --tags=@local_mooc_audit       # exige Selenium; ver moodle-env/README.md
 vendor/bin/phpcs --standard=moodle local/mooc_audit             # moodlehq/moodle-cs
 ```

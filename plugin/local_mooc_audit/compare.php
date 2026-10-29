@@ -39,11 +39,11 @@ require_login(null, false);
 $system = context_system::instance();
 $params = array_filter(['source' => $sourceid, 'target' => $targetid]);
 $url = new moodle_url('/local/mooc_audit/compare.php', $params);
-if (has_capability('local/mooc_audit:compare', $system)) {
+$access = \local_mooc_audit\comparator::page_access();
+if ($access === 'site') {
     admin_externalpage_setup('local_mooc_audit_compare', '', null, $url);
 } else {
-    // A category manager may compare the courses of their categories: the page needs the capability in some course.
-    if (!get_user_capability_course('local/mooc_audit:compare', null, true, '', '', 1)) {
+    if ($access === null) {
         throw new required_capability_exception($system, 'local/mooc_audit:compare', 'nopermissions', '');
     }
     $PAGE->set_context($system);

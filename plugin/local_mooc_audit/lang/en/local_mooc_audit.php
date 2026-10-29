@@ -84,6 +84,7 @@ $string['cmp_code_grade_item_changed'] = 'Grade item changed ({$a->field}: {$a->
 $string['cmp_code_instance_missing'] = 'The activity has no data of its own on one side (missing instance).';
 $string['cmp_code_moved'] = 'Activity moved from section {$a->source} to {$a->target}.';
 $string['cmp_code_offer_setting'] = 'Offer setting changed ({$a->field}: {$a->source} → {$a->target}): expected in a new offer; conformity is checked against the new offer policy.';
+$string['cmp_code_reference_added'] = 'The source did not use this kind of source; in the target the activity now uses "{$a->ref}": check that it is the intended source.';
 $string['cmp_code_reference_unmapped'] = 'The activity used "{$a->ref}" as its source and in the target it does not point to the matching activity.';
 $string['cmp_code_renamed'] = 'Name changed ("{$a->source}" → "{$a->target}").';
 $string['cmp_code_section_renamed'] = 'Section name changed.';

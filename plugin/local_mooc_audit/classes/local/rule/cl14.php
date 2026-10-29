@@ -44,6 +44,8 @@ class cl14 extends base {
     const LOCUS = self::LOCUS_MODULE_EDIT;
     /** @var string */
     const SOURCE = 'Checklist item 14';
+    /** @var bool Depends on the dates/category/enrolment of the offer (specs/003). */
+    const OFFER_CYCLE = true;
 
     /**
      * Evaluate.

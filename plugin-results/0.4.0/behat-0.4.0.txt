@@ -6,10 +6,11 @@ Run optional tests:
 - SCSS deprecations: No
 - Icon deprecations: Yes
 Server OS "Linux", Browser: "chrome"
-Started at 29-10-2026, 23:44
+Started at 30-10-2026, 00:44
 ...................................................................... 70
-.........................................................
+...................................................................... 140
+....
 
-9 scenarios (9 passed)
-127 steps (127 passed)
-0m50.34s (84.23Mb)
+10 scenarios (10 passed)
+144 steps (144 passed)
+1m1.00s (84.17Mb)

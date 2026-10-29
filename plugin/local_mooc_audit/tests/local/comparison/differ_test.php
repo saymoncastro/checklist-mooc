@@ -326,6 +326,7 @@ final class differ_test extends \advanced_testcase {
         $a->patch('course', ['startdate' => 1830308400]);
         $r = comparator::compare($a->get(), $b->get());
         $this->assertContains(get_string('cmp_inverted', 'local_mooc_audit'), $r['warnings']);
+        $this->assertTrue($r['possibly_inverted']);
         $this->assertSame(10, $r['source']['id']);
         $r = comparator::compare($b->get(), $a->get());
         $this->assertNotContains(get_string('cmp_inverted', 'local_mooc_audit'), $r['warnings']);
@@ -358,5 +359,26 @@ final class differ_test extends \advanced_testcase {
             'self.enrolstartdate' => 'esperada',
             'guest.status' => 'relevante',
         ], $kinds);
+    }
+
+    /**
+     * A source that the original did not use (reference added in the target) is named by the target activity; a
+     * category with the same name but another id is a change of category.
+     */
+    public function test_reference_added_and_category_by_id(): void {
+        $this->resetAfterTest();
+        [$a, $b] = $this->builders();
+        $gb = $b->add('glossary', 'Glossário novo', 3, ['extra' => ['entries' => 2]]);
+        $j = $a->add('game', 'Forca', 3, ['extra' => ['sourcemodule' => 'question', 'glossaryid' => 0]]);
+        $b->add('game', 'Forca', 3, ['extra' => ['sourcemodule' => 'question',
+            'glossaryid' => $b->get()['modules'][$gb]['instanceid']]]);
+        $b->patch('course', ['category' => ['id' => 99, 'name' => 'Inscrições Abertas']]);
+        $r = comparator::compare($a->get(), $b->get());
+        $game = $this->entry($r, $j);
+        $this->assertSame(['reference_added'], $this->codes($game['diffs']));
+        $this->assertStringContainsString('Glossário novo', $game['diffs'][0]['explanation']);
+        $cat = array_values(array_filter($r['course_diffs'], fn($d) => $d['field'] === 'category'));
+        $this->assertSame(['Inscrições Abertas (id 1)', 'Inscrições Abertas (id 99)', 'esperada'], [$cat[0]['source'],
+            $cat[0]['target'], $cat[0]['kind']]);
     }
 }

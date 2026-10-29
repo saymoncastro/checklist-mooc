@@ -63,7 +63,7 @@ final class audit_relation_test extends \advanced_testcase {
      * @return array "rule|cmid_source|cmid_target" => class
      */
     private function classify(array $src, array $dst): array {
-        [$items] = audit_relation::relate($src, $dst, self::MATCH, comparator::CYCLE_RULES);
+        [$items] = audit_relation::relate($src, $dst, self::MATCH, comparator::cycle_rules());
         $out = [];
         foreach ($items as $i) {
             $out[$i['rule'] . '|' . ($i['cmid_source'] ?? '-') . '|' . ($i['cmid_target'] ?? '-')] = $i['classification'];
@@ -137,7 +137,7 @@ final class audit_relation_test extends \advanced_testcase {
             'CL-12|-|-' => 'nao_aplicavel_no_destino',
         ], array_intersect_key($this->classify($src, $dst), array_flip(['X-CONT-01|102|-', 'CL-13|100|300', 'CL-19|101|301',
             'CL-12|-|-', 'CL-18|104|-'])));
-        [$items, $counts] = audit_relation::relate($src, $dst, self::MATCH, comparator::CYCLE_RULES);
+        [$items, $counts] = audit_relation::relate($src, $dst, self::MATCH, comparator::cycle_rules());
         $this->assertSame(2, $counts['resolvido_no_destino']);
         $this->assertSame(5, count($items));
     }
@@ -181,7 +181,7 @@ final class audit_relation_test extends \advanced_testcase {
     public function test_grouping_keeps_worst_state_and_evidence(): void {
         $src = [$this->r('CL-13', status::CONFORME, 100)];
         $dst = [$this->r('CL-13', status::ATENCAO, 300), $this->r('CL-13', status::NAO_CONFORME, 300)];
-        [$items] = audit_relation::relate($src, $dst, self::MATCH, comparator::CYCLE_RULES);
+        [$items] = audit_relation::relate($src, $dst, self::MATCH, comparator::cycle_rules());
         $this->assertCount(1, $items);
         $this->assertSame(status::NAO_CONFORME, $items[0]['status_target']);
         $this->assertSame('CL-13 ATENCAO | CL-13 NAO_CONFORME', $items[0]['evidence_target']);
@@ -194,12 +194,15 @@ final class audit_relation_test extends \advanced_testcase {
     public function test_cycle_rules_are_catalogue_rules(): void {
         $this->resetAfterTest();
         $ids = array_keys(catalog::instances());
-        foreach (comparator::CYCLE_RULES as $id) {
+        foreach (comparator::cycle_rules() as $id) {
             $this->assertContains($id, $ids);
         }
-        $this->assertSame(['CL-05', 'CL-06', 'CL-07', 'CL-08', 'CL-14'], comparator::CYCLE_RULES);
+        $this->assertSame(['CL-05', 'CL-06', 'CL-07', 'CL-08', 'CL-14'], comparator::cycle_rules());
+        foreach (catalog::instances() as $id => $rule) {
+            $this->assertSame(in_array($id, comparator::cycle_rules(), true), $rule->meta()['offer_cycle'], $id);
+        }
         $offer = array_keys(array_filter(catalog::instances(), fn($r) => $r->meta()['category'] === 'offer_enrol'));
-        $this->assertSame([], array_diff($offer, comparator::CYCLE_RULES), 'every offer/enrolment rule is a cycle rule');
+        $this->assertSame([], array_diff($offer, comparator::cycle_rules()), 'every offer/enrolment rule is a cycle rule');
     }
 
     /**
@@ -215,7 +218,7 @@ final class audit_relation_test extends \advanced_testcase {
             $f(status::CONFORME, 'declaração "Declaração licença para capacitação": presente')];
         $dst = [$f(status::CONFORME, 'pesquisa "Licença para capacitação": presente'),
             $f(status::NAO_CONFORME, 'declaração "Declaração licença para capacitação": ausente')];
-        [$items] = audit_relation::relate($src, $dst, self::MATCH, comparator::CYCLE_RULES);
+        [$items] = audit_relation::relate($src, $dst, self::MATCH, comparator::cycle_rules());
         $this->assertEqualsCanonicalizing(['novo_no_destino', 'resolvido_no_destino'], array_column($items, 'classification'));
         $this->assertSame('bloco "acessibilidade"', audit_relation::subject('bloco "Acessibilidade": ausente'));
         $this->assertSame('blocos', audit_relation::subject('blocos=["html"] (fonte: block_manager)'));

@@ -41,8 +41,36 @@ class comparator {
     const CONTRACT = 'comparison';
     /** @var string Version of the comparison contract (bumped only on incompatible changes). */
     const CONTRACT_VERSION = '1.0';
-    /** @var string[] Rules of the offer cycle: their problems in the target are pending items of the new offer. */
-    const CYCLE_RULES = ['CL-05', 'CL-06', 'CL-07', 'CL-08', 'CL-14'];
+
+    /**
+     * Ids of the offer-cycle rules (rule metadata OFFER_CYCLE): their problems in the target are pending items of the
+     * new offer, whatever the source state was.
+     *
+     * @return string[]
+     */
+    public static function cycle_rules(): array {
+        $out = [];
+        foreach (local\catalog::RULES as $class) {
+            if ($class::OFFER_CYCLE) {
+                $out[] = $class::ID;
+            }
+        }
+        return $out;
+    }
+
+    /**
+     * Who may open the comparison page: 'site' (capability at system level: page in the site administration),
+     * 'courses' (capability in some course only, e.g. a category manager: plain admin page) or null (refused).
+     *
+     * @param int|null $userid default: current user
+     * @return string|null
+     */
+    public static function page_access(?int $userid = null): ?string {
+        if (has_capability('local/mooc_audit:compare', \context_system::instance(), $userid)) {
+            return 'site';
+        }
+        return get_user_capability_course('local/mooc_audit:compare', $userid, true, '', '', 1) ? 'courses' : null;
+    }
 
     /**
      * Require the comparison capability in BOTH course contexts (allowed on one room only is not enough). A missing
@@ -100,11 +128,11 @@ class comparator {
         [$items, $counts] = audit_relation::relate(
             $syear === null ? array_values(array_filter(
                 $sresults,
-                fn($r) => !in_array($r['rule'], self::CYCLE_RULES, true)
+                fn($r) => !in_array($r['rule'], self::cycle_rules(), true)
             )) : $sresults,
             $tresults,
             $report['match'],
-            self::CYCLE_RULES
+            self::cycle_rules()
         );
         unset($report['match']);
         $t4 = microtime(true);
@@ -116,7 +144,7 @@ class comparator {
             'target_reoffer_year' => (int) $tpolicy['reoffer_year'],
             'source_reoffer_year' => $syear,
             'source_basis' => $syear === null ? 'sem_contexto' : 'startdate',
-            'cycle_rules' => self::CYCLE_RULES,
+            'cycle_rules' => self::cycle_rules(),
             'note' => get_string(
                 $syear === null ? 'cmp_policy_note_nocontext' : 'cmp_policy_note',
                 'local_mooc_audit',
@@ -135,7 +163,7 @@ class comparator {
             }
         }
         $report['summary'] = self::summary($report);
-        unset($report['expected_ids']);
+        unset($report['expected_ids'], $report['possibly_inverted']);
         $report['timing'] = [
             'snapshot_source_s' => round($t1 - $t0, 3),
             'snapshot_target_s' => round($t2 - $t1, 3),
@@ -235,7 +263,8 @@ class comparator {
             }
         }
         [$sstart, $tstart] = [$src['course']['startdate'], $dst['course']['startdate']];
-        if ($sstart && $tstart && $sstart > $tstart) {
+        $inverted = $sstart && $tstart && $sstart > $tstart;
+        if ($inverted) {
             $warnings[] = get_string('cmp_inverted', 'local_mooc_audit');
         }
 
@@ -258,6 +287,7 @@ class comparator {
             'manual_pairs' => $match['manual'],
             'warnings' => $warnings,
             'expected_ids' => $ids,
+            'possibly_inverted' => $inverted,
             'match' => $match,
         ];
     }
@@ -339,6 +369,7 @@ class comparator {
             'course_diffs_relevant' => $coursediffs,
             'expected_identifier_changes' => ($r['expected_ids'] ?? 0) + array_sum(array_column($r['matches'], 'expected_count')),
             'audit_counts' => (object) $r['audit']['counts'],
+            'possibly_inverted' => (bool) ($r['possibly_inverted'] ?? false),
             'verdict' => $verdict,
         ];
     }
@@ -366,7 +397,7 @@ class comparator {
      * @return string
      */
     public static function to_json(array $report): string {
-        unset($report['expected_ids']);
+        unset($report['expected_ids'], $report['possibly_inverted']);
         return json_encode($report, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     }
 

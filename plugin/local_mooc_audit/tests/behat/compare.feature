@@ -9,13 +9,18 @@ Feature: Comparison between two offers of a MOOC
       | username | firstname | lastname | email                |
       | manager1 | Gestora   | Um       | manager1@example.com |
       | teacher1 | Docente   | Um       | teacher1@example.com |
+      | catman1  | Gestor    | Categoria | catman1@example.com |
+    And the following "categories" exist:
+      | name      | category | idnumber |
+      | Reofertas | 0        | REOF     |
     And the following "role assigns" exist:
       | user     | role    | contextlevel | reference |
       | manager1 | manager | System       |           |
+      | catman1  | manager | Category     | REOF      |
     And the following "courses" exist:
-      | fullname            | shortname | enablecompletion |
-      | Acessibilidade 2026 | AT26      | 1                |
-      | Acessibilidade 2027 | AT27      | 1                |
+      | fullname            | shortname | enablecompletion | category |
+      | Acessibilidade 2026 | AT26      | 1                | REOF     |
+      | Acessibilidade 2027 | AT27      | 1                | REOF     |
     And the following "course enrolments" exist:
       | user     | course | role           |
       | teacher1 | AT26   | editingteacher |
@@ -66,3 +71,14 @@ Feature: Comparison between two offers of a MOOC
     When I navigate to "Technical audit" in current page administration
     Then I should see "Technical audit: Acessibilidade 2027"
     And I should not see "Compare with the previous offer"
+
+  @javascript
+  Scenario: A category manager compares two offers of their category from the comparison page
+    Given I log in as "catman1"
+    And I visit "/local/mooc_audit/compare.php"
+    When I set the field "Source course (previous offer)" to "Acessibilidade 2026"
+    And I set the field "Target course (new offer)" to "Acessibilidade 2027"
+    And I set the field "I confirm that the source is the previous offer and the target is the new offer" to "1"
+    And I press "Compare offers"
+    Then I should see "Review the new course"
+    And I should see "Acessibilidade 2027" in the ".local_mooc_audit-sides" "css_element"

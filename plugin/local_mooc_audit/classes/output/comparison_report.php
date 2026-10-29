@@ -88,7 +88,7 @@ class comparison_report implements renderable, templatable {
         $d->rerunurl = $rerun->out(false);
         $d->inverturl = (new moodle_url('/local/mooc_audit/compare.php', ['source' => $r['target']['id'],
             'target' => $r['source']['id'], 'confirm' => 1]))->out(false);
-        $d->inverted = (bool) array_filter($r['warnings'], fn($w) => $w === $str('cmp_inverted'));
+        $d->inverted = !empty($r['summary']['possibly_inverted']);
 
         $s = $r['summary'];
         $d->verdict = (object) ['code' => $s['verdict'], 'label' => $str('cmp_verdict_' . strtolower($s['verdict'])),

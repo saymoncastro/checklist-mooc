@@ -84,6 +84,7 @@ $string['cmp_code_grade_item_changed'] = 'Item de nota alterado ({$a->field}: {$
 $string['cmp_code_instance_missing'] = 'A atividade não tem dados próprios em um dos lados (instância ausente).';
 $string['cmp_code_moved'] = 'Atividade movida da seção {$a->source} para a {$a->target}.';
 $string['cmp_code_offer_setting'] = 'Configuração da oferta alterada ({$a->field}: {$a->source} → {$a->target}): esperado em uma nova oferta; a conformidade é verificada pela política da nova oferta.';
+$string['cmp_code_reference_added'] = 'A origem não usava esse tipo de fonte; no destino a atividade passou a usar "{$a->ref}": confira se é a fonte pretendida.';
 $string['cmp_code_reference_unmapped'] = 'A atividade usava "{$a->ref}" como fonte e no destino não aponta para a atividade correspondente.';
 $string['cmp_code_renamed'] = 'Nome alterado ("{$a->source}" → "{$a->target}").';
 $string['cmp_code_section_renamed'] = 'Nome da seção alterado.';

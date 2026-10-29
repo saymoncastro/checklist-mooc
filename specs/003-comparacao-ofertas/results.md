@@ -13,7 +13,7 @@ e #3 já mesclados) · **Ambiente:** site isolado `moocaudit-s3-web` (porta 8094
 | 3 | Contrato JSON `comparison` 1.0 | [contracts/comparison-v1.0.schema.json](contracts/comparison-v1.0.schema.json) (= `plugin/local_mooc_audit/schema/`), [data-model.md](data-model.md) |
 | 4 | Comparador evoluído e testado | `classes/comparator.php`, `classes/local/comparison/{matcher,differ,audit_relation}.php` |
 | 5 | Interface no Moodle | `compare.php` (Administração do site > Cursos > Comparar ofertas; link no relatório de auditoria), [contracts/compare-page.md](contracts/compare-page.md) |
-| 6 | Testes PHPUnit e Behat | 48 testes PHPUnit novos (166 no total), `tests/behat/compare.feature` (3 cenários; 9 no total) |
+| 6 | Testes PHPUnit e Behat | 50 testes PHPUnit novos (168 no total), `tests/behat/compare.feature` (4 cenários; 10 no total) |
 | 7 | Evidências dos cenários experimentais | `plugin-results/0.4.0/cenario_{A..G}.{txt,json}`, `cli/make_scenarios.php` |
 | 8 | Resultados de comparação | §3 abaixo e `plugin-results/0.4.0/medicoes.md` |
 | 9 | Revisão de segurança | §5 |
@@ -98,6 +98,21 @@ dados pessoais. Achados e tratamento (commit "Corrige os achados da revisão da 
 | 7 | Baixa | Curso inexistente respondia diferente de curso sem permissão | `require_access` responde igual nos dois casos. Teste `test_missing_course_same_answer` |
 | 8 | Baixa | Ano da origem dependia do fuso horário de quem abre a página | Ano calculado no fuso do servidor |
 | 9 | Baixa | Só a primeira instância de cada método de inscrição era comparada | Menos instâncias no destino → `enrol_count_changed` (relevante) |
+
+### 5.2 Achados do `/code-review` (nível alto)
+
+Todos corrigidos no commit "Corrige os achados do code review da spec 003":
+
+| # | Categoria | Achado | Tratamento |
+|---|---|---|---|
+| 1 | Correção | A assinatura de texto descartava a query string: vídeos `watch?v=` diferentes ficavam iguais (Libras indistinguível, troca de vídeo invisível) | Links externos mantêm host, caminho e query; links do próprio site continuam só com o nome do arquivo. Teste `test_external_links_keep_their_query` |
+| 2 | Cobertura | Caminho de acesso da página para gerente de categoria sem teste | Lógica em `comparator::page_access()` (testada) e cenário Behat do gerente de categoria |
+| 3 | Correção | Referência nova no destino (origem sem fonte) explicada como "usava \"0\"" | Novo código `reference_added`, que nomeia a fonte do destino |
+| 4 | Simplificação | Inversão detectada comparando o aviso traduzido | `summary.possibly_inverted` (booleano) no contrato; a página o usa |
+| 5 | Altitude | Regras do ciclo de oferta fixadas em lista no comparador | Metadado `OFFER_CYCLE` nas regras (CL-05…08, CL-14), exposto em `meta()['offer_cycle']`; `comparator::cycle_rules()` lê o catálogo |
+| 6 | Eficiência | Impressão de conteúdo recalculada a cada passo | Calculada uma vez por módulo em `matcher::match()` |
+| 7 | Reuso | Hash de tabelas duplicado entre os testes de somente leitura | `tests/helper/course_tables.php` compartilhado (inclui glossário e jogo quando instalados) |
+| 8 | Correção | Categoria comparada só pelo nome | Comparada pelo id; nome e id no relatório |
 
 ## 6. Limitações
 
