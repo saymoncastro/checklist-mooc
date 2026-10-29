@@ -46,6 +46,8 @@ abstract class base implements rule_interface {
     const LOCUS_BLOCKS = 'blocks';
     /** @var string */
     const LOCUS_SECTION = 'section';
+    /** @var string Import from another course (missing institutional component). */
+    const LOCUS_IMPORT = 'import';
     /** @var string */
     const LOCUS_NONE = 'none';
 

@@ -106,6 +106,18 @@ $string['label_time'] = 'tempo';
 $string['label_visible'] = 'Visível';
 $string['none_in_section'] = 'Nenhum.';
 
+// Destinations of the correction links (one per locus).
+$string['locus_module_edit'] = 'Configurações do módulo';
+$string['locus_module_view'] = 'Página do módulo';
+$string['locus_course_settings'] = 'Configurações do curso';
+$string['locus_enrol'] = 'Métodos de inscrição';
+$string['locus_gradebook'] = 'Configuração do livro de notas';
+$string['locus_blocks'] = 'Página do curso (blocos)';
+$string['locus_section'] = 'Página da seção';
+$string['locus_import'] = 'Importar de outro curso';
+$string['locus_none'] = 'Sem destino navegável';
+$string['link_title'] = 'Abrir: {$a}';
+
 // Rule titles and guidance (ids CL-nn / X-AREA-nn, keys rule_<id>_title, rule_<id>_guidance, rule_<id>_g_<name>).
 $string['rule_cl04_guidance'] = 'Acrescentar o botão ao final do sumário (Editar configurações do curso > Descrição).';
 $string['rule_cl04_title'] = 'Sumário contém botões institucionais';

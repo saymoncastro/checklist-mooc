@@ -21,7 +21,7 @@
 
     Context variables required for this template:
     * course - object with id, shortname, fullname
-    * executed_at, reoffer_year, policy_version, engine, total_s, jsonurl, rerunurl
+    * executed_at, reoffer_year, policy_version, engine, total_s, jsonurl, rerunurl, rerunbutton (HTML)
     * inventory - object with startdate, enddate, category, visible, sections, modules, modules_by_type[], grade_items, files, files_missing, enrols, blocks
     * overall - object with code, label, cssclass
     * counts_status[] - objects with label, count, cssclass; counts_severity[] - objects with label, count; rules_total
@@ -33,7 +33,7 @@
     {
         "course": {"id": 8, "shortname": "MOOC_TESTE_A", "fullname": "MOOC teste A"},
         "executed_at": "29 October 2026, 10:00", "reoffer_year": 2027, "policy_version": "2026-10", "engine": "local_mooc_audit 0.2.0",
-        "total_s": 0.4, "jsonurl": "#", "rerunurl": "#",
+        "total_s": 0.4, "jsonurl": "#", "rerunurl": "#", "rerunbutton": "<button>Run again</button>",
         "inventory": {"startdate": "2027-01-01 00:00", "enddate": "2027-12-31 23:59", "category": "Inscrições Abertas", "visible": "Yes",
             "sections": 4, "modules": 12, "modules_by_type": [{"type": "quiz", "count": 2}], "grade_items": 3, "files": 5, "files_missing": 0,
             "enrols": "manual, self", "blocks": "html, completionstatus"},
@@ -61,7 +61,10 @@
             <dt class="col-sm-3">{{#str}} label_engine, local_mooc_audit {{/str}}</dt>
             <dd class="col-sm-9">{{engine}} ({{#str}} label_contract, local_mooc_audit {{/str}} {{contract_version}})</dd>
         </dl>
-        <p class="mb-0"><a href="{{jsonurl}}" class="local_mooc_audit-json">{{#str}} jsonlink, local_mooc_audit {{/str}}</a></p>
+        <div class="d-flex align-items-center local_mooc_audit-actions">
+            {{{rerunbutton}}}
+            <a href="{{jsonurl}}" class="ml-3 local_mooc_audit-json">{{#str}} jsonlink, local_mooc_audit {{/str}}</a>
+        </div>
     </div>
 
     <h4>{{#str}} label_inventory, local_mooc_audit {{/str}}</h4>
@@ -112,14 +115,14 @@
         <h5>{{#str}} section_unverifiable_nv, local_mooc_audit {{/str}}</h5>
         <table class="table table-sm table-striped">
             <thead><tr><th scope="col">{{#str}} label_rule, local_mooc_audit {{/str}}</th><th scope="col">{{#str}} label_local, local_mooc_audit {{/str}}</th><th scope="col">{{#str}} label_reason, local_mooc_audit {{/str}}</th></tr></thead>
-            <tbody>{{#unverifiable.nv}}<tr><td><strong>{{rule}}</strong> {{title}}</td><td>{{local}}</td><td>{{evidencia}}</td></tr>{{/unverifiable.nv}}</tbody>
+            <tbody>{{#unverifiable.nv}}<tr><td><strong>{{rule}}</strong> {{title}}</td><td>{{#haslink}}<a href="{{link}}" title="{{linktitle}}">{{local}}</a>{{/haslink}}{{^haslink}}{{local}}{{/haslink}}</td><td>{{evidencia}}</td></tr>{{/unverifiable.nv}}</tbody>
         </table>
     {{/unverifiable.hasnv}}
     {{#unverifiable.hasna}}
         <h5>{{#str}} section_unverifiable_na, local_mooc_audit {{/str}}</h5>
         <table class="table table-sm table-striped">
             <thead><tr><th scope="col">{{#str}} label_rule, local_mooc_audit {{/str}}</th><th scope="col">{{#str}} label_local, local_mooc_audit {{/str}}</th><th scope="col">{{#str}} label_reason, local_mooc_audit {{/str}}</th></tr></thead>
-            <tbody>{{#unverifiable.na}}<tr><td><strong>{{rule}}</strong> {{title}}</td><td>{{local}}</td><td>{{evidencia}}</td></tr>{{/unverifiable.na}}</tbody>
+            <tbody>{{#unverifiable.na}}<tr><td><strong>{{rule}}</strong> {{title}}</td><td>{{#haslink}}<a href="{{link}}" title="{{linktitle}}">{{local}}</a>{{/haslink}}{{^haslink}}{{local}}{{/haslink}}</td><td>{{evidencia}}</td></tr>{{/unverifiable.na}}</tbody>
         </table>
     {{/unverifiable.hasna}}
 

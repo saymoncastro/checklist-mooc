@@ -57,7 +57,7 @@ class cl11 extends base {
         $prof = helpers::mods($s, 'feedback', $p['required_feedback_profile']);
         if (!$prof) {
             return [$this->f(status::NAO_CONFORME, 'Atividades do curso', 'nenhuma Pesquisa (feedback) ~ "' . $p['required_feedback_profile'] . '"',
-                ['orientacao' => $this->g('import')])];
+                ['orientacao' => $this->g('import'), 'locus' => self::LOCUS_IMPORT])];
         }
         $pm = $prof[0];
         $out = [$this->f(status::CONFORME, helpers::label($pm), 'presente', ['cmid' => $pm['cmid']])];
@@ -67,7 +67,7 @@ class cl11 extends base {
         }
         $certs = helpers::certs($s, $p);
         if (!$certs) {
-            $out[] = $this->f(status::NAO_CONFORME, 'Atividades do curso', 'nenhum certificado de conclusão');
+            $out[] = $this->f(status::NAO_CONFORME, 'Atividades do curso', 'nenhum certificado de conclusão', ['locus' => self::LOCUS_IMPORT]);
         }
         foreach ($certs as $c) {
             $cms = [];

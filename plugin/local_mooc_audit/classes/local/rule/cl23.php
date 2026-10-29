@@ -56,7 +56,7 @@ class cl23 extends base {
     public function evaluate(array $s, array $p): array {
         $certs = helpers::certs($s, $p);
         if (!$certs) {
-            return [$this->f(status::NAO_CONFORME, 'Atividades do curso', 'nenhum certificado de conclusão (' . $p['required_certificate_module'] . ')', ['orientacao' => $this->g('import')])];
+            return [$this->f(status::NAO_CONFORME, 'Atividades do curso', 'nenhum certificado de conclusão (' . $p['required_certificate_module'] . ')', ['orientacao' => $this->g('import'), 'locus' => self::LOCUS_IMPORT])];
         }
         $ev = helpers::mods($s, 'feedback', $p['required_feedback_evaluation']);
         $ci = $s['grade']['course_item'];

@@ -121,7 +121,7 @@ final class engine_test extends \advanced_testcase {
         $this->assertSame([], $ra['policy_warnings']);
         $this->assertSame(status::OVERALL_CLEAN, $ra['summary']['overall_status']);
         $this->assertSame(status::OVERALL_BLOCKED, $rb['summary']['overall_status']);
-        $loci = ['module_edit', 'module_view', 'course_settings', 'enrol', 'gradebook', 'blocks', 'section', 'none'];
+        $loci = \local_mooc_audit\local\locator::loci();
         $links = 0;
         foreach (array_merge($ra['results'], $rb['results']) as $r) {
             $this->assertTrue(category::is_valid($r['category']), $r['rule']);
@@ -129,6 +129,10 @@ final class engine_test extends \advanced_testcase {
             $this->assertContains($r['gravidade'], status::severities(), $r['rule']);
             $this->assertContains($r['tipo'], ['institucional', 'tecnica'], $r['rule']);
             $this->assertContains($r['locus'], $loci, $r['rule']);
+            if (in_array($r['locus'], ['module_edit', 'module_view'], true)) {
+                $this->assertNotEmpty($r['cmid'], $r['rule'] . ': module locus without cmid');
+                $this->assertNotNull($r['link'], $r['rule']);
+            }
             $this->assertTrue($r['link'] === null || is_string($r['link']), $r['rule']);
             $links += $r['link'] !== null ? 1 : 0;
             if ($r['status'] === status::NAO_CONFORME) {
@@ -194,6 +198,27 @@ final class engine_test extends \advanced_testcase {
             . get_string('overall_' . strtolower($report['summary']['overall_status']), 'local_mooc_audit'), $text);
         $this->assertStringContainsString(get_string('policy_invalid', 'local_mooc_audit', 'Syntax error'), $text);
         $this->assertStringContainsString(get_string('label_conformant_omitted', 'local_mooc_audit'), $text);
+    }
+
+    /**
+     * A missing institutional component points to the course import page; a module locus always has a module.
+     */
+    public function test_import_locus_for_missing_components(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $course = $this->getDataGenerator()->create_course();
+        $report = engine::audit($course->id);
+        foreach (['CL-09', 'CL-11', 'CL-23'] as $rule) {
+            $r = array_values(array_filter($report['results'], fn($x) => $x['rule'] === $rule));
+            $this->assertSame(status::NAO_CONFORME, $r[0]['status'], $rule);
+            $this->assertSame('import', $r[0]['locus'], $rule);
+            $this->assertStringContainsString('/backup/import.php?id=' . $course->id, $r[0]['link'], $rule);
+        }
+        $cl22 = array_filter($report['results'], fn($x) => $x['rule'] === 'CL-22');
+        $this->assertCount(3, $cl22);
+        foreach ($cl22 as $r) {
+            $this->assertSame('import', $r['locus']);
+        }
     }
 
     /**

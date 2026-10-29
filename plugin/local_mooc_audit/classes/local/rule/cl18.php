@@ -67,7 +67,7 @@ class cl18 extends base {
                     $st = $entries === 0 ? status::NAO_CONFORME : status::ATENCAO;
                     $out[] = $this->f($st, helpers::label($g), "glossário com $entries entradas; fonte de " . count($deps) . ' jogos: ' . implode('; ', $names),
                         ['cmid' => $g['cmid'], 'gravidade' => $entries === 0 ? status::BLOQUEANTE : status::MEDIA, 'esperado' => 'entradas disponíveis para os jogos',
-                        'orientacao' => $this->g('repopulate')]);
+                        'orientacao' => $this->g('repopulate'), 'locus' => self::LOCUS_MODULE_VIEW]);
                 } else {
                     $out[] = $this->f(status::NAO_CONFORME, helpers::label($g), "módulo $mod presente ($entries entradas) sem uso por jogos", ['cmid' => $g['cmid'],
                         'orientacao' => $this->guidance()]);

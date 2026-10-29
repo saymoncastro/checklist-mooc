@@ -16,10 +16,12 @@
 namespace local_mooc_audit\output;
 
 use local_mooc_audit\local\category;
+use local_mooc_audit\local\locator;
 use local_mooc_audit\local\status;
 use moodle_url;
 use renderable;
 use renderer_base;
+use single_button;
 use stdClass;
 use templatable;
 
@@ -95,6 +97,7 @@ class report implements renderable, templatable {
         $rerun = new moodle_url($this->pageurl);
         $rerun->remove_params('format');
         $data->rerunurl = $rerun->out(false);
+        $data->rerunbutton = $output->render(new single_button($rerun, get_string('rerun', 'local_mooc_audit'), 'get'));
         $json = new moodle_url($this->pageurl, ['format' => 'json']);
         $data->jsonurl = $json->out(false);
 
@@ -240,6 +243,7 @@ class report implements renderable, templatable {
             'local' => $res['local'],
             'link' => $res['link'],
             'haslink' => !empty($res['link']),
+            'linktitle' => !empty($res['link']) ? get_string('link_title', 'local_mooc_audit', locator::title($res['locus'])) : '',
             'evidencia' => $res['evidencia'],
             'encontrado' => $res['encontrado'],
             'esperado' => $res['esperado'],

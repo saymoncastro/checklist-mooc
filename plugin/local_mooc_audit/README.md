@@ -51,16 +51,17 @@ mecanismo nativo `core_course_external::import_course`).
 | `classes/local/rule/rule_interface.php`, `base.php` | Contrato de uma regra (`id()`, `meta()`, `evaluate()`) e construtor de findings |
 | `classes/local/rule/*.php` | Uma classe por regra: 18 `CL-*` (checklist) + 11 `X-*` (adicionais), com categoria, tipo, gravidade, chaves de política, locus e fonte |
 | `classes/local/catalog.php` | Lista explícita e ordenada das 29 regras |
-| `classes/local/{status,category,helpers,locator}.php` | Estados/gravidades, 8 categorias, helpers compartilhados, mapeamento finding → URL de correção |
+| `classes/local/{status,category,helpers,locator}.php` | Estados/gravidades, 8 categorias, helpers compartilhados, mapeamento finding → URL de correção (loci: configurações/página do módulo, configurações do curso, inscrição, livro de notas, blocos, seção, importação, nenhum) |
 | `classes/engine.php` | Execução isolada das regras, situação geral, contrato JSON 1.0, renderização texto |
 | `classes/comparator.php` | Comparador experimental origem × destino (inalterado; escopo da spec 003) |
 | `cli/audit.php`, `cli/compare.php` | Linha de comando |
 | `lib.php` | Callback `local_mooc_audit_extend_navigation_course()`: entrada "Auditoria técnica" no menu do curso para quem tem a capacidade |
-| `index.php` | Página do relatório no contexto do curso (`courseid` ou `id`; `format=json`); sem id, formulário de compatibilidade |
+| `index.php` | Página do relatório no contexto do curso (`courseid` ou `id`; `format=json`); local de cada resultado é link para a página de correção quando existe; botão "Executar novamente"; sem id, formulário de compatibilidade |
 | `classes/output/report.php`, `renderer.php`, `templates/report*.mustache` | Dados do relatório para o template (agrupamento por gravidade → categoria, listas de alertas, não verificados, erros, conformes, avisos) e renderização |
 | `tests/generator/lib.php` | Gerador de componente: cursos A (conforme) e B (inconsistente), usado pelo PHPUnit e por `cli/make_fixtures.php` |
 | `tests/characterization_test.php` + `tests/fixtures/expected_*.json` | Estados por regra dos cursos A/B congelados (proteção contra mudança de comportamento) |
 | `tests/engine_test.php` | Motor, contrato, política, isolamento, conclusão desabilitada no site, saída texto do CLI |
+| `tests/locator_test.php` | URL esperada por locus; identificadores ausentes → sem link |
 | `tests/access_test.php` | Capacidade por arquétipo (estudante/professor não; gerente sim), definição sem risco declarado, nó de navegação só com a capacidade |
 | `tests/output_test.php` | Dados do template e renderização da página (cursos A/B) |
 

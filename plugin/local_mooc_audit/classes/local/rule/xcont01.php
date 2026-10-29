@@ -65,10 +65,11 @@ class xcont01 extends base {
                 }
             }
             if ($m['modname'] === 'quiz' && ($m['extra']['slots'] ?? 0) == 0) {
-                $out[] = $this->f(status::NAO_CONFORME, helpers::label($m), 'questionário sem questões', ['cmid' => $m['cmid'], 'gravidade' => status::ALTA]);
+                $out[] = $this->f(status::NAO_CONFORME, helpers::label($m), 'questionário sem questões', ['cmid' => $m['cmid'], 'gravidade' => status::ALTA,
+                    'locus' => self::LOCUS_MODULE_VIEW]);
             }
             if ($m['modname'] === 'feedback' && ($m['extra']['items'] ?? 0) == 0) {
-                $out[] = $this->f(status::NAO_CONFORME, helpers::label($m), 'pesquisa sem itens', ['cmid' => $m['cmid']]);
+                $out[] = $this->f(status::NAO_CONFORME, helpers::label($m), 'pesquisa sem itens', ['cmid' => $m['cmid'], 'locus' => self::LOCUS_MODULE_VIEW]);
             }
             if (in_array($m['modname'], ['resource', 'folder'])) {
                 $content = array_filter($m['files']['list'], fn($fe) => $fe['filearea'] === 'content');

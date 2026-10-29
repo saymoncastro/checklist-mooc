@@ -79,6 +79,12 @@ final class output_test extends \advanced_testcase {
         $this->assertStringContainsString(get_string('section_nonconformities', 'local_mooc_audit'), $html);
         $this->assertStringContainsString(get_string('overall_bloqueada', 'local_mooc_audit'), $html);
         $this->assertStringContainsString('<th', $html);
+        // Locations with a destination are links (CL-13 → module settings); without one, plain text (X-DEP-04).
+        $cl13 = array_values(array_filter($audit['results'], fn($r) => $r['rule'] === 'CL-13' && $r['status'] === status::NAO_CONFORME));
+        $this->assertStringContainsString('<a href="' . s($cl13[0]['link']) . '"', $html);
+        $this->assertStringContainsString(get_string('link_title', 'local_mooc_audit', get_string('locus_module_edit', 'local_mooc_audit')), $html);
+        $this->assertStringContainsString(get_string('rerun', 'local_mooc_audit'), $html);
+        $this->assertStringContainsString('<form method="get"', $html);
         // Evidence is rendered in full (the PoC truncated it at 300 characters).
         $longest = '';
         foreach ($audit['results'] as $r) {

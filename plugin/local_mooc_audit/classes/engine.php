@@ -112,6 +112,9 @@ class engine {
                 $f['tipo'] = $meta['type'];
                 $f['gravidade'] = $f['gravidade'] ?? $meta['severity'];
                 $f['locus'] = $f['locus'] ?? $meta['locus'];
+                if (empty($f['cmid']) && in_array($f['locus'], [base::LOCUS_MODULE_EDIT, base::LOCUS_MODULE_VIEW], true)) {
+                    $f['locus'] = base::LOCUS_NONE;
+                }
                 if ($f['status'] === status::NAO_CONFORME && ($f['orientacao'] === null || $f['orientacao'] === '')) {
                     $f['orientacao'] = $meta['guidance'];
                 }

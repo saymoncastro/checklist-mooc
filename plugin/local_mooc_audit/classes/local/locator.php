@@ -30,6 +30,26 @@ use moodle_url;
 class locator {
 
     /**
+     * Every locus a finding may declare.
+     *
+     * @return string[]
+     */
+    public static function loci(): array {
+        return [base::LOCUS_MODULE_EDIT, base::LOCUS_MODULE_VIEW, base::LOCUS_COURSE_SETTINGS, base::LOCUS_ENROL, base::LOCUS_GRADEBOOK,
+            base::LOCUS_BLOCKS, base::LOCUS_SECTION, base::LOCUS_IMPORT, base::LOCUS_NONE];
+    }
+
+    /**
+     * Localised description of the destination of a locus (used as link title).
+     *
+     * @param string $locus
+     * @return string
+     */
+    public static function title(string $locus): string {
+        return get_string('locus_' . $locus, 'local_mooc_audit');
+    }
+
+    /**
      * URL for a result, or null when there is no navigable destination.
      *
      * @param array $result finding with keys locus, cmid, section
@@ -57,6 +77,8 @@ class locator {
                 return new moodle_url('/grade/edit/tree/index.php', ['id' => $courseid]);
             case base::LOCUS_BLOCKS:
                 return new moodle_url('/course/view.php', ['id' => $courseid]);
+            case base::LOCUS_IMPORT:
+                return new moodle_url('/backup/import.php', ['id' => $courseid]);
             case base::LOCUS_SECTION:
                 if (!isset($result['section'])) {
                     return null;

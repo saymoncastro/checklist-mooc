@@ -16,8 +16,10 @@ description: "Task list for 001 — Auditoria Técnica Operacional de Cursos MOO
 depois cobertura por regra e acabamento. Caminhos relativos a `plugin/local_mooc_audit/` salvo indicação.
 
 **Status desta lista**: fases 1 e 2 autorizadas em 2026-10-28 e concluídas (T001–T047b); fase 3 (US1) autorizada em
-2026-10-29 e concluída (T048–T055, verificada no navegador contra os cursos A/B gerados); fases 4–9 aguardam
-autorização após validação da fase 3 (ver `docs/relatorio-adocao-sdd.md`).
+2026-10-29 e concluída (T048–T055, verificada no navegador contra os cursos A/B gerados); fase 4 (US2) autorizada e
+concluída em 2026-10-29 (T056–T059: `locator_test`, locus por finding incl. novo locus `import` →
+`/backup/import.php`, local como link com título, botão "Executar novamente"); fases 5–9 aguardam autorização após
+validação (ver `docs/relatorio-adocao-sdd.md`).
 
 ## Format: `[ID] [P?] [Story] Description`
 
@@ -124,10 +126,10 @@ inconformidades por gravidade e categoria, evidência completa, alertas, não ve
 
 **Independent Test**: quickstart §5.3; `locator_test`.
 
-- [ ] T056 [P] [US2] Criar `tests/locator_test.php`: para cada `locus` (module_edit, module_view, course_settings, enrol, gradebook, blocks, section, none) a URL esperada; cmid inexistente → null; `section` sem número → null
-- [ ] T057 [US2] Revisar o `locus` por finding nas 29 classes de regra onde o padrão da regra não serve (ex.: CL-20 `course_settings` vs `section`; X-CONT-01/X-CONT-04 `module_view` para conteúdo vs `module_edit` para configuração; CL-12 `gradebook`; CL-08 `enrol`; CL-21 `blocks`; X-DEP-04 `none`) e confirmar na caracterização que estados não mudaram
-- [ ] T058 [US2] No template e em `output/report.php`, renderizar `local` como link quando `link` não for null (texto do link = local; `title` com o tipo de destino), e como texto quando null
-- [ ] T059 [US2] Acrescentar o botão "Executar novamente" (`single_button` GET para a mesma URL) e o link "JSON" no cabeçalho do template; nova execução mostra nova `executed_at`
+- [x] T056 [P] [US2] Criar `tests/locator_test.php`: para cada `locus` (module_edit, module_view, course_settings, enrol, gradebook, blocks, section, none) a URL esperada; cmid inexistente → null; `section` sem número → null
+- [x] T057 [US2] Revisar o `locus` por finding nas 29 classes de regra onde o padrão da regra não serve (ex.: CL-20 `course_settings` vs `section`; X-CONT-01/X-CONT-04 `module_view` para conteúdo vs `module_edit` para configuração; CL-12 `gradebook`; CL-08 `enrol`; CL-21 `blocks`; X-DEP-04 `none`) e confirmar na caracterização que estados não mudaram
+- [x] T058 [US2] No template e em `output/report.php`, renderizar `local` como link quando `link` não for null (texto do link = local; `title` com o tipo de destino), e como texto quando null
+- [x] T059 [US2] Acrescentar o botão "Executar novamente" (`single_button` GET para a mesma URL) e o link "JSON" no cabeçalho do template; nova execução mostra nova `executed_at`
 
 **Checkpoint**: links e reexecução verificáveis em B (quickstart §5.3).
 

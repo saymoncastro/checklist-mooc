@@ -22,7 +22,7 @@
     Context variables required for this template:
     * severity, label, count
     * categories[] - objects with title and items[]; each item has rule, title, statuslabel, statusclass, severitylabel, local,
-      evidencia, encontrado, esperado, orientacao, hasfound, hasexpected, hasdetails
+      evidencia, encontrado, esperado, orientacao, hasfound, hasexpected, hasdetails, haslink, link, linktitle
 
     Example context (json):
     {
@@ -51,7 +51,7 @@
             <tr>
                 <td><strong>{{rule}}</strong><br><small>{{title}}</small></td>
                 <td><span class="badge {{statusclass}}">{{statuslabel}}</span><br><small>{{severitylabel}}</small></td>
-                <td>{{local}}</td>
+                <td>{{#haslink}}<a href="{{link}}" title="{{linktitle}}">{{local}}</a>{{/haslink}}{{^haslink}}{{local}}{{/haslink}}</td>
                 <td>{{evidencia}}{{#hasdetails}}<dl class="mb-0 small">{{#hasfound}}<dt>{{#str}} label_found, local_mooc_audit {{/str}}</dt><dd>{{encontrado}}</dd>{{/hasfound}}{{#hasexpected}}<dt>{{#str}} label_expected, local_mooc_audit {{/str}}</dt><dd>{{esperado}}</dd>{{/hasexpected}}</dl>{{/hasdetails}}</td>
                 <td>{{orientacao}}</td>
             </tr>

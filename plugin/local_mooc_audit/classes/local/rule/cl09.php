@@ -57,7 +57,7 @@ class cl09 extends base {
         if (!$f) {
             $names = array_map(fn($m) => $m['name'], helpers::mods($s, 'forum'));
             return [$this->f(status::NAO_CONFORME, 'Fóruns do curso', 'nenhum fórum com nome ~ "' . $p['required_forum_name'] . '"; existentes: ' . json_encode($names, JSON_UNESCAPED_UNICODE),
-                ['orientacao' => $this->g('import')])];
+                ['orientacao' => $this->g('import'), 'locus' => self::LOCUS_IMPORT])];
         }
         $m = $f[0];
         $out = [$this->f(status::CONFORME, helpers::label($m), 'presente', ['cmid' => $m['cmid']])];

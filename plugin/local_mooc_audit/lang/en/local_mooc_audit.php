@@ -106,6 +106,18 @@ $string['label_time'] = 'time';
 $string['label_visible'] = 'Visible';
 $string['none_in_section'] = 'None.';
 
+// Destinations of the correction links (one per locus).
+$string['locus_module_edit'] = 'Module settings';
+$string['locus_module_view'] = 'Module page';
+$string['locus_course_settings'] = 'Course settings';
+$string['locus_enrol'] = 'Enrolment methods';
+$string['locus_gradebook'] = 'Gradebook setup';
+$string['locus_blocks'] = 'Course page (blocks)';
+$string['locus_section'] = 'Section page';
+$string['locus_import'] = 'Import from another course';
+$string['locus_none'] = 'No navigable destination';
+$string['link_title'] = 'Open: {$a}';
+
 // Rule titles and guidance (ids CL-nn / X-AREA-nn, keys rule_<id>_title, rule_<id>_guidance, rule_<id>_g_<name>).
 $string['rule_cl04_guidance'] = 'Add the button at the end of the summary (Edit course settings > Description).';
 $string['rule_cl04_title'] = 'Course summary contains the institutional buttons';
