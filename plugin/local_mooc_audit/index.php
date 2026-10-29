@@ -82,5 +82,6 @@ if ($format === 'json') {
 
 $renderer = $PAGE->get_renderer('local_mooc_audit');
 echo $OUTPUT->header();
-echo $renderer->render(new \local_mooc_audit\output\report($report, $url));
+$withcorrections = has_capability('local/mooc_audit:preparecorrection', $context);
+echo $renderer->render(new \local_mooc_audit\output\report($report, $url, $withcorrections));
 echo $OUTPUT->footer();

@@ -17,6 +17,7 @@
 namespace local_mooc_audit\output;
 
 use local_mooc_audit\local\category;
+use local_mooc_audit\local\correction\planner;
 use local_mooc_audit\local\locator;
 use local_mooc_audit\local\status;
 use moodle_url;
@@ -60,16 +61,20 @@ class report implements renderable, templatable {
     protected array $report;
     /** @var moodle_url URL of the page that shows the report (used for re-run and JSON links). */
     protected moodle_url $pageurl;
+    /** @var bool Offer "See correction proposal" on eligible results (viewer holds local/mooc_audit:preparecorrection). */
+    protected bool $withcorrections;
 
     /**
      * Constructor.
      *
      * @param array $report report produced by the engine
      * @param moodle_url $pageurl URL of the current page
+     * @param bool $withcorrections offer the correction proposal action on eligible results (specs/002)
      */
-    public function __construct(array $report, moodle_url $pageurl) {
+    public function __construct(array $report, moodle_url $pageurl, bool $withcorrections = false) {
         $this->report = $report;
         $this->pageurl = $pageurl;
+        $this->withcorrections = $withcorrections;
     }
 
     /**
@@ -256,6 +261,10 @@ class report implements renderable, templatable {
             'hasexpected' => $res['esperado'] !== null && $res['esperado'] !== '',
             'hasdetails' => ($res['encontrado'] !== null && $res['encontrado'] !== '') || ($res['esperado'] !== null
                 && $res['esperado'] !== ''),
+            'correctionurl' => $this->withcorrections && planner::eligible($res) ? (new moodle_url(
+                '/local/mooc_audit/correction.php',
+                ['courseid' => $this->report['course']['id'], 'rule' => $res['rule'], 'cmid' => $res['cmid']]
+            ))->out(false) : null,
         ];
     }
 
