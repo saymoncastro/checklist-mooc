@@ -1,0 +1,128 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_mooc_audit/correction
+
+    Preview of a correction proposal. Shows the nine elements of the proposal (problem, location, rule, current value,
+    proposed value, justification, expected impact, risks and dependencies, who may apply it). The confirmation form
+    (POST with sesskey and the fingerprint of the previewed state) appears only for an executable proposal and a user
+    allowed to apply it. Opening this page never changes the course.
+
+    Context variables required for this template:
+    * hasproposal, reporturl
+    * rule, ruletitle, rulesource, location, editurl, problem, current, proposed, justification, effect
+    * categorylabel, modelabel, modeclass, executable, showform, cannotexecute
+    * risks[], blockers[], dependencies[] (with has* flags)
+    * simulated, impactresolved[], impactintroduced[], impactwarnings[] (with has* flags)
+    * capabilities, roles, policyversion, actionurl, sesskey, fingerprint, courseid, cmid
+    * history[] - date, field, oldvalue, newvalue, outcome, reaudit (hashistory)
+
+    Example context (json):
+    {
+        "hasproposal": true, "reporturl": "#", "rule": "CL-13", "ruletitle": "Quizzes with at least two attempts",
+        "rulesource": "Checklist item 13", "location": "quiz Quiz 1 (cmid=12)", "editurl": "#", "problem": "attempts=1",
+        "current": "1", "proposed": "2", "justification": "Policy: at least 2 attempts", "effect": "One more attempt",
+        "categorylabel": "A", "modelabel": "Executable after confirmation", "modeclass": "alert-info", "executable": true,
+        "showform": true, "risks": ["3 enrolled students"], "hasrisks": true, "dependencies": ["Grading method unchanged"],
+        "hasdependencies": true, "simulated": true, "impactresolved": ["CL-13 quiz: attempts=1"], "hasimpactresolved": true,
+        "capabilities": "local/mooc_audit:applycorrection", "roles": "Manager", "policyversion": "2027",
+        "actionurl": "#", "sesskey": "abc", "fingerprint": "f00", "courseid": 2, "cmid": 12
+    }
+}}
+<div class="local_mooc_audit-correction">
+{{^hasproposal}}
+    <div class="alert alert-info" role="status">{{#str}} fix_nothing, local_mooc_audit {{/str}}</div>
+    <p><a class="btn btn-secondary" href="{{reporturl}}">{{#str}} fix_backtoreport, local_mooc_audit {{/str}}</a></p>
+{{/hasproposal}}
+{{#hasproposal}}
+    <h3>{{#str}} fix_heading, local_mooc_audit {{/str}}</h3>
+    <div class="alert {{modeclass}}" role="status">
+        <strong>{{modelabel}}</strong>
+        <span class="badge badge-secondary ml-2" title="{{#str}} fix_category, local_mooc_audit {{/str}}">{{categorylabel}}</span>
+    </div>
+    <dl class="row local_mooc_audit-proposal">
+        <dt class="col-sm-3">{{#str}} fix_problem, local_mooc_audit {{/str}}</dt>
+        <dd class="col-sm-9">{{problem}}</dd>
+        <dt class="col-sm-3">{{#str}} fix_location, local_mooc_audit {{/str}}</dt>
+        <dd class="col-sm-9">{{#editurl}}<a href="{{editurl}}">{{location}}</a>{{/editurl}}{{^editurl}}{{location}}{{/editurl}}</dd>
+        <dt class="col-sm-3">{{#str}} fix_rule, local_mooc_audit {{/str}}</dt>
+        <dd class="col-sm-9"><strong>{{rule}}</strong> — {{ruletitle}}<br><small class="text-muted">{{rulesource}} · {{#str}} label_policy, local_mooc_audit {{/str}} {{policyversion}}</small></dd>
+        <dt class="col-sm-3">{{#str}} fix_current, local_mooc_audit {{/str}}</dt>
+        <dd class="col-sm-9" data-region="current">{{current}}</dd>
+        <dt class="col-sm-3">{{#str}} fix_proposed, local_mooc_audit {{/str}}</dt>
+        <dd class="col-sm-9" data-region="proposed"><strong>{{proposed}}</strong></dd>
+        <dt class="col-sm-3">{{#str}} fix_justification, local_mooc_audit {{/str}}</dt>
+        <dd class="col-sm-9">{{justification}}</dd>
+        <dt class="col-sm-3">{{#str}} fix_impact, local_mooc_audit {{/str}}</dt>
+        <dd class="col-sm-9">
+            {{effect}}
+            {{#simulated}}
+            <div class="small mt-1">
+                <strong>{{#str}} fix_simulation, local_mooc_audit {{/str}}</strong>
+                {{#hasimpactresolved}}<div>{{#str}} fix_sim_resolved, local_mooc_audit {{/str}}<ul class="mb-1">{{#impactresolved}}<li>{{.}}</li>{{/impactresolved}}</ul></div>{{/hasimpactresolved}}
+                {{#hasimpactintroduced}}<div class="text-danger">{{#str}} fix_sim_introduced, local_mooc_audit {{/str}}<ul class="mb-1">{{#impactintroduced}}<li>{{.}}</li>{{/impactintroduced}}</ul></div>{{/hasimpactintroduced}}
+                {{^hasimpactintroduced}}<div>{{#str}} fix_sim_nointroduced, local_mooc_audit {{/str}}</div>{{/hasimpactintroduced}}
+                {{#hasimpactwarnings}}<div>{{#str}} fix_sim_warnings, local_mooc_audit {{/str}}<ul class="mb-1">{{#impactwarnings}}<li>{{.}}</li>{{/impactwarnings}}</ul></div>{{/hasimpactwarnings}}
+            </div>
+            {{/simulated}}
+        </dd>
+        <dt class="col-sm-3">{{#str}} fix_risks, local_mooc_audit {{/str}}</dt>
+        <dd class="col-sm-9">
+            {{#hasblockers}}<div class="text-danger"><strong>{{#str}} fix_blockers, local_mooc_audit {{/str}}</strong><ul class="mb-1" data-region="blockers">{{#blockers}}<li>{{.}}</li>{{/blockers}}</ul></div>{{/hasblockers}}
+            {{#hasrisks}}<ul class="mb-1">{{#risks}}<li>{{.}}</li>{{/risks}}</ul>{{/hasrisks}}
+            {{#hasdependencies}}<div><strong>{{#str}} fix_dependencies, local_mooc_audit {{/str}}</strong><ul class="mb-1">{{#dependencies}}<li>{{.}}</li>{{/dependencies}}</ul></div>{{/hasdependencies}}
+            {{^hasrisks}}{{^hasblockers}}{{^hasdependencies}}{{#str}} fix_norisks, local_mooc_audit {{/str}}{{/hasdependencies}}{{/hasblockers}}{{/hasrisks}}
+        </dd>
+        <dt class="col-sm-3">{{#str}} fix_authorised, local_mooc_audit {{/str}}</dt>
+        <dd class="col-sm-9">{{roles}}<br><small class="text-muted">{{capabilities}}</small></dd>
+    </dl>
+    <p class="small text-muted">{{#str}} fix_noundo, local_mooc_audit {{/str}}</p>
+    {{#showform}}
+    <form method="post" action="{{actionurl}}" class="local_mooc_audit-confirm">
+        <input type="hidden" name="sesskey" value="{{sesskey}}">
+        <input type="hidden" name="courseid" value="{{courseid}}">
+        <input type="hidden" name="rule" value="{{rule}}">
+        <input type="hidden" name="cmid" value="{{cmid}}">
+        <input type="hidden" name="fingerprint" value="{{fingerprint}}">
+        <input type="hidden" name="confirm" value="1">
+        <button type="submit" class="btn btn-primary">{{#str}} fix_confirm, local_mooc_audit {{/str}}</button>
+        <a class="btn btn-secondary" href="{{reporturl}}">{{#str}} cancel {{/str}}</a>
+    </form>
+    {{/showform}}
+    {{^showform}}
+    {{#cannotexecute}}<div class="alert alert-secondary">{{#str}} fix_cannotexecute, local_mooc_audit {{/str}}</div>{{/cannotexecute}}
+    <p>
+        {{#editurl}}<a class="btn btn-primary" href="{{editurl}}">{{#str}} fix_openedit, local_mooc_audit {{/str}}</a>{{/editurl}}
+        <a class="btn btn-secondary" href="{{reporturl}}">{{#str}} fix_backtoreport, local_mooc_audit {{/str}}</a>
+    </p>
+    {{/showform}}
+    {{#hashistory}}
+    <h4 class="mt-4">{{#str}} fix_history, local_mooc_audit {{/str}}</h4>
+    <table class="table table-sm">
+        <thead><tr>
+            <th scope="col">{{#str}} date {{/str}}</th>
+            <th scope="col">{{#str}} fix_field, local_mooc_audit {{/str}}</th>
+            <th scope="col">{{#str}} fix_before, local_mooc_audit {{/str}}</th>
+            <th scope="col">{{#str}} fix_after, local_mooc_audit {{/str}}</th>
+            <th scope="col">{{#str}} fix_outcome, local_mooc_audit {{/str}}</th>
+            <th scope="col">{{#str}} fix_reaudit, local_mooc_audit {{/str}}</th>
+        </tr></thead>
+        <tbody>{{#history}}<tr><td>{{date}}</td><td>{{field}}</td><td>{{oldvalue}}</td><td>{{newvalue}}</td><td>{{outcome}}</td><td>{{reaudit}}</td></tr>{{/history}}</tbody>
+    </table>
+    {{/hashistory}}
+{{/hasproposal}}
+</div>

@@ -56,27 +56,8 @@ class cl14 extends base {
         $out = [];
         $ed = $s['course']['enddate'];
         foreach (helpers::graded($s) as [$m, $gi]) {
-            $x = $m['extra'];
-            $close = null;
-            $known = true;
-            switch ($m['modname']) {
-                case 'quiz':
-                case 'game':
-                case 'choice':
-                case 'feedback':
-                    $close = $x['timeclose'] ?? 0;
-                    break;
-                case 'assign':
-                case 'forum':
-                    $close = ($x['cutoffdate'] ?? 0) ?: ($x['duedate'] ?? 0);
-                    break;
-                case 'data':
-                    $close = $x['timeavailableto'] ?? 0;
-                    break;
-                default:
-                    $known = false;
-            }
-            if (!$known) {
+            $close = helpers::close_date($m);
+            if ($close === null) {
                 $out[] = $this->f(
                     status::NAO_VERIFICAVEL,
                     helpers::label($m),

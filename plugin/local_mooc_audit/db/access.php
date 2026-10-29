@@ -15,8 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Capabilities for local_mooc_audit. All read-only; no risk declared (the audit reads course configuration, not
- * personal data; see specs/001 research R11).
+ * Capabilities for local_mooc_audit.
+ *
+ * Auditing and comparing are read-only (no risk declared: the audit reads course configuration, not personal data; see
+ * specs/001 research R11). Assisted correction (specs/002) separates preparing a proposal (read) from applying it
+ * (write); applying also requires moodle/course:manageactivities in the activity context. Auditing and both correction
+ * capabilities are granted by default to managers and editing teachers (decision 11 of 2026-10-29, specs/002).
  *
  * @package    local_mooc_audit
  * @copyright  2026 Cefor/Ifes
@@ -31,6 +35,7 @@ $capabilities = [
         'captype' => 'read',
         'contextlevel' => CONTEXT_COURSE,
         'archetypes' => [
+            'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW,
         ],
     ],
@@ -39,6 +44,25 @@ $capabilities = [
         'captype' => 'read',
         'contextlevel' => CONTEXT_SYSTEM,
         'archetypes' => [
+            'manager' => CAP_ALLOW,
+        ],
+    ],
+    // See correction proposals (current value, proposed value, impact, risks). Never writes.
+    'local/mooc_audit:preparecorrection' => [
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => [
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
+        ],
+    ],
+    // Apply an executable correction proposal after explicit confirmation (changes activity settings).
+    'local/mooc_audit:applycorrection' => [
+        'riskbitmask' => RISK_CONFIG,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => [
+            'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW,
         ],
     ],

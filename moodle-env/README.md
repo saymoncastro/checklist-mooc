@@ -129,3 +129,35 @@ docker exec -w /var/www/html moocaudit-wt /tmp/cs/vendor/bin/phpcs --standard=mo
 Para regravar as expectativas de caracterização após uma mudança de comportamento documentada:
 `docker exec -e LOCAL_MOOC_AUDIT_WRITE_EXPECTED=1 -w /var/www/html moocaudit-wt vendor/bin/phpunit local/mooc_audit/tests/characterization_test.php`.
 Remover depois: `docker rm -f moocaudit-wt moocaudit-wt-web moocaudit-wt-selenium && docker exec moocaudit-db-1 dropdb -U moodle moodle_wt`.
+
+## Ambiente da spec 002 (correção assistida)
+
+Os contêineres `moocaudit-wt*` montam o worktree da spec 001. Para a spec 002 há um ambiente próprio, com banco
+`moodle_s2`, porta 8093 e uma rede `moocaudit_s2` (o banco do laboratório é ligado a ela com o apelido `db`), para que
+o Selenium com apelido `selenium` não colida com o da spec 001:
+
+```bash
+docker exec moocaudit-db-1 createdb -U moodle moodle_s2
+docker network create moocaudit_s2
+docker network connect --alias db moocaudit_s2 moocaudit-db-1
+docker run -d --name moocaudit-s2-web --network moocaudit_s2 -p 127.0.0.1:8093:80 \
+  -e MOODLE_DOCKER_DBTYPE=pgsql -e MOODLE_DOCKER_DBNAME=moodle_s2 -e MOODLE_DOCKER_DBUSER=moodle -e 'MOODLE_DOCKER_DBPASS=m@0dl3ing' \
+  -e MOODLE_DOCKER_WEB_HOST=localhost -e MOODLE_DOCKER_WEB_PORT=127.0.0.1:8093 -e MOODLE_DOCKER_RUNNING=1 -e MOODLE_DOCKER_BROWSER=chrome \
+  -v "$PROJECT_DIR/moodle-local/moodle:/var/www/html" -v "<worktree>/plugin/local_mooc_audit:/var/www/html/local/mooc_audit" \
+  -w /var/www/html moodlehq/moodle-php-apache:8.3
+docker exec moocaudit-s2-web bash -c 'mkdir -p /var/www/moodledata /var/www/behatdata /var/www/behatfaildumps && chown www-data /var/www/moodledata /var/www/behatdata /var/www/behatfaildumps && echo "127.0.0.1 webserver" >> /etc/hosts'
+docker exec -w /var/www/html moocaudit-s2-web php admin/cli/install_database.php --agree-license \
+  --fullname="Auditor MOOC (spec 002)" --shortname=s2 --adminpass='Admin123!' --adminemail=admin@example.com --lang=pt_br
+docker exec -w /var/www/html moocaudit-s2-web php local/mooc_audit/cli/make_fixtures.php     # A = 2, B = 3
+docker exec moocaudit-s2-web chown -R www-data /var/www/moodledata
+docker exec -w /var/www/html moocaudit-s2-web php admin/tool/phpunit/cli/init.php
+IP=$(docker inspect moocaudit-s2-web --format '{{(index .NetworkSettings.Networks "moocaudit_s2").IPAddress}}')
+docker run -d --name moocaudit-s2-selenium --network moocaudit_s2 --network-alias selenium --add-host "webserver:$IP" \
+  --shm-size=2g selenium/standalone-chrome:4
+docker exec -w /var/www/html moocaudit-s2-web php admin/tool/behat/cli/init.php
+```
+
+O PHPCS usa uma cópia de `/tmp/cs` do contêiner `moocaudit-wt` (`docker cp`). Remover tudo:
+`docker rm -f moocaudit-s2-web moocaudit-s2-selenium && docker network disconnect moocaudit_s2 moocaudit-db-1 &&
+docker network rm moocaudit_s2 && docker exec moocaudit-db-1 dropdb -U moodle moodle_s2`.
+

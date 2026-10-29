@@ -31,7 +31,7 @@ use local_mooc_audit\local\status;
  */
 class engine {
     /** @var string Engine version recorded in every report. */
-    const VERSION = '0.2.0';
+    const VERSION = '0.3.0';
     /** @var string Version of the JSON report contract (bumped only on incompatible changes). */
     const CONTRACT_VERSION = '1.0';
 

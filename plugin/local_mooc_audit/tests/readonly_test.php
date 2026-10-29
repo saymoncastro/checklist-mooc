@@ -101,4 +101,51 @@ final class readonly_test extends \advanced_testcase {
         $this->assertSame($course->timemodified, $DB->get_field('course', 'timemodified', ['id' => $b->id]));
         $this->assertSame($course->cacherev, $DB->get_field('course', 'cacherev', ['id' => $b->id]));
     }
+
+    /**
+     * Opening every correction proposal of course B (preview) and cancelling (going back to the report) change nothing:
+     * same tables, same cacherev, no calendar event, no trail row, no log event (specs/002 SC-002).
+     *
+     * @covers \local_mooc_audit\local\correction\planner
+     */
+    public function test_correction_preview_does_not_modify_the_course(): void {
+        global $DB, $PAGE;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        [$b] = $this->getDataGenerator()->get_plugin_generator('local_mooc_audit')->create_course_b(2027);
+        $this->getDataGenerator()->create_and_enrol($b, 'student');
+        \context_helper::build_all_paths(true);
+        foreach (get_fast_modinfo($b)->get_cms() as $cm) {
+            \context_module::instance($cm->id);
+        }
+        $before = $this->hashes($b->id);
+        $cacherev = $DB->get_field('course', 'cacherev', ['id' => $b->id]);
+        $events = $DB->count_records('event');
+
+        $this->waitForSecond();
+        $sink = $this->redirectEvents();
+        $planner = new local\correction\planner();
+        $report = engine::audit($b->id, ['reoffer_year' => 2027]);
+        $planned = 0;
+        $output = $PAGE->get_renderer('local_mooc_audit');
+        $url = new \moodle_url('/local/mooc_audit/correction.php');
+        foreach ($report['results'] as $r) {
+            if (local\correction\planner::eligible($r)) {
+                $p = $planner->plan($b->id, $r['rule'], (int) $r['cmid'], ['reoffer_year' => 2027]);
+                $output->render(new output\correction_proposal($p, $url, $url));
+                $planned++;
+            }
+        }
+        // The report page with the correction actions.
+        $output->render(new output\report(engine::audit($b->id), $url, true));
+        $logged = $sink->get_events();
+        $sink->close();
+
+        $this->assertGreaterThanOrEqual(6, $planned);
+        $this->assertSame($before, $this->hashes($b->id));
+        $this->assertSame($cacherev, $DB->get_field('course', 'cacherev', ['id' => $b->id]));
+        $this->assertSame($events, $DB->count_records('event'));
+        $this->assertSame(0, $DB->count_records('local_mooc_audit_fix'));
+        $this->assertSame([], $logged);
+    }
 }

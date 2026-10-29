@@ -67,25 +67,7 @@ class cl17 extends base {
                 continue;
             }
             if ($m['completion'] == 2) {
-                $x = $m['extra'];
-                $crit = [];
-                if ($m['completionview']) {
-                    $crit[] = 'view';
-                }
-                if ($m['completiongradeitemnumber'] !== null) {
-                    $crit[] = 'grade';
-                }
-                foreach (
-                    ['completionsubmit' => 'submit', 'completionentries' => 'entries', 'completionposts' => 'posts',
-                        'completiondiscussions' => 'posts',
-                    'completionreplies' => 'posts', 'completionminattempts' => 'attempts',
-                        'completionattemptsexhausted' => 'attempts', 'completionpass' => 'grade'] as $k => $v
-                ) {
-                    if (!empty($x[$k])) {
-                        $crit[] = $v;
-                    }
-                }
-                $crit = array_values(array_unique($crit));
+                $crit = helpers::completion_criteria($m);
                 if (!$crit) {
                     $out[] = $this->f(
                         status::ATENCAO,

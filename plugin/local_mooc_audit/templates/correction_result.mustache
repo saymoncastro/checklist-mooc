@@ -1,0 +1,67 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_mooc_audit/correction_result
+
+    Outcome of a confirmed correction. Success (alert-success) only when the value was written, read back and the
+    re-audit no longer reports the target finding.
+
+    Context variables required for this template:
+    * status, success, alertclass, message, detail, hasdetail, reporturl, proposalurl, newanalysis
+    * hasproposal, rule, ruletitle, location, field, before, after, written, blockers[], hasblockers
+    * hascomparison, targetbefore, targetafter, resolved[], introduced[], hasresolved, hasintroduced
+
+    Example context (json):
+    {
+        "status": "applied", "success": true, "alertclass": "alert-success", "message": "Correction applied and resolved.",
+        "reporturl": "#", "proposalurl": "#", "hasproposal": true, "rule": "CL-13", "ruletitle": "Quiz attempts",
+        "location": "quiz Quiz 1 (cmid=12)", "field": "attempts", "before": "1", "after": "2", "written": true,
+        "hascomparison": true, "targetbefore": "NAO_CONFORME", "targetafter": "CONFORME",
+        "resolved": ["CL-13 quiz: attempts=1"], "hasresolved": true
+    }
+}}
+<div class="local_mooc_audit-correction-result">
+    <div class="alert {{alertclass}}" role="status" data-region="outcome">
+        <strong>{{message}}</strong>
+        {{#hasdetail}}<div class="small mt-1">{{detail}}</div>{{/hasdetail}}
+    </div>
+    {{#hasproposal}}
+    <dl class="row">
+        <dt class="col-sm-3">{{#str}} fix_rule, local_mooc_audit {{/str}}</dt>
+        <dd class="col-sm-9"><strong>{{rule}}</strong> — {{ruletitle}}</dd>
+        <dt class="col-sm-3">{{#str}} fix_location, local_mooc_audit {{/str}}</dt>
+        <dd class="col-sm-9">{{location}}</dd>
+        {{#written}}
+        <dt class="col-sm-3">{{#str}} fix_field, local_mooc_audit {{/str}}</dt>
+        <dd class="col-sm-9">{{field}}: {{before}} → <strong>{{after}}</strong></dd>
+        {{/written}}
+        {{#hascomparison}}
+        <dt class="col-sm-3">{{#str}} fix_reaudit, local_mooc_audit {{/str}}</dt>
+        <dd class="col-sm-9" data-region="reaudit">
+            {{rule}}: {{targetbefore}} → {{targetafter}}
+            {{#hasresolved}}<div class="small">{{#str}} fix_resolved_list, local_mooc_audit {{/str}}<ul class="mb-1">{{#resolved}}<li>{{.}}</li>{{/resolved}}</ul></div>{{/hasresolved}}
+            {{#hasintroduced}}<div class="small text-danger">{{#str}} fix_introduced_list, local_mooc_audit {{/str}}<ul class="mb-1">{{#introduced}}<li>{{.}}</li>{{/introduced}}</ul></div>{{/hasintroduced}}
+        </dd>
+        {{/hascomparison}}
+    </dl>
+    {{#hasblockers}}<div class="text-danger"><strong>{{#str}} fix_blockers, local_mooc_audit {{/str}}</strong><ul>{{#blockers}}<li>{{.}}</li>{{/blockers}}</ul></div>{{/hasblockers}}
+    {{/hasproposal}}
+    <p>
+        {{#newanalysis}}<a class="btn btn-primary" href="{{proposalurl}}">{{#str}} fix_newanalysis, local_mooc_audit {{/str}}</a>{{/newanalysis}}
+        <a class="btn btn-secondary" href="{{reporturl}}">{{#str}} fix_backtoreport, local_mooc_audit {{/str}}</a>
+    </p>
+</div>

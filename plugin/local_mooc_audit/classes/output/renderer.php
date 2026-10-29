@@ -35,4 +35,24 @@ class renderer extends plugin_renderer_base {
     public function render_report(report $report): string {
         return $this->render_from_template('local_mooc_audit/report', $report->export_for_template($this));
     }
+
+    /**
+     * Render the preview of a correction proposal.
+     *
+     * @param correction_proposal $page
+     * @return string HTML
+     */
+    public function render_correction_proposal(correction_proposal $page): string {
+        return $this->render_from_template('local_mooc_audit/correction', $page->export_for_template($this));
+    }
+
+    /**
+     * Render the outcome of a confirmed correction.
+     *
+     * @param correction_result $page
+     * @return string HTML
+     */
+    public function render_correction_result(correction_result $page): string {
+        return $this->render_from_template('local_mooc_audit/correction_result', $page->export_for_template($this));
+    }
 }

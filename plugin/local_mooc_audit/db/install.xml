@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="local/mooc_audit/db" VERSION="20261029" COMMENT="XMLDB file for Moodle local/mooc_audit"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="local_mooc_audit_fix" COMMENT="Trail of the assisted corrections that reached the write step (specs/002)">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Course"/>
+        <FIELD NAME="cmid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Course module"/>
+        <FIELD NAME="ruleid" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" COMMENT="Audit rule id (CL-13...)"/>
+        <FIELD NAME="strategy" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false" COMMENT="Correction strategy"/>
+        <FIELD NAME="field" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false" COMMENT="Changed setting"/>
+        <FIELD NAME="oldvalue" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Value before the correction"/>
+        <FIELD NAME="newvalue" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Value written"/>
+        <FIELD NAME="outcome" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" COMMENT="applied or failed"/>
+        <FIELD NAME="reaudit" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" COMMENT="resolved, not_resolved, introduced, error or skipped"/>
+        <FIELD NAME="details" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Short JSON: rules resolved/introduced or error message"/>
+        <FIELD NAME="policyversion" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" COMMENT="Institutional policy version"/>
+        <FIELD NAME="engineversion" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false" COMMENT="Audit engine version"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="User who confirmed (0 = anonymised)"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid"/>
+        <INDEX NAME="cmid" UNIQUE="false" FIELDS="cmid"/>
+        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>
