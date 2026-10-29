@@ -46,8 +46,8 @@ Nenhum requisito sem tarefa; nenhuma tarefa sem requisito. Os 12 cenários exper
 | IX | Abstrações justificadas em Complexity Tracking (estratégias, proposta, verificador, facts, tabela) | ✅ |
 | X | Spec, plano, tarefas e análise antes do código (commit `bed2031` precede `ad44c0b`) | ✅ |
 
-Achados: nenhum CRITICAL. **MEDIUM** — decisão institucional sobre quem recebe `applycorrection` e marco de
-encerramento do CL-14 seguem **[validar]**. **LOW** — janela residual de concorrência com edição manual simultânea
+Achados: nenhum CRITICAL. **MEDIUM** — marco de encerramento do CL-14 segue **[validar]**; quem corrige foi
+decidido em 2026-10-29 (gerente e professor editor), mas professores só chegam ao relatório com `:audit` (Spec 001). **LOW** — janela residual de concorrência com edição manual simultânea
 (documentada). **LOW** — `access_test` da spec 001 continua afirmando "sem risco" apenas para `:audit`/`:compare`;
 `applycorrection` declara `RISK_CONFIG`.
 
@@ -60,5 +60,5 @@ encerramento do CL-14 seguem **[validar]**. **LOW** — janela residual de conco
 | Capacidades | `audit`, `compare` | + `preparecorrection`, `applycorrection` |
 | Contrato JSON | 1.0 | 1.0 (inalterado) |
 | Resultados das 29 regras | referência | idênticos (caracterização A/B; curso A antes/depois idêntico) |
-| Testes | 75 PHPUnit, 2 Behat | 111 PHPUnit, 5 Behat |
+| Testes | 75 PHPUnit, 2 Behat | 113 PHPUnit, 6 Behat |
 | Privacidade | `null_provider` | provider com metadados, exportação e anonimização |

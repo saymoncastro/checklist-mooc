@@ -40,11 +40,13 @@ reestruturação da interface; rollback genérico; histórico completo de audito
 Decisões do autor da especificação para não bloquear o incremento experimental. **[validar]** = exige confirmação
 institucional antes da homologação; as demais são premissas registradas.
 
-- Q: Quem pode executar uma correção por padrão? → A: **somente papéis com arquétipo gerente**, por uma capacidade
-  nova `local/mooc_audit:applycorrection` no contexto do curso, **somada** à capacidade nativa
+- Q: Quem pode executar uma correção por padrão? → A: **gerentes e professores editores** (decidido pelo responsável
+  do projeto em 2026-10-29; a primeira versão da spec propunha só gerentes), por uma capacidade nova
+  `local/mooc_audit:applycorrection` no contexto do curso, **somada** à capacidade nativa
   `moodle/course:manageactivities` no contexto da atividade. Preparar/visualizar propostas usa outra capacidade
-  (`local/mooc_audit:preparecorrection`). Quem só audita não vê nem executa correções. **[validar]** se professores
-  editores ou a coordenação pedagógica devem receber `applycorrection`.
+  (`local/mooc_audit:preparecorrection`), com os mesmos arquétipos. Professores não editores e estudantes não recebem
+  nenhuma das duas. Quem só audita não vê nem executa correções. Para chegar às propostas pelo menu do curso o
+  professor precisa também de `local/mooc_audit:audit`, que a Spec 001 mantém só para gerentes (**[validar]** na 001).
 - Q: Qual é a data de encerramento esperada pelo CL-14? → A: **a data de término do curso**, critério que a regra já
   usa (alerta quando o encerramento ≠ fim do curso). A proposta só é executável quando a própria data de término do
   curso está conforme a política (CL-07) e no futuro; caso contrário, a proposta indica a dependência e não executa.
@@ -327,5 +329,6 @@ dependências e ausência do botão de confirmar; conferir que POST de confirma�
 
 - Ambiente de desenvolvimento local (Moodle 4.5.15, PostgreSQL); nada é executado em produção.
 - O valor da política vigente é lido no momento da proposta e novamente na confirmação.
-- A decisão sobre quem pode corrigir em produção é institucional; o padrão (gerente) é conservador.
+- Quem pode corrigir: gerentes e professores editores (decisão de 2026-10-29, registrada como decisão 11 em
+  `DECISOES-INSTITUCIONAIS-CHECKLIST.md`); outros papéis pelo mecanismo nativo de permissões.
 - Desfazer uma correção é feito pela tela oficial de edição, usando o valor anterior registrado.

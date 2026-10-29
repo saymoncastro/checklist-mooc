@@ -16,7 +16,7 @@ da equipe técnica.
 identificada oferecem "Ver proposta de correção" (problema, local, regra, valor atual, valor proposto, justificativa,
 impacto simulado, riscos/dependências/impedimentos, quem pode executar). Executáveis mediante confirmação: tentativas de
 questionário (CL-13) e encerramento de questionário igual ao término do curso (CL-14). Orientadas: CL-14 dos demais
-tipos e critério de conclusão (CL-17). 111 testes PHPUnit, 5 cenários Behat, PHPCS limpo. Matriz das 29 regras em
+tipos e critério de conclusão (CL-17). 113 testes PHPUnit, 6 cenários Behat, PHPCS limpo. Matriz das 29 regras em
 `specs/002-correcao-assistida/correction-matrix.md`; evidências em `plugin-results/0.3.0/`.
 
 ## Instalação
@@ -26,14 +26,16 @@ cp -r plugin/local_mooc_audit <moodle>/local/mooc_audit
 php admin/cli/upgrade.php --non-interactive
 ```
 
-Nenhuma alteração no núcleo. Capacidades próprias, concedidas por padrão apenas ao arquétipo *manager*:
+Nenhuma alteração no núcleo. Capacidades próprias (arquétipos padrão na última coluna):
 
-| Capacidade | Contexto | Tipo | Para |
-|---|---|---|---|
-| `local/mooc_audit:audit` | curso | read | executar a auditoria e ver o relatório |
-| `local/mooc_audit:compare` | sistema | read | comparar origem × destino |
-| `local/mooc_audit:preparecorrection` | curso | read | ver propostas de correção |
-| `local/mooc_audit:applycorrection` | curso | write, `RISK_CONFIG` | confirmar correções (exige também `moodle/course:manageactivities` na atividade) |
+| Capacidade | Contexto | Tipo | Para | Padrão |
+|---|---|---|---|---|
+| `local/mooc_audit:audit` | curso | read | executar a auditoria e ver o relatório | manager |
+| `local/mooc_audit:compare` | sistema | read | comparar origem × destino | manager |
+| `local/mooc_audit:preparecorrection` | curso | read | ver propostas de correção | manager, editingteacher |
+| `local/mooc_audit:applycorrection` | curso | write, `RISK_CONFIG` | confirmar correções (exige também `moodle/course:manageactivities` na atividade) | manager, editingteacher |
+
+Professores editores só chegam às propostas pelo menu do curso se também receberem `local/mooc_audit:audit`.
 
 Tabela própria: `local_mooc_audit_fix` (trilha das correções confirmadas; ver privacidade).
 
@@ -107,7 +109,7 @@ mecanismo nativo `core_course_external::import_course`).
 | `tests/local/rule/*_test.php` | Um arquivo por regra (29): cenários conforme, não conforme e, quando a regra os produz, atenção/não se aplica/não verificável, construídos por API (ex.: X-INT-03 com condição de plugin inexistente; X-CERT-01 com visão de estudante) |
 | `tests/readonly_test.php` | Hashes de 17 tabelas do curso B antes e depois de três auditorias (admin, estudante, texto) idênticos; `timemodified`/`cacherev` inalterados; idem ao abrir todas as propostas e o relatório com ações (sem evento, sem linha na trilha) |
 | `tests/locator_test.php` | URL esperada por locus; identificadores ausentes → sem link |
-| `tests/access_test.php` | Capacidade por arquétipo (estudante/professor não; gerente sim), definição sem risco declarado, nó de navegação só com a capacidade |
+| `tests/access_test.php` | Capacidade de auditoria por arquétipo (estudante/professor não; gerente sim), definição sem risco declarado, nó de navegação só com a capacidade; capacidades de correção (gerente e professor editor sim; professor não editor e estudante não; `applycorrection` write com `RISK_CONFIG`) |
 | `tests/output_test.php` | Dados do template e renderização da página (cursos A/B) |
 | `classes/local/correction/proposal.php` | Proposta (valor, impressão digital, invariante de executabilidade) |
 | `classes/local/correction/planner.php` | Monta a proposta a partir de uma auditoria fresca; simulação; capacidades e papéis |
@@ -119,7 +121,7 @@ mecanismo nativo `core_course_external::import_course`).
 | `correction.php`, `classes/output/correction_{proposal,result}.php`, `templates/correction*.mustache` | Página de prévia/confirmação e resultado |
 | `tests/local/correction/*_test.php`, `tests/helper/correction_testcase.php`, `tests/fixtures/correction/` | Planejador, executor (sucesso, conflitos, permissões, estudantes, falha com rollback, releitura, reauditoria, trava), verificador, proposta, saída |
 | `tests/privacy/provider_test.php` | Metadados, exportação e anonimização |
-| `tests/behat/correction.feature` | Ver proposta, confirmar (com axe), cancelar, professor que vê mas não aplica |
+| `tests/behat/correction.feature` | Ver proposta, confirmar (com axe), cancelar, professor editor aplica, professor não editor vê mas não aplica |
 | `tests/behat/audit_page.feature` | Gerente abre o relatório pelo menu do curso (com JavaScript e verificação de acessibilidade axe), reexecuta; professor e estudante não veem a entrada |
 
 Fluxo de desenvolvimento: `specs/001-auditoria-tecnica-operacional/` (Spec Kit) e `.specify/memory/constitution.md`.
@@ -152,7 +154,7 @@ mudam).
 ## Verificação
 
 ```bash
-vendor/bin/phpunit --testsuite local_mooc_audit_testsuite      # 111 testes
+vendor/bin/phpunit --testsuite local_mooc_audit_testsuite      # 113 testes
 php admin/tool/behat/cli/run.php --tags=@local_mooc_audit       # exige Selenium; ver moodle-env/README.md
 vendor/bin/phpcs --standard=moodle local/mooc_audit             # moodlehq/moodle-cs
 ```
@@ -169,8 +171,7 @@ vendor/bin/phpcs --standard=moodle local/mooc_audit             # moodlehq/moodl
 - Sem persistência de auditorias: cada execução é recalculada; histórico e acompanhamento são da spec 005. A única
   tabela guarda a trilha das correções confirmadas.
 - Correção assistida experimental: executável só para questionários (CL-13, CL-14); demais tipos e CL-17 são
-  orientados. Quem recebe `applycorrection` em produção e o marco de encerramento do CL-14 (término do curso) dependem
-  de validação institucional.
+  orientados. O marco de encerramento do CL-14 (término do curso) depende de validação institucional.
 - Detecção de conflito: entre a releitura do valor dentro da transação e a gravação, uma edição simultânea pela tela de
   edição não usa a mesma trava (janela de milissegundos); a releitura pela API e a reauditoria acusariam a divergência.
 - Sem desfazer automático; o valor anterior está na trilha para reversão manual.

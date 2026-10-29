@@ -15,7 +15,7 @@ contêineres da Spec 001 e produção intocados.
 | 4 | Implementação experimental | `plugin/local_mooc_audit/classes/local/correction/`, `correction.php`, `db/` |
 | 5 | Interface de prévia e confirmação | `correction.php`, `templates/correction*.mustache`, ação no relatório |
 | 6 | Registro mínimo | tabela `local_mooc_audit_fix` + evento `correction_applied` |
-| 7 | Testes automatizados | 36 PHPUnit novos (111 no total), 3 cenários Behat novos (5 no total) |
+| 7 | Testes automatizados | 38 PHPUnit novos (113 no total), 4 cenários Behat novos (6 no total) |
 | 8–9 | Evidências e antes/depois | `plugin-results/0.3.0/` |
 | 10 | Revisão de segurança | §4 |
 | 11 | Constituição e Spec 001 | `analysis.md` |
@@ -25,8 +25,8 @@ contêineres da Spec 001 e produção intocados.
 
 | Suíte | Resultado |
 |---|---|
-| PHPUnit `local_mooc_audit_testsuite` | **111 testes, 2001 asserções, OK** (75 da Spec 001, incluindo caracterização A/B e contrato 1.0, + 36 novos) |
-| Behat `@local_mooc_audit` | **5 cenários, 69 passos, OK** (2 da Spec 001 + 3 novos; acessibilidade axe na prévia) |
+| PHPUnit `local_mooc_audit_testsuite` | **113 testes, 2017 asserções, OK** (75 da Spec 001, incluindo caracterização A/B e contrato 1.0, + 38 novos) |
+| Behat `@local_mooc_audit` | **6 cenários, 79 passos, OK** (2 da Spec 001 + 4 novos; acessibilidade axe na prévia; professor editor aplica, professor não editor não) |
 | PHPCS `moodle` | 0 erros, 0 avisos |
 | `php -l` | sem erros |
 | Upgrade 0.2.0 → 0.3.0 | `admin/cli/upgrade.php` cria a tabela e as capacidades |
@@ -64,7 +64,7 @@ CL-14) e reauditam; no Moodle local a tela oficial de edição exibiu o novo val
 - **Escrita mínima**: lista branca de 2 colunas; comparação do registro inteiro nos testes.
 - **Saída**: templates usam apenas `{{ }}` (escapado); nenhum `{{{ }}}`; conteúdo de curso (nomes) escapado.
 - **Privacidade**: só `userid` de quem confirmou; exportação; exclusão por anonimização.
-- **Capacidades**: `applycorrection` com `captype=write` e `RISK_CONFIG`; padrão apenas gerente.
+- **Capacidades**: `applycorrection` com `captype=write` e `RISK_CONFIG`; padrão gerente e professor editor (decisão 11), nunca professor não editor nem estudante.
 - Revisão independente (subagente, leitura do diff): ver §4.1.
 
 ### 4.1 Revisão independente
@@ -103,7 +103,8 @@ desfavorável).
 
 **A confirmação está protegida por permissões adequadas?** Sim: capacidade própria de escrita, separada de ver a
 auditoria e de ver propostas, somada à capacidade nativa de gerenciar atividades, verificadas no servidor, com chave
-de sessão e POST. Quem recebe `applycorrection` em produção ainda é decisão institucional (**[validar]**).
+de sessão e POST. Por decisão de 2026-10-29, gerentes e professores editores recebem as capacidades de correção por
+padrão; professores não editores e estudantes, não (testado em `access_test` e no Behat).
 
 **É possível garantir que uma correção não provoque outra inconformidade?** Não em termos absolutos, mas o risco é
 controlado em duas camadas: (1) a simulação executa as 29 regras com o valor proposto e bloqueia a execução se a
@@ -134,7 +135,8 @@ qualquer alteração em atividade com tentativas/notas de estudantes.
 
 **A Spec 002 está pronta para merge e posterior homologação?** Pronta para **revisão** técnica, não para merge
 imediato: (1) depende do merge do PR #1 (Spec 001) — o PR desta spec tem a branch da 001 como base; (2) faltam as
-validações institucionais marcadas **[validar]** (quem corrige; marco do encerramento); (3) validação em uma cópia da
+a validação institucional ainda marcada **[validar]** (marco do encerramento do CL-14) e, para professores usarem o
+menu, a decisão da Spec 001 sobre quem audita; (3) validação em uma cópia da
 instalação institucional com plugins e dados reais antes de produção. Tecnicamente, a suíte completa, o Behat e o
 PHPCS passam.
 

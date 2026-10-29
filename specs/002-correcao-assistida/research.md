@@ -84,8 +84,8 @@ anonimização (`userid = 0`), preservando a trilha institucional sem dado pesso
 
 | Capacidade | captype | Contexto | riskbitmask | Arquétipos |
 |---|---|---|---|---|
-| `local/mooc_audit:preparecorrection` | read | curso | — | manager |
-| `local/mooc_audit:applycorrection` | write | curso | `RISK_CONFIG` | manager |
+| `local/mooc_audit:preparecorrection` | read | curso | — | manager, editingteacher |
+| `local/mooc_audit:applycorrection` | write | curso | `RISK_CONFIG` | manager, editingteacher |
 
 Além disso, a execução exige `moodle/course:manageactivities` no contexto da atividade (a mesma verificação de
 `can_update_moduleinfo()` e do callback de calendário do questionário). `RISK_CONFIG` sinaliza que a capacidade altera

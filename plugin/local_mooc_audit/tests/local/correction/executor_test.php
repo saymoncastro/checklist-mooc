@@ -319,8 +319,8 @@ final class executor_test extends correction_testcase {
         $p = $this->plan($course, 'CL-13', $q->coursemodule);
         $coursecontext = \context_course::instance($course->id);
 
-        // Editing teacher allowed to prepare only.
-        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
+        // Non-editing teacher allowed to prepare only.
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
         $teacherrole = $this->getDataGenerator()->create_role();
         assign_capability('local/mooc_audit:preparecorrection', CAP_ALLOW, $teacherrole, $coursecontext);
         role_assign($teacherrole, $teacher->id, $coursecontext);
@@ -348,6 +348,23 @@ final class executor_test extends correction_testcase {
         }
         $this->assertEquals(1, $this->quizrow($q)->attempts);
         $this->assertSame([], $this->trail());
+    }
+
+    /**
+     * An editing teacher holds both correction capabilities by default (decision of 2026-10-29) and the core
+     * manageactivities: the correction is applied and recorded under the teacher's id.
+     */
+    public function test_editing_teacher_applies(): void {
+        $course = $this->ccourse();
+        $q = $this->quiz($course, 'Q', 1, 50, 0, '<p>Tentativas permitidas: 2.</p>');
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
+        $this->setUser($teacher);
+        $p = $this->plan($course, 'CL-13', $q->coursemodule);
+        $this->assertTrue($p->canexecute);
+        $r = (new executor())->execute($course->id, 'CL-13', $q->coursemodule, $p->fingerprint(), $this->policy());
+        $this->assertSame(executor::APPLIED, $r['status']);
+        $this->assertEquals(2, $this->quizrow($q)->attempts);
+        $this->assertEquals($teacher->id, $this->trail()[0]->userid);
     }
 
     /**

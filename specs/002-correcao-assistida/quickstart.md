@@ -11,7 +11,7 @@ docker exec -e MOODLE_DOCKER_BROWSER=chrome -w /var/www/html moocaudit-s2-web ph
 docker exec -w /var/www/html moocaudit-s2-web /tmp/cs/vendor/bin/phpcs --standard=moodle local/mooc_audit
 ```
 
-Esperado: 111 testes OK; 5 cenários Behat OK; PHPCS sem erros nem avisos.
+Esperado: 113 testes OK; 6 cenários Behat OK; PHPCS sem erros nem avisos.
 
 ## Manual (≈ 10 min)
 
@@ -28,6 +28,7 @@ Esperado: 111 testes OK; 5 cenários Behat OK; PHPCS sem erros nem avisos.
    de edição (seção de conclusão no CL-17).
 5. Questionário com tentativa de estudante (não prévia): proposta CL-13 com impedimento "já tem 1 tentativa(s) de
    estudantes".
-6. Professor com `preparecorrection` mas sem `applycorrection`: vê a proposta, não vê "Confirmar correção".
+6. Professor não editor com `preparecorrection` (concedida manualmente): vê a proposta, não vê "Confirmar correção".
+   Professor editor com `audit` concedida: confirma a correção.
 7. *Administração > Relatórios > Logs*: evento "Correção assistida aplicada" por correção, com regra, campo, valor
    anterior/novo e resultado da reauditoria.

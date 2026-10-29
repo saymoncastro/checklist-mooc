@@ -14,7 +14,7 @@
 
 ## Requirement Completeness
 
-- [x] Nenhum marcador [NEEDS CLARIFICATION] restante (decisões registradas em Clarifications; 2 itens **[validar]**)
+- [x] Nenhum marcador [NEEDS CLARIFICATION] restante (decisões registradas em Clarifications; 1 item **[validar]**)
 - [x] Requisitos testáveis e sem ambiguidade
 - [x] Critérios de sucesso mensuráveis
 - [x] Cenários de aceite cobrem: caminho conforme (nada a corrigir), não conforme (proposta/execução), sem
@@ -32,5 +32,5 @@
 
 ## Notes
 
-- **[validar]** quem recebe `applycorrection` em produção; **[validar]** marco de encerramento do CL-14 (término do
-  curso).
+- Quem recebe `applycorrection`: decidido em 2026-10-29 (gerente e professor editor). **[validar]** marco de
+  encerramento do CL-14 (término do curso).

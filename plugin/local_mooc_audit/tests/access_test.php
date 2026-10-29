@@ -46,6 +46,34 @@ final class access_test extends \advanced_testcase {
     }
 
     /**
+     * Correction capabilities (specs/002): managers and editing teachers by default; non-editing teachers and students
+     * not. Applying is a write capability with RISK_CONFIG; preparing is read-only.
+     */
+    public function test_correction_capabilities(): void {
+        global $DB;
+        $this->resetAfterTest();
+        $gen = $this->getDataGenerator();
+        $course = $gen->create_course();
+        $context = \context_course::instance($course->id);
+        $users = [];
+        foreach (['student', 'teacher', 'editingteacher', 'manager'] as $role) {
+            $users[$role] = $gen->create_and_enrol($course, $role);
+        }
+        foreach (['local/mooc_audit:preparecorrection', 'local/mooc_audit:applycorrection'] as $cap) {
+            $this->assertFalse(has_capability($cap, $context, $users['student']), $cap);
+            $this->assertFalse(has_capability($cap, $context, $users['teacher']), $cap);
+            $this->assertTrue(has_capability($cap, $context, $users['editingteacher']), $cap);
+            $this->assertTrue(has_capability($cap, $context, $users['manager']), $cap);
+        }
+        $prepare = $DB->get_record('capabilities', ['name' => 'local/mooc_audit:preparecorrection'], '*', MUST_EXIST);
+        $this->assertSame('read', $prepare->captype);
+        $this->assertSame(0, (int) $prepare->riskbitmask);
+        $apply = $DB->get_record('capabilities', ['name' => 'local/mooc_audit:applycorrection'], '*', MUST_EXIST);
+        $this->assertSame('write', $apply->captype);
+        $this->assertSame(RISK_CONFIG, (int) $apply->riskbitmask);
+    }
+
+    /**
      * The capability declares no risk and is read-only (research R11).
      */
     public function test_capability_definition(): void {

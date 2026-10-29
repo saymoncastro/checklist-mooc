@@ -9,6 +9,7 @@ Feature: Assisted correction of a technical audit finding
       | username | firstname | lastname | email                |
       | manager1 | Gestora   | Um       | manager1@example.com |
       | teacher1 | Docente   | Um       | teacher1@example.com |
+      | teacher2 | Tutora    | Dois     | teacher2@example.com |
     And the following "courses" exist:
       | fullname       | shortname | enablecompletion |
       | Curso de teste | CT1       | 1                |
@@ -16,6 +17,7 @@ Feature: Assisted correction of a technical audit finding
       | user     | course | role           |
       | manager1 | CT1    | manager        |
       | teacher1 | CT1    | editingteacher |
+      | teacher2 | CT1    | teacher        |
     And the following "activities" exist:
       | activity | name                  | course | attempts | intro                        |
       | quiz     | Avaliação do Tópico 1 | CT1    | 1        | Tentativas permitidas: 2.    |
@@ -48,12 +50,23 @@ Feature: Assisted correction of a technical audit finding
     And the field "Attempts allowed" matches value "1"
 
   @javascript
-  Scenario: A teacher allowed to see proposals cannot apply them
+  Scenario: An editing teacher who can open the audit applies a correction
     Given the following "permission overrides" exist:
-      | capability                         | permission | role           | contextlevel | reference |
-      | local/mooc_audit:audit             | Allow      | editingteacher | Course       | CT1       |
-      | local/mooc_audit:preparecorrection | Allow      | editingteacher | Course       | CT1       |
+      | capability             | permission | role           | contextlevel | reference |
+      | local/mooc_audit:audit | Allow      | editingteacher | Course       | CT1       |
     And I am on the "Curso de teste" "Course" page logged in as "teacher1"
+    And I navigate to "Technical audit" in current page administration
+    When I click on "See correction proposal" "link" in the "CL-13" "table_row"
+    And I press "Confirm correction"
+    Then I should see "Correction applied and confirmed: the re-audit no longer reports the non conformity."
+
+  @javascript
+  Scenario: A non-editing teacher allowed to see proposals cannot apply them
+    Given the following "permission overrides" exist:
+      | capability                         | permission | role    | contextlevel | reference |
+      | local/mooc_audit:audit             | Allow      | teacher | Course       | CT1       |
+      | local/mooc_audit:preparecorrection | Allow      | teacher | Course       | CT1       |
+    And I am on the "Curso de teste" "Course" page logged in as "teacher2"
     And I navigate to "Technical audit" in current page administration
     When I click on "See correction proposal" "link" in the "CL-13" "table_row"
     Then I should see "Correction proposal"
