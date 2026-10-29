@@ -95,8 +95,13 @@ class cleanup_history extends \core\task\scheduled_task {
             'id'
         );
         foreach ($open as $run) {
-            if (!isset($tasked[(int) $run->id]) && recorder::fail((int) $run->id, 'stale',
-                    get_string('error_stale', 'local_mooc_audit'))) {
+            if (
+                !isset($tasked[(int) $run->id]) && recorder::fail(
+                    (int) $run->id,
+                    'stale',
+                    get_string('error_stale', 'local_mooc_audit')
+                )
+            ) {
                 $out['stale']++;
             }
         }

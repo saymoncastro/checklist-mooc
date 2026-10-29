@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * Audit follow-up dashboard (specs/005 US4): which courses need attention, which problems remain open, which were
  * resolved since the previous audit, which courses were never audited or have outdated results.

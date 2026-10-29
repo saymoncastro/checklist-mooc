@@ -60,8 +60,15 @@ class run_page implements renderable, templatable {
      * @param string $reporthtml
      * @param array $baseoptions
      */
-    public function __construct(stdClass $run, ?stdClass $base, ?array $cmp, array $corrections, ?stdClass $policy,
-            string $reporthtml, array $baseoptions) {
+    public function __construct(
+        stdClass $run,
+        ?stdClass $base,
+        ?array $cmp,
+        array $corrections,
+        ?stdClass $policy,
+        string $reporthtml,
+        array $baseoptions
+    ) {
         $this->run = $run;
         $this->base = $base;
         $this->cmp = $cmp;
@@ -82,8 +89,11 @@ class run_page implements renderable, templatable {
         $courseid = (int) $run->courseid;
         $data = new stdClass();
         $data->runid = (int) $run->id;
-        $data->recordof = get_string('history_record_of', 'local_mooc_audit',
-            history_helper::date((int) ($run->timefinished ?: $run->timecreated)));
+        $data->recordof = get_string(
+            'history_record_of',
+            'local_mooc_audit',
+            history_helper::date((int) ($run->timefinished ?: $run->timecreated))
+        );
         $data->status = history_helper::run_status($run->status);
         $data->overall = history_helper::overall($run->overall);
         $data->origin = get_string('history_origin_' . $run->origin, 'local_mooc_audit');
@@ -103,8 +113,11 @@ class run_page implements renderable, templatable {
         $data->first = $valid && !$this->base && !$run->previousrunid;
         $data->basemissing = $valid && !$this->base && $run->previousrunid;
         if ($this->base) {
-            $data->evolutiontitle = get_string('evolution_title', 'local_mooc_audit',
-                history_helper::date((int) $this->base->timefinished));
+            $data->evolutiontitle = get_string(
+                'evolution_title',
+                'local_mooc_audit',
+                history_helper::date((int) $this->base->timefinished)
+            );
             $data->notes = array_map(fn($n) => get_string('evolution_note_' . $n, 'local_mooc_audit'), $this->cmp['notes']);
             $data->counts = history_helper::evolution_counts($this->cmp['counts'], true);
             $data->comparable = $this->cmp['counts'] !== null;
@@ -164,8 +177,11 @@ class run_page implements renderable, templatable {
                     'evidence_before' => $i['evidence_before'],
                     'evidence_after' => $i['evidence_after'],
                     'reason' => $i['reason'] ? get_string('evolution_reason_' . $i['reason'], 'local_mooc_audit') : null,
-                    'successor' => $i['successor_cmid'] ? get_string('evolution_successor', 'local_mooc_audit',
-                        $i['successor_cmid']) : null,
+                    'successor' => $i['successor_cmid'] ? get_string(
+                        'evolution_successor',
+                        'local_mooc_audit',
+                        $i['successor_cmid']
+                    ) : null,
                     'key' => $i['key'],
                 ], $list),
             ];

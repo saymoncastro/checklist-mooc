@@ -1,6 +1,6 @@
 # local_mooc_audit — auditoria técnica de cursos MOOC dentro do Moodle 4.5
 
-Plugin local (versão 0.4.0, entregas das specs 001, 002 e 003) que audita uma sala existente a partir do seu `courseid`, sem depender do MOOC Admin
+Plugin local (versão 0.5.0, entregas das specs 001, 002, 003 e 005) que audita uma sala existente a partir do seu `courseid`, sem depender do MOOC Admin
 nem de arquivos `.mbz`. A **auditoria é somente leitura**; a **correção assistida** (spec 002) é um componente separado
 que só escreve após prévia, confirmação explícita e revalidação. Reaproveita o catálogo de regras e as decisões institucionais do projeto `checklist-mooc`.
 
@@ -28,6 +28,38 @@ relação entre as duas auditorias (persistente, novo no destino, pendência da 
 com a origem avaliada no ano da sua própria oferta. Restrita a gerentes, com a capacidade nas duas salas; somente
 leitura. 169 testes PHPUnit, 10 cenários Behat, PHPCS limpo. Evidências e medições em `plugin-results/0.4.0/`;
 especificação em `specs/003-comparacao-ofertas/`.
+
+**Estado (0.5.0, spec 005 — histórico, lote e acompanhamento, experimental):** toda auditoria aberta pela página da
+sala, por um lote ou pela CLI com `--record` é **registrada** (tabelas `local_mooc_audit_run`, `_policy`, `_batch`),
+com a política efetivamente aplicada guardada por impressão digital. Cada resultado tem uma **chave de ocorrência**
+estável (`regra|entidade|verificação[|discriminador]`), e cada execução é comparada com a anterior válida: novas,
+persistentes, resolvidas, estado/gravidade alterados, não verificáveis agora, não comparáveis (política ou código da
+regra mudou), recurso removido ou substituído. **Lotes** por categoria, lista de ids, ano de início ou seleção no painel
+rodam em segundo plano pela fila de tarefas ad hoc do Moodle (concorrência limitada, trava por sala, permissões
+reconferidas na execução). **Painel** *Administração do site > Cursos > Acompanhamento das auditorias* com situação por
+sala (com bloqueantes, requer correções, sem inconformidades detectadas, auditoria incompleta, não auditada),
+desatualização, filtros e evolução somada, sem "aprovado" nem percentuais. Retenção configurável (padrão 365 dias).
+Especificação, medições e respostas em `specs/005-auditoria-lote-historico/`.
+
+### Histórico, lote e acompanhamento (spec 005)
+
+- **Quem vê o quê:** o histórico de uma sala usa `local/mooc_audit:audit` (gerente e professor editor). O painel e as
+  páginas de lote exigem `local/mooc_audit:viewdashboard`; solicitar lotes e reexecutar falhas exige
+  `local/mooc_audit:batchaudit` (ambas no sistema, só gerentes por padrão). Painel e lotes listam apenas salas em que a
+  pessoa tem `local/mooc_audit:audit`.
+- **Execução em segundo plano:** cada sala de um lote é uma tarefa `\local_mooc_audit\task\audit_course` executada
+  pelo cron, em nome de quem pediu. Concorrência: configuração *Auditorias simultâneas em segundo plano* (padrão 2;
+  `$CFG->task_concurrency_limit['\local_mooc_audit\task\audit_course']` tem precedência). Sem cron os lotes ficam na
+  fila (o painel mostra "Na fila ou em execução"). Para processar à mão:
+  `php admin/cli/adhoc_task.php --execute --classname='\local_mooc_audit\task\audit_course'`.
+- **Falhas:** sala removida, permissão revogada, exceção fora das regras ou três interrupções terminam a execução como
+  *Falhou* com o motivo; as demais salas seguem. *Reexecutar auditorias com falha* (página do lote) cria novas execuções;
+  as falhas antigas ficam no histórico. Uma regra que lança exceção torna a execução *Parcial*.
+- **Retenção:** tarefa diária `\local_mooc_audit\task\cleanup_history` (03:17) remove execuções finais mais antigas
+  que *Retenção do histórico* (padrão 365 dias, limite 30–1825), mantendo a última execução válida de cada sala
+  existente; remove lotes vazios e políticas sem referência; marca como falha execuções presas há mais de um dia.
+- **CLI:** `php local/mooc_audit/cli/audit.php --courseid=N --record` e
+  `php local/mooc_audit/cli/batch.php --category=C [--subcats] | --courses=1,2 | --startyear=AAAA [--run]`.
 
 ## Instalação
 
@@ -101,7 +133,7 @@ Scripts **apenas para ambientes de teste** (recusam rodar fora de `localhost`): 
 gerador de questões do núcleo carrega classes do PHPUnit) e `cli/make_import.php` (cria sala vazia e importa com o
 mecanismo nativo `core_course_external::import_course`).
 
-## Estrutura (0.4.0)
+## Estrutura (0.5.0)
 
 | Arquivo | Papel |
 |---|---|
@@ -151,6 +183,17 @@ mecanismo nativo `core_course_external::import_course`).
 | `tests/compare_access_test.php`, `tests/compare_readonly_test.php`, `tests/comparison_contract_test.php`, `tests/comparison_output_test.php` | Capacidade nas duas salas e busca restrita; não modificação das duas salas e ausência de dados pessoais; contrato; página e texto |
 | `tests/helper/schema_validator.php` | Validador mínimo de JSON Schema (contratos 1.0 e comparison 1.0) |
 | `tests/behat/compare.feature` | Seleção pela administração, confirmação obrigatória, relatório (com axe), correspondência manual, link a partir da auditoria, professor editor sem acesso |
+| `classes/local/history/fingerprint.php` | Impressão digital da política (sem o relógio da execução) e, por regra, da fatia de política declarada e do código da regra (spec 005) |
+| `classes/local/history/{policy_store,run_store}.php` | Política aplicada por impressão digital; execuções, estados e imutabilidade dos estados finais |
+| `classes/local/history/recorder.php` | Único caminho de auditoria registrada (página, CLI, tarefa): motor, entidades, métricas, evolução, estado |
+| `classes/local/history/evolution.php` | Comparação entre execuções pela chave de ocorrência; correções da trilha no intervalo (sem cópia) |
+| `classes/local/history/{batch_manager,dashboard,access}.php` | Lotes (seleção, recusas, duplicação, andamento derivado, reexecução); dados do painel; regras de acesso do histórico |
+| `classes/task/{audit_course,cleanup_history}.php`, `db/tasks.php` | Tarefa ad hoc por sala; retenção diária |
+| `history.php`, `dashboard.php`, `batch.php`, `classes/form/batch_form.php`, `classes/output/{run_summary,history_page,run_page,dashboard_page,batch_page,history_helper}.php`, `templates/{run_summary,history,run,dashboard,batch}.mustache` | Histórico e evolução, painel, lotes |
+| `cli/batch.php` | Lote pela linha de comando (`--run` executa as tarefas no próprio processo, para medição) |
+| `tests/occurrence_test.php`, `tests/policy_dependency_test.php` | Unicidade e estabilidade da chave (ordem, idioma); toda chave de política lida é declarada pela regra |
+| `tests/local/history/*_test.php`, `tests/task/*_test.php`, `tests/history_access_test.php` | Evolução (todas as classes), registro, painel, lote pela fila real (falha parcial, permissão revogada, duplicação, interrupção), retenção, acesso |
+| `tests/behat/history.feature` | Professor editor audita duas vezes e lê histórico e evolução; gerente enfileira lote pelo painel e acompanha |
 | `tests/behat/audit_page.feature` | Gerente abre o relatório pelo menu do curso (com JavaScript e verificação de acessibilidade axe), reexecuta; professor editor abre o relatório; professor não editor e estudante não veem a entrada |
 
 Fluxo de desenvolvimento: `specs/001-auditoria-tecnica-operacional/` (Spec Kit) e `.specify/memory/constitution.md`.
@@ -197,8 +240,11 @@ vendor/bin/phpcs --standard=moodle local/mooc_audit             # moodlehq/moodl
   restauração. Ver `RELATORIO-POC-PLUGIN-MOODLE.md`.
 - Textos de evidência das regras ainda são gerados em português no código (orientações e títulos já estão em `lang/`).
 - Módulo com nome vazio não aparece no `modinfo` do Moodle; X-STR-01 só detecta nomes formados por espaços ou marcação.
-- Sem persistência de auditorias: cada execução é recalculada; histórico e acompanhamento são da spec 005. A única
-  tabela guarda a trilha das correções confirmadas.
+- Histórico (spec 005): toda abertura da página registra uma execução (decisão **[validar]**); a reauditoria da
+  correção assistida não é registrada (tem trilha própria). Mudanças no coletor comum (`snapshot`) não entram na
+  impressão digital por regra: a evolução avisa quando as versões do plugin diferem. Gerente só de categoria não acessa
+  o painel (capacidades no sistema, constituição VIII). A comparação entre ofertas continua com a chave de local da
+  spec 003.
 - Correção assistida experimental: executável só para questionários (CL-13, CL-14); demais tipos e CL-17 são
   orientados. O marco de encerramento do CL-14 (término do curso) depende de validação institucional.
 - Detecção de conflito: entre a releitura do valor dentro da transação e a gravação, uma edição simultânea pela tela de

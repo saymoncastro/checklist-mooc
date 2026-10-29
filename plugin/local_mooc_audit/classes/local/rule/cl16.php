@@ -60,8 +60,12 @@ class cl16 extends base {
     public function evaluate(array $s, array $p): array {
         $ev = helpers::mods($s, 'feedback', $p['required_feedback_evaluation']);
         if (!$ev) {
-            return [$this->f(status::NAO_CONFORME, 'Atividades do curso', 'nenhuma "' . $p['required_feedback_evaluation'] . '"',
-                ['check' => 'evaluation_presence'])];
+            return [$this->f(
+                status::NAO_CONFORME,
+                'Atividades do curso',
+                'nenhuma "' . $p['required_feedback_evaluation'] . '"',
+                ['check' => 'evaluation_presence']
+            )];
         }
         $e = $ev[0];
         $req = [];

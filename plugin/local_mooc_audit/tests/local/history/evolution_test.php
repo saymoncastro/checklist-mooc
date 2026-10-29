@@ -53,8 +53,12 @@ final class evolution_test extends \basic_testcase {
      * @param string $version
      * @return array
      */
-    protected static function audit(array $results, array $modules = [42 => 'quiz|q1', 43 => 'quiz|q2', 50 => 'feedback|av'],
-            array $fp = self::FP, string $version = '0.5.0 (2026103000)'): array {
+    protected static function audit(
+        array $results,
+        array $modules = [42 => 'quiz|q1', 43 => 'quiz|q2', 50 => 'feedback|av'],
+        array $fp = self::FP,
+        string $version = '0.5.0 (2026103000)'
+    ): array {
         return ['report' => ['results' => $results],
             'details' => ['rules' => $fp, 'modules' => $modules, 'sections' => [0, 1, 2]], 'pluginversion' => $version];
     }
@@ -118,8 +122,10 @@ final class evolution_test extends \basic_testcase {
         $this->assertSame('changed', $c['CL-13|cm:42|intro_attempts']);
         $this->assertSame('persistent', $c['CL-14|cm:43|close_date']);
         $this->assertSame('new', $c['CL-13|cm:43|attempts']);
-        $item = array_values(array_filter(evolution::compare($before, $after)['items'],
-            fn($i) => $i['key'] === 'CL-13|cm:42|intro_attempts'))[0];
+        $item = array_values(array_filter(
+            evolution::compare($before, $after)['items'],
+            fn($i) => $i['key'] === 'CL-13|cm:42|intro_attempts'
+        ))[0];
         $this->assertSame(['ATENCAO', 'NAO_CONFORME', 'Baixa', 'Alta'], [$item['status_before'], $item['status_after'],
             $item['severity_before'], $item['severity_after']]);
     }

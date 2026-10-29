@@ -64,8 +64,16 @@ class dashboard_page implements renderable, templatable {
      * @param int $perpage
      * @param moodle_url $url
      */
-    public function __construct(array $data, array $categories, bool $canbatch, array $batches, array $removed, int $page,
-            int $perpage, moodle_url $url) {
+    public function __construct(
+        array $data,
+        array $categories,
+        bool $canbatch,
+        array $batches,
+        array $removed,
+        int $page,
+        int $perpage,
+        moodle_url $url
+    ) {
         $this->data = $data;
         $this->categories = $categories;
         $this->canbatch = $canbatch;

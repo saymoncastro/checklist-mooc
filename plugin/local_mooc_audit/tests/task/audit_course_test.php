@@ -213,8 +213,10 @@ final class audit_course_test extends \advanced_testcase {
         $teacher = $this->getDataGenerator()->create_and_enrol($c, 'editingteacher');
 
         $flat = batch_manager::resolve(['mode' => 'category', 'categoryid' => $a->category], $manager->id);
-        $deep = batch_manager::resolve(['mode' => 'category', 'categoryid' => $a->category, 'subcategories' => 1],
-            $manager->id);
+        $deep = batch_manager::resolve(
+            ['mode' => 'category', 'categoryid' => $a->category, 'subcategories' => 1],
+            $manager->id
+        );
         $this->assertEqualsCanonicalizing([$a->id, $b->id], array_keys($flat['accepted']));
         $this->assertEqualsCanonicalizing([$a->id, $b->id, $c->id], array_keys($deep['accepted']));
         $year = batch_manager::resolve(['mode' => 'startyear', 'startyear' => 2031], $manager->id);

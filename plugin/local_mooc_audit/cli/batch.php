@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * CLI: create a batch audit and, optionally, run its tasks in this process (operation and performance measurement).
  *
@@ -90,11 +89,25 @@ foreach ($tasks as $record) {
     $DB->delete_records('task_adhoc', ['id' => $record->id]);
     $run = run_store::get((int) $data->runid);
     $metrics = run_store::json($run, 'details')['metrics'] ?? [];
-    cli_writeln(sprintf('  curso %6d  %-9s %-20s %6.2fs %7.1f MB  leituras %5d  relatório %7d bytes',
-        $run->courseid, $run->status, (string) $run->overall, $metrics['seconds'] ?? 0, $metrics['peak_mb'] ?? 0,
-        $metrics['db_reads'] ?? 0, strlen((string) $run->report)));
+    cli_writeln(sprintf(
+        '  curso %6d  %-9s %-20s %6.2fs %7.1f MB  leituras %5d  relatório %7d bytes',
+        $run->courseid,
+        $run->status,
+        (string) $run->overall,
+        $metrics['seconds'] ?? 0,
+        $metrics['peak_mb'] ?? 0,
+        $metrics['db_reads'] ?? 0,
+        strlen((string) $run->report)
+    ));
 }
 $p = batch_manager::progress($batch);
-cli_writeln(sprintf('total %d: concluídas %d, parciais %d, falhas %d, pendentes %d; %.1fs; pico do processo %.1f MB',
-    $p['total'], $p['complete'], $p['partial'], $p['failed'], $p['queued'] + $p['running'], microtime(true) - $t0,
-    memory_get_peak_usage() / 1048576));
+cli_writeln(sprintf(
+    'total %d: concluídas %d, parciais %d, falhas %d, pendentes %d; %.1fs; pico do processo %.1f MB',
+    $p['total'],
+    $p['complete'],
+    $p['partial'],
+    $p['failed'],
+    $p['queued'] + $p['running'],
+    microtime(true) - $t0,
+    memory_get_peak_usage() / 1048576
+));

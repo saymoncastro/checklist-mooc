@@ -272,9 +272,11 @@ class batch_manager {
             if ($run->status !== run_store::FAILED || (int) $run->batchid !== (int) $batch->id) {
                 continue;
             }
-            if (!\core\context\course::instance($courseid, IGNORE_MISSING)
+            if (
+                !\core\context\course::instance($courseid, IGNORE_MISSING)
                     || !has_capability('local/mooc_audit:audit', \context_course::instance($courseid), $userid)
-                    || run_store::pending($courseid)) {
+                    || run_store::pending($courseid)
+            ) {
                 continue;
             }
             recorder::queue($courseid, $userid, (int) $batch->id);

@@ -89,8 +89,13 @@ class run_store {
      * @param string $status QUEUED or RUNNING (synchronous audits)
      * @return int run id
      */
-    public static function create(int $courseid, string $origin, int $userid, int $batchid = 0,
-            string $status = self::QUEUED): int {
+    public static function create(
+        int $courseid,
+        string $origin,
+        int $userid,
+        int $batchid = 0,
+        string $status = self::QUEUED
+    ): int {
         global $DB;
         $now = time();
         return (int) $DB->insert_record(self::TABLE, (object) [

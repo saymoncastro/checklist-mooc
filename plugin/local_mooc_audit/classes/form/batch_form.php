@@ -46,8 +46,12 @@ class batch_form extends \moodleform {
         }
         $mform->addElement('select', 'mode', get_string('batch_mode', 'local_mooc_audit'), $modes);
         $mform->addHelpButton('mode', 'batch_mode', 'local_mooc_audit');
-        $mform->addElement('select', 'categoryid', get_string('batch_category', 'local_mooc_audit'),
-            \core_course_category::make_categories_list());
+        $mform->addElement(
+            'select',
+            'categoryid',
+            get_string('batch_category', 'local_mooc_audit'),
+            \core_course_category::make_categories_list()
+        );
         $mform->hideIf('categoryid', 'mode', 'neq', batch_manager::MODE_CATEGORY);
         $mform->addElement('advcheckbox', 'subcategories', '', get_string('batch_subcategories', 'local_mooc_audit'));
         $mform->setDefault('subcategories', 1);
@@ -78,8 +82,10 @@ class batch_form extends \moodleform {
      */
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
-        if (($data['mode'] ?? '') === batch_manager::MODE_STARTYEAR && ((int) $data['startyear'] < 1970
-                || (int) $data['startyear'] > 2100)) {
+        if (
+            ($data['mode'] ?? '') === batch_manager::MODE_STARTYEAR && ((int) $data['startyear'] < 1970
+                || (int) $data['startyear'] > 2100)
+        ) {
             $errors['startyear'] = get_string('invaliddata', 'error');
         }
         return $errors;

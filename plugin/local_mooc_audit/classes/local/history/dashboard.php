@@ -123,8 +123,11 @@ class dashboard {
            ORDER BY c.fullname, c.id',
             $params
         );
-        return array_filter($courses, fn($c) => has_capability('local/mooc_audit:audit', \context_course::instance($c->id),
-            $userid));
+        return array_filter($courses, fn($c) => has_capability(
+            'local/mooc_audit:audit',
+            \context_course::instance($c->id),
+            $userid
+        ));
     }
 
     /**

@@ -83,8 +83,10 @@ if ($hassiteconfig) {
         get_string('setting_history_heading', 'local_mooc_audit'),
         get_string('setting_history_heading_desc', 'local_mooc_audit')
     ));
-    foreach (['history_retention_days' => 365, 'history_stale_days' => 7, 'batch_concurrency' => 2,
-            'batch_max_courses' => 300] as $name => $default) {
+    foreach (
+        ['history_retention_days' => 365, 'history_stale_days' => 7, 'batch_concurrency' => 2,
+            'batch_max_courses' => 300] as $name => $default
+    ) {
         $settings->add(new admin_setting_configtext(
             "local_mooc_audit/$name",
             get_string("setting_$name", 'local_mooc_audit'),

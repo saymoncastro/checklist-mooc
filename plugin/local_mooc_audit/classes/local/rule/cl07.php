@@ -57,8 +57,12 @@ class cl07 extends base {
     public function evaluate(array $s, array $p): array {
         $ed = $s['course']['enddate'];
         if (!$ed) {
-            return [$this->f(status::NAO_CONFORME, 'Configurações do curso > Data de término', 'não definida (0)',
-                ['check' => 'enddate'])];
+            return [$this->f(
+                status::NAO_CONFORME,
+                'Configurações do curso > Data de término',
+                'não definida (0)',
+                ['check' => 'enddate']
+            )];
         }
         $dm = userdate($ed, '%d/%m', 99, false);
         $year = (int) userdate($ed, '%Y', 99, false);

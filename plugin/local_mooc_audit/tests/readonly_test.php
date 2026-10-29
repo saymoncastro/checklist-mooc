@@ -107,4 +107,39 @@ final class readonly_test extends \advanced_testcase {
         $this->assertSame(0, $DB->count_records('local_mooc_audit_fix'));
         $this->assertSame([], $logged);
     }
+
+    /**
+     * Recorded audits (page and background batch) write only to the plugin's own tables (specs/005 FR-031).
+     *
+     * @covers \local_mooc_audit\local\history\recorder
+     * @covers \local_mooc_audit\task\audit_course
+     */
+    public function test_recorded_and_batch_audits_do_not_modify_the_course(): void {
+        global $DB, $USER;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        [$b] = $this->getDataGenerator()->get_plugin_generator('local_mooc_audit')->create_course_b(2027);
+        $this->getDataGenerator()->create_and_enrol($b, 'student');
+        \context_helper::build_all_paths(true);
+        foreach (get_fast_modinfo($b)->get_cms() as $cm) {
+            \context_module::instance($cm->id);
+        }
+        $before = tests\course_tables::hashes($b->id);
+        $course = $DB->get_record('course', ['id' => $b->id]);
+        $events = $DB->count_records('event');
+
+        $this->waitForSecond();
+        local\history\recorder::record_now((int) $b->id, 'page', (int) $USER->id, ['reoffer_year' => 2027]);
+        local\history\batch_manager::create(['mode' => 'ids', 'courseids' => [$b->id]], (int) $USER->id);
+        ob_start();
+        $this->runAdhocTasks(\local_mooc_audit\task\audit_course::class);
+        ob_end_clean();
+
+        $this->assertSame(2, $DB->count_records('local_mooc_audit_run', ['courseid' => $b->id, 'status' => 'complete']));
+        $this->assertSame($before, tests\course_tables::hashes($b->id));
+        $this->assertSame($course->timemodified, $DB->get_field('course', 'timemodified', ['id' => $b->id]));
+        $this->assertSame($course->cacherev, $DB->get_field('course', 'cacherev', ['id' => $b->id]));
+        $this->assertSame($events, $DB->count_records('event'));
+        $this->assertSame(0, $DB->count_records('local_mooc_audit_fix'));
+    }
 }

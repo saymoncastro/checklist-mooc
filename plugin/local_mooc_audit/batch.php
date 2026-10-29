@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * Batch audits (specs/005 US3): new batch (preview, confirm), creation from the dashboard selection, progress of a
  * batch and re-run of its failures.
@@ -67,14 +66,22 @@ if ($action === 'create' || $action === 'retry') {
     if ($action === 'retry') {
         $batch = batch_manager::get($id) ?: throw new moodle_exception('invalidrecord', 'error', '', batch_manager::TABLE);
         $n = batch_manager::retry_failed($batch, (int) $USER->id);
-        redirect(new moodle_url('/local/mooc_audit/batch.php', ['id' => $batch->id]),
-            get_string('batch_retried', 'local_mooc_audit', $n), null, \core\output\notification::NOTIFY_SUCCESS);
+        redirect(
+            new moodle_url('/local/mooc_audit/batch.php', ['id' => $batch->id]),
+            get_string('batch_retried', 'local_mooc_audit', $n),
+            null,
+            \core\output\notification::NOTIFY_SUCCESS
+        );
     }
     $out = batch_manager::create(['mode' => batch_manager::MODE_SELECTION,
         'courseids' => optional_param_array('courseids', [], PARAM_INT)], (int) $USER->id);
     [$message, $type] = local_mooc_audit_batch_message($out);
-    redirect($out['batchid'] ? new moodle_url('/local/mooc_audit/batch.php', ['id' => $out['batchid']]) : $dashboardurl,
-        $message, null, $type);
+    redirect(
+        $out['batchid'] ? new moodle_url('/local/mooc_audit/batch.php', ['id' => $out['batchid']]) : $dashboardurl,
+        $message,
+        null,
+        $type
+    );
 }
 
 $renderer = $PAGE->get_renderer('local_mooc_audit');
@@ -92,8 +99,13 @@ if ($id) {
     }
     echo $OUTPUT->header();
     echo $OUTPUT->heading(get_string('batch_title', 'local_mooc_audit', format_string($batch->name)));
-    echo $renderer->render(new \local_mooc_audit\output\batch_page($batch, $runs, $courses, batch_manager::progress($batch),
-        has_capability('local/mooc_audit:batchaudit', $system)));
+    echo $renderer->render(new \local_mooc_audit\output\batch_page(
+        $batch,
+        $runs,
+        $courses,
+        batch_manager::progress($batch),
+        has_capability('local/mooc_audit:batchaudit', $system)
+    ));
     echo $OUTPUT->footer();
     exit;
 }
@@ -125,12 +137,16 @@ if ($preview) {
     if (!empty($preview['message'])) {
         echo $OUTPUT->notification($preview['message'][0], $preview['message'][1]);
     } else if ($preview['toomany']) {
-        echo $OUTPUT->notification(get_string('batch_error_toomany', 'local_mooc_audit', batch_manager::max_courses()),
-            \core\output\notification::NOTIFY_ERROR);
+        echo $OUTPUT->notification(
+            get_string('batch_error_toomany', 'local_mooc_audit', batch_manager::max_courses()),
+            \core\output\notification::NOTIFY_ERROR
+        );
     }
     echo $OUTPUT->heading(get_string('batch_accepted', 'local_mooc_audit', count($preview['accepted'])), 4);
-    $items = array_map(fn($c) => s($c->shortname) . ' — ' . format_string($c->fullname) . ' (id ' . $c->id . ')',
-        $preview['accepted']);
+    $items = array_map(
+        fn($c) => s($c->shortname) . ' — ' . format_string($c->fullname) . ' (id ' . $c->id . ')',
+        $preview['accepted']
+    );
     echo html_writer::alist($items, ['data-region' => 'batch-preview']);
     if ($preview['skipped']) {
         echo $OUTPUT->heading(get_string('batch_skipped', 'local_mooc_audit', count($preview['skipped'])), 4);
