@@ -84,7 +84,8 @@ final class recorder_test extends \advanced_testcase {
         $details = run_store::json($run, 'details');
         $this->assertCount(catalog::count(), $details['rules']);
         $this->assertNotEmpty($details['modules']);
-        $this->assertContains(0, $details['sections']);
+        $this->assertContains((int) $DB->get_field('course_sections', 'id', ['course' => $b->id, 'section' => 0]),
+            $details['sections']);
         $this->assertArrayHasKey('peak_mb', $details['metrics']);
         $policy = policy_store::get((int) $run->policyid);
         $this->assertEquals(self::YEAR, json_decode($policy->policy, true)['reoffer_year']);
@@ -211,5 +212,55 @@ final class recorder_test extends \advanced_testcase {
         $this->assertCount(1, $list);
         $this->assertSame('CL-13', $list[0]->ruleid);
         $this->assertSame(1, $DB->count_records('local_mooc_audit_fix'));
+    }
+
+    /**
+     * Inserting a section above a problematic one keeps its occurrence (sections are keyed by id, not by number):
+     * nothing is "resolved", only the new empty section is "new" (review finding 1).
+     */
+    public function test_section_insertion_keeps_keys(): void {
+        global $DB;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $course = $this->getDataGenerator()->create_course(['numsections' => 3, 'enablecompletion' => 1]);
+        $this->getDataGenerator()->create_module('page', ['course' => $course->id, 'section' => 1]);
+        $this->getDataGenerator()->create_module('page', ['course' => $course->id, 'section' => 3]);
+        [$first, $report] = $this->record((int) $course->id);
+        $sec2 = $DB->get_field('course_sections', 'id', ['course' => $course->id, 'section' => 2]);
+        $this->assertContains("CL-20|sec:$sec2|content", array_column($report['results'], 'occurrence'));
+
+        course_create_section($course, 1);
+        [$second] = $this->record((int) $course->id);
+        $this->assertEquals(3, $DB->get_field('course_sections', 'section', ['id' => $sec2]), 'section moved down');
+        $evo = evolution::compare(
+            ['report' => $report, 'details' => run_store::json($first, 'details'), 'pluginversion' => $first->pluginversion],
+            ['report' => run_store::json($second, 'report'), 'details' => run_store::json($second, 'details'),
+                'pluginversion' => $second->pluginversion]
+        );
+        $classes = array_column($evo['items'], 'class', 'key');
+        $this->assertSame('persistent', $classes["CL-20|sec:$sec2|content"]);
+        $this->assertSame(0, $evo['counts']['resolved']);
+        $this->assertSame(1, $evo['counts']['new'], 'the inserted empty section');
+    }
+
+    /**
+     * The base of a run is the latest run finished before it started, whatever the ids: a batch run queued before a
+     * page audit and executed after it compares with the page audit (review finding 3).
+     */
+    public function test_base_is_chosen_by_time(): void {
+        global $USER;
+        $b = $this->course_b();
+        set_config('policyjson', json_encode(self::POLICY), 'local_mooc_audit');
+        $this->record($b->id);
+        $queued = recorder::queue((int) $b->id, (int) $USER->id, 0);
+        $this->waitForSecond();
+        [$page] = $this->record($b->id);
+        $this->waitForSecond();
+        ob_start();
+        $this->runAdhocTasks(\local_mooc_audit\task\audit_course::class);
+        ob_end_clean();
+        $this->assertLessThan((int) $page->id, $queued, 'the batch run has the smaller id');
+        $this->assertEquals($page->id, run_store::get($queued)->previousrunid);
+        $this->assertEquals($queued, run_store::latest_valid((int) $b->id)->id, 'latest = last finished, not highest id');
     }
 }

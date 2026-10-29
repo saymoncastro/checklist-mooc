@@ -220,4 +220,16 @@ final class evolution_test extends \basic_testcase {
         $this->assertNull($cmp['counts']);
         $this->assertSame(['base_without_occurrences'], $cmp['notes']);
     }
+
+    /**
+     * A rule that could only partly verify the course (course level NAO_VERIFICAVEL, e.g. CL-12 without the course
+     * total): its problems that disappear are not verifiable, not resolved (review finding 2).
+     */
+    public function test_partially_unverified_rule(): void {
+        $fp = self::FP + ['CL-12' => ['p' => 'p12', 'r' => 'r12']];
+        $before = self::audit([self::r('CL-12|course|aggregation', 'NAO_CONFORME')], fp: $fp);
+        $after = self::audit([self::r('CL-12|course|total_sum', 'CONFORME', null),
+            self::r('CL-12|course|onlygraded', 'NAO_VERIFICAVEL', 'Informativa')], fp: $fp);
+        $this->assertSame('unverifiable', self::classes(evolution::compare($before, $after))['CL-12|course|aggregation']);
+    }
 }

@@ -111,7 +111,9 @@ final class dashboard_test extends \advanced_testcase {
 
         // Outdated: age, policy change.
         $this->assertSame([], $only(['situation' => dashboard::STALE]));
-        $DB->set_field(run_store::TABLE, 'timefinished', time() - 30 * DAYSECS, ['id' => $second->id]);
+        // Every run of B aged (the latest run is the last one to finish, not the highest id).
+        $DB->set_field(run_store::TABLE, 'timefinished', time() - 30 * DAYSECS, ['courseid' => $b->id]);
+        $DB->set_field(run_store::TABLE, 'timefinished', time() - 29 * DAYSECS, ['id' => $second->id]);
         $this->assertSame([(int) $b->id], $only(['situation' => dashboard::STALE]));
         set_config('policyjson', json_encode(['reoffer_year' => self::YEAR, 'min_quiz_attempts' => 3]), 'local_mooc_audit');
         $rows = dashboard::build((int) $USER->id, ['situation' => dashboard::STALE])['rows'];

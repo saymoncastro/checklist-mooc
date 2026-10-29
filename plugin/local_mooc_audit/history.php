@@ -93,9 +93,11 @@ $valid = in_array($run->status, run_store::valid_states(), true);
 $base = null;
 if ($valid) {
     $candidate = $baseid ? run_store::get($baseid) : ($run->previousrunid ? run_store::get((int) $run->previousrunid) : null);
+    // The base must have finished before this run started (runs are ordered by time, not by id).
+    $started = (int) ($run->timestarted ?: $run->timecreated);
     if (
-        $candidate && (int) $candidate->courseid === $courseid && (int) $candidate->id < (int) $run->id
-            && in_array($candidate->status, run_store::valid_states(), true)
+        $candidate && (int) $candidate->courseid === $courseid && (int) $candidate->id !== (int) $run->id
+            && (int) $candidate->timefinished <= $started && in_array($candidate->status, run_store::valid_states(), true)
     ) {
         $base = $candidate;
     }
@@ -109,11 +111,10 @@ if ($base) {
             'pluginversion' => $base->pluginversion],
         ['report' => $report ?? [], 'details' => run_store::json($run, 'details') ?? [], 'pluginversion' => $run->pluginversion]
     );
-    $corrections = evolution::corrections_between(
-        $courseid,
-        (int) $base->timefinished,
-        (int) ($run->timestarted ?: $run->timecreated)
-    );
+    // The specs/002 trail (values and who corrected) is shown to whoever may see correction proposals.
+    if (has_capability('local/mooc_audit:preparecorrection', $context)) {
+        $corrections = evolution::corrections_between($courseid, (int) $base->timefinished, $started);
+    }
 }
 $policy = $run->policyid ? policy_store::get((int) $run->policyid) : null;
 
@@ -137,12 +138,12 @@ if ($format === 'json') {
 $baseoptions = [];
 if ($valid) {
     [$in, $params] = $DB->get_in_or_equal(run_store::valid_states(), SQL_PARAMS_NAMED);
-    $params += ['courseid' => $courseid, 'runid' => $run->id];
+    $params += ['courseid' => $courseid, 'runid' => $run->id, 'started' => (int) ($run->timestarted ?: $run->timecreated)];
     $earlier = $DB->get_records_select(
         run_store::TABLE,
-        "courseid = :courseid AND id < :runid AND status $in",
+        "courseid = :courseid AND id <> :runid AND timefinished <= :started AND status $in",
         $params,
-        'id DESC',
+        'timefinished DESC, id DESC',
         'id, timefinished',
         0,
         50
@@ -166,6 +167,7 @@ echo $renderer->render(new \local_mooc_audit\output\run_page(
     $corrections,
     $policy,
     $reporthtml,
-    $baseoptions
+    $baseoptions,
+    has_capability('local/mooc_audit:preparecorrection', $context)
 ));
 echo $OUTPUT->footer();

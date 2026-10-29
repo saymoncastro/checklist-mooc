@@ -1,0 +1,202 @@
+lote 2: 100 enfileiradas, 0 reaproveitadas, 0 recusadas
+local_mooc_audit: run 4 course 4 → complete
+  curso      4  complete  REQUER_CORRECOES       0.12s    28.7 MB  leituras    90  relatório   25726 bytes
+local_mooc_audit: run 5 course 5 → complete
+  curso      5  complete  BLOQUEADA              0.03s    30.9 MB  leituras   116  relatório   33580 bytes
+local_mooc_audit: run 6 course 6 → complete
+  curso      6  complete  REQUER_CORRECOES       0.02s    30.9 MB  leituras    89  relatório   25728 bytes
+local_mooc_audit: run 7 course 7 → complete
+  curso      7  complete  BLOQUEADA              0.02s    31.1 MB  leituras   116  relatório   33589 bytes
+local_mooc_audit: run 8 course 8 → complete
+  curso      8  complete  REQUER_CORRECOES       0.02s    31.1 MB  leituras    89  relatório   25783 bytes
+local_mooc_audit: run 9 course 9 → complete
+  curso      9  complete  BLOQUEADA              0.03s    31.3 MB  leituras   116  relatório   33708 bytes
+local_mooc_audit: run 10 course 10 → complete
+  curso     10  complete  REQUER_CORRECOES       0.03s    31.3 MB  leituras    89  relatório   25798 bytes
+local_mooc_audit: run 11 course 11 → complete
+  curso     11  complete  BLOQUEADA              0.03s    31.5 MB  leituras   116  relatório   33723 bytes
+local_mooc_audit: run 12 course 12 → complete
+  curso     12  complete  REQUER_CORRECOES       0.02s    31.5 MB  leituras    89  relatório   25797 bytes
+local_mooc_audit: run 13 course 13 → complete
+  curso     13  complete  BLOQUEADA              0.03s    31.7 MB  leituras   116  relatório   33723 bytes
+local_mooc_audit: run 14 course 14 → complete
+  curso     14  complete  REQUER_CORRECOES       0.02s    31.8 MB  leituras    89  relatório   25798 bytes
+local_mooc_audit: run 15 course 15 → complete
+  curso     15  complete  BLOQUEADA              0.03s    31.8 MB  leituras   116  relatório   33723 bytes
+local_mooc_audit: run 16 course 16 → complete
+  curso     16  complete  REQUER_CORRECOES       0.02s    31.8 MB  leituras    89  relatório   25798 bytes
+local_mooc_audit: run 17 course 17 → complete
+  curso     17  complete  BLOQUEADA              0.03s    31.9 MB  leituras   116  relatório   33723 bytes
+local_mooc_audit: run 18 course 18 → complete
+  curso     18  complete  REQUER_CORRECOES       0.02s    31.8 MB  leituras    89  relatório   25798 bytes
+local_mooc_audit: run 19 course 19 → complete
+  curso     19  complete  BLOQUEADA              0.03s    31.9 MB  leituras   116  relatório   33723 bytes
+local_mooc_audit: run 20 course 20 → complete
+  curso     20  complete  REQUER_CORRECOES       0.02s    31.9 MB  leituras    89  relatório   25797 bytes
+local_mooc_audit: run 21 course 21 → complete
+  curso     21  complete  BLOQUEADA              0.02s    32.0 MB  leituras   116  relatório   33723 bytes
+local_mooc_audit: run 22 course 22 → complete
+  curso     22  complete  REQUER_CORRECOES       0.02s    31.9 MB  leituras    89  relatório   25798 bytes
+local_mooc_audit: run 23 course 23 → complete
+  curso     23  complete  BLOQUEADA              0.02s    32.0 MB  leituras   116  relatório   33723 bytes
+local_mooc_audit: run 24 course 24 → complete
+  curso     24  complete  REQUER_CORRECOES       0.02s    32.0 MB  leituras    89  relatório   25798 bytes
+local_mooc_audit: run 25 course 25 → complete
+  curso     25  complete  BLOQUEADA              0.02s    32.1 MB  leituras   116  relatório   33723 bytes
+local_mooc_audit: run 26 course 26 → complete
+  curso     26  complete  REQUER_CORRECOES       0.02s    32.1 MB  leituras    89  relatório   25798 bytes
+local_mooc_audit: run 27 course 27 → complete
+  curso     27  complete  BLOQUEADA              0.02s    32.1 MB  leituras   116  relatório   33723 bytes
+local_mooc_audit: run 28 course 28 → complete
+  curso     28  complete  REQUER_CORRECOES       0.02s    32.1 MB  leituras    89  relatório   25798 bytes
+local_mooc_audit: run 29 course 29 → complete
+  curso     29  complete  BLOQUEADA              0.02s    32.2 MB  leituras   116  relatório   33723 bytes
+local_mooc_audit: run 30 course 30 → complete
+  curso     30  complete  REQUER_CORRECOES       0.02s    32.1 MB  leituras    89  relatório   25798 bytes
+local_mooc_audit: run 31 course 31 → complete
+  curso     31  complete  BLOQUEADA              0.02s    32.2 MB  leituras   116  relatório   33724 bytes
+local_mooc_audit: run 32 course 32 → complete
+  curso     32  complete  REQUER_CORRECOES       0.02s    32.2 MB  leituras    89  relatório   25799 bytes
+local_mooc_audit: run 33 course 33 → complete
+  curso     33  complete  BLOQUEADA              0.02s    32.3 MB  leituras   116  relatório   33724 bytes
+local_mooc_audit: run 34 course 34 → complete
+  curso     34  complete  REQUER_CORRECOES       0.02s    32.2 MB  leituras    89  relatório   25798 bytes
+local_mooc_audit: run 35 course 35 → complete
+  curso     35  complete  BLOQUEADA              0.02s    32.3 MB  leituras   116  relatório   33726 bytes
+local_mooc_audit: run 36 course 36 → complete
+  curso     36  complete  REQUER_CORRECOES       0.02s    32.3 MB  leituras    89  relatório   25801 bytes
+local_mooc_audit: run 37 course 37 → complete
+  curso     37  complete  BLOQUEADA              0.02s    32.4 MB  leituras   116  relatório   33726 bytes
+local_mooc_audit: run 38 course 38 → complete
+  curso     38  complete  REQUER_CORRECOES       0.02s    32.3 MB  leituras    89  relatório   25801 bytes
+local_mooc_audit: run 39 course 39 → complete
+  curso     39  complete  BLOQUEADA              0.02s    32.4 MB  leituras   116  relatório   33726 bytes
+local_mooc_audit: run 40 course 40 → complete
+  curso     40  complete  REQUER_CORRECOES       0.02s    32.4 MB  leituras    89  relatório   25801 bytes
+local_mooc_audit: run 41 course 41 → complete
+  curso     41  complete  BLOQUEADA              0.02s    32.5 MB  leituras   116  relatório   33726 bytes
+local_mooc_audit: run 42 course 42 → complete
+  curso     42  complete  REQUER_CORRECOES       0.02s    32.4 MB  leituras    89  relatório   25801 bytes
+local_mooc_audit: run 43 course 43 → complete
+  curso     43  complete  BLOQUEADA              0.02s    32.5 MB  leituras   116  relatório   33726 bytes
+local_mooc_audit: run 44 course 44 → complete
+  curso     44  complete  REQUER_CORRECOES       0.02s    32.5 MB  leituras    89  relatório   25801 bytes
+local_mooc_audit: run 45 course 45 → complete
+  curso     45  complete  BLOQUEADA              0.02s    32.6 MB  leituras   116  relatório   33726 bytes
+local_mooc_audit: run 46 course 46 → complete
+  curso     46  complete  REQUER_CORRECOES       0.02s    32.5 MB  leituras    89  relatório   25801 bytes
+local_mooc_audit: run 47 course 47 → complete
+  curso     47  complete  BLOQUEADA              0.02s    32.6 MB  leituras   116  relatório   33726 bytes
+local_mooc_audit: run 48 course 48 → complete
+  curso     48  complete  REQUER_CORRECOES       0.02s    32.6 MB  leituras    89  relatório   25801 bytes
+local_mooc_audit: run 49 course 49 → complete
+  curso     49  complete  BLOQUEADA              0.02s    32.7 MB  leituras   116  relatório   33726 bytes
+local_mooc_audit: run 50 course 50 → complete
+  curso     50  complete  REQUER_CORRECOES       0.02s    32.7 MB  leituras    89  relatório   25801 bytes
+local_mooc_audit: run 51 course 51 → complete
+  curso     51  complete  BLOQUEADA              0.02s    32.7 MB  leituras   116  relatório   33726 bytes
+local_mooc_audit: run 52 course 52 → complete
+  curso     52  complete  REQUER_CORRECOES       0.02s    32.7 MB  leituras    89  relatório   25801 bytes
+local_mooc_audit: run 53 course 53 → complete
+  curso     53  complete  BLOQUEADA              0.02s    32.8 MB  leituras   116  relatório   33726 bytes
+local_mooc_audit: run 54 course 54 → complete
+  curso     54  complete  REQUER_CORRECOES       0.02s    32.7 MB  leituras    89  relatório   25801 bytes
+local_mooc_audit: run 55 course 55 → complete
+  curso     55  complete  BLOQUEADA              0.02s    32.8 MB  leituras   116  relatório   33725 bytes
+local_mooc_audit: run 56 course 56 → complete
+  curso     56  complete  REQUER_CORRECOES       0.02s    32.8 MB  leituras    89  relatório   25801 bytes
+local_mooc_audit: run 57 course 57 → complete
+  curso     57  complete  BLOQUEADA              0.03s    32.9 MB  leituras   116  relatório   33726 bytes
+local_mooc_audit: run 58 course 58 → complete
+  curso     58  complete  REQUER_CORRECOES       0.03s    32.8 MB  leituras    89  relatório   25801 bytes
+local_mooc_audit: run 59 course 59 → complete
+  curso     59  complete  BLOQUEADA              0.03s    32.9 MB  leituras   116  relatório   33726 bytes
+local_mooc_audit: run 60 course 60 → complete
+  curso     60  complete  REQUER_CORRECOES       0.02s    32.9 MB  leituras    89  relatório   25801 bytes
+local_mooc_audit: run 61 course 61 → complete
+  curso     61  complete  BLOQUEADA              0.03s    32.9 MB  leituras   116  relatório   33854 bytes
+local_mooc_audit: run 62 course 62 → complete
+  curso     62  complete  REQUER_CORRECOES       0.02s    32.9 MB  leituras    89  relatório   25855 bytes
+local_mooc_audit: run 63 course 63 → complete
+  curso     63  complete  BLOQUEADA              0.03s    33.0 MB  leituras   116  relatório   33853 bytes
+local_mooc_audit: run 64 course 64 → complete
+  curso     64  complete  REQUER_CORRECOES       0.02s    33.0 MB  leituras    89  relatório   25855 bytes
+local_mooc_audit: run 65 course 65 → complete
+  curso     65  complete  BLOQUEADA              0.03s    33.1 MB  leituras   116  relatório   33854 bytes
+local_mooc_audit: run 66 course 66 → complete
+  curso     66  complete  REQUER_CORRECOES       0.02s    33.0 MB  leituras    89  relatório   25855 bytes
+local_mooc_audit: run 67 course 67 → complete
+  curso     67  complete  BLOQUEADA              0.03s    33.1 MB  leituras   116  relatório   33854 bytes
+local_mooc_audit: run 68 course 68 → complete
+  curso     68  complete  REQUER_CORRECOES       0.02s    33.1 MB  leituras    89  relatório   25854 bytes
+local_mooc_audit: run 69 course 69 → complete
+  curso     69  complete  BLOQUEADA              0.03s    33.2 MB  leituras   116  relatório   33854 bytes
+local_mooc_audit: run 70 course 70 → complete
+  curso     70  complete  REQUER_CORRECOES       0.02s    33.2 MB  leituras    89  relatório   25855 bytes
+local_mooc_audit: run 71 course 71 → complete
+  curso     71  complete  BLOQUEADA              0.03s    33.2 MB  leituras   116  relatório   33854 bytes
+local_mooc_audit: run 72 course 72 → complete
+  curso     72  complete  REQUER_CORRECOES       0.02s    33.2 MB  leituras    89  relatório   25855 bytes
+local_mooc_audit: run 73 course 73 → complete
+  curso     73  complete  BLOQUEADA              0.02s    33.3 MB  leituras   116  relatório   33854 bytes
+local_mooc_audit: run 74 course 74 → complete
+  curso     74  complete  REQUER_CORRECOES       0.02s    33.2 MB  leituras    89  relatório   25854 bytes
+local_mooc_audit: run 75 course 75 → complete
+  curso     75  complete  BLOQUEADA              0.03s    33.3 MB  leituras   116  relatório   33854 bytes
+local_mooc_audit: run 76 course 76 → complete
+  curso     76  complete  REQUER_CORRECOES       0.02s    33.3 MB  leituras    89  relatório   25855 bytes
+local_mooc_audit: run 77 course 77 → complete
+  curso     77  complete  BLOQUEADA              0.03s    33.4 MB  leituras   116  relatório   33854 bytes
+local_mooc_audit: run 78 course 78 → complete
+  curso     78  complete  REQUER_CORRECOES       0.03s    33.3 MB  leituras    89  relatório   25855 bytes
+local_mooc_audit: run 79 course 79 → complete
+  curso     79  complete  BLOQUEADA              0.03s    33.4 MB  leituras   116  relatório   33854 bytes
+local_mooc_audit: run 80 course 80 → complete
+  curso     80  complete  REQUER_CORRECOES       0.02s    33.4 MB  leituras    89  relatório   25855 bytes
+local_mooc_audit: run 81 course 81 → complete
+  curso     81  complete  BLOQUEADA              0.03s    33.5 MB  leituras   116  relatório   33854 bytes
+local_mooc_audit: run 82 course 82 → complete
+  curso     82  complete  REQUER_CORRECOES       0.02s    33.5 MB  leituras    89  relatório   25855 bytes
+local_mooc_audit: run 83 course 83 → complete
+  curso     83  complete  BLOQUEADA              0.03s    33.5 MB  leituras   116  relatório   33854 bytes
+local_mooc_audit: run 84 course 84 → complete
+  curso     84  complete  REQUER_CORRECOES       0.02s    33.5 MB  leituras    89  relatório   25855 bytes
+local_mooc_audit: run 85 course 85 → complete
+  curso     85  complete  BLOQUEADA              0.03s    33.6 MB  leituras   116  relatório   33854 bytes
+local_mooc_audit: run 86 course 86 → complete
+  curso     86  complete  REQUER_CORRECOES       0.02s    33.6 MB  leituras    89  relatório   25855 bytes
+local_mooc_audit: run 87 course 87 → complete
+  curso     87  complete  BLOQUEADA              0.03s    33.6 MB  leituras   116  relatório   33854 bytes
+local_mooc_audit: run 88 course 88 → complete
+  curso     88  complete  REQUER_CORRECOES       0.02s    33.6 MB  leituras    89  relatório   25854 bytes
+local_mooc_audit: run 89 course 89 → complete
+  curso     89  complete  BLOQUEADA              0.02s    33.7 MB  leituras   116  relatório   33854 bytes
+local_mooc_audit: run 90 course 90 → complete
+  curso     90  complete  REQUER_CORRECOES       0.02s    33.7 MB  leituras    89  relatório   25855 bytes
+local_mooc_audit: run 91 course 91 → complete
+  curso     91  complete  BLOQUEADA              0.03s    33.7 MB  leituras   116  relatório   33854 bytes
+local_mooc_audit: run 92 course 92 → complete
+  curso     92  complete  REQUER_CORRECOES       0.02s    33.7 MB  leituras    89  relatório   25855 bytes
+local_mooc_audit: run 93 course 93 → complete
+  curso     93  complete  BLOQUEADA              0.03s    33.8 MB  leituras   116  relatório   33854 bytes
+local_mooc_audit: run 94 course 94 → complete
+  curso     94  complete  REQUER_CORRECOES       0.02s    33.7 MB  leituras    89  relatório   25854 bytes
+local_mooc_audit: run 95 course 95 → complete
+  curso     95  complete  BLOQUEADA              0.02s    33.8 MB  leituras   116  relatório   33854 bytes
+local_mooc_audit: run 96 course 96 → complete
+  curso     96  complete  REQUER_CORRECOES       0.02s    33.8 MB  leituras    89  relatório   25855 bytes
+local_mooc_audit: run 97 course 97 → complete
+  curso     97  complete  BLOQUEADA              0.02s    33.9 MB  leituras   116  relatório   33854 bytes
+local_mooc_audit: run 98 course 98 → complete
+  curso     98  complete  REQUER_CORRECOES       0.02s    33.8 MB  leituras    89  relatório   25855 bytes
+local_mooc_audit: run 99 course 99 → complete
+  curso     99  complete  BLOQUEADA              0.02s    34.0 MB  leituras   116  relatório   33854 bytes
+local_mooc_audit: run 100 course 100 → complete
+  curso    100  complete  REQUER_CORRECOES       0.02s    33.9 MB  leituras    89  relatório   25870 bytes
+local_mooc_audit: run 101 course 101 → complete
+  curso    101  complete  BLOQUEADA              0.02s    34.0 MB  leituras   116  relatório   33869 bytes
+local_mooc_audit: run 102 course 102 → complete
+  curso    102  complete  REQUER_CORRECOES       0.02s    34.0 MB  leituras    89  relatório   25870 bytes
+local_mooc_audit: run 103 course 103 → complete
+  curso    103  complete  BLOQUEADA              0.03s    34.1 MB  leituras   116  relatório   33869 bytes
+total 100: concluídas 100, parciais 0, falhas 0, pendentes 0; 2.9s; pico do processo 34.2 MB

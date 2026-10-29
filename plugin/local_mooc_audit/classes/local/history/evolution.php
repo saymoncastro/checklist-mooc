@@ -16,7 +16,6 @@
 
 namespace local_mooc_audit\local\history;
 
-use local_mooc_audit\engine;
 use local_mooc_audit\local\correction\trail;
 use local_mooc_audit\local\status;
 
@@ -95,7 +94,9 @@ class evolution {
     }
 
     /**
-     * Rules that did not run in a report (replaced by the engine's single ERRO / NAO_VERIFICAVEL result).
+     * Rules not fully verified in a report: the engine's single ERRO / NAO_VERIFICAVEL replacing the rule, or any course
+     * level result of the rule in one of those states (e.g. CL-12 without the course total). A problem of such a rule
+     * that disappears is "not verifiable now", never "resolved".
      *
      * @param array $results
      * @return array rule => true
@@ -103,7 +104,7 @@ class evolution {
     protected static function rules_not_run(array $results): array {
         $out = [];
         foreach ($results as $r) {
-            if (self::entity($r['occurrence'])[0] === 'course' && explode('|', $r['occurrence'])[2] === engine::RULE_CHECK) {
+            if (self::unverified($r['status']) && self::entity($r['occurrence'])[0] === 'course') {
                 $out[$r['rule']] = true;
             }
         }

@@ -49,3 +49,13 @@ Nenhuma. T001–T002 e T036–T040 são transversais.
 
 Prosseguir para a implementação na ordem do `tasks.md`. Reexecutar esta análise ao final (seção "Pós-implementação"
 em `results.md`).
+
+## Pós-implementação (2026-10-30)
+
+- Todas as 40 tarefas concluídas; T040 (PR) aberto sem merge.
+- A1 mantido **[validar]** (decisão 12.4). A4 confirmado e corrigido: o teste de dependência encontrou CL-22 e CL-23
+  com `POLICY_KEYS` incompletas.
+- A revisão independente (results.md §5) encontrou dois defeitos altos de classificação (seções por número; CL-12 sem
+  item de total) e defeitos médios de ordenação, reaproveitamento e impressão digital; todos corrigidos com testes,
+  exceto o volume de execuções da página, que depende da decisão 12.1.
+- Divergência do plano: a chave de seção passou de `sec:<número>` para `sec:<id>`; data-model e research atualizados.

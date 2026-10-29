@@ -24,7 +24,8 @@ use local_mooc_audit\local\rule\rule_interface;
  *
  * The policy fingerprint covers the effective policy without the execution clock (reference_timestamp) and the load
  * warnings. Each rule gets two short hashes: "p" of the policy values it declares (plus the reoffer year for the rules
- * of the offer cycle) and "r" of its source file.
+ * of the offer cycle) and "r" of its source file together with the shared code every rule depends on (collector,
+ * helpers, base class, states): a change in any of them may change results without any change in the course.
  *
  * @package    local_mooc_audit
  * @copyright  2026 Cefor/Ifes
@@ -34,8 +35,14 @@ class fingerprint {
     /** @var string[] Keys of a loaded policy that are not policy content. */
     const NOT_CONTENT = ['warnings', 'reference_timestamp'];
 
+    /** @var string[] Shared code read by every rule, relative to the plugin directory. */
+    const SHARED = ['classes/snapshot.php', 'classes/local/helpers.php', 'classes/local/rule/base.php',
+        'classes/local/status.php'];
+
     /** @var array Source hash per rule class (files do not change during a request). */
     protected static array $sources = [];
+    /** @var string|null Hash of the shared code. */
+    protected static ?string $shared = null;
 
     /**
      * Canonical JSON: object keys sorted recursively, lists kept in order.
@@ -109,16 +116,21 @@ class fingerprint {
     }
 
     /**
-     * Short hash of the source file of a rule class.
+     * Short hash of the source file of a rule class and of the shared code.
      *
      * @param rule_interface $rule
      * @return string
      */
     public static function source(rule_interface $rule): string {
+        if (self::$shared === null) {
+            $dir = dirname(__DIR__, 3);
+            self::$shared = sha1(implode("\n", array_map(fn($f) => sha1_file("$dir/$f") ?: $f, self::SHARED)));
+        }
         $class = get_class($rule);
         if (!isset(self::$sources[$class])) {
             $file = (new \ReflectionClass($rule))->getFileName();
-            self::$sources[$class] = substr(sha1($file && is_readable($file) ? file_get_contents($file) : $class), 0, 12);
+            self::$sources[$class] = substr(sha1(self::$shared . ($file && is_readable($file) ? file_get_contents($file)
+                : $class)), 0, 12);
         }
         return self::$sources[$class];
     }

@@ -25,7 +25,7 @@
     * first, basemissing, hasbase, evolutiontitle, comparable, nochange, notes[], counts[] (code, label, count, cssclass)
     * groups[] (code, label, cssclass, count, items[] with rule, title, local, link, before, after, evidence_before,
       evidence_after, reason, successor, key)
-    * hascorrections, corrections[] (date, rule, cmid, field, oldvalue, newvalue, outcome, requester)
+    * showcorrections, hascorrections, corrections[] (date, rule, cmid, field, oldvalue, newvalue, outcome, requester)
     * hasbaseoptions, baseoptions[] (id, label, selected), formurl, courseid; hasreport, reporthtml (HTML)
 
     Example context (json):
@@ -41,7 +41,7 @@
             "items": [{"rule": "CL-13", "title": "Quiz attempts", "local": "Quiz 1", "link": "#", "before": "Non conformant",
             "after": "Conformant", "evidence_before": "attempts=1", "evidence_after": "attempts=2", "reason": null,
             "successor": null, "key": "CL-13|cm:42|attempts"}]}],
-        "hascorrections": false, "corrections": [], "hasbaseoptions": false, "baseoptions": [], "formurl": "#",
+        "showcorrections": true, "hascorrections": false, "corrections": [], "hasbaseoptions": false, "baseoptions": [], "formurl": "#",
         "courseid": 2, "hasreport": false, "reporthtml": ""
     }
 }}
@@ -114,6 +114,7 @@
         {{/groups}}
         {{/comparable}}
 
+        {{#showcorrections}}
         <h4 class="h6 mt-3">{{#str}} corrections_between, local_mooc_audit {{/str}}</h4>
         <p class="small text-muted">{{#str}} corrections_between_notice, local_mooc_audit {{/str}}</p>
         {{^hascorrections}}<p>{{#str}} corrections_none, local_mooc_audit {{/str}}</p>{{/hascorrections}}
@@ -122,6 +123,7 @@
             {{#corrections}}<li>{{date}} · {{rule}} · cmid {{cmid}} · {{field}}: {{oldvalue}} → {{newvalue}} ({{outcome}}, {{requester}})</li>{{/corrections}}
         </ul>
         {{/hascorrections}}
+        {{/showcorrections}}
     {{/hasbase}}
     </section>
     {{#hasreport}}{{{reporthtml}}}{{/hasreport}}

@@ -48,6 +48,8 @@ class run_page implements renderable, templatable {
     protected string $reporthtml;
     /** @var array Earlier valid runs: id => label. */
     protected array $baseoptions;
+    /** @var bool Viewer may see the assisted correction trail (local/mooc_audit:preparecorrection). */
+    protected bool $showcorrections;
 
     /**
      * Constructor.
@@ -59,6 +61,7 @@ class run_page implements renderable, templatable {
      * @param stdClass|null $policy
      * @param string $reporthtml
      * @param array $baseoptions
+     * @param bool $showcorrections viewer may see the assisted correction trail
      */
     public function __construct(
         stdClass $run,
@@ -67,7 +70,8 @@ class run_page implements renderable, templatable {
         array $corrections,
         ?stdClass $policy,
         string $reporthtml,
-        array $baseoptions
+        array $baseoptions,
+        bool $showcorrections = true
     ) {
         $this->run = $run;
         $this->base = $base;
@@ -76,6 +80,7 @@ class run_page implements renderable, templatable {
         $this->policy = $policy;
         $this->reporthtml = $reporthtml;
         $this->baseoptions = $baseoptions;
+        $this->showcorrections = $showcorrections;
     }
 
     /**
@@ -134,6 +139,7 @@ class run_page implements renderable, templatable {
                 'requester' => history_helper::requester((int) $c->userid),
             ], $this->corrections);
             $data->hascorrections = (bool) $data->corrections;
+            $data->showcorrections = $this->showcorrections;
         }
         $data->baseoptions = [];
         foreach ($this->baseoptions as $id => $label) {

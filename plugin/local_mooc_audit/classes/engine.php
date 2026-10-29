@@ -122,6 +122,11 @@ class engine {
     public static function run_rules(array $snapshot, array $policy, ?array $rules = null): array {
         $results = [];
         $seen = [];
+        // Section numbers change when a section is inserted or moved: occurrences use the section id.
+        $sectionids = [];
+        foreach ($snapshot['sections'] ?? [] as $sec) {
+            $sectionids[(int) $sec['number']] = (int) $sec['id'];
+        }
         $nocompletion = empty($snapshot['site']['enablecompletion']);
         $noavailability = empty($snapshot['site']['enableavailability']);
         foreach ($rules ?? catalog::instances() as $id => $rule) {
@@ -165,7 +170,7 @@ class engine {
                 if ($f['status'] === status::NAO_CONFORME && ($f['orientacao'] === null || $f['orientacao'] === '')) {
                     $f['orientacao'] = $meta['guidance'];
                 }
-                $key = self::occurrence($id, $f);
+                $key = self::occurrence($id, $f, $sectionids);
                 // Safety net only: a collision is a defect of the rule (occurrence_test fails on the reference courses).
                 $seen[$key] = ($seen[$key] ?? 0) + 1;
                 $f['occurrence'] = $seen[$key] > 1 ? $key . '#' . $seen[$key] : $key;
@@ -179,20 +184,22 @@ class engine {
     /**
      * Stable occurrence key of a finding: rule|entity|check[|subject] (specs/005 research R2).
      *
-     * The entity is the activity (cm:<cmid>), else the section (sec:<number>), else the course. The check is the code of
+     * The entity is the activity (cm:<cmid>), else the section (sec:<section id>, stable when sections are inserted or
+     * moved; the number when the id is unknown), else the course. The check is the code of
      * the verified condition declared by the rule (the same whether the condition passes or fails) and the subject a
      * semantic discriminator when the check repeats on the same entity. Never derived from the evidence text, the
      * language or the position of the result.
      *
      * @param string $rule
-     * @param array $f finding with cmid, section, check and subject
+     * @param array $f finding with cmid, section (number), check and subject
+     * @param array $sectionids section number => section id
      * @return string
      */
-    public static function occurrence(string $rule, array $f): string {
+    public static function occurrence(string $rule, array $f, array $sectionids = []): string {
         if (!empty($f['cmid'])) {
             $entity = 'cm:' . (int) $f['cmid'];
         } else if ($f['section'] !== null && $f['section'] !== '') {
-            $entity = 'sec:' . (int) $f['section'];
+            $entity = 'sec:' . ($sectionids[(int) $f['section']] ?? (int) $f['section']);
         } else {
             $entity = 'course';
         }

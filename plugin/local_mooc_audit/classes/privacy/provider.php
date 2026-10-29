@@ -30,7 +30,8 @@ use core_privacy\local\request\writer;
  * - local_mooc_audit_fix (specs/002): who confirmed each assisted correction, course context;
  * - local_mooc_audit_run (specs/005): who requested each recorded audit, course context (the stored reports are the
  *   configuration view of the course, without student data);
- * - local_mooc_audit_batch (specs/005): who requested each batch, system context.
+ * - local_mooc_audit_batch (specs/005): who requested each batch, system context; runs of removed courses (no course
+ *   context any more) are handled in the system context too.
  * Deletion anonymises the rows (userid = 0) instead of deleting them: the institutional trail of what was changed or
  * audited in the course is kept without personal data.
  *
@@ -92,7 +93,7 @@ class provider implements
               WHERE ctx.contextlevel = :level AND r.userid = :userid',
             ['level' => CONTEXT_COURSE, 'userid' => $userid]
         );
-        if ($DB->record_exists('local_mooc_audit_batch', ['userid' => $userid])) {
+        if ($DB->record_exists('local_mooc_audit_batch', ['userid' => $userid]) || self::orphan_runs($userid)) {
             $contextlist->add_system_context();
         }
         return $contextlist;
@@ -107,6 +108,8 @@ class provider implements
         $context = $userlist->get_context();
         if ($context->contextlevel == CONTEXT_SYSTEM) {
             $userlist->add_from_sql('userid', 'SELECT userid FROM {local_mooc_audit_batch} WHERE userid > 0', []);
+            $userlist->add_from_sql('userid', 'SELECT r.userid FROM {local_mooc_audit_run} r
+                LEFT JOIN {course} c ON c.id = r.courseid WHERE c.id IS NULL AND r.userid > 0', []);
             return;
         }
         if ($context->contextlevel != CONTEXT_COURSE) {
@@ -147,6 +150,18 @@ class provider implements
                             fn($b) => (object) ['id' => $b->id, 'name' => $b->name,
                             'timecreated' => \core_privacy\local\request\transform::datetime($b->timecreated)],
                             array_values($batches)
+                        )]
+                    );
+                }
+                $orphans = self::orphan_runs($userid);
+                if ($orphans) {
+                    writer::with_context($context)->export_data(
+                        [get_string('privacy:path_runs', 'local_mooc_audit')],
+                        (object) ['runs' => array_map(
+                            fn($r) => (object) ['id' => $r->id, 'courseid' => $r->courseid, 'origin' => $r->origin,
+                            'status' => $r->status,
+                            'timecreated' => \core_privacy\local\request\transform::datetime($r->timecreated)],
+                            array_values($orphans)
                         )]
                     );
                 }
@@ -205,6 +220,9 @@ class provider implements
             $DB->set_field('local_mooc_audit_run', 'userid', 0, ['courseid' => $context->instanceid]);
         } else if ($context->contextlevel == CONTEXT_SYSTEM) {
             $DB->set_field_select('local_mooc_audit_batch', 'userid', 0, 'userid > 0');
+            foreach (array_keys(self::orphan_runs()) as $id) {
+                $DB->set_field('local_mooc_audit_run', 'userid', 0, ['id' => $id]);
+            }
         }
     }
 
@@ -222,6 +240,9 @@ class provider implements
                 $DB->set_field('local_mooc_audit_run', 'userid', 0, ['courseid' => $context->instanceid, 'userid' => $userid]);
             } else if ($context->contextlevel == CONTEXT_SYSTEM) {
                 $DB->set_field('local_mooc_audit_batch', 'userid', 0, ['userid' => $userid]);
+                foreach (array_keys(self::orphan_runs((int) $userid)) as $id) {
+                    $DB->set_field('local_mooc_audit_run', 'userid', 0, ['id' => $id]);
+                }
             }
         }
     }
@@ -240,6 +261,11 @@ class provider implements
         [$insql, $params] = $DB->get_in_or_equal($userlist->get_userids(), SQL_PARAMS_NAMED);
         if ($context->contextlevel == CONTEXT_SYSTEM) {
             $DB->set_field_select('local_mooc_audit_batch', 'userid', 0, "userid $insql", $params);
+            foreach ($userlist->get_userids() as $userid) {
+                foreach (array_keys(self::orphan_runs((int) $userid)) as $id) {
+                    $DB->set_field('local_mooc_audit_run', 'userid', 0, ['id' => $id]);
+                }
+            }
             return;
         }
         if ($context->contextlevel != CONTEXT_COURSE) {
@@ -248,5 +274,22 @@ class provider implements
         $params['courseid'] = $context->instanceid;
         $DB->set_field_select('local_mooc_audit_fix', 'userid', 0, "courseid = :courseid AND userid $insql", $params);
         $DB->set_field_select('local_mooc_audit_run', 'userid', 0, "courseid = :courseid AND userid $insql", $params);
+    }
+
+    /**
+     * Runs of courses that no longer exist (they have no course context: they are handled in the system context).
+     *
+     * @param int|null $userid only the runs of this requester (null = every identified requester)
+     * @return \stdClass[] id => run (id, courseid, origin, status, timecreated)
+     */
+    protected static function orphan_runs(?int $userid = null): array {
+        global $DB;
+        return $DB->get_records_sql(
+            'SELECT r.id, r.courseid, r.origin, r.status, r.timecreated
+               FROM {local_mooc_audit_run} r
+          LEFT JOIN {course} c ON c.id = r.courseid
+              WHERE c.id IS NULL AND ' . ($userid ? 'r.userid = :userid' : 'r.userid > 0'),
+            ['userid' => (int) $userid]
+        );
     }
 }

@@ -64,7 +64,8 @@ class xav01 extends base {
                         helpers::label($m),
                         "enunciado declara {$mm[1]} pontos; nota máxima={$gi['grademax']}",
                         ['cmid' => $m['cmid'],
-                        'orientacao' => $this->guidance(), 'check' => 'intro_grade']
+                        'orientacao' => $this->guidance(), 'check' => 'intro_grade',
+                        'subject' => 'item:' . (int) $gi['itemnumber']]
                     );
                 }
             }

@@ -251,4 +251,34 @@ final class audit_course_test extends \advanced_testcase {
         set_config('batch_concurrency', 4, 'local_mooc_audit');
         $this->assertSame(4, $task->get_concurrency_limit());
     }
+
+    /**
+     * A dead pending run (queued without task, or running for too long) is not reused by a new batch; a failed run that
+     * a batch had reused is queued again by "re-run failures" (review finding 4).
+     */
+    public function test_dead_pending_runs_are_not_reused(): void {
+        global $DB;
+        [$a, $b, $manager] = $this->setup_courses();
+        $lost = run_store::create((int) $a->id, run_store::ORIGIN_BATCH, (int) $manager->id);
+        $old = run_store::create((int) $b->id, run_store::ORIGIN_PAGE, (int) $manager->id, 0, run_store::RUNNING);
+        $DB->set_field(run_store::TABLE, 'timestarted', time() - run_store::STALE_RUNNING - 60, ['id' => $old]);
+        $out = batch_manager::create(['mode' => 'ids', 'courseids' => [$a->id, $b->id]], $manager->id);
+        $this->assertSame(2, $out['queued']);
+        $this->assertSame(0, $out['reused']);
+
+        // A live queued run is reused; when it fails, the batch that reused it can queue the course again.
+        $this->run_queue();
+        $first = batch_manager::create(['mode' => 'ids', 'courseids' => [$a->id]], $manager->id);
+        $second = batch_manager::create(['mode' => 'ids', 'courseids' => [$a->id]], $manager->id);
+        $this->assertSame(1, $second['reused']);
+        $reused = (int) $second['skipped'][0]['runid'];
+        \local_mooc_audit\local\history\recorder::fail($reused, 'exception', 'simulated');
+        $DB->delete_records('task_adhoc', ['classname' => '\\' . audit_course::class]);
+        $this->setUser($manager);
+        $batch = batch_manager::get($second['batchid']);
+        $this->assertSame(run_store::FAILED, batch_manager::runs($batch)[$a->id]->status);
+        $this->assertSame(1, batch_manager::retry_failed($batch, (int) $manager->id));
+        $this->assertSame(run_store::QUEUED, run_store::get($lost)->status, 'left for the daily cleanup (stale)');
+        $this->assertNotEquals($first['batchid'], $second['batchid']);
+    }
 }

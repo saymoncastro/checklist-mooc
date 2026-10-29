@@ -131,7 +131,7 @@ class dashboard {
     }
 
     /**
-     * Latest run per course among some states.
+     * Latest run per course (by end time) among some states, with the fingerprint of its policy.
      *
      * @param int[] $courseids
      * @param string[] $states
@@ -139,25 +139,14 @@ class dashboard {
      */
     protected static function latest(array $courseids, array $states): array {
         global $DB;
-        if (!$courseids) {
-            return [];
-        }
-        [$cin, $params] = $DB->get_in_or_equal($courseids, SQL_PARAMS_NAMED, 'c');
-        [$sin, $sparams] = $DB->get_in_or_equal($states, SQL_PARAMS_NAMED, 's');
-        $runs = $DB->get_records_sql(
-            'SELECT r.id, r.courseid, r.status, r.overall, r.policyid, r.pluginversion, r.summary, r.evolution,
-                    r.timefinished, p.fingerprint
-               FROM {' . run_store::TABLE . '} r
-               JOIN (SELECT courseid, MAX(id) AS maxid FROM {' . run_store::TABLE . "}
-                      WHERE courseid $cin AND status $sin GROUP BY courseid) m ON m.maxid = r.id
-          LEFT JOIN {" . policy_store::TABLE . '} p ON p.id = r.policyid',
-            $params + $sparams
-        );
-        $out = [];
+        $runs = run_store::latest_per_course($states, $courseids, 'r.id, r.courseid, r.status, r.overall, r.policyid,
+            r.pluginversion, r.summary, r.evolution, r.timefinished');
+        $policyids = array_unique(array_filter(array_map(fn($r) => (int) $r->policyid, $runs)));
+        $fps = $policyids ? $DB->get_records_list(policy_store::TABLE, 'id', $policyids, '', 'id, fingerprint') : [];
         foreach ($runs as $r) {
-            $out[(int) $r->courseid] = $r;
+            $r->fingerprint = $fps[$r->policyid]->fingerprint ?? null;
         }
-        return $out;
+        return $runs;
     }
 
     /**

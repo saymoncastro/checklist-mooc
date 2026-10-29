@@ -137,7 +137,7 @@ class recorder {
 
             $version = run_store::plugin_version();
             $evolution = null;
-            $previous = run_store::latest_valid((int) $run->courseid, $runid);
+            $previous = run_store::latest_valid((int) $run->courseid, (int) ($run->timestarted ?: $run->timecreated), $runid);
             if ($previous) {
                 $cmp = evolution::compare(
                     ['report' => run_store::json($previous, 'report') ?? [],
@@ -175,14 +175,14 @@ class recorder {
      * Entities of the audited course needed to tell a removed activity or section from a resolved problem.
      *
      * @param array $snapshot
-     * @return array ['modules' => cmid => "modname|normalised name", 'sections' => section numbers]
+     * @return array ['modules' => cmid => "modname|normalised name", 'sections' => section ids]
      */
     public static function entities(array $snapshot): array {
         $modules = [];
         foreach ($snapshot['modules'] as $cmid => $m) {
             $modules[(int) $cmid] = $m['modname'] . '|' . helpers::norm($m['name']);
         }
-        $sections = array_values(array_map(fn($s) => (int) $s['number'], $snapshot['sections']));
+        $sections = array_values(array_map(fn($s) => (int) $s['id'], $snapshot['sections']));
         sort($sections);
         return ['modules' => $modules, 'sections' => $sections];
     }

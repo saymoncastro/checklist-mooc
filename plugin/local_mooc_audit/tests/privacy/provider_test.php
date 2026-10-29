@@ -136,4 +136,29 @@ final class provider_test extends \core_privacy\tests\provider_testcase {
         provider::delete_data_for_users(new approved_userlist($ctx, 'local_mooc_audit', [$u2->id]));
         $this->assertSame(2, $DB->count_records('local_mooc_audit_run', ['userid' => 0]));
     }
+
+    /**
+     * Runs of a removed course have no course context: they are exported and anonymised in the system context
+     * (review finding 9).
+     */
+    public function test_runs_of_removed_courses(): void {
+        global $DB;
+        $this->resetAfterTest();
+        set_config('categorybinenable', 0, 'tool_recyclebin');
+        $course = $this->getDataGenerator()->create_course();
+        $user = $this->getDataGenerator()->create_user();
+        \local_mooc_audit\local\history\run_store::create((int) $course->id, 'page', (int) $user->id);
+        delete_course($course, false);
+        $system = \context_system::instance();
+        $this->assertEquals([$system->id], provider::get_contexts_for_userid($user->id)->get_contextids());
+        $users = new userlist($system, 'local_mooc_audit');
+        provider::get_users_in_context($users);
+        $this->assertEquals([$user->id], $users->get_userids());
+        provider::export_user_data(new approved_contextlist($user, 'local_mooc_audit', [$system->id]));
+        $runs = writer::with_context($system)->get_data([get_string('privacy:path_runs', 'local_mooc_audit')]);
+        $this->assertEquals($course->id, $runs->runs[0]->courseid);
+        provider::delete_data_for_user(new approved_contextlist($user, 'local_mooc_audit', [$system->id]));
+        $this->assertSame(0, $DB->count_records('local_mooc_audit_run', ['userid' => $user->id]));
+        $this->assertSame(1, $DB->count_records('local_mooc_audit_run'));
+    }
 }

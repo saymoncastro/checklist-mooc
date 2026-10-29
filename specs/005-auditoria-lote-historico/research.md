@@ -22,7 +22,8 @@ colide quando uma regra emite várias ocorrências no mesmo local (CL-21 blocos,
 **Decisão**: entre execuções da **mesma sala** os ids internos são estáveis. Cada regra passa a declarar, em cada
 achado, `check` (código estável da condição) e, quando necessário, `subject` (discriminador semântico). O motor
 compõe `occurrence = regra|entidade|check[|subject]`, onde entidade = `cm:<cmid>` se o achado tem `cmid`, senão
-`sec:<número>` se tem seção, senão `course`. `check` e `subject` não ficam no relatório; só a chave composta.
+`sec:<id da seção>` se tem seção (o id, não o número: inserir ou mover uma seção muda os números — achado da revisão),
+senão `course`. `check` e `subject` não ficam no relatório; só a chave composta.
 
 Tabela de verificações (todas as regras):
 
@@ -34,9 +35,9 @@ Tabela de verificações (todas as regras):
 | CL-08 | course | `self_enrol` (ausência: `self_enrol` sem subject), `guest` | `enrol:<id>` |
 | CL-09 | course (ausente) ou cm | `forum_presence`, `forum_completion` | — |
 | CL-11 | course ou cm | `profile_presence`, `profile_completion`, `certificate_presence`, `requires_profile` | — |
-| CL-12 | course | `total_sum`, `course_item`, `aggregation`, `onlygraded`, `total_grademax`, `subcategories` | — |
+| CL-12 | course | `total_sum`, `aggregation`, `onlygraded`, `total_grademax`, `subcategories` (sem item de total ou categoria raiz: as dependentes saem como `NAO_VERIFICAVEL` com a própria chave) | — |
 | CL-13 | cm | `attempts`, `intro_attempts` | — |
-| CL-14 | cm | `close_date`; sem avaliativas: `applicability` | — |
+| CL-14 | cm | `close_date`; sem avaliativas: `applicability` | `item:<itemnumber>` (vários itens de nota, ex.: workshop) |
 | CL-16 | course ou cm | `evaluation_presence`, `requires_graded`, `root_operator` | — |
 | CL-17 | course, cm | `summary`, `completion` | — |
 | CL-18 | course ou cm | `forbidden` | nome do módulo (nível curso) |
@@ -45,7 +46,7 @@ Tabela de verificações (todas as regras):
 | CL-21 | course | `progress_block`, `html_block` | título normalizado do bloco exigido |
 | CL-22 | course | `licence_label`, `licence_feedback`, `licence_certificate` | — |
 | CL-23 | course ou cm | `certificate_presence`, `requires_evaluation`, `min_grade`, `root_operator` | — |
-| X-AV-01 | cm, course | `intro_grade`, `summary` | — |
+| X-AV-01 | cm, course | `intro_grade`, `summary` | `item:<itemnumber>` |
 | X-CERT-01 | cm, course | `chain`, `hidden`, `certificate_presence` | — |
 | X-CONT-01 | cm, course | `empty_content`, `book_chapters`, `quiz_questions`, `feedback_items`, `files`, `summary` | — |
 | X-CONT-04 | cm, course | `pluginfile`, `summary` | `<campo>:<caminho>` |
@@ -75,7 +76,8 @@ Uma ocorrência problemática anterior ausente (ou conforme) na nova execução 
 executou (nenhum `_rule` `ERRO`/`NAO_VERIFICAVEL` na nova execução e a ocorrência não está `ERRO`/`NAO_VERIFICAVEL`);
 (b) a entidade existe (para `cm:` o `cmid` está no inventário da nova execução; para `sec:` o número da seção existe);
 (c) as impressões digitais da regra são iguais (R4). Caso contrário: **não verificável agora**, **recurso
-removido/substituído** ou **não comparável**. Por isso a execução guarda o inventário de entidades (cmid → tipo +
+removido/substituído** ou **não comparável**. Uma regra com qualquer resultado `ERRO`/`NAO_VERIFICAVEL` no nível da sala
+é tratada como não verificada por inteiro naquela execução (ex.: CL-12 sem o item de total). Por isso a execução guarda o inventário de entidades (cmid → tipo +
 nome normalizado; números de seção).
 
 **Substituição**: atividade removida X e atividade nova Y do mesmo tipo e mesmo nome normalizado, únicas nos dois
@@ -97,8 +99,10 @@ declarações incompletas encontradas).
 
 **Rejeitadas**: impressão digital global da política (uma mudança de nome tornaria toda a evolução não comparável);
 versão manual por regra (depende de disciplina humana; o hash do código é automático e conservador — um ajuste
-cosmético marca a regra como alterada, o que é o lado seguro). Mudanças em `snapshot`/`helpers` não entram no hash por
-regra; a página avisa quando as versões do plugin diferem.
+cosmético marca a regra como alterada, o que é o lado seguro). Após a revisão independente, `r` inclui também o código
+compartilhado por todas as regras (`snapshot`, `helpers`, `base`, `status`): se o coletor muda, as ocorrências que
+surgem ou somem ficam "não comparáveis" em todas as regras. O motor (`engine.php`) não entra (muda a cada versão); a
+página avisa quando as versões do plugin diferem.
 
 `reference_timestamp` não entra na impressão digital da política (é o relógio da execução); o `reoffer_year` resolvido
 entra, porque muda resultados das regras do ciclo de oferta.

@@ -1,0 +1,13 @@
+Lote de 100 salas pela fila real de tarefas ad hoc (3 executores admin/cli/adhoc_task.php em paralelo; limite de
+concorrência da tarefa = 2, configuração batch_concurrency padrão).
+
+$ php local/mooc_audit/cli/batch.php --category=3 --name="Medição fila 100"
+lote 4: 100 enfileiradas, 0 reaproveitadas, 0 recusadas
+
+$ psql: select status, count(*), min(timestarted), max(timefinished), max(timefinished)-min(timestarted), max(attempts)
+complete|100|1793296076|1793296078|2|1
+
+100 execuções concluídas entre o início da primeira e o término da última em 2 s (resolução de 1 s dos carimbos);
+nenhuma execução com mais de uma tentativa (sem entrega duplicada). O tempo de parede medido pelo laço de espera do
+script de medição (607 s) não vale: o laço "pgrep -f adhoc_task.php" casava com o próprio comando e só terminou pelo
+tempo limite; o tempo real é o do banco acima.

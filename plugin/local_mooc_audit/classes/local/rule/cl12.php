@@ -70,8 +70,12 @@ class cl12 extends base {
         );
         $ci = $s['grade']['course_item'];
         if (!$ci) {
-            $out[] = $this->f(status::NAO_VERIFICAVEL, 'Livro de notas', 'item de total do curso não encontrado', [
-                'check' => 'course_item']);
+            // The checks that depend on the course total are reported as not verifiable under their own keys, so that
+            // the history never takes their absence for a fix (specs/005).
+            foreach (['aggregation', 'onlygraded', 'total_grademax'] as $check) {
+                $out[] = $this->f(status::NAO_VERIFICAVEL, 'Livro de notas', 'item de total do curso não encontrado', [
+                    'check' => $check, 'gravidade' => status::INFORMATIVA]);
+            }
             return $out;
         }
         $root = $s['grade']['categories'][$ci['iteminstance']] ?? null;
@@ -99,6 +103,11 @@ class cl12 extends base {
             } else {
                 $out[] = $this->f(status::CONFORME, 'Livro de notas > categoria raiz', 'aggregateonlygraded=0', [
                     'check' => 'onlygraded']);
+            }
+        } else {
+            foreach (['aggregation', 'onlygraded'] as $check) {
+                $out[] = $this->f(status::NAO_VERIFICAVEL, 'Livro de notas > categoria raiz', 'categoria raiz não encontrada', [
+                    'check' => $check, 'gravidade' => status::INFORMATIVA]);
             }
         }
         if (abs($ci['grademax'] - (float) $p['course_total_max']) > 0.001) {

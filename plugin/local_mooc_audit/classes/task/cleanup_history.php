@@ -107,12 +107,15 @@ class cleanup_history extends \core\task\scheduled_task {
         }
 
         // 2. Retention, keeping the latest valid run of each existing course.
-        [$in, $params] = $DB->get_in_or_equal(run_store::valid_states(), SQL_PARAMS_NAMED);
-        $keep = array_flip(array_map('intval', $DB->get_fieldset_sql(
-            "SELECT MAX(r.id) FROM {" . run_store::TABLE . "} r JOIN {course} c ON c.id = r.courseid
-              WHERE r.status $in GROUP BY r.courseid",
-            $params
-        )));
+        $existing = array_map('intval', $DB->get_fieldset_sql(
+            'SELECT DISTINCT r.courseid FROM {' . run_store::TABLE . '} r JOIN {course} c ON c.id = r.courseid'
+        ));
+        $keep = [];
+        foreach (array_chunk($existing, 1000) as $chunk) {
+            foreach (run_store::latest_per_course(run_store::valid_states(), $chunk, 'r.id, r.courseid, r.timefinished') as $r) {
+                $keep[(int) $r->id] = true;
+            }
+        }
         [$fin, $fparams] = $DB->get_in_or_equal(run_store::final_states(), SQL_PARAMS_NAMED);
         $fparams['cutoff'] = $now - self::retention_days() * DAYSECS;
         $old = $DB->get_fieldset_select(run_store::TABLE, 'id', "status $fin AND timefinished < :cutoff", $fparams);

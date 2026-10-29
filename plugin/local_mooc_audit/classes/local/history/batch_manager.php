@@ -21,7 +21,7 @@ namespace local_mooc_audit\local\history;
  *
  * Selection by category, list of ids, start year or a selection made on the dashboard. Every course is checked against
  * the requester's local/mooc_audit:audit capability; refused courses are kept with the reason. A course that already
- * has a queued or running run gets no second one: the batch records the run it reuses. Progress is derived from the runs
+ * has a live queued or running run gets no second one: the batch records the run it reuses. Progress is derived from the runs
  * of the batch, never stored twice.
  *
  * @package    local_mooc_audit
@@ -193,7 +193,7 @@ class batch_manager {
         $skipped = $r['skipped'];
         $queued = 0;
         foreach (array_keys($r['accepted']) as $courseid) {
-            $pending = run_store::pending($courseid);
+            $pending = run_store::reusable_pending($courseid);
             if ($pending) {
                 $skipped[] = ['courseid' => $courseid, 'reason' => self::SKIP_DUPLICATE, 'runid' => (int) $pending->id];
                 continue;
@@ -269,13 +269,14 @@ class batch_manager {
         require_capability('local/mooc_audit:batchaudit', \context_system::instance(), $userid);
         $n = 0;
         foreach (self::runs($batch) as $courseid => $run) {
-            if ($run->status !== run_store::FAILED || (int) $run->batchid !== (int) $batch->id) {
+            // Failed runs of this batch, and failed runs of other requests this batch had reused.
+            if ($run->status !== run_store::FAILED) {
                 continue;
             }
             if (
                 !\core\context\course::instance($courseid, IGNORE_MISSING)
                     || !has_capability('local/mooc_audit:audit', \context_course::instance($courseid), $userid)
-                    || run_store::pending($courseid)
+                    || run_store::reusable_pending($courseid)
             ) {
                 continue;
             }

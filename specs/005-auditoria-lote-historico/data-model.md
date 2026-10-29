@@ -45,7 +45,7 @@ data são carimbos Unix. `userid = 0` significa "processo" (CLI) ou solicitante 
 | reofferyear | int(4) | sim | ano de reoferta efetivo |
 | summary | text | sim | JSON: `summary` do relatório (`por_status`, `nao_conformes_por_gravidade`, `regras`, `overall_status`) |
 | report | text | sim | JSON do relatório (contrato 1.0, sem `snapshot`, resultados com `occurrence`) |
-| details | text | sim | JSON: `{"rules": {"CL-13": {"p": hash12, "r": hash12}}, "modules": {"<cmid>": "<modname>\|<nome normalizado>"}, "sections": [0,1,…], "metrics": {"seconds": f, "peak_mb": f, "db_reads": n, "db_writes": n}}` |
+| details | text | sim | JSON: `{"rules": {"CL-13": {"p": hash12, "r": hash12}}, "modules": {"<cmid>": "<modname>\|<nome normalizado>"}, "sections": [ids das seções], "metrics": {"seconds": f, "peak_mb": f, "db_reads": n, "db_writes": n}}` |
 | previousrunid | int(10) | não (padrão 0) | execução usada como base da evolução (0 = primeira) |
 | evolution | text | sim | JSON: contagens por classe (abaixo) e `notes` (ex.: `plugin_version_changed`) |
 | errors | text | sim | JSON: lista de `{"code": str, "message": str, "rule": str?}` (falha, regras em `ERRO`, avisos de coleta e de política) |
@@ -74,12 +74,14 @@ page/cli: registro criado já em running (síncrono)
 ## Ocorrência (dentro de `report.results[]`)
 
 `occurrence` = `RULE|ENTITY|CHECK[|SUBJECT]` (ver research R2), única por execução. ENTITY ∈ `course`, `cm:<cmid>`,
-`sec:<número>`. Exemplo: `CL-13|cm:42|attempts`, `CL-21|course|html_block|acessibilidade`,
+`sec:<id da seção>`. Exemplo: `CL-13|cm:42|attempts`, `CL-21|course|html_block|acessibilidade`,
 `X-DEP-02|cm:57|target_completion|cm:41`.
 
 ## Evolução (calculada por `local\history\evolution::compare(base, atual)`)
 
-Entradas: os dois relatórios, os `details` das duas execuções. Para cada chave K problemática (`NAO_CONFORME` ou
+Entradas: os dois relatórios, os `details` das duas execuções. A base é a última execução concluída ou parcial
+**terminada antes do início** da execução comparada (ordem por tempo, não por id: um lote enfileirado antes de uma
+auditoria da página pode terminar depois dela); o painel e a retenção também usam a última por término. Para cada chave K problemática (`NAO_CONFORME` ou
 `ATENCAO`) em ao menos uma execução:
 
 | Base | Atual | Condição | Classe |
@@ -112,6 +114,9 @@ nenhuma classificação.
 | `blocking` | `overall = BLOQUEADA` |
 | `needs_fix` | `overall = REQUER_CORRECOES` |
 | `none_detected` | `overall = SEM_INCONFORMIDADES` |
+
+Reaproveitamento por um lote novo: só execução `queued` cuja tarefa ad hoc ainda existe, ou `running` iniciada há menos
+de 15 min; execuções mortas não bloqueiam a sala e a limpeza diária as marca como `stale`.
 
 Indicadores adicionais: `pending` (execução `queued`/`running` existente), `stale` com motivos `age`,
 `policy_changed`, `plugin_changed` (com base na última execução **válida** — `complete`/`partial`).

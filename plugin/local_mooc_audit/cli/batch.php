@@ -77,7 +77,9 @@ if (!$options['run']) {
 
 $batch = batch_manager::get($out['batchid']);
 $tasks = $DB->get_records('task_adhoc', ['classname' => '\\' . audit_course::class], 'id ASC');
-$mine = array_map(fn($r) => (int) $r->id, batch_manager::runs($batch));
+// Only the runs of this batch: reused runs of other requests stay with their own tasks.
+$own = array_filter(batch_manager::runs($batch), fn($r) => (int) $r->batchid === (int) $batch->id);
+$mine = array_map(fn($r) => (int) $r->id, $own);
 foreach ($tasks as $record) {
     $data = json_decode($record->customdata);
     if (!in_array((int) ($data->runid ?? 0), $mine, true)) {

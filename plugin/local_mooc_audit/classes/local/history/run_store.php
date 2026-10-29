@@ -44,6 +44,9 @@ class run_store {
     /** @var string No report. */
     const FAILED = 'failed';
 
+    /** @var int A running run older than this (seconds) is not reused by a new batch (its process probably died). */
+    const STALE_RUNNING = 900;
+
     /** @var string Audit page of the course. */
     const ORIGIN_PAGE = 'page';
     /** @var string Background batch. */
@@ -151,7 +154,9 @@ class run_store {
                 throw new \coding_exception('Unknown run field: ' . $k);
             }
             $set[] = "$k = :f_$k";
-            $params["f_$k"] = is_array($v) ? json_encode($v, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) : $v;
+            // Course texts may carry invalid UTF-8 (byte truncation): substitute rather than lose the whole report.
+            $params["f_$k"] = is_array($v) ? json_encode($v, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+                | JSON_INVALID_UTF8_SUBSTITUTE | JSON_THROW_ON_ERROR) : $v;
         }
         $before = $DB->get_field(self::TABLE, 'status', ['id' => $id]);
         if (!in_array($before, [self::QUEUED, self::RUNNING], true)) {
@@ -159,7 +164,44 @@ class run_store {
         }
         $DB->execute('UPDATE {' . self::TABLE . '} SET ' . implode(', ', $set)
             . ' WHERE id = :id AND status IN (:queued, :running)', $params);
-        return true;
+        // Another finisher may have won in between: report success only if the row now holds this outcome.
+        $after = $DB->get_record(self::TABLE, ['id' => $id], 'status, timefinished');
+        return $after && $after->status === $status && (int) $after->timefinished === $params['timefinished'];
+    }
+
+    /**
+     * A queued or running run of the course that is still alive and may be reused by a new batch: a queued run whose
+     * background task still exists, or a run that started less than STALE_RUNNING seconds ago.
+     *
+     * @param int $courseid
+     * @param int|null $now
+     * @return \stdClass|null
+     */
+    public static function reusable_pending(int $courseid, ?int $now = null): ?\stdClass {
+        global $DB;
+        $runs = $DB->get_records_select(
+            self::TABLE,
+            'courseid = :courseid AND status IN (:queued, :running)',
+            ['courseid' => $courseid, 'queued' => self::QUEUED, 'running' => self::RUNNING],
+            'id ASC',
+            'id, courseid, batchid, status, timecreated, timestarted'
+        );
+        foreach ($runs as $run) {
+            if ($run->status === self::QUEUED) {
+                $task = $DB->record_exists_select(
+                    'task_adhoc',
+                    'classname = :classname AND ' . $DB->sql_compare_text('customdata') . ' = ' . $DB->sql_compare_text(':data'),
+                    ['classname' => '\\' . \local_mooc_audit\task\audit_course::class,
+                        'data' => json_encode(['runid' => (int) $run->id])]
+                );
+                if ($task) {
+                    return $run;
+                }
+            } else if ((int) $run->timestarted > ($now ?? time()) - self::STALE_RUNNING) {
+                return $run;
+            }
+        }
+        return null;
     }
 
     /**
@@ -189,23 +231,69 @@ class run_store {
     }
 
     /**
-     * Latest run with a report (complete or partial) of a course, optionally older than a given run.
+     * Latest run with a report (complete or partial) of a course by end time, optionally finished before a moment.
+     *
+     * Runs are ordered by the time they finished, not by id: a batch run queued before a page audit may finish after it.
      *
      * @param int $courseid
-     * @param int $beforeid only runs with a smaller id (0 = any)
+     * @param int $finishedby only runs finished at or before this time (0 = any)
+     * @param int $excludeid run to leave out (the run being compared)
      * @return \stdClass|null
      */
-    public static function latest_valid(int $courseid, int $beforeid = 0): ?\stdClass {
+    public static function latest_valid(int $courseid, int $finishedby = 0, int $excludeid = 0): ?\stdClass {
         global $DB;
         [$in, $params] = $DB->get_in_or_equal(self::valid_states(), SQL_PARAMS_NAMED);
         $params['courseid'] = $courseid;
         $where = "courseid = :courseid AND status $in";
-        if ($beforeid) {
-            $where .= ' AND id < :beforeid';
-            $params['beforeid'] = $beforeid;
+        if ($finishedby) {
+            $where .= ' AND timefinished <= :finishedby';
+            $params['finishedby'] = $finishedby;
         }
-        $runs = $DB->get_records_select(self::TABLE, $where, $params, 'id DESC', '*', 0, 1);
+        if ($excludeid) {
+            $where .= ' AND id <> :excludeid';
+            $params['excludeid'] = $excludeid;
+        }
+        $runs = $DB->get_records_select(self::TABLE, $where, $params, 'timefinished DESC, id DESC', '*', 0, 1);
         return $runs ? reset($runs) : null;
+    }
+
+    /**
+     * Latest run per course (by end time, then id) among some states.
+     *
+     * @param string[] $states final states to consider
+     * @param int[]|null $courseids restrict to these courses (null = all)
+     * @param string $fields run columns, prefixed with r.
+     * @return \stdClass[] courseid => run
+     */
+    public static function latest_per_course(array $states, ?array $courseids = null, string $fields = 'r.*'): array {
+        global $DB;
+        if ($courseids === []) {
+            return [];
+        }
+        [$sin, $params] = $DB->get_in_or_equal($states, SQL_PARAMS_NAMED, 's');
+        [$sin2, $params2] = $DB->get_in_or_equal($states, SQL_PARAMS_NAMED, 't');
+        $params += $params2;
+        $cwhere = '';
+        if ($courseids !== null) {
+            [$cin, $cparams] = $DB->get_in_or_equal($courseids, SQL_PARAMS_NAMED, 'c');
+            $cwhere = "AND courseid $cin";
+            $params += $cparams;
+        }
+        $rows = $DB->get_records_sql(
+            "SELECT $fields
+               FROM {" . self::TABLE . "} r
+               JOIN (SELECT courseid, MAX(timefinished) AS tf FROM {" . self::TABLE . "}
+                      WHERE status $sin $cwhere GROUP BY courseid) m
+                 ON m.courseid = r.courseid AND m.tf = r.timefinished
+              WHERE r.status $sin2
+           ORDER BY r.id",
+            $params
+        );
+        $out = [];
+        foreach ($rows as $r) {
+            $out[(int) $r->courseid] = $r;
+        }
+        return $out;
     }
 
     /**
