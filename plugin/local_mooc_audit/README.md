@@ -52,7 +52,8 @@ mecanismo nativo `core_course_external::import_course`).
 | `classes/local/rule/*.php` | Uma classe por regra: 18 `CL-*` (checklist) + 11 `X-*` (adicionais), com categoria, tipo, gravidade, chaves de política, locus e fonte |
 | `classes/local/catalog.php` | Lista explícita e ordenada das 29 regras |
 | `classes/local/{status,category,helpers,locator}.php` | Estados/gravidades, 8 categorias, helpers compartilhados, mapeamento finding → URL de correção (loci: configurações/página do módulo, configurações do curso, inscrição, livro de notas, blocos, seção, importação, nenhum) |
-| `classes/engine.php` | Execução isolada das regras, situação geral, contrato JSON 1.0, renderização texto |
+| `classes/engine.php` | Execução isolada das regras, situação geral, contrato JSON 1.0 (`to_json()` é a única codificação, usada pela página e pelo CLI), renderização texto |
+| `schema/report-v1.0.schema.json` | JSON Schema do contrato 1.0 (cópia idêntica à de `specs/001-.../contracts/`); validado por `tests/contract_test.php` |
 | `classes/comparator.php` | Comparador experimental origem × destino (inalterado; escopo da spec 003) |
 | `cli/audit.php`, `cli/compare.php` | Linha de comando |
 | `lib.php` | Callback `local_mooc_audit_extend_navigation_course()`: entrada "Auditoria técnica" no menu do curso para quem tem a capacidade |
@@ -61,6 +62,7 @@ mecanismo nativo `core_course_external::import_course`).
 | `tests/generator/lib.php` | Gerador de componente: cursos A (conforme) e B (inconsistente), usado pelo PHPUnit e por `cli/make_fixtures.php` |
 | `tests/characterization_test.php` + `tests/fixtures/expected_*.json` | Estados por regra dos cursos A/B congelados (proteção contra mudança de comportamento) |
 | `tests/engine_test.php` | Motor, contrato, política, isolamento de regra com exceção (regra injetada), conclusão desabilitada no site, locus de importação, saída texto do CLI |
+| `tests/contract_test.php` | Relatórios de A/B válidos contra o schema (validador mínimo sem biblioteca), campos da PoC preservados, ida e volta do JSON |
 | `tests/policy_test.php` | Padrões, override do administrador e por arquivo, tipos errados, ano de reoferta automático, validação do setting |
 | `tests/rule/xint03_test.php` | X-INT-03: plugin ausente (condição de tipo inexistente) → não conforme; padrão instalado → conforme; curso vazio → não se aplica |
 | `tests/locator_test.php` | URL esperada por locus; identificadores ausentes → sem link |

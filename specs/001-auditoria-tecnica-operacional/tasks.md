@@ -20,8 +20,10 @@ depois cobertura por regra e acabamento. Caminhos relativos a `plugin/local_mooc
 concluída em 2026-10-29 (T056–T059: `locator_test`, locus por finding incl. novo locus `import` →
 `/backup/import.php`, local como link com título, botão "Executar novamente"); fase 5 (US3) autorizada e concluída em
 2026-10-29 (T060–T064: setting de política validado, `policy_test`, blocos de transparência testados, `xint03_test`,
-isolamento de exceção com regra injetada); fases 6–9 aguardam autorização após validação (ver
-`docs/relatorio-adocao-sdd.md`).
+isolamento de exceção com regra injetada); fase 6 (US4) autorizada e concluída em 2026-10-29 (T065–T066:
+`contract_test` valida A/B contra o schema 1.0 — agora com o locus `import` e distribuído em
+`plugin/local_mooc_audit/schema/` —, codificação única `engine::to_json()` na página e no CLI); fases 7–9 aguardam
+autorização após validação (ver `docs/relatorio-adocao-sdd.md`).
 
 ## Format: `[ID] [P?] [Story] Description`
 
@@ -159,8 +161,8 @@ inconformidades por gravidade e categoria, evidência completa, alertas, não ve
 
 **Independent Test**: quickstart §4; teste de schema.
 
-- [ ] T065 [P] [US4] Criar `tests/contract_test.php`: o JSON de `engine::audit()` para A e B contém todos os campos obrigatórios de `specs/001-auditoria-tecnica-operacional/contracts/report-v1.0.schema.json` (validação manual dos `required` e enums, sem biblioteca externa), e todos os campos da PoC (`engine`, `policy_version`, `reoffer_year`, `executed_at`, `course`, `viewer_userid`, `timing`, `inventory`, `summary`, `results`, `warnings`) continuam presentes
-- [ ] T066 [US4] Confirmar em `index.php` (`format=json`) e `cli/audit.php` (`--json`) que ambos serializam o mesmo array com `JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT`; atualizar `cli/audit.php --help` para citar o contrato 1.0
+- [x] T065 [P] [US4] Criar `tests/contract_test.php`: o JSON de `engine::audit()` para A e B contém todos os campos obrigatórios de `specs/001-auditoria-tecnica-operacional/contracts/report-v1.0.schema.json` (validação manual dos `required` e enums, sem biblioteca externa), e todos os campos da PoC (`engine`, `policy_version`, `reoffer_year`, `executed_at`, `course`, `viewer_userid`, `timing`, `inventory`, `summary`, `results`, `warnings`) continuam presentes
+- [x] T066 [US4] Confirmar em `index.php` (`format=json`) e `cli/audit.php` (`--json`) que ambos serializam o mesmo array com `JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT`; atualizar `cli/audit.php --help` para citar o contrato 1.0
 
 ---
 

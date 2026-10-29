@@ -48,7 +48,7 @@
         "gravidade": {"enum": ["Bloqueante", "Alta", "Média", "Baixa", "Informativa"]},
         "local": {"type": ["string", "null"]},
         "cmid": {"type": ["integer", "null"]},
-        "locus": {"enum": ["module_edit", "module_view", "course_settings", "enrol", "gradebook", "blocks", "section", "none"]},
+        "locus": {"enum": ["module_edit", "module_view", "course_settings", "enrol", "gradebook", "blocks", "section", "import", "none"]},
         "section": {"type": ["integer", "null"]},
         "link": {"type": ["string", "null"]},
         "evidencia": {"type": ["string", "null"]},

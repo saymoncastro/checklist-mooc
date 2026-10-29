@@ -34,7 +34,7 @@ list($options, $unrecognized) = cli_get_params([
 ], ['h' => 'help', 'c' => 'courseid']);
 
 if ($options['help'] || empty($options['courseid'])) {
-    cli_writeln("Auditoria MOOC somente leitura de um curso.\n\nOpções:\n  --courseid=N   curso a auditar (obrigatório)\n  --userid=N     usuário cuja visão define 'uservisible' (0 = admin)\n  --policy=FILE  JSON com parâmetros de política que sobrescrevem os padrões\n  --json         imprime o relatório em JSON em vez de texto\n  --out=FILE     grava o JSON do relatório no arquivo\n  --snapshot     inclui o retrato completo no JSON");
+    cli_writeln("Auditoria MOOC somente leitura de um curso.\n\nOpções:\n  --courseid=N   curso a auditar (obrigatório)\n  --userid=N     usuário cuja visão define 'uservisible' (0 = admin)\n  --policy=FILE  JSON com parâmetros de política que sobrescrevem os padrões\n  --json         imprime o relatório em JSON (contrato 1.0, schema em local/mooc_audit/schema/report-v1.0.schema.json) em vez de texto\n  --out=FILE     grava o JSON do relatório (mesmo contrato e codificação da página) no arquivo\n  --snapshot     inclui o retrato completo no JSON");
     exit(0);
 }
 
@@ -50,10 +50,10 @@ if ($options['policy'] !== '') {
 $report = \local_mooc_audit\engine::audit((int) $options['courseid'], $override, (int) $options['userid'], (bool) $options['snapshot']);
 
 if ($options['out'] !== '') {
-    file_put_contents($options['out'], json_encode($report, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+    file_put_contents($options['out'], \local_mooc_audit\engine::to_json($report));
 }
 if ($options['json']) {
-    echo json_encode($report, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), "\n";
+    echo \local_mooc_audit\engine::to_json($report), "\n";
 } else {
     echo \local_mooc_audit\engine::render_text($report);
 }

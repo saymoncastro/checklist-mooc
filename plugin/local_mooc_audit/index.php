@@ -71,7 +71,7 @@ $report = \local_mooc_audit\engine::audit($course->id, null, 0);
 
 if ($format === 'json') {
     @header('Content-Type: application/json; charset=utf-8');
-    echo json_encode($report, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    echo \local_mooc_audit\engine::to_json($report);
     exit;
 }
 

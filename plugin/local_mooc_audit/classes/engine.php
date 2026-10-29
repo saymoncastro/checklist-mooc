@@ -186,6 +186,16 @@ class engine {
     }
 
     /**
+     * JSON serialisation of a report (contract 1.0): the single encoding used by the page and the CLI.
+     *
+     * @param array $report
+     * @return string
+     */
+    public static function to_json(array $report): string {
+        return json_encode($report, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    }
+
+    /**
      * Plain-text rendering of a report (CLI): header, inventory, overall status, every non conformant result first,
      * conformant rules compacted, then the policy and data collection notices. Labels come from the language pack.
      *
