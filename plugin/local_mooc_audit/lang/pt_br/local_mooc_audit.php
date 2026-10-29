@@ -23,8 +23,8 @@
  */
 
 $string['pluginname'] = 'Auditoria MOOC (prova de conceito)';
-$string['mooc_audit:audit'] = 'Executar auditoria MOOC somente leitura de um curso';
-$string['mooc_audit:compare'] = 'Comparar dois cursos (origem e destino importado)';
+$string['mooc_audit:audit'] = 'Executar a auditoria técnica de um curso e ver o relatório (somente leitura)';
+$string['mooc_audit:compare'] = 'Comparar dois cursos, origem e destino importado (somente leitura)';
 $string['policyjson'] = 'Política institucional (JSON)';
 $string['policyjson_desc'] = 'Objeto JSON que sobrescreve os parâmetros padrão da política (ano da reoferta, data de término, tentativas mínimas, nomes canônicos, blocos exigidos...). Vazio = padrões do plugin.';
 $string['courseid'] = 'Id do curso';
@@ -70,6 +70,41 @@ $string['policy_invalid'] = 'Política institucional inválida ({$a}); os padrõ
 $string['policy_badtype'] = 'Política: a chave "{$a}" tem tipo inesperado; o padrão foi mantido.';
 $string['site_completion_disabled'] = 'Acompanhamento de conclusão ou restrições de acesso desabilitados no site; regras de conclusão, restrições e certificação não puderam ser verificadas.';
 $string['rule_error'] = 'Falha interna na regra: {$a}';
+
+// Labels of the report page and of the CLI text output.
+$string['label_blocks'] = 'Blocos';
+$string['label_bysev'] = 'Inconformidades por gravidade';
+$string['label_bystatus'] = 'Resultados por estado';
+$string['label_category'] = 'Categoria';
+$string['label_collection'] = 'Coleta';
+$string['label_conformant_omitted'] = 'regras conformes omitidas';
+$string['label_contract'] = 'contrato';
+$string['label_engine'] = 'Auditor';
+$string['label_enrols'] = 'Métodos de inscrição';
+$string['label_evidence'] = 'Evidência';
+$string['label_executed_at'] = 'Executada em';
+$string['label_expected'] = 'Esperado';
+$string['label_files'] = 'Arquivos';
+$string['label_files_missing'] = 'sem conteúdo no armazenamento';
+$string['label_found'] = 'Encontrado';
+$string['label_grade_items'] = 'Itens de nota';
+$string['label_guidance'] = 'Orientação';
+$string['label_inventory'] = 'Inventário';
+$string['label_local'] = 'Local';
+$string['label_message'] = 'Mensagem';
+$string['label_modules'] = 'Módulos';
+$string['label_overall'] = 'Situação geral';
+$string['label_period'] = 'Período';
+$string['label_policy'] = 'Política';
+$string['label_reason'] = 'Motivo';
+$string['label_reoffer_year'] = 'Ano da reoferta';
+$string['label_rule'] = 'Regra';
+$string['label_rules'] = 'Regras';
+$string['label_sections'] = 'Seções';
+$string['label_status'] = 'Estado';
+$string['label_time'] = 'tempo';
+$string['label_visible'] = 'Visível';
+$string['none_in_section'] = 'Nenhum.';
 
 // Rule titles and guidance (ids CL-nn / X-AREA-nn, keys rule_<id>_title, rule_<id>_guidance, rule_<id>_g_<name>).
 $string['rule_cl04_guidance'] = 'Acrescentar o botão ao final do sumário (Editar configurações do curso > Descrição).';

@@ -23,8 +23,8 @@
  */
 
 $string['pluginname'] = 'MOOC audit (proof of concept)';
-$string['mooc_audit:audit'] = 'Run a read-only MOOC audit of a course';
-$string['mooc_audit:compare'] = 'Compare two courses (source and imported target)';
+$string['mooc_audit:audit'] = 'Run the technical audit of a course and view its report (read-only)';
+$string['mooc_audit:compare'] = 'Compare two courses, source and imported target (read-only)';
 $string['policyjson'] = 'Institutional policy (JSON)';
 $string['policyjson_desc'] = 'JSON object overriding the default policy parameters (reoffer year, end date, minimum attempts, canonical names, required blocks...). Leave empty to use the defaults shipped with the plugin.';
 $string['courseid'] = 'Course id';
@@ -70,6 +70,41 @@ $string['policy_invalid'] = 'Invalid institutional policy ({$a}); the plugin def
 $string['policy_badtype'] = 'Policy: key "{$a}" has an unexpected type; the default was kept.';
 $string['site_completion_disabled'] = 'Completion tracking or access restrictions are disabled on the site; completion, restriction and certification rules could not be verified.';
 $string['rule_error'] = 'Internal failure in the rule: {$a}';
+
+// Labels of the report page and of the CLI text output.
+$string['label_blocks'] = 'Blocks';
+$string['label_bysev'] = 'Non-conformities by severity';
+$string['label_bystatus'] = 'Results by state';
+$string['label_category'] = 'Category';
+$string['label_collection'] = 'Data collection';
+$string['label_conformant_omitted'] = 'conformant rules omitted';
+$string['label_contract'] = 'contract';
+$string['label_engine'] = 'Auditor';
+$string['label_enrols'] = 'Enrolment methods';
+$string['label_evidence'] = 'Evidence';
+$string['label_executed_at'] = 'Executed at';
+$string['label_expected'] = 'Expected';
+$string['label_files'] = 'Files';
+$string['label_files_missing'] = 'without content in storage';
+$string['label_found'] = 'Found';
+$string['label_grade_items'] = 'Grade items';
+$string['label_guidance'] = 'Guidance';
+$string['label_inventory'] = 'Inventory';
+$string['label_local'] = 'Location';
+$string['label_message'] = 'Message';
+$string['label_modules'] = 'Modules';
+$string['label_overall'] = 'Overall status';
+$string['label_period'] = 'Period';
+$string['label_policy'] = 'Policy';
+$string['label_reason'] = 'Reason';
+$string['label_reoffer_year'] = 'Reoffer year';
+$string['label_rule'] = 'Rule';
+$string['label_rules'] = 'Rules';
+$string['label_sections'] = 'Sections';
+$string['label_status'] = 'State';
+$string['label_time'] = 'time';
+$string['label_visible'] = 'Visible';
+$string['none_in_section'] = 'None.';
 
 // Rule titles and guidance (ids CL-nn / X-AREA-nn, keys rule_<id>_title, rule_<id>_guidance, rule_<id>_g_<name>).
 $string['rule_cl04_guidance'] = 'Add the button at the end of the summary (Edit course settings > Description).';

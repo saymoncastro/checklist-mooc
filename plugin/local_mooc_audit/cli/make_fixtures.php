@@ -36,6 +36,14 @@ define('CLI_SCRIPT', true);
 
 require(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir . '/clilib.php');
+// The core question generator loads question/engine/tests/helpers.php, whose classes extend PHPUnit's TestCase:
+// the composer autoloader of the development site is required (composer install at the Moodle root).
+if (!class_exists('PHPUnit\\Framework\\TestCase') && is_readable($CFG->dirroot . '/vendor/autoload.php')) {
+    require_once($CFG->dirroot . '/vendor/autoload.php');
+}
+if (!class_exists('PHPUnit\\Framework\\TestCase')) {
+    cli_error('PHPUnit is required to build the fixture courses (run "composer install" at the Moodle root of the development site).');
+}
 require_once($CFG->libdir . '/testing/generator/lib.php');
 require_once(__DIR__ . '/../tests/generator/lib.php');
 

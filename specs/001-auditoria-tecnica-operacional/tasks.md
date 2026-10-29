@@ -15,8 +15,9 @@ description: "Task list for 001 — Auditoria Técnica Operacional de Cursos MOO
 **Organization**: fases de preparação e fundação (refatoração protegida), depois uma fase por user story (P1 → P3),
 depois cobertura por regra e acabamento. Caminhos relativos a `plugin/local_mooc_audit/` salvo indicação.
 
-**Status desta lista**: fases 1 e 2 autorizadas em 2026-10-28 e concluídas (T001–T047b marcadas); fases 3–9 aguardam
-validação da equipe após a fase 3 ser autorizada (ver `docs/relatorio-adocao-sdd.md`).
+**Status desta lista**: fases 1 e 2 autorizadas em 2026-10-28 e concluídas (T001–T047b); fase 3 (US1) autorizada em
+2026-10-29 e concluída (T048–T055, verificada no navegador contra os cursos A/B gerados); fases 4–9 aguardam
+autorização após validação da fase 3 (ver `docs/relatorio-adocao-sdd.md`).
 
 ## Format: `[ID] [P?] [Story] Description`
 
@@ -104,14 +105,14 @@ inconformidades por gravidade e categoria, evidência completa, alertas, não ve
 
 **Independent Test**: quickstart §5.2 (curso B) e §4 (curso A); `access_test`.
 
-- [ ] T048 [US1] Criar `lib.php` com `local_mooc_audit_extend_navigation_course(navigation_node $navigation, stdClass $course, context_course $context)` adicionando o nó `auditmenu` (TYPE_SETTING, ícone `i/report`) apenas se `has_capability('local/mooc_audit:audit', $context)`
-- [ ] T049 [P] [US1] Criar `classes/output/report.php` (`renderable`, `templatable`): `export_for_template()` converte o array do engine em dados do template — cabeçalho, inventário, situação geral, contagens, grupos por gravidade → categoria de NAO_CONFORME, lista ATENCAO, lista NV+NA com motivo, lista ERRO, lista compacta CONFORME, avisos (coleta + política), URLs de reexecução e JSON; strings via `get_string`
-- [ ] T050 [P] [US1] Criar `templates/report.mustache` com as seções do contrato `contracts/page.md` (h3/h4, tabelas com `<th>`, estado como texto + classe CSS, evidência sem truncamento, `{{#str}}` para rótulos) e `classes/output/renderer.php` com `render_report()`
-- [ ] T051 [US1] Reescrever `index.php`: `courseid|id` obrigatório (formulário de compatibilidade se ausente), `require_login($course)`, `require_capability` no contexto do curso, `set_context`/`set_pagelayout('incourse')`, título `pagetitle`, `format=json` mantido, renderização via renderer; remover todo texto fixo
-- [ ] T052 [US1] Revisar `db/access.php`: remover `riskbitmask` indevido (research R11), manter `captype read`, arquétipo `manager`; atualizar strings das capacidades em `lang/*`
-- [ ] T053 [US1] Criar `tests/access_test.php`: estudante e professor inscritos não têm `local/mooc_audit:audit` por padrão; gerente tem; `local_mooc_audit_extend_navigation_course()` não adiciona o nó sem a capacidade e adiciona com ela
-- [ ] T054 [US1] Atualizar `engine_test.php`: cada resultado tem `category` válida, `status` e `gravidade` válidos, `contract_version` presente, `overall_status` coerente (B → BLOQUEADA, A → SEM_INCONFORMIDADES), NAO_CONFORME tem local/evidencia/orientacao não vazios e ATENCAO tem local/evidencia não vazios
-- [ ] T055 [US1] `engine::render_text()` passa a incluir a situação geral e os avisos de política, com strings de idioma (saída de texto do CLI)
+- [x] T048 [US1] Criar `lib.php` com `local_mooc_audit_extend_navigation_course(navigation_node $navigation, stdClass $course, context_course $context)` adicionando o nó `auditmenu` (TYPE_SETTING, ícone `i/report`) apenas se `has_capability('local/mooc_audit:audit', $context)`
+- [x] T049 [P] [US1] Criar `classes/output/report.php` (`renderable`, `templatable`): `export_for_template()` converte o array do engine em dados do template — cabeçalho, inventário, situação geral, contagens, grupos por gravidade → categoria de NAO_CONFORME, lista ATENCAO, lista NV+NA com motivo, lista ERRO, lista compacta CONFORME, avisos (coleta + política), URLs de reexecução e JSON; strings via `get_string`
+- [x] T050 [P] [US1] Criar `templates/report.mustache` com as seções do contrato `contracts/page.md` (h3/h4, tabelas com `<th>`, estado como texto + classe CSS, evidência sem truncamento, `{{#str}}` para rótulos) e `classes/output/renderer.php` com `render_report()`
+- [x] T051 [US1] Reescrever `index.php`: `courseid|id` obrigatório (formulário de compatibilidade se ausente), `require_login($course)`, `require_capability` no contexto do curso, `set_context`/`set_pagelayout('incourse')`, título `pagetitle`, `format=json` mantido, renderização via renderer; remover todo texto fixo
+- [x] T052 [US1] Revisar `db/access.php`: remover `riskbitmask` indevido (research R11), manter `captype read`, arquétipo `manager`; atualizar strings das capacidades em `lang/*`
+- [x] T053 [US1] Criar `tests/access_test.php`: estudante e professor inscritos não têm `local/mooc_audit:audit` por padrão; gerente tem; `local_mooc_audit_extend_navigation_course()` não adiciona o nó sem a capacidade e adiciona com ela
+- [x] T054 [US1] Atualizar `engine_test.php`: cada resultado tem `category` válida, `status` e `gravidade` válidos, `contract_version` presente, `overall_status` coerente (B → BLOQUEADA, A → SEM_INCONFORMIDADES), NAO_CONFORME tem local/evidencia/orientacao não vazios e ATENCAO tem local/evidencia não vazios
+- [x] T055 [US1] `engine::render_text()` passa a incluir a situação geral e os avisos de política, com strings de idioma (saída de texto do CLI)
 
 **Checkpoint**: US1 verificável no navegador (quickstart §5.2) e por `access_test`/`engine_test`.
 

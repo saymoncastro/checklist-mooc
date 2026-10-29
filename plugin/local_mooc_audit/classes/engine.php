@@ -180,48 +180,55 @@ class engine {
     }
 
     /**
-     * Plain-text rendering of a report (non conforming first).
+     * Plain-text rendering of a report (CLI): header, inventory, overall status, every non conformant result first,
+     * conformant rules compacted, then the policy and data collection notices. Labels come from the language pack.
      *
      * @param array $report
      * @return string
      */
     public static function render_text(array $report): string {
+        $str = fn(string $key, $a = null) => get_string($key, 'local_mooc_audit', $a);
         $results = $report['results'];
         usort($results, fn($a, $b) => [status::status_rank($a['status']), status::severity_rank($a['gravidade']), $a['rule']]
             <=> [status::status_rank($b['status']), status::severity_rank($b['gravidade']), $b['rule']]);
         $inv = $report['inventory'];
         $lines = [];
-        $lines[] = "=== {$report['course']['fullname']} [{$report['course']['shortname']}] (id {$report['course']['id']}) — {$report['engine']} / política {$report['policy_version']} (ano {$report['reoffer_year']})";
-        $lines[] = "Período: {$inv['startdate']} → {$inv['enddate']} | categoria: {$inv['category']['name']} | visível: {$inv['visible']} | tempo: {$report['timing']['total_s']}s";
-        $lines[] = 'Seções: ' . $inv['sections'] . ' | módulos: ' . $inv['modules'] . ' ' . json_encode($inv['modules_by_type']) . ' | arquivos: ' . $inv['files'] . ' (sem conteúdo: ' . $inv['files_missing_in_storage'] . ')';
-        $lines[] = 'Blocos: ' . json_encode($inv['blocks']) . ' | inscrição: ' . json_encode($inv['enrols']);
-        $lines[] = 'Situação: ' . get_string('overall_' . strtolower($report['summary']['overall_status']), 'local_mooc_audit')
-            . ' | ' . json_encode($report['summary']['por_status']) . ' | não conformes por gravidade: ' . json_encode($report['summary']['nao_conformes_por_gravidade'], JSON_UNESCAPED_UNICODE);
+        $lines[] = "=== {$report['course']['fullname']} [{$report['course']['shortname']}] (id {$report['course']['id']}) — {$report['engine']}"
+            . " / {$str('label_policy')} {$report['policy_version']} ({$str('label_reoffer_year')} {$report['reoffer_year']})";
+        $lines[] = "{$str('label_period')}: {$inv['startdate']} → {$inv['enddate']} | {$str('label_category')}: {$inv['category']['name']}"
+            . " | {$str('label_visible')}: {$inv['visible']} | {$str('label_time')}: {$report['timing']['total_s']}s";
+        $lines[] = "{$str('label_sections')}: {$inv['sections']} | {$str('label_modules')}: {$inv['modules']} " . json_encode($inv['modules_by_type'])
+            . " | {$str('label_files')}: {$inv['files']} ({$str('label_files_missing')}: {$inv['files_missing_in_storage']})";
+        $lines[] = "{$str('label_blocks')}: " . json_encode($inv['blocks']) . " | {$str('label_enrols')}: " . json_encode($inv['enrols']);
+        $lines[] = "{$str('label_overall')}: " . $str('overall_' . strtolower($report['summary']['overall_status']))
+            . ' | ' . json_encode($report['summary']['por_status'])
+            . " | {$str('label_bysev')}: " . json_encode($report['summary']['nao_conformes_por_gravidade'], JSON_UNESCAPED_UNICODE);
         foreach ($results as $r) {
             if ($r['status'] === status::CONFORME) {
                 continue;
             }
             $lines[] = sprintf('  [%-15s] %-9s %-11s %s', $r['status'], $r['rule'], $r['gravidade'], $r['titulo']);
-            $lines[] = '      local: ' . $r['local'] . ($r['link'] ? ' → ' . $r['link'] : '');
-            $lines[] = '      evidência: ' . $r['evidencia'];
+            $lines[] = "      {$str('label_local')}: " . $r['local'] . ($r['link'] ? ' → ' . $r['link'] : '');
+            $lines[] = "      {$str('label_evidence')}: " . $r['evidencia'];
             if (!empty($r['encontrado'])) {
-                $lines[] = '      encontrado: ' . $r['encontrado'];
+                $lines[] = "      {$str('label_found')}: " . $r['encontrado'];
             }
             if (!empty($r['esperado'])) {
-                $lines[] = '      esperado: ' . $r['esperado'];
+                $lines[] = "      {$str('label_expected')}: " . $r['esperado'];
             }
             if (!empty($r['orientacao'])) {
-                $lines[] = '      orientação: ' . $r['orientacao'];
+                $lines[] = "      {$str('label_guidance')}: " . $r['orientacao'];
             }
         }
-        $conf = array_unique(array_map(fn($r) => $r['rule'], array_filter($results, fn($r) => $r['status'] === status::CONFORME)));
+        $notconf = array_unique(array_column(array_filter($results, fn($r) => $r['status'] !== status::CONFORME), 'rule'));
+        $conf = array_values(array_diff(array_unique(array_column($results, 'rule')), $notconf));
         sort($conf);
-        $lines[] = '  (conformes omitidos: ' . implode(', ', $conf) . ')';
+        $lines[] = "  ({$str('label_conformant_omitted')}: " . implode(', ', $conf) . ')';
         foreach ($report['policy_warnings'] as $w) {
-            $lines[] = '  aviso de política: ' . $w;
+            $lines[] = "  {$str('label_policy')}: " . $w;
         }
-        if ($report['warnings']) {
-            $lines[] = '  avisos: ' . json_encode($report['warnings'], JSON_UNESCAPED_UNICODE);
+        foreach ($report['warnings'] as $w) {
+            $lines[] = "  {$str('label_collection')}: " . (is_string($w) ? $w : json_encode($w, JSON_UNESCAPED_UNICODE));
         }
         return implode("\n", $lines) . "\n";
     }

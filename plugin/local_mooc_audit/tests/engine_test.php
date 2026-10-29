@@ -136,7 +136,12 @@ final class engine_test extends \advanced_testcase {
                 $this->assertNotEmpty($r['evidencia'], $r['rule']);
                 $this->assertNotEmpty($r['orientacao'], $r['rule']);
             }
+            if ($r['status'] === status::ATENCAO) {
+                $this->assertNotEmpty($r['local'], $r['rule']);
+                $this->assertNotEmpty($r['evidencia'], $r['rule']);
+            }
         }
+        $this->assertContains(status::ATENCAO, array_column($rb['results'], 'status'));
         $this->assertGreaterThan(0, $links);
         // A module finding links to the module editing page.
         $cl13 = array_values(array_filter($rb['results'], fn($r) => $r['rule'] === 'CL-13' && $r['status'] === status::NAO_CONFORME));
@@ -173,6 +178,22 @@ final class engine_test extends \advanced_testcase {
         $this->assertArrayHasKey('NAO_CONFORME', $report['summary']['por_status']);
         $blocking = array_filter($report['results'], fn($r) => $r['status'] === status::NAO_CONFORME && $r['gravidade'] === status::BLOQUEANTE);
         $this->assertSame(['CL-18'], array_values(array_unique(array_column($blocking, 'rule'))));
+    }
+
+    /**
+     * The CLI text output carries the overall status and the policy notices, through language strings.
+     */
+    public function test_render_text(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $course = $this->getDataGenerator()->create_course();
+        set_config('policyjson', '{not json', 'local_mooc_audit');
+        $report = engine::audit($course->id);
+        $text = engine::render_text($report);
+        $this->assertStringContainsString(get_string('label_overall', 'local_mooc_audit') . ': '
+            . get_string('overall_' . strtolower($report['summary']['overall_status']), 'local_mooc_audit'), $text);
+        $this->assertStringContainsString(get_string('policy_invalid', 'local_mooc_audit', 'Syntax error'), $text);
+        $this->assertStringContainsString(get_string('label_conformant_omitted', 'local_mooc_audit'), $text);
     }
 
     /**

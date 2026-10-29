@@ -3,7 +3,7 @@
 Plugin local **somente leitura** (versão 0.2.0, em evolução pela spec 001) que audita uma sala existente a partir do seu `courseid`, sem depender do MOOC Admin
 nem de arquivos `.mbz`. Reaproveita o catálogo de regras e as decisões institucionais do projeto `checklist-mooc`.
 
-**Estado:** PoC reorganizada (0.2.0): regras em classes próprias, catálogo com metadados, contrato JSON 1.0, caracterização dos cursos A/B. Validado em Moodle 4.5.15 / PHP 8.3 / PostgreSQL 17 em ambiente local.
+**Estado:** PoC reorganizada (0.2.0): regras em classes próprias, catálogo com metadados, contrato JSON 1.0, caracterização dos cursos A/B, página do relatório no contexto do curso (menu *Mais > Auditoria técnica*). Validado em Moodle 4.5.15 / PHP 8.3 / PostgreSQL 17 em ambiente local.
 Não instalar em produção sem revisão.
 
 ## Instalação
@@ -28,8 +28,8 @@ php local/mooc_audit/cli/audit.php --courseid=3 --policy=politica.json
 # Comparação origem x destino (correspondência por tipo+seção+nome, nunca por cmid)
 php local/mooc_audit/cli/compare.php --source=8 --target=10
 
-# Página web (exige login e a capacidade no contexto do curso)
-/local/mooc_audit/index.php?courseid=3            # tabela
+# Página web (exige login e a capacidade no contexto do curso); também pelo menu do curso: Mais > Auditoria técnica
+/local/mooc_audit/index.php?courseid=3            # relatório (inventário, situação geral, inconformidades por gravidade/categoria, alertas, conformes, avisos)
 /local/mooc_audit/index.php?courseid=3&format=json
 ```
 
@@ -38,7 +38,8 @@ Política institucional: padrões em `classes/policy.php` (decisões de 2026-10-
 quando não informado, é o ano seguinte ao da execução.
 
 Scripts **apenas para ambientes de teste** (recusam rodar fora de `localhost`): `cli/make_fixtures.php`
-(cria os cursos A — referência — e B — inconsistente) e `cli/make_import.php` (cria sala vazia e importa com o
+(cria os cursos A — referência — e B — inconsistente; exige o autoloader do Composer do site de desenvolvimento, porque o
+gerador de questões do núcleo carrega classes do PHPUnit) e `cli/make_import.php` (cria sala vazia e importa com o
 mecanismo nativo `core_course_external::import_course`).
 
 ## Estrutura (0.2.0)
@@ -54,10 +55,14 @@ mecanismo nativo `core_course_external::import_course`).
 | `classes/engine.php` | Execução isolada das regras, situação geral, contrato JSON 1.0, renderização texto |
 | `classes/comparator.php` | Comparador experimental origem × destino (inalterado; escopo da spec 003) |
 | `cli/audit.php`, `cli/compare.php` | Linha de comando |
-| `index.php` | Página mínima (será substituída na fase 3 da spec 001) |
+| `lib.php` | Callback `local_mooc_audit_extend_navigation_course()`: entrada "Auditoria técnica" no menu do curso para quem tem a capacidade |
+| `index.php` | Página do relatório no contexto do curso (`courseid` ou `id`; `format=json`); sem id, formulário de compatibilidade |
+| `classes/output/report.php`, `renderer.php`, `templates/report*.mustache` | Dados do relatório para o template (agrupamento por gravidade → categoria, listas de alertas, não verificados, erros, conformes, avisos) e renderização |
 | `tests/generator/lib.php` | Gerador de componente: cursos A (conforme) e B (inconsistente), usado pelo PHPUnit e por `cli/make_fixtures.php` |
 | `tests/characterization_test.php` + `tests/fixtures/expected_*.json` | Estados por regra dos cursos A/B congelados (proteção contra mudança de comportamento) |
-| `tests/engine_test.php` | Motor, contrato, política, isolamento, conclusão desabilitada no site |
+| `tests/engine_test.php` | Motor, contrato, política, isolamento, conclusão desabilitada no site, saída texto do CLI |
+| `tests/access_test.php` | Capacidade por arquétipo (estudante/professor não; gerente sim), definição sem risco declarado, nó de navegação só com a capacidade |
+| `tests/output_test.php` | Dados do template e renderização da página (cursos A/B) |
 
 Fluxo de desenvolvimento: `specs/001-auditoria-tecnica-operacional/` (Spec Kit) e `.specify/memory/constitution.md`.
 
