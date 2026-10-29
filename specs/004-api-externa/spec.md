@@ -83,8 +83,8 @@ registradas.
   algo foi revogado, a execução falha com motivo `permission` e nada é auditado. Trava por sala, concorrência,
   retomada após interrupção e limpeza de execuções presas são as da Spec 005, sem mudança.
 - Q: Que limites protegem a fila? → A: (1) reaproveitamento da execução viva (no máximo uma pendente por sala); (2) no
-  máximo **100 execuções pendentes de origem `api` por solicitante** (configurável, 1–2000, mesmo valor de partida da
-  decisão 12.5); ao exceder, a chamada falha com erro próprio (`queuefull`) e nada é criado; reaproveitar não conta;
+  máximo **100 execuções pendentes de origem `api` por solicitante** (configurável, 1–2000: vazio ou ≤ 0 vale 100,
+  acima de 2000 vale 2000, como o limite de salas por lote; mesmo valor de partida da decisão 12.5); ao exceder, a chamada falha com erro próprio (`queuefull`) e nada é criado; reaproveitar não conta;
   (3) a concorrência da fila continua a configuração da Spec 005 (padrão 2). Não há limite de requisições por minuto
   nesta versão. **[validar]**
 - Q: Qual ciclo (ano de reoferta) uma auditoria pedida pela API usa? → A: o da política vigente, como a página. O
@@ -299,6 +299,9 @@ contrato publicado.
   serializada por sala, de modo que a segunda chamada recebe a execução criada pela primeira (reaproveitada); se a
   serialização não puder ser obtida a tempo, a chamada falha com erro temporário (`busy`) e nada é criado.
 - Política inválida no site: a execução termina com o aviso de política nas limitações, como nas demais origens.
+- Fila ocupada por um lote grande: as execuções pedidas pela API entram na mesma fila, com a mesma concorrência
+  (padrão 2) e sem prioridade; o tempo até o fim cresce com a fila, e o guia do consumidor avisa isso. A chamada de
+  solicitação continua respondendo na hora.
 - Parâmetros com tipo errado ou ausentes: rejeitados pela validação nativa de parâmetros, com o erro padrão do Moodle.
 - Execução de sala para a qual a conta tem `audit`, mas que pertence a um lote de outra pessoa: visível (o acesso é por
   sala, como na página de histórico).
@@ -371,8 +374,9 @@ contrato publicado.
 
 **Somente leitura e independência**
 
-- **FR-020**: As consultas MUST NOT executar auditorias nem gravar nada (execuções, tarefas, políticas, lotes); a
-  solicitação MUST gravar apenas a execução na fila e a tarefa.
+- **FR-020**: As consultas MUST NOT executar auditorias nem gravar nada nas tabelas do plugin nem na fila
+  (execuções, tarefas, políticas, lotes); a solicitação MUST gravar apenas a execução na fila e a tarefa. Registros
+  que o próprio Moodle faz em qualquer chamada autenticada (último acesso ao curso, log de Web Services) não contam.
 - **FR-021**: Nenhuma função MUST escrever em tabelas de curso, módulo, nota, inscrição, bloco, arquivo ou configuração
   (constituição III); a auditoria em si continua a da Spec 005.
 - **FR-022**: Páginas, lotes, painel e CLI MUST funcionar igualmente com o serviço desabilitado ou sem nenhuma conta com

@@ -24,7 +24,7 @@ Estados e transições inalterados (`queued → running → complete | partial |
 
 | Nome | Tipo | Padrão | Faixa | Uso |
 |---|---|---|---|---|
-| `local_mooc_audit/api_max_pending` | inteiro | 100 | 1–2000 | limite de pendentes `api` por solicitante (FR-011) |
+| `local_mooc_audit/api_max_pending` | inteiro | 100 | 1–2000 (vazio ou ≤ 0 → 100; > 2000 → 2000) | limite de pendentes `api` por solicitante (FR-011) |
 
 ## Capacidade nova
 

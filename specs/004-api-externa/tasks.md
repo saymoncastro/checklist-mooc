@@ -99,7 +99,8 @@ mostra `complete`, `origin = api`.
   run_store::ORIGIN_BATCH)` — conta ativa + `audit` no curso + `batchaudit` (origem `batch`) ou `api` (origem `api`);
   `execute()` passa `$run->origin`; docblock da classe atualizado.
 - [ ] T020 [US2] `settings.php`: `admin_setting_configtext` `local_mooc_audit/api_max_pending` (PARAM_INT, padrão 100)
-  e, em `service`, leitura com faixa **1–2000** (fora da faixa ou vazio → 100), seguindo `batch_manager::max_courses()`.
+  e `service::max_pending(): int` com a mesma regra de `batch_manager::max_courses()`: valor ≤ 0 ou vazio → 100;
+  acima de 2000 → 2000; entre 1 e 2000 → o valor configurado.
 - [ ] T021 [US2] `classes/local/api/service.php`: `request(int $courseid, int $userid): array` — trava
   `\core\lock\lock_config::get_lock_factory('local_mooc_audit')->get_lock('request_course_' . $courseid, 5)` (sem trava
   → `moodle_exception('busy', 'local_mooc_audit')`); `reusable_pending` → `reused = true`; senão
@@ -115,7 +116,9 @@ mostra `complete`, `origin = api`.
 - [ ] T024 [P] [US2] `tests/external/request_audit_test.php`: sucesso (`queued`, `reused=false`, linha com `origin =
   api`, `batchid = 0`, tarefa `audit_course` criada); nenhuma regra executada na chamada (nenhuma linha passa a
   `running`/final e `local_mooc_audit_policy` inalterada); após `runAdhocTasks(audit_course::class)` a execução fica
-  `complete` com evolução contra a válida anterior; `clean_returnvalue`.
+  `complete` com evolução contra a válida anterior e `reofferyear` igual ao da política vigente, sem sobreposição de
+  lote (FR-012); sala com senha de inscrição definida: nenhuma resposta contém o valor da senha (FR-029);
+  `clean_returnvalue`.
 - [ ] T025 [P] [US2] `tests/task/audit_course_test.php`: execução `api` roda com `api` + `audit`; `api` revogada antes
   da tarefa → `failed`/`permission` e sala não auditada; conta suspensa → `permission`; execuções `batch` continuam
   exigindo `batchaudit` (sem `batchaudit` mas com `api` → `permission`).
@@ -140,7 +143,8 @@ mostra `complete`, `origin = api`.
   por `history.php`; `includereport=0`; falhou (código e mensagem, sem relatório); na fila/em execução (sem relatório);
   base removida pela retenção (`items_unavailable`); inexistente e outra sala fora do escopo → mesmo `errorcode` e
   mesma mensagem `runnotfound`; sala removida com `viewdashboard` (sucesso) e sem (`runnotfound`); consulta não grava
-  (contagens); `clean_returnvalue`.
+  (contagens nas tabelas do plugin e `task_adhoc`); resposta com relatório de sala com senha de inscrição não contém o
+  valor (FR-029); `clean_returnvalue`.
 
 **Checkpoint**: as três funções existem e estão cobertas.
 
@@ -151,7 +155,8 @@ mostra `complete`, `origin = api`.
 
 - [ ] T030 [US4] `tests/external/access_test.php`: após instalação, `local/mooc_audit:api` sem arquétipo (nenhum papel
   padrão a tem); serviço `local_mooc_audit` em `external_services` com `enabled = 0`, `restrictedusers = 1`,
-  `requiredcapability = local/mooc_audit:api` e as três funções.
+  `requiredcapability = local/mooc_audit:api` e as três funções; as únicas funções `local_mooc_audit_*` em
+  `external_functions` são `request_audit`, `get_run` e `get_latest_audit` (FR-002).
 - [ ] T031 [US4] `tests/external/access_test.php`: matriz para as três funções — professor editor com `audit` sem
   `api` → `nopermissions` e nada gravado; conta com `api` no sistema e `audit`/`course:view`/`viewhiddencourses` só na
   categoria A: sala da categoria B → `nopermissions` ou `requireloginerror` (`request_audit`, `get_latest_audit`) e
@@ -167,10 +172,12 @@ mostra `complete`, `origin = api`.
 
 - [ ] T033 [P] [US5] `API.md`: habilitar Web Services/REST; papel "Integração Auditor MOOC" (sistema:
   `local/mooc_audit:api`, `local/mooc_audit:audit`, `moodle/course:view`, `moodle/course:viewhiddencourses`,
-  `webservice/rest:use`; opcional `local/mooc_audit:viewdashboard`) e variante por categoria; autorizar a conta no
+  `webservice/rest:use`; opcional `local/mooc_audit:viewdashboard`) e variante por categoria (sistema: `api` +
+  `webservice/rest:use`; categoria: `audit`, `course:view`, `viewhiddencourses`); autorizar a conta no
   serviço (restrito sempre, reaplicado no upgrade) ou usar serviço personalizado; gerar token; as três funções com
   parâmetros, respostas e erros de `contracts/web-services.md`; exemplos `curl`; acompanhamento (10–30 s,
-  `includereport=0` até o estado final); significado de `stale_reasons` ("resultado da última auditoria", nunca
+  `includereport=0` até o estado final; o tempo até o fim depende da fila, compartilhada com os lotes e sem
+  prioridade nesta versão); significado de `stale_reasons` ("resultado da última auditoria", nunca
   conformidade atual); versionamento (`api_version`, clientes ignoram valores desconhecidos, `_v2`, obsolescência).
 - [ ] T034 [P] [US5] `README.md` do plugin: seção "API externa (0.6.0)" com link para `API.md`, capacidade nova,
   configuração `api_max_pending`, limitações (sem lote, ciclo, notificações, limite de taxa).

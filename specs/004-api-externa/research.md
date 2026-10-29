@@ -41,7 +41,8 @@ em serviços personalizados. Somada a `local/mooc_audit:audit` no curso (e `view
 Papel documentado "Integração Auditor MOOC" (contexto de sistema): `local/mooc_audit:api`,
 `local/mooc_audit:audit`, `moodle/course:view`, `moodle/course:viewhiddencourses`, `webservice/rest:use`
 (opcional `local/mooc_audit:viewdashboard` para execuções de salas removidas). Para restringir a uma categoria, a
-conta recebe `api` no sistema e um papel com `audit` + `course:view` + `viewhiddencourses` só na categoria.
+conta recebe `api` + `webservice/rest:use` no sistema e um papel com `audit` + `course:view` + `viewhiddencourses` só
+na categoria.
 
 **Racional**: privilégio mínimo (VIII) e decisão explícita do administrador. Sem arquétipo, a instalação não concede a
 API a ninguém (mesmo padrão das capacidades `webservice/*:use` do núcleo). `audit` sozinha daria a todo professor
@@ -97,7 +98,9 @@ Para execuções, o id é sequencial e enumerável; igualar as respostas fecha o
 5. `recorder::queue(courseid, userid, 0, run_store::ORIGIN_API)` → `{runid, reused: false}`.
 6. Libera a trava (`finally`).
 
-Configuração `api_max_pending` (padrão 100, 1–2000). Contagem só de pendentes **vivas** (mesma regra de
+Configuração `api_max_pending` (padrão 100, 1–2000; vazio ou ≤ 0 → 100, acima de 2000 → 2000, como
+`batch_manager::max_courses()`). A fila e a concorrência são as dos lotes, sem prioridade para a API: um lote grande
+atrasa o fim das execuções pedidas pela API (o guia avisa). Contagem só de pendentes **vivas** (mesma regra de
 `alive_pending`: tarefa ainda existe ou iniciada há menos de `STALE_RUNNING`), para que execuções mortas, que a limpeza
 diária encerra, não bloqueiem a conta.
 

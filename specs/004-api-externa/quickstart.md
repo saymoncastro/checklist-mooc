@@ -37,8 +37,8 @@ Esperado: suíte completa verde (Specs 001–005 + 004); testes de `tests/extern
 5. **Execução por id (US3)** — `get_run&runid=<id>&includeevolutionitems=1`: itens iguais aos da página
    *Histórico > execução*. `get_run&runid=999999` e o id de uma execução de uma sala fora do escopo: mesma resposta
    `runnotfound`.
-6. **Acesso (US4)** — restringir `integracao` à categoria da sala A (papel de sistema só com `api`; `audit`,
-   `course:view` e `viewhiddencourses` na categoria): pedir/consultar B → `nopermissions`/`requireloginerror`;
+6. **Acesso (US4)** — restringir `integracao` à categoria da sala A (papel de sistema só com `api` e
+   `webservice/rest:use`; `audit`, `course:view` e `viewhiddencourses` na categoria): pedir/consultar B → `nopermissions`/`requireloginerror`;
    `get_run` de execução de B → `runnotfound`. Com um professor editor de B com token de um serviço personalizado que
    inclua as funções: `nopermissions` em todas.
 7. **Limite (US2.6)** — configurar `api_max_pending = 1`; pedir A (fila), pedir B → `queuefull`; pedir A de novo →
