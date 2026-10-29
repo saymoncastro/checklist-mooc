@@ -60,7 +60,9 @@ jobs:
       - name: Install the plugin, its test dependencies and Moodle
         run: |
           moodle-plugin-ci add-plugin --branch master davidherney/moodle-mod_simplecertificate
-          moodle-plugin-ci add-plugin --branch master bdaloukas/moodle-mod_game
+          # mod_game keeps its current code (2026100800, as in the lab) on its default branch MOODLE_20_STABLE;
+          # its master branch only has a README.
+          moodle-plugin-ci add-plugin --branch MOODLE_20_STABLE bdaloukas/moodle-mod_game
           moodle-plugin-ci add-plugin --branch master deraadt/moodle-block_completion_progress
           moodle-plugin-ci install --plugin ./repo/plugin/local_mooc_audit --db-host=127.0.0.1
         env:
