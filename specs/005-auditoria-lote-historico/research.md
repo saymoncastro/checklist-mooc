@@ -35,7 +35,7 @@ Tabela de verificações (todas as regras):
 | CL-08 | course | `self_enrol` (ausência: `self_enrol` sem subject), `guest` | `enrol:<id>` |
 | CL-09 | course (ausente) ou cm | `forum_presence`, `forum_completion` | — |
 | CL-11 | course ou cm | `profile_presence`, `profile_completion`, `certificate_presence`, `requires_profile` | — |
-| CL-12 | course | `total_sum`, `aggregation`, `onlygraded`, `total_grademax`, `subcategories` (sem item de total ou categoria raiz: as dependentes saem como `NAO_VERIFICAVEL` com a própria chave) | — |
+| CL-12 | course | `total_sum`, `course_item`, `aggregation`, `onlygraded`, `root_category`, `total_grademax`, `subcategories` (sem item de total ou categoria raiz: um `NAO_VERIFICAVEL` no nível da sala, que torna a regra inteira não verificada na evolução) | — |
 | CL-13 | cm | `attempts`, `intro_attempts` | — |
 | CL-14 | cm | `close_date`; sem avaliativas: `applicability` | `item:<itemnumber>` (vários itens de nota, ex.: workshop) |
 | CL-16 | course ou cm | `evaluation_presence`, `requires_graded`, `root_operator` | — |

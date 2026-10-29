@@ -123,11 +123,7 @@ class dashboard {
            ORDER BY c.fullname, c.id',
             $params
         );
-        return array_filter($courses, fn($c) => has_capability(
-            'local/mooc_audit:audit',
-            \context_course::instance($c->id),
-            $userid
-        ));
+        return array_intersect_key($courses, access::auditable_course_ids($userid));
     }
 
     /**
@@ -147,26 +143,6 @@ class dashboard {
             $r->fingerprint = $fps[$r->policyid]->fingerprint ?? null;
         }
         return $runs;
-    }
-
-    /**
-     * Courses with a queued or running run.
-     *
-     * @param int[] $courseids
-     * @return array courseid => true
-     */
-    protected static function pending(array $courseids): array {
-        global $DB;
-        if (!$courseids) {
-            return [];
-        }
-        [$cin, $params] = $DB->get_in_or_equal($courseids, SQL_PARAMS_NAMED);
-        $params['q'] = run_store::QUEUED;
-        $params['r'] = run_store::RUNNING;
-        return array_fill_keys(array_map('intval', $DB->get_fieldset_sql(
-            'SELECT DISTINCT courseid FROM {' . run_store::TABLE . "} WHERE courseid $cin AND status IN (:q, :r)",
-            $params
-        )), true);
     }
 
     /**
@@ -230,7 +206,7 @@ class dashboard {
         $ids = array_keys($courses);
         $finals = self::latest($ids, run_store::final_states());
         $valids = self::latest($ids, run_store::valid_states());
-        $pending = self::pending($ids);
+        $pending = run_store::alive_pending($ids, $now);
         $policyfp = policy_store::current_fingerprint();
         $version = run_store::plugin_version();
         $tz = \core_date::get_server_timezone_object();
@@ -281,7 +257,8 @@ class dashboard {
         $evolution = array_fill_keys(evolution::classes(), 0);
         foreach ($rows as $row) {
             $counts[$row->situation]++;
-            $counts['audited'] += $row->situation === self::NOT_AUDITED ? 0 : 1;
+            // Audited = has at least one report; a course whose runs all failed was never audited.
+            $counts['audited'] += $row->valid ? 1 : 0;
             $counts[self::STALE] += $row->stale ? 1 : 0;
             $counts[self::PENDING] += $row->pending ? 1 : 0;
             foreach ($row->evolution ?? [] as $class => $n) {

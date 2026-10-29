@@ -65,6 +65,9 @@ class report implements renderable, templatable {
     protected bool $withcorrections;
     /** @var moodle_url|null Link to compare this course with the previous offer (viewer holds local/mooc_audit:compare). */
     protected ?moodle_url $compareurl;
+    /** @var moodle_url|null JSON of a stored run (specs/005): the report is a record, so it offers neither re-run nor a
+     * live JSON link, which would execute and record a new audit. */
+    protected ?moodle_url $storedjsonurl;
 
     /**
      * Constructor.
@@ -73,12 +76,20 @@ class report implements renderable, templatable {
      * @param moodle_url $pageurl URL of the current page
      * @param bool $withcorrections offer the correction proposal action on eligible results (specs/002)
      * @param moodle_url|null $compareurl link to the comparison with the previous offer (specs/003)
+     * @param moodle_url|null $storedjsonurl JSON of the stored run when the report comes from the history (specs/005)
      */
-    public function __construct(array $report, moodle_url $pageurl, bool $withcorrections = false, ?moodle_url $compareurl = null) {
+    public function __construct(
+        array $report,
+        moodle_url $pageurl,
+        bool $withcorrections = false,
+        ?moodle_url $compareurl = null,
+        ?moodle_url $storedjsonurl = null
+    ) {
         $this->report = $report;
         $this->pageurl = $pageurl;
         $this->withcorrections = $withcorrections;
         $this->compareurl = $compareurl;
+        $this->storedjsonurl = $storedjsonurl;
     }
 
     /**
@@ -107,8 +118,9 @@ class report implements renderable, templatable {
         $rerun = new moodle_url($this->pageurl);
         $rerun->remove_params('format');
         $data->rerunurl = $rerun->out(false);
-        $data->rerunbutton = $output->render(new single_button($rerun, get_string('rerun', 'local_mooc_audit'), 'get'));
-        $json = new moodle_url($this->pageurl, ['format' => 'json']);
+        $data->rerunbutton = $this->storedjsonurl ? ''
+            : $output->render(new single_button($rerun, get_string('rerun', 'local_mooc_audit'), 'get'));
+        $json = $this->storedjsonurl ?? new moodle_url($this->pageurl, ['format' => 'json']);
         $data->jsonurl = $json->out(false);
         $data->compareurl = $this->compareurl ? $this->compareurl->out(false) : null;
 

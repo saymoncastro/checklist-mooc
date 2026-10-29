@@ -258,6 +258,7 @@ $string['error_code_policy_warning'] = 'Política';
 $string['error_code_rule_error'] = 'Erro de regra';
 $string['error_code_stale'] = 'Abandonada';
 $string['error_interrupted'] = 'A auditoria foi interrompida {$a} vezes e foi abandonada.';
+$string['error_lockbusy'] = 'Outra auditoria em segundo plano desta sala está em andamento; a tarefa será repetida mais tarde.';
 $string['error_permission'] = 'O solicitante não pode mais auditar esta sala em lote.';
 $string['error_stale'] = 'A execução ficou na fila ou em execução por mais de um dia sem tarefa em segundo plano.';
 $string['errors_title'] = 'Erros e limitações';

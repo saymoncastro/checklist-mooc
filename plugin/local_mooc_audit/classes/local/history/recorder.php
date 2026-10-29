@@ -175,7 +175,8 @@ class recorder {
      * Entities of the audited course needed to tell a removed activity or section from a resolved problem.
      *
      * @param array $snapshot
-     * @return array ['modules' => cmid => "modname|normalised name", 'sections' => section ids]
+     * @return array ['modules' => cmid => "modname|normalised name", 'sections' => section ids, 'enrols' => enrolment
+     *     instance ids]
      */
     public static function entities(array $snapshot): array {
         $modules = [];
@@ -184,6 +185,8 @@ class recorder {
         }
         $sections = array_values(array_map(fn($s) => (int) $s['id'], $snapshot['sections']));
         sort($sections);
-        return ['modules' => $modules, 'sections' => $sections];
+        $enrols = array_values(array_map(fn($e) => (int) $e['id'], $snapshot['enrols'] ?? []));
+        sort($enrols);
+        return ['modules' => $modules, 'sections' => $sections, 'enrols' => $enrols];
     }
 }

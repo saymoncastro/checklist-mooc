@@ -84,8 +84,10 @@ final class recorder_test extends \advanced_testcase {
         $details = run_store::json($run, 'details');
         $this->assertCount(catalog::count(), $details['rules']);
         $this->assertNotEmpty($details['modules']);
-        $this->assertContains((int) $DB->get_field('course_sections', 'id', ['course' => $b->id, 'section' => 0]),
-            $details['sections']);
+        $this->assertContains(
+            (int) $DB->get_field('course_sections', 'id', ['course' => $b->id, 'section' => 0]),
+            $details['sections']
+        );
         $this->assertArrayHasKey('peak_mb', $details['metrics']);
         $policy = policy_store::get((int) $run->policyid);
         $this->assertEquals(self::YEAR, json_decode($policy->policy, true)['reoffer_year']);

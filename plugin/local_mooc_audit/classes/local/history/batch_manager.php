@@ -143,12 +143,13 @@ class batch_manager {
         }
         $accepted = [];
         $skipped = [];
+        $auditable = access::auditable_course_ids($userid);
         foreach ($ids as $id) {
             if ($id == SITEID) {
                 $skipped[] = ['courseid' => $id, 'reason' => self::SKIP_SITE];
             } else if (!isset($existing[$id])) {
                 $skipped[] = ['courseid' => $id, 'reason' => self::SKIP_NOT_FOUND];
-            } else if (!has_capability('local/mooc_audit:audit', \context_course::instance($id), $userid)) {
+            } else if (!isset($auditable[$id])) {
                 $skipped[] = ['courseid' => $id, 'reason' => self::SKIP_PERMISSION];
             } else {
                 $accepted[$id] = $existing[$id];
@@ -222,20 +223,27 @@ class batch_manager {
      * Latest run of each course of a batch (its own runs plus the reused pending runs of other requests).
      *
      * @param \stdClass $batch
+     * @param bool $light only id, courseid, batchid and status (progress counts)
      * @return \stdClass[] courseid => run (without the large columns)
      */
-    public static function runs(\stdClass $batch): array {
+    public static function runs(\stdClass $batch, bool $light = false): array {
         global $DB;
-        $fields = 'id, courseid, batchid, userid, origin, status, overall, summary, evolution, errors, timecreated,
-            timestarted, timefinished';
+        $fields = $light ? 'id, courseid, batchid, status'
+            : 'id, courseid, batchid, userid, origin, status, overall, summary, evolution, errors, timecreated, timestarted,
+                timefinished';
         $out = [];
         foreach ($DB->get_records(run_store::TABLE, ['batchid' => $batch->id], 'id ASC', $fields) as $run) {
             $out[(int) $run->courseid] = $run;
         }
-        $reused = array_filter(json_decode((string) $batch->skipped, true) ?: [], fn($s) => !empty($s['runid']));
-        foreach ($reused as $s) {
-            if (!isset($out[$s['courseid']]) && ($run = $DB->get_record(run_store::TABLE, ['id' => $s['runid']], $fields))) {
-                $out[(int) $s['courseid']] = $run;
+        $reused = [];
+        foreach (json_decode((string) $batch->skipped, true) ?: [] as $s) {
+            if (!empty($s['runid']) && !isset($out[(int) $s['courseid']])) {
+                $reused[(int) $s['runid']] = (int) $s['courseid'];
+            }
+        }
+        if ($reused) {
+            foreach ($DB->get_records_list(run_store::TABLE, 'id', array_keys($reused), '', $fields) as $run) {
+                $out[$reused[(int) $run->id]] = $run;
             }
         }
         ksort($out);
@@ -251,7 +259,7 @@ class batch_manager {
     public static function progress(\stdClass $batch): array {
         $counts = array_fill_keys([run_store::QUEUED, run_store::RUNNING, run_store::COMPLETE, run_store::PARTIAL,
             run_store::FAILED], 0);
-        foreach (self::runs($batch) as $run) {
+        foreach (self::runs($batch, true) as $run) {
             $counts[$run->status]++;
         }
         $counts['total'] = array_sum($counts);

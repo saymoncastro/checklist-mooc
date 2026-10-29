@@ -152,9 +152,14 @@ if ($valid) {
         $baseoptions[(int) $e->id] = '#' . $e->id . ' — ' . \local_mooc_audit\output\history_helper::date((int) $e->timefinished);
     }
 }
+// The stored report is a record: no re-run button, and its JSON link returns the stored run (never a new audit).
+$runurl = new moodle_url('/local/mooc_audit/history.php', ['courseid' => $courseid, 'runid' => $run->id]);
 $reporthtml = $report ? $renderer->render(new \local_mooc_audit\output\report(
     $report,
-    $auditurl ?? new moodle_url('/local/mooc_audit/history.php', ['courseid' => $courseid])
+    $runurl,
+    false,
+    null,
+    new moodle_url($runurl, ['format' => 'json'])
 )) : '';
 
 echo $OUTPUT->header();

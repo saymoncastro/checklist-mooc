@@ -49,7 +49,7 @@ PostgreSQL 17) · **Evidências:** `plugin-results/0.5.0/`.
 
 | Suíte | Resultado |
 |---|---|
-| PHPUnit (`local_mooc_audit_testsuite`) | **210 testes** (169 da linha de base + 41 novos), ver §3.1 — todos passando na execução final |
+| PHPUnit (`local_mooc_audit_testsuite`) | **212 testes** (169 da linha de base + 43 novos), ver §3.1 — todos passando na execução final |
 | Behat (`@local_mooc_audit`) | **13 cenários, 193 passos**: 10 das Specs 001–003 (regressão) + 3 novos (`history.feature`), com verificação de acessibilidade (axe) |
 | PHPCS `moodle` | 0 erros, 0 avisos |
 | Caracterização A/B (Spec 001) | inalterada (`expected_A/B.json` sem regravação) |
@@ -118,6 +118,20 @@ triplas para HTML gerado no servidor, `install.xml` e `upgrade.php` coincidem.
 | Página do lote mostra contagens incluindo salas fora do escopo do leitor; histórico de sala removida visível a todo `viewdashboard` | risco | **Aceito e documentado**: só gerentes têm a capacidade por padrão |
 | Corrida da limpeza de políticas órfãs (> 1 dia) com execução em andamento | risco | Aceito (janela de segundos vs. 24 h) |
 
+### 5.1 Segunda passada: code review do PR #5 (2026-10-30)
+
+| Achado | Situação |
+|---|---|
+| Discriminadores com ids (`cm:<alvo>` de X-DEP-01/02, `enrol:<id>` de CL-08) não eram remapeados na substituição: alvo trocado por cópia idêntica gerava "resolvida + nova" | **Corrigido**: toda referência `cm:` da chave (entidade ou discriminador) é remapeada para a sucessora; alvo apagado = "recurso removido"; inscrição recriada = "removido + nova"; `details.enrols` passou a ser gravado; teste |
+| Relatório guardado no histórico tinha "Executar novamente" e JSON apontando para `index.php` (gravava nova auditoria e devolvia o relatório de hoje) | **Corrigido**: relatório guardado sem botão de reexecução e com JSON da própria execução; teste |
+| `moodle_exception('locktimeout')` sem string correspondente | **Corrigido**: string `error_lockbusy` do plugin; teste |
+| "Auditadas" contava salas cujas execuções só falharam | **Corrigido**: só salas com relatório |
+| Painel contava execuções mortas como "Na fila ou em execução" | **Corrigido**: mesma regra de "execução viva" do lote (`run_store::alive_pending`) |
+| Painel e lote verificavam a capacidade sala a sala sem pré-carregar contextos | **Corrigido**: `get_user_capability_course()` (`access::auditable_course_ids`) |
+| Andamento dos lotes lia as colunas JSON de todas as execuções | **Corrigido**: leitura só de id/curso/estado e uma consulta para as reaproveitadas |
+| CL-12 repetia três vezes o mesmo "não verificável" | **Corrigido**: um resultado no nível da sala (o tratamento genérico da evolução cobre o caso) |
+| `run_store::pending()` sem uso | **Removido** |
+
 ## 6. Limitações
 
 - Registrar toda abertura da página é provisório (decisão 12.1); recarregar a página sem mudanças gera execuções com
@@ -127,6 +141,8 @@ triplas para HTML gerado no servidor, `install.xml` e `upgrade.php` coincidem.
   classificada como "resolvida": a regra executou e a entidade existe. A página mostra o estado "Antes/Agora" para
   conferência.
 - Excluir o módulo proibido do CL-18 (que é a correção) aparece como "recurso removido", não "resolvida".
+- Recriar um método de inscrição gera "recurso removido" + "nova" (não há correspondência entre instâncias de
+  inscrição); execuções gravadas antes desta versão não têm a lista de inscrições e não fazem essa distinção.
 - Gerentes só de categoria não acessam painel/lotes (constituição VIII; decisão 12.4).
 - A comparação entre ofertas (Spec 003) continua com sua chave de local; adotar a chave de ocorrência nela é melhoria
   futura.

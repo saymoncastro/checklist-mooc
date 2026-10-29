@@ -67,7 +67,9 @@ final class dashboard_test extends \advanced_testcase {
         [$second] = recorder::record_now((int) $b->id, run_store::ORIGIN_PAGE, (int) $USER->id);
         $this->fake_run((int) $failed->id, run_store::FAILED);
         $this->fake_run((int) $partial->id, run_store::PARTIAL, status::OVERALL_NEEDS_FIX);
-        run_store::create((int) $never->id, run_store::ORIGIN_BATCH, (int) $USER->id);
+        recorder::queue((int) $never->id, (int) $USER->id, 0);
+        // A dead run (queued, its task lost) is not "pending" (code review finding 5).
+        run_store::create((int) $failed->id, run_store::ORIGIN_BATCH, (int) $USER->id);
 
         $data = dashboard::build((int) $USER->id, []);
         $situations = [];
@@ -81,7 +83,7 @@ final class dashboard_test extends \advanced_testcase {
         $this->assertSame(dashboard::INCOMPLETE, $situations[$partial->id]);
         $c = $data['counts'];
         $this->assertSame(5, $c['selected']);
-        $this->assertSame(4, $c['audited']);
+        $this->assertSame(3, $c['audited'], 'a course whose runs all failed was never audited (code review finding 4)');
         $this->assertSame(1, $c[dashboard::NOT_AUDITED]);
         $this->assertSame(1, $c[dashboard::BLOCKING]);
         $this->assertSame(1, $c[dashboard::NONE_DETECTED]);

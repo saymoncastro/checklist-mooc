@@ -136,6 +136,62 @@ class evolution {
         return $out;
     }
 
+    /** @var string A field of an occurrence key that references an activity (entity or subject): "cm:<cmid>". */
+    const CM_REF = '/(?<=\|)cm:(\d+)(?=\||$)/';
+    /** @var string A field of an occurrence key that references an enrolment instance: "enrol:<id>". */
+    const ENROL_REF = '/(?<=\|)enrol:(\d+)(?=\||$)/';
+
+    /**
+     * The key with every reference to a replaced activity (entity or subject, e.g. the target of an X-DEP-02 condition)
+     * rewritten to its successor.
+     *
+     * @param string $key
+     * @param array $successors removed cmid => successor cmid
+     * @return array [remapped key, first successor used or null]
+     */
+    protected static function remap(string $key, array $successors): array {
+        $first = null;
+        $remapped = preg_replace_callback(self::CM_REF, function ($m) use ($successors, &$first) {
+            if (!isset($successors[(int) $m[1]])) {
+                return $m[0];
+            }
+            $first = $first ?? $successors[(int) $m[1]];
+            return 'cm:' . $successors[(int) $m[1]];
+        }, $key);
+        return [$remapped, $first];
+    }
+
+    /**
+     * Whether an occurrence references something that existed in the base run and no longer exists: an activity
+     * (entity or subject), a section, or an enrolment instance (when both runs recorded their enrolment ids).
+     *
+     * @param string $key
+     * @param array $base details of the base run
+     * @param array $current details of the current run
+     * @return bool
+     */
+    protected static function references_removed(string $key, array $base, array $current): bool {
+        [$type, $id] = self::entity($key);
+        if ($type === 'sec' && !in_array($id, $current['sections'] ?? [], true)) {
+            return true;
+        }
+        preg_match_all(self::CM_REF, $key, $m);
+        foreach ($m[1] as $cmid) {
+            if (isset($base['modules'][$cmid]) && !isset($current['modules'][$cmid])) {
+                return true;
+            }
+        }
+        if (isset($base['enrols'], $current['enrols'])) {
+            preg_match_all(self::ENROL_REF, $key, $m);
+            foreach ($m[1] as $enrolid) {
+                if (in_array((int) $enrolid, $base['enrols'], true) && !in_array((int) $enrolid, $current['enrols'], true)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     /**
      * Why the results of a rule may differ for reasons outside the course.
      *
@@ -187,9 +243,9 @@ class evolution {
         $cfp = $current['details']['rules'] ?? [];
         $bnotrun = self::rules_not_run($bresults);
         $cnotrun = self::rules_not_run($cresults);
-        $cmods = $current['details']['modules'] ?? [];
-        $csections = array_flip($current['details']['sections'] ?? []);
-        $successors = self::successors($base['details']['modules'] ?? [], $cmods);
+        $bdetails = $base['details'] ?? [];
+        $cdetails = $current['details'] ?? [];
+        $successors = self::successors($bdetails['modules'] ?? [], $cdetails['modules'] ?? []);
 
         $items = [];
         $consumed = [];
@@ -200,22 +256,17 @@ class evolution {
             $new = $c[$key] ?? null;
             $reason = null;
             $successor = null;
-            [$type, $id] = self::entity($key);
+            [$skey, $successor] = self::remap($key, $successors);
             if ($new && self::is_problem($new['status'])) {
                 $class = $old['status'] === $new['status'] && $old['gravidade'] === $new['gravidade']
                     ? self::PERSISTENT : self::CHANGED;
-            } else if ($type === 'cm' && !isset($cmods[$id])) {
-                $class = self::REMOVED;
-                if (isset($successors[$id])) {
-                    $successor = $successors[$id];
-                    $skey = preg_replace('/\|cm:\d+\|/', '|cm:' . $successor . '|', $key, 1);
-                    if (isset($c[$skey]) && self::is_problem($c[$skey]['status'])) {
-                        $class = self::REPLACED;
-                        $new = $c[$skey];
-                        $consumed[$skey] = true;
-                    }
-                }
-            } else if ($type === 'sec' && !isset($csections[$id])) {
+                $successor = null;
+            } else if ($skey !== $key && isset($c[$skey]) && self::is_problem($c[$skey]['status'])) {
+                // The activity, or an activity it refers to, was replaced and the problem reappears on the successor.
+                $class = self::REPLACED;
+                $new = $c[$skey];
+                $consumed[$skey] = true;
+            } else if (self::references_removed($key, $bdetails, $cdetails)) {
                 $class = self::REMOVED;
             } else if (($new && self::unverified($new['status'])) || isset($cnotrun[$old['rule']])) {
                 $class = self::UNVERIFIABLE;

@@ -170,38 +170,64 @@ class run_store {
     }
 
     /**
-     * A queued or running run of the course that is still alive and may be reused by a new batch: a queued run whose
-     * background task still exists, or a run that started less than STALE_RUNNING seconds ago.
+     * Queued or running runs that are still alive: a queued run whose background task still exists, or a run that
+     * started less than STALE_RUNNING seconds ago. Dead runs (lost task, process killed) are left for the daily cleanup,
+     * which fails them as "stale"; they neither block a new batch nor show as pending on the dashboard.
+     *
+     * @param int[] $courseids
+     * @param int|null $now
+     * @return \stdClass[] courseid => oldest alive run of the course
+     */
+    public static function alive_pending(array $courseids, ?int $now = null): array {
+        global $DB;
+        if (!$courseids) {
+            return [];
+        }
+        [$cin, $params] = $DB->get_in_or_equal($courseids, SQL_PARAMS_NAMED);
+        $params += ['queued' => self::QUEUED, 'running' => self::RUNNING];
+        $runs = $DB->get_records_select(
+            self::TABLE,
+            "courseid $cin AND status IN (:queued, :running)",
+            $params,
+            'id ASC',
+            'id, courseid, batchid, status, timecreated, timestarted'
+        );
+        if (!$runs) {
+            return [];
+        }
+        $tasked = [];
+        $tasks = $DB->get_records(
+            'task_adhoc',
+            ['classname' => '\\' . \local_mooc_audit\task\audit_course::class],
+            '',
+            'id, customdata'
+        );
+        foreach ($tasks as $t) {
+            $data = json_decode((string) $t->customdata);
+            if (!empty($data->runid)) {
+                $tasked[(int) $data->runid] = true;
+            }
+        }
+        $limit = ($now ?? time()) - self::STALE_RUNNING;
+        $out = [];
+        foreach ($runs as $run) {
+            $alive = $run->status === self::QUEUED ? isset($tasked[(int) $run->id]) : (int) $run->timestarted > $limit;
+            if ($alive && !isset($out[(int) $run->courseid])) {
+                $out[(int) $run->courseid] = $run;
+            }
+        }
+        return $out;
+    }
+
+    /**
+     * The alive queued or running run of a course, if any (see alive_pending()).
      *
      * @param int $courseid
      * @param int|null $now
      * @return \stdClass|null
      */
     public static function reusable_pending(int $courseid, ?int $now = null): ?\stdClass {
-        global $DB;
-        $runs = $DB->get_records_select(
-            self::TABLE,
-            'courseid = :courseid AND status IN (:queued, :running)',
-            ['courseid' => $courseid, 'queued' => self::QUEUED, 'running' => self::RUNNING],
-            'id ASC',
-            'id, courseid, batchid, status, timecreated, timestarted'
-        );
-        foreach ($runs as $run) {
-            if ($run->status === self::QUEUED) {
-                $task = $DB->record_exists_select(
-                    'task_adhoc',
-                    'classname = :classname AND ' . $DB->sql_compare_text('customdata') . ' = ' . $DB->sql_compare_text(':data'),
-                    ['classname' => '\\' . \local_mooc_audit\task\audit_course::class,
-                        'data' => json_encode(['runid' => (int) $run->id])]
-                );
-                if ($task) {
-                    return $run;
-                }
-            } else if ((int) $run->timestarted > ($now ?? time()) - self::STALE_RUNNING) {
-                return $run;
-            }
-        }
-        return null;
+        return self::alive_pending([$courseid], $now)[$courseid] ?? null;
     }
 
     /**
@@ -294,26 +320,6 @@ class run_store {
             $out[(int) $r->courseid] = $r;
         }
         return $out;
-    }
-
-    /**
-     * Queued or running run of a course, if any (oldest first).
-     *
-     * @param int $courseid
-     * @return \stdClass|null
-     */
-    public static function pending(int $courseid): ?\stdClass {
-        global $DB;
-        $runs = $DB->get_records_select(
-            self::TABLE,
-            'courseid = :courseid AND status IN (:queued, :running)',
-            ['courseid' => $courseid, 'queued' => self::QUEUED, 'running' => self::RUNNING],
-            'id ASC',
-            'id, courseid, batchid, status, timecreated',
-            0,
-            1
-        );
-        return $runs ? reset($runs) : null;
     }
 
     /**

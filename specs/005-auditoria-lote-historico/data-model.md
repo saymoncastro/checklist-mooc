@@ -45,7 +45,7 @@ data são carimbos Unix. `userid = 0` significa "processo" (CLI) ou solicitante 
 | reofferyear | int(4) | sim | ano de reoferta efetivo |
 | summary | text | sim | JSON: `summary` do relatório (`por_status`, `nao_conformes_por_gravidade`, `regras`, `overall_status`) |
 | report | text | sim | JSON do relatório (contrato 1.0, sem `snapshot`, resultados com `occurrence`) |
-| details | text | sim | JSON: `{"rules": {"CL-13": {"p": hash12, "r": hash12}}, "modules": {"<cmid>": "<modname>\|<nome normalizado>"}, "sections": [ids das seções], "metrics": {"seconds": f, "peak_mb": f, "db_reads": n, "db_writes": n}}` |
+| details | text | sim | JSON: `{"rules": {"CL-13": {"p": hash12, "r": hash12}}, "modules": {"<cmid>": "<modname>\|<nome normalizado>"}, "sections": [ids das seções], "enrols": [ids das instâncias de inscrição], "metrics": {"seconds": f, "peak_mb": f, "db_reads": n, "db_writes": n}}` |
 | previousrunid | int(10) | não (padrão 0) | execução usada como base da evolução (0 = primeira) |
 | evolution | text | sim | JSON: contagens por classe (abaixo) e `notes` (ex.: `plugin_version_changed`) |
 | errors | text | sim | JSON: lista de `{"code": str, "message": str, "rule": str?}` (falha, regras em `ERRO`, avisos de coleta e de política) |
@@ -89,8 +89,8 @@ auditoria da página pode terminar depois dela); o painel e a retenção também
 | problema | problema | mesmo estado e gravidade | `persistent` |
 | problema | problema | estado ou gravidade diferentes | `changed` |
 | problema | `ERRO`/`NAO_VERIFICAVEL`, ou regra `_rule` não verificável/erro na atual | — | `unverifiable` |
-| problema | ausente/conforme/N.A. | entidade `cm:`/`sec:` não existe na atual; sucessora com o mesmo problema | `replaced` |
-| problema | ausente/conforme/N.A. | entidade não existe na atual | `removed` |
+| problema | ausente/conforme/N.A. | uma atividade referida na chave (entidade ou discriminador, ex.: alvo de X-DEP-02) foi substituída por sucessora com o mesmo problema | `replaced` |
+| problema | ausente/conforme/N.A. | atividade, seção ou inscrição referida na chave existia na base e não existe na atual | `removed` |
 | problema | ausente/conforme/N.A. | impressão digital da regra mudou | `not_comparable` (`policy_changed`/`rule_changed`) |
 | problema | ausente/conforme/N.A. | demais casos | `resolved` |
 | ausente/não problema | problema | regra não verificada na base (`_rule`, `ERRO` na base, regra inexistente na base) | `not_comparable` (`previously_unverified`) |

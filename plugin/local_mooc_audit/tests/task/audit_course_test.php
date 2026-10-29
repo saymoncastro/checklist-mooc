@@ -196,7 +196,8 @@ final class audit_course_test extends \advanced_testcase {
             $task->execute();
             $this->fail('The task must not run while another audit of the course holds the lock');
         } catch (\moodle_exception $e) {
-            $this->assertSame('locktimeout', $e->errorcode);
+            $this->assertSame('error_lockbusy', $e->errorcode);
+            $this->assertStringNotContainsString('[[', $e->getMessage());
         } finally {
             $lock->release();
         }

@@ -53,6 +53,23 @@ class access {
     }
 
     /**
+     * Ids of the courses where a user may audit, with the contexts preloaded by core (no query per course).
+     *
+     * @param int $userid
+     * @return array course id => true (never the site course)
+     */
+    public static function auditable_course_ids(int $userid): array {
+        $courses = get_user_capability_course('local/mooc_audit:audit', $userid, true, '', 'id') ?: [];
+        $out = [];
+        foreach ($courses as $c) {
+            if ((int) $c->id !== (int) SITEID) {
+                $out[(int) $c->id] = true;
+            }
+        }
+        return $out;
+    }
+
+    /**
      * A run of the given course.
      *
      * @param int $runid

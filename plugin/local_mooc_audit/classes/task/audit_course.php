@@ -87,7 +87,7 @@ class audit_course extends \core\task\adhoc_task {
         $lock = \core\lock\lock_config::get_lock_factory('local_mooc_audit')->get_lock('course_' . $run->courseid, 0);
         if (!$lock) {
             // Another background audit of this course is running: let the task API retry later.
-            throw new \moodle_exception('locktimeout');
+            throw new \moodle_exception('error_lockbusy', 'local_mooc_audit');
         }
         try {
             $run = run_store::get($runid);

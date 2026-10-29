@@ -90,12 +90,9 @@ if ($id) {
     $runs = batch_manager::runs($batch);
     $courses = [];
     if ($runs) {
+        $auditable = \local_mooc_audit\local\history\access::auditable_course_ids((int) $USER->id);
         $records = $DB->get_records_list('course', 'id', array_keys($runs), '', 'id, shortname, fullname');
-        foreach ($records as $c) {
-            if (has_capability('local/mooc_audit:audit', context_course::instance($c->id))) {
-                $courses[(int) $c->id] = $c;
-            }
-        }
+        $courses = array_intersect_key($records, $auditable);
     }
     echo $OUTPUT->header();
     echo $OUTPUT->heading(get_string('batch_title', 'local_mooc_audit', format_string($batch->name)));

@@ -1,10 +1,10 @@
-Execução final (código 0e50101), ambiente moocaudit-s5-web, 2026-10-30
+Execução final (após o code review do PR #5), ambiente moocaudit-s5-web, 2026-10-30
 
 $ vendor/bin/phpunit --testsuite local_mooc_audit_testsuite
-OK (210 tests, 3409 assertions) — 02:30
+OK (212 tests, 3407 assertions) — 02:16 (após o code review)
 
 $ vendor/bin/behat --tags=@local_mooc_audit
-13 scenarios (13 passed), 193 steps (193 passed) — 1m24s
+13 scenarios (13 passed), 193 steps (193 passed) — 1m19s
 
 $ phpcs --standard=moodle local/mooc_audit
 0 erros, 0 avisos

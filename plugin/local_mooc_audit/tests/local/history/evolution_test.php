@@ -232,4 +232,42 @@ final class evolution_test extends \basic_testcase {
             self::r('CL-12|course|onlygraded', 'NAO_VERIFICAVEL', 'Informativa')], fp: $fp);
         $this->assertSame('unverifiable', self::classes(evolution::compare($before, $after))['CL-12|course|aggregation']);
     }
+
+    /**
+     * References inside the subject are remapped too (code review finding 1): the target of an X-DEP-02 condition
+     * replaced by an identical activity keeps the problem "replaced", a deleted target is "removed", a reference to an
+     * activity that never existed (X-DEP-01) is resolved normally, and a recreated enrolment instance is "removed".
+     */
+    public function test_references_in_subject(): void {
+        $fp = self::FP + ['X-DEP-01' => ['p' => 'a', 'r' => 'b'], 'X-DEP-02' => ['p' => 'c', 'r' => 'd'],
+            'CL-08' => ['p' => 'e', 'r' => 'f']];
+        $mods = [57 => 'quiz|q', 41 => 'page|leitura', 50 => 'feedback|av'];
+        $before = self::audit([self::r('X-DEP-02|cm:57|target_completion|cm:41', 'NAO_CONFORME', 'Bloqueante'),
+            self::r('X-DEP-01|cm:57|missing_target|cm:99', 'NAO_CONFORME')], $mods, $fp);
+        // Page 41 deleted and re-added as 44, the condition now points at 44, still without completion tracking.
+        $after = self::audit(
+            [self::r('X-DEP-02|cm:57|target_completion|cm:44', 'NAO_CONFORME', 'Bloqueante')],
+            [57 => 'quiz|q', 44 => 'page|leitura', 50 => 'feedback|av'],
+            $fp
+        );
+        $cmp = evolution::compare($before, $after);
+        $c = self::classes($cmp);
+        $this->assertSame('replaced', $c['X-DEP-02|cm:57|target_completion|cm:41']);
+        $this->assertArrayNotHasKey('X-DEP-02|cm:57|target_completion|cm:44', $c, 'not a new problem');
+        $this->assertSame('resolved', $c['X-DEP-01|cm:57|missing_target|cm:99'], 'cm 99 never existed: a real fix');
+        $this->assertSame(44, array_column($cmp['items'], 'successor_cmid', 'key')['X-DEP-02|cm:57|target_completion|cm:41']);
+
+        // Target deleted without successor: removed, not resolved.
+        $gone = self::audit([], [57 => 'quiz|q', 50 => 'feedback|av'], $fp);
+        $this->assertSame('removed', self::classes(evolution::compare($before, $gone))['X-DEP-02|cm:57|target_completion|cm:41']);
+
+        // Self enrolment instance 7 deleted and recreated as 8 with the same problem: removed + new, never resolved.
+        $b = self::audit([self::r('CL-08|course|self_enrol|enrol:7', 'NAO_CONFORME')], fp: $fp);
+        $b['details']['enrols'] = [7];
+        $a = self::audit([self::r('CL-08|course|self_enrol|enrol:8', 'NAO_CONFORME')], fp: $fp);
+        $a['details']['enrols'] = [8];
+        $c = self::classes(evolution::compare($b, $a));
+        $this->assertSame('removed', $c['CL-08|course|self_enrol|enrol:7']);
+        $this->assertSame('new', $c['CL-08|course|self_enrol|enrol:8']);
+    }
 }

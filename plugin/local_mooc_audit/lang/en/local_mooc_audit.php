@@ -258,6 +258,7 @@ $string['error_code_policy_warning'] = 'Policy';
 $string['error_code_rule_error'] = 'Rule error';
 $string['error_code_stale'] = 'Abandoned';
 $string['error_interrupted'] = 'The audit was interrupted {$a} times and was given up.';
+$string['error_lockbusy'] = 'Another background audit of this course is running; the task will be retried later.';
 $string['error_permission'] = 'The requester can no longer audit this course in batch.';
 $string['error_stale'] = 'The run stayed queued or running for more than a day without a background task.';
 $string['errors_title'] = 'Errors and limitations';
