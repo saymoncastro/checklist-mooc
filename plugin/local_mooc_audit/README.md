@@ -16,7 +16,7 @@ da equipe técnica.
 identificada oferecem "Ver proposta de correção" (problema, local, regra, valor atual, valor proposto, justificativa,
 impacto simulado, riscos/dependências/impedimentos, quem pode executar). Executáveis mediante confirmação: tentativas de
 questionário (CL-13) e encerramento de questionário igual ao término do curso (CL-14). Orientadas: CL-14 dos demais
-tipos e critério de conclusão (CL-17). 117 testes PHPUnit, 6 cenários Behat, PHPCS limpo. Matriz das 29 regras em
+tipos e critério de conclusão (CL-17). 118 testes PHPUnit, 6 cenários Behat, PHPCS limpo. Matriz das 29 regras em
 `specs/002-correcao-assistida/correction-matrix.md`; evidências em `plugin-results/0.3.0/`.
 
 ## Instalação
@@ -36,6 +36,9 @@ Nenhuma alteração no núcleo. Capacidades próprias (arquétipos padrão na ú
 | `local/mooc_audit:applycorrection` | curso | write, `RISK_CONFIG` | confirmar correções (exige também `moodle/course:manageactivities` na atividade) | manager, editingteacher |
 
 Padrões da decisão 11 (2026-10-29); professores não editores e estudantes não recebem nenhuma capacidade do plugin.
+O Moodle só aplica os arquétipos quando a capacidade é criada; por isso o upgrade para 2026102905
+(`db/upgradelib.php`) concede `local/mooc_audit:audit` aos papéis de arquétipo professor editor em sites que já tinham
+a capacidade, sem alterar papéis em que o administrador já escolheu uma permissão.
 
 Tabela própria: `local_mooc_audit_fix` (trilha das correções confirmadas; ver privacidade).
 
@@ -154,7 +157,7 @@ mudam).
 ## Verificação
 
 ```bash
-vendor/bin/phpunit --testsuite local_mooc_audit_testsuite      # 117 testes
+vendor/bin/phpunit --testsuite local_mooc_audit_testsuite      # 118 testes
 php admin/tool/behat/cli/run.php --tags=@local_mooc_audit       # exige Selenium; ver moodle-env/README.md
 vendor/bin/phpcs --standard=moodle local/mooc_audit             # moodlehq/moodle-cs
 ```

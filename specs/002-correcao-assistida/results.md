@@ -15,7 +15,7 @@ contêineres da Spec 001 e produção intocados.
 | 4 | Implementação experimental | `plugin/local_mooc_audit/classes/local/correction/`, `correction.php`, `db/` |
 | 5 | Interface de prévia e confirmação | `correction.php`, `templates/correction*.mustache`, ação no relatório |
 | 6 | Registro mínimo | tabela `local_mooc_audit_fix` + evento `correction_applied` |
-| 7 | Testes automatizados | 42 PHPUnit novos (117 no total), 4 cenários Behat novos (6 no total) |
+| 7 | Testes automatizados | 43 PHPUnit novos (118 no total), 4 cenários Behat novos (6 no total) |
 | 8–9 | Evidências e antes/depois | `plugin-results/0.3.0/` |
 | 10 | Revisão de segurança | §4 |
 | 11 | Constituição e Spec 001 | `analysis.md` |
@@ -25,7 +25,7 @@ contêineres da Spec 001 e produção intocados.
 
 | Suíte | Resultado |
 |---|---|
-| PHPUnit `local_mooc_audit_testsuite` | **117 testes, 2036 asserções, OK** (75 da Spec 001, incluindo caracterização A/B e contrato 1.0, + 42 novos) |
+| PHPUnit `local_mooc_audit_testsuite` | **118 testes, 2041 asserções, OK** (75 da Spec 001, incluindo caracterização A/B e contrato 1.0, + 43 novos) |
 | Behat `@local_mooc_audit` | **6 cenários, 82 passos, OK** (2 da Spec 001 + 4 novos; acessibilidade axe na prévia; professor editor aplica, professor não editor não) |
 | PHPCS `moodle` | 0 erros, 0 avisos |
 | `php -l` | sem erros |
@@ -163,3 +163,16 @@ PHPCS passam.
 - Evidências da interface por texto da página (`get_page_text`) e consultas ao banco; sem capturas de tela versionadas.
 - Fuso do laboratório: Europe/London. O valor gravado é o mesmo instante do término do curso, portanto independente
   de fuso, mas a exibição das datas deve ser conferida na homologação com o fuso da instalação institucional.
+
+## 7. Merge e atualização do laboratório (2026-10-29)
+
+- PRs #1 (Spec 001) e #2 (Spec 002) mesclados em `main` com merge commits (`4ee6eb3`, `7bde5fe`).
+- Laboratório principal (`moocaudit-webserver-1`): backup prévio do banco
+  (`moodle-local/backups/moodle-lab-antes-0.3.0-20261029.dump`), cópia principal atualizada para `main`, upgrade de
+  0.1.0-poc para 0.3.0. Auditorias dos cursos 2, 3, 8 e 9 idênticas antes e depois, regra a regra; nenhuma correção
+  aplicada no laboratório.
+- Defeito encontrado na atualização: o Moodle só aplica os arquétipos de `db/access.php` quando a capacidade é criada,
+  então sites que já tinham `local/mooc_audit:audit` não a concederam ao professor editor (decisão 11). Corrigido no
+  upgrade 2026102905 (`db/upgradelib.php`), que respeita permissões já escolhidas pelo administrador; teste
+  `access_test::test_upgrade_grants_audit_to_editing_teachers`; verificado no upgrade real do site da Spec 002.
+

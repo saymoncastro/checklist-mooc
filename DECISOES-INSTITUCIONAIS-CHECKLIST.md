@@ -88,6 +88,8 @@ Regra: as capacidades `local/mooc_audit:preparecorrection` (ver propostas) e `lo
 capacidade nativa `moodle/course:manageactivities` na atividade. Professores não editores e estudantes não as recebem.
 A capacidade de auditar (`local/mooc_audit:audit`, menu *Mais > Auditoria técnica*) segue o mesmo padrão: gerente e
 professor editor. A comparação entre cursos (`local/mooc_audit:compare`, contexto de sistema) continua só com gerentes.
+Em sites que já tinham o plugin, o upgrade (versão 2026102905) aplica essa decisão aos papéis de professor editor que
+não tenham uma permissão escolhida pelo administrador.
 
 ---
 

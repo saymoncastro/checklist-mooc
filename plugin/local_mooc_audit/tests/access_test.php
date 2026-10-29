@@ -77,6 +77,35 @@ final class access_test extends \advanced_testcase {
     }
 
     /**
+     * Upgrade from a version that already had local/mooc_audit:audit: editing-teacher roles get it unless an
+     * administrator already chose a setting for them; running it again changes nothing.
+     */
+    public function test_upgrade_grants_audit_to_editing_teachers(): void {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . '/local/mooc_audit/db/upgradelib.php');
+        $this->resetAfterTest();
+        $syscontext = \context_system::instance();
+        $editingteacher = $DB->get_record('role', ['shortname' => 'editingteacher'], '*', MUST_EXIST);
+        $other = $this->getDataGenerator()->create_role(['archetype' => 'editingteacher', 'shortname' => 'designer']);
+        // State of a site installed before 0.3.0: no setting for editing teachers; an administrator prohibited it for
+        // the other role.
+        unassign_capability('local/mooc_audit:audit', $editingteacher->id, $syscontext->id);
+        unassign_capability('local/mooc_audit:audit', $other, $syscontext->id);
+        assign_capability('local/mooc_audit:audit', CAP_PROHIBIT, $other, $syscontext->id);
+
+        $this->assertSame(1, local_mooc_audit_grant_audit_to_editingteachers());
+        $perm = fn($roleid) => (int) $DB->get_field('role_capabilities', 'permission', ['roleid' => $roleid,
+            'contextid' => $syscontext->id, 'capability' => 'local/mooc_audit:audit']);
+        $this->assertSame(CAP_ALLOW, $perm($editingteacher->id));
+        $this->assertSame(CAP_PROHIBIT, $perm($other), 'administrator choice kept');
+        $this->assertSame(0, local_mooc_audit_grant_audit_to_editingteachers(), 'idempotent');
+
+        $course = $this->getDataGenerator()->create_course();
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
+        $this->assertTrue(has_capability('local/mooc_audit:audit', \context_course::instance($course->id), $teacher));
+    }
+
+    /**
      * The capability declares no risk and is read-only (research R11).
      */
     public function test_capability_definition(): void {

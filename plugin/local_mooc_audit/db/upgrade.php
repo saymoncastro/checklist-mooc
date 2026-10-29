@@ -29,7 +29,8 @@
  * @return bool
  */
 function xmldb_local_mooc_audit_upgrade($oldversion) {
-    global $DB;
+    global $CFG, $DB;
+    require_once($CFG->dirroot . '/local/mooc_audit/db/upgradelib.php');
     $dbman = $DB->get_manager();
 
     if ($oldversion < 2026102902) {
@@ -58,6 +59,12 @@ function xmldb_local_mooc_audit_upgrade($oldversion) {
             $dbman->create_table($table);
         }
         upgrade_plugin_savepoint(true, 2026102902, 'local', 'mooc_audit');
+    }
+
+    if ($oldversion < 2026102905) {
+        // Decision 11: editing teachers audit too; archetypes are not reapplied to an existing capability.
+        local_mooc_audit_grant_audit_to_editingteachers();
+        upgrade_plugin_savepoint(true, 2026102905, 'local', 'mooc_audit');
     }
     return true;
 }
