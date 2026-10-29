@@ -63,35 +63,6 @@ final class engine_test extends \advanced_testcase {
     }
 
     /**
-     * X-DEP-02 / X-DEP-04: impossible condition and cycle are detected; a valid chain is CONFORME.
-     */
-    public function test_dependency_rules(): void {
-        global $DB;
-        $this->resetAfterTest();
-        $this->setAdminUser();
-        $gen = $this->getDataGenerator();
-        $course = $gen->create_course(['enablecompletion' => 1]);
-        $p1 = $gen->create_module('page', ['course' => $course->id, 'completion' => COMPLETION_TRACKING_AUTOMATIC, 'completionview' => 1]);
-        $p2 = $gen->create_module('page', ['course' => $course->id, 'completion' => COMPLETION_TRACKING_NONE]);
-        $quiz = $gen->create_module('quiz', ['course' => $course->id, 'attempts' => 2]);
-        // Valid: quiz requires p1 (has completion).
-        $DB->set_field('course_modules', 'availability', json_encode(['op' => '&', 'c' => [['type' => 'completion', 'cm' => $p1->cmid, 'e' => 1]], 'showc' => [true]]), ['id' => $quiz->cmid]);
-        rebuild_course_cache($course->id, true);
-        $report = engine::audit($course->id);
-        $this->assertSame([status::CONFORME], $this->statuses($report, 'X-DEP-02'));
-        $this->assertSame([status::CONFORME], $this->statuses($report, 'X-DEP-04'));
-
-        // Impossible: quiz requires p2 (no completion); cycle: p1 <-> p2.
-        $DB->set_field('course_modules', 'availability', json_encode(['op' => '&', 'c' => [['type' => 'completion', 'cm' => $p2->cmid, 'e' => 1]], 'showc' => [true]]), ['id' => $quiz->cmid]);
-        $DB->set_field('course_modules', 'availability', json_encode(['op' => '&', 'c' => [['type' => 'completion', 'cm' => $p2->cmid, 'e' => 1]], 'showc' => [true]]), ['id' => $p1->cmid]);
-        $DB->set_field('course_modules', 'availability', json_encode(['op' => '&', 'c' => [['type' => 'completion', 'cm' => $p1->cmid, 'e' => 1]], 'showc' => [true]]), ['id' => $p2->cmid]);
-        rebuild_course_cache($course->id, true);
-        $report = engine::audit($course->id);
-        $this->assertContains(status::NAO_CONFORME, $this->statuses($report, 'X-DEP-02'));
-        $this->assertContains(status::NAO_CONFORME, $this->statuses($report, 'X-DEP-04'));
-    }
-
-    /**
      * A rule throwing an exception produces an ERRO result and does not abort the audit.
      */
     public function test_policy_override_and_isolation(): void {

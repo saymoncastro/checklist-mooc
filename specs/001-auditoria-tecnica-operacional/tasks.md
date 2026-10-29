@@ -24,8 +24,10 @@ isolamento de exceção com regra injetada); fase 6 (US4) autorizada e concluíd
 `contract_test` valida A/B contra o schema 1.0 — agora com o locus `import` e distribuído em
 `plugin/local_mooc_audit/schema/` —, codificação única `engine::to_json()` na página e no CLI); fase 7 (US5) autorizada
 e concluída em 2026-10-29 (T067–T068: lista de chaves com tipo e padrão e JSON de referência gerados de
-`policy::defaults()` no setting; teste de nome canônico alterado → CL-09 pelo novo nome e versão `+admin`); fases 8–9
-aguardam autorização após validação (ver `docs/relatorio-adocao-sdd.md`).
+`policy::defaults()` no setting; teste de nome canônico alterado → CL-09 pelo novo nome e versão `+admin`); fase 8
+autorizada e concluída em 2026-10-29 (T069–T096: 28 arquivos em `tests/rule/` sobre a base `tests/helper/rule_testcase.php`,
+cada um com cenário conforme e não conforme construído por API; T097 `readonly_test` antecipado da fase 9; T098 Behat
+fica para a fase 9 por exigir ambiente Selenium); fase 9 aguarda autorização (ver `docs/relatorio-adocao-sdd.md`).
 
 ## Format: `[ID] [P?] [Story] Description`
 
@@ -184,40 +186,40 @@ inconformidades por gravidade e categoria, evidência completa, alertas, não ve
 **Purpose**: um arquivo de teste por regra com cenário conforme e não conforme (e NA/NV/ATENCAO quando a regra os
 produz), construídos por API; mínimos descritos por regra.
 
-- [ ] T069 [P] `tests/rule/cl04_test.php`: sumário com os dois links → C; sem um deles → NC
-- [ ] T070 [P] `tests/rule/cl05_test.php`: categoria "Inscrições Abertas" → C; outra → NC
-- [ ] T071 [P] `tests/rule/cl06_test.php`: 01/01/ano → C; outro ano → NC; 0 → NC; início < 30 dias do fim → NC
-- [ ] T072 [P] `tests/rule/cl07_test.php`: 31/12/ano → C; 30/06 → NC; 0 → NC
-- [ ] T073 [P] `tests/rule/cl08_test.php`: self habilitado, datas = curso, customint6=1 → C; sem instância → NC; desabilitado/sem datas → NC; guest ativo → ATENCAO Informativa
-- [ ] T074 [P] `tests/rule/cl09_test.php`: fórum canônico sem conclusão → C; com conclusão → NC; ausente → NC; dois fóruns homônimos → avalia o primeiro, sem duplicata
-- [ ] T075 [P] `tests/rule/cl11_test.php`: pesquisa com completionsubmit e exigida pelo certificado → C; sem completionsubmit → NC; não exigida → NC; ausente → NC (certificado pulado se `mod_simplecertificate` ausente)
-- [ ] T076 [P] `tests/rule/cl12_test.php`: soma 100, Natural, aggregateonlygraded=0 → C; soma 90 → NC; aggregateonlygraded=1 → NC; agregação ≠ 13 → NC; item em subcategoria → ATENCAO
-- [ ] T077 [P] `tests/rule/cl13_test.php`: 2 e 0 tentativas → C; 1 → NC; enunciado "Tentativas permitidas: 2" com 1 → NC extra; enunciado sem menção → ATENCAO Baixa; sem quiz → NA
-- [ ] T078 [P] `tests/rule/cl14_test.php`: quiz com timeclose = fim → C; sem timeclose → NC; ≠ fim → ATENCAO; assign com cutoffdate → C; sem atividades com nota → NA
-- [ ] T079 [P] `tests/rule/cl16_test.php`: Avaliação exige todos os cmids com nota → C; falta um → NC; operador `|` → ATENCAO; ausente → NC
-- [ ] T080 [P] `tests/rule/cl17_test.php`: página com conclusão por visualização → C (síntese); conclusão manual → NC; automática sem critério → ATENCAO; critério inesperado para o tipo → ATENCAO Baixa
-- [ ] T081 [P] `tests/rule/cl18_test.php`: sem glossário → C; glossário sem jogo → NC; glossário vazio fonte de jogo → NC Bloqueante; com entradas → ATENCAO (pular jogo se `mod_game` ausente; ainda assim cobrir "sem jogo")
-- [ ] T082 [P] `tests/rule/cl19_test.php`: rótulo sem conclusão → C; com conclusão → NC
-- [ ] T083 [P] `tests/rule/cl20_test.php`: hiddensections=1 → C; 0 → NC; seção vazia → ATENCAO; nome "Topic 3" → ATENCAO; seção oculta com atividade com conclusão → ATENCAO Média
-- [ ] T084 [P] `tests/rule/cl21_test.php`: progresso + 3 HTML → C; sem progresso → NC; sem "Acessibilidade" → NC (pular progresso se `block_completion_progress` ausente)
-- [ ] T085 [P] `tests/rule/cl22_test.php`: rótulo + pesquisa + declaração → C ×3; cada ausência → NC
-- [ ] T086 [P] `tests/rule/cl23_test.php`: certificado exige Avaliação e nota ≥ 60 no total → C; sem nota → NC; nota em item errado → NC; operador `|` → NC; sem certificado → NC
-- [ ] T087 [P] `tests/rule/xint02_test.php`: arquivo presente → C; registro com conteúdo removido do `filedir` → NC
-- [ ] T088 [P] `tests/rule/xcont01_test.php`: página com texto → C; página vazia → NC; quiz sem questões → NC Alta; feedback sem itens → NC; resource sem arquivo → NC Alta; livro sem capítulos → NC
-- [ ] T089 [P] `tests/rule/xcont04_test.php`: `@@PLUGINFILE@@` com arquivo → C; sem arquivo → NC; com `?time=` e arquivo existente → C
-- [ ] T090 [P] `tests/rule/xav01_test.php`: "Valor: 50 pontos" com grademax 50 → C; 40 → NC
-- [ ] T091 [P] `tests/rule/xdep01_test.php`: condições válidas → C; cm inexistente em módulo → NC; em seção → NC
-- [ ] T092 [P] `tests/rule/xdep02_test.php`: mover de `engine_test` o cenário existente e acrescentar `e=2` sobre módulo sem nota → NC; módulo oculto → ATENCAO Alta
-- [ ] T093 [P] `tests/rule/xdep03_test.php`: condição de nota para item existente → C; inexistente → NC
-- [ ] T094 [P] `tests/rule/xdep04_test.php`: mover de `engine_test` o cenário existente (sem ciclo → C; ciclo → NC)
-- [ ] T095 [P] `tests/rule/xcert01_test.php`: cadeia satisfazível → C; elo sem conclusão → NC; elo oculto → NC; certificado oculto → NC; sem certificado → NC; com `userid` de estudante sem acesso a um elo → NC
-- [ ] T096 [P] `tests/rule/xstr01_test.php`: tudo visível e nomeado → C; módulo oculto → ATENCAO; nome vazio → NC
+- [x] T069 [P] `tests/rule/cl04_test.php`: sumário com os dois links → C; sem um deles → NC
+- [x] T070 [P] `tests/rule/cl05_test.php`: categoria "Inscrições Abertas" → C; outra → NC
+- [x] T071 [P] `tests/rule/cl06_test.php`: 01/01/ano → C; outro ano → NC; 0 → NC; início < 30 dias do fim → NC
+- [x] T072 [P] `tests/rule/cl07_test.php`: 31/12/ano → C; 30/06 → NC; 0 → NC
+- [x] T073 [P] `tests/rule/cl08_test.php`: self habilitado, datas = curso, customint6=1 → C; sem instância → NC; desabilitado/sem datas → NC; guest ativo → ATENCAO Informativa
+- [x] T074 [P] `tests/rule/cl09_test.php`: fórum canônico sem conclusão → C; com conclusão → NC; ausente → NC; dois fóruns homônimos → avalia o primeiro, sem duplicata
+- [x] T075 [P] `tests/rule/cl11_test.php`: pesquisa com completionsubmit e exigida pelo certificado → C; sem completionsubmit → NC; não exigida → NC; ausente → NC (certificado pulado se `mod_simplecertificate` ausente)
+- [x] T076 [P] `tests/rule/cl12_test.php`: soma 100, Natural, aggregateonlygraded=0 → C; soma 90 → NC; aggregateonlygraded=1 → NC; agregação ≠ 13 → NC; item em subcategoria → ATENCAO
+- [x] T077 [P] `tests/rule/cl13_test.php`: 2 e 0 tentativas → C; 1 → NC; enunciado "Tentativas permitidas: 2" com 1 → NC extra; enunciado sem menção → ATENCAO Baixa; sem quiz → NA
+- [x] T078 [P] `tests/rule/cl14_test.php`: quiz com timeclose = fim → C; sem timeclose → NC; ≠ fim → ATENCAO; assign com cutoffdate → C; sem atividades com nota → NA
+- [x] T079 [P] `tests/rule/cl16_test.php`: Avaliação exige todos os cmids com nota → C; falta um → NC; operador `|` → ATENCAO; ausente → NC
+- [x] T080 [P] `tests/rule/cl17_test.php`: página com conclusão por visualização → C (síntese); conclusão manual → NC; automática sem critério → ATENCAO; critério inesperado para o tipo → ATENCAO Baixa
+- [x] T081 [P] `tests/rule/cl18_test.php`: sem glossário → C; glossário sem jogo → NC; glossário vazio fonte de jogo → NC Bloqueante; com entradas → ATENCAO (pular jogo se `mod_game` ausente; ainda assim cobrir "sem jogo")
+- [x] T082 [P] `tests/rule/cl19_test.php`: rótulo sem conclusão → C; com conclusão → NC
+- [x] T083 [P] `tests/rule/cl20_test.php`: hiddensections=1 → C; 0 → NC; seção vazia → ATENCAO; nome "Topic 3" → ATENCAO; seção oculta com atividade com conclusão → ATENCAO Média
+- [x] T084 [P] `tests/rule/cl21_test.php`: progresso + 3 HTML → C; sem progresso → NC; sem "Acessibilidade" → NC (pular progresso se `block_completion_progress` ausente)
+- [x] T085 [P] `tests/rule/cl22_test.php`: rótulo + pesquisa + declaração → C ×3; cada ausência → NC
+- [x] T086 [P] `tests/rule/cl23_test.php`: certificado exige Avaliação e nota ≥ 60 no total → C; sem nota → NC; nota em item errado → NC; operador `|` → NC; sem certificado → NC
+- [x] T087 [P] `tests/rule/xint02_test.php`: arquivo presente → C; registro com conteúdo removido do `filedir` → NC
+- [x] T088 [P] `tests/rule/xcont01_test.php`: página com texto → C; página vazia → NC; quiz sem questões → NC Alta; feedback sem itens → NC; resource sem arquivo → NC Alta; livro sem capítulos → NC
+- [x] T089 [P] `tests/rule/xcont04_test.php`: `@@PLUGINFILE@@` com arquivo → C; sem arquivo → NC; com `?time=` e arquivo existente → C
+- [x] T090 [P] `tests/rule/xav01_test.php`: "Valor: 50 pontos" com grademax 50 → C; 40 → NC
+- [x] T091 [P] `tests/rule/xdep01_test.php`: condições válidas → C; cm inexistente em módulo → NC; em seção → NC
+- [x] T092 [P] `tests/rule/xdep02_test.php`: mover de `engine_test` o cenário existente e acrescentar `e=2` sobre módulo sem nota → NC; módulo oculto → ATENCAO Alta
+- [x] T093 [P] `tests/rule/xdep03_test.php`: condição de nota para item existente → C; inexistente → NC
+- [x] T094 [P] `tests/rule/xdep04_test.php`: mover de `engine_test` o cenário existente (sem ciclo → C; ciclo → NC)
+- [x] T095 [P] `tests/rule/xcert01_test.php`: cadeia satisfazível → C; elo sem conclusão → NC; elo oculto → NC; certificado oculto → NC; sem certificado → NC; com `userid` de estudante sem acesso a um elo → NC
+- [x] T096 [P] `tests/rule/xstr01_test.php`: tudo visível e nomeado → C; módulo oculto → ATENCAO; nome vazio → NC
 
 ---
 
 ## Phase 9: Polish & Cross-Cutting Concerns
 
-- [ ] T097 Criar `tests/readonly_test.php`: hashes de `course`, `course_sections`, `course_modules`, `grade_items`, `grade_categories`, `enrol`, `block_instances`, `files`, `quiz`, `feedback`, `glossary` (filtrados pelo curso) e `course.timemodified`/`cacherev` antes e depois de `engine::audit()` em B → idênticos
+- [x] T097 Criar `tests/readonly_test.php`: hashes de `course`, `course_sections`, `course_modules`, `grade_items`, `grade_categories`, `enrol`, `block_instances`, `files`, `quiz`, `feedback`, `glossary` (filtrados pelo curso) e `course.timemodified`/`cacherev` antes e depois de `engine::audit()` em B → idênticos
 - [ ] T098 [P] Criar `tests/behat/audit_page.feature` (@local_mooc_audit): gerente vê "Auditoria técnica" no menu do curso e abre o relatório com a situação geral; estudante não vê a entrada; passos verificam que as seções têm cabeçalhos e que os locais com link têm texto significativo (FR-023)
 - [ ] T099 [P] Rodar `php -l` em todos os `.php` e PHPCS padrão `moodle` no contêiner; corrigir avisos
 - [ ] T100 Rodar a suíte completa `vendor/bin/phpunit local/mooc_audit/tests` e registrar a saída em `plugin-results/phpunit-0.2.0.txt`

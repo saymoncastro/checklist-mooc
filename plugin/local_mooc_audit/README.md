@@ -3,7 +3,7 @@
 Plugin local **somente leitura** (versão 0.2.0, em evolução pela spec 001) que audita uma sala existente a partir do seu `courseid`, sem depender do MOOC Admin
 nem de arquivos `.mbz`. Reaproveita o catálogo de regras e as decisões institucionais do projeto `checklist-mooc`.
 
-**Estado:** PoC reorganizada (0.2.0): regras em classes próprias, catálogo com metadados, contrato JSON 1.0, caracterização dos cursos A/B, página do relatório no contexto do curso (menu *Mais > Auditoria técnica*). Validado em Moodle 4.5.15 / PHP 8.3 / PostgreSQL 17 em ambiente local.
+**Estado:** PoC reorganizada (0.2.0): regras em classes próprias com teste por regra, catálogo com metadados, contrato JSON 1.0, caracterização dos cursos A/B, página do relatório no contexto do curso (menu *Mais > Auditoria técnica*). Validado em Moodle 4.5.15 / PHP 8.3 / PostgreSQL 17 em ambiente local.
 Não instalar em produção sem revisão.
 
 ## Instalação
@@ -66,7 +66,9 @@ mecanismo nativo `core_course_external::import_course`).
 | `tests/engine_test.php` | Motor, contrato, política, isolamento de regra com exceção (regra injetada), conclusão desabilitada no site, locus de importação, saída texto do CLI |
 | `tests/contract_test.php` | Relatórios de A/B válidos contra o schema (validador mínimo sem biblioteca), campos da PoC preservados, ida e volta do JSON |
 | `tests/policy_test.php` | Padrões, override do administrador e por arquivo, tipos errados, ano de reoferta automático, validação do setting, nome canônico alterado aplicado a CL-09 |
-| `tests/rule/xint03_test.php` | X-INT-03: plugin ausente (condição de tipo inexistente) → não conforme; padrão instalado → conforme; curso vazio → não se aplica |
+| `tests/helper/rule_testcase.php` | Base dos testes por regra: curso na categoria da oferta com datas da reoferta, construtores de página/questionário/pesquisa/certificado e árvores de restrição |
+| `tests/rule/*_test.php` | Um arquivo por regra (29): cenários conforme, não conforme e, quando a regra os produz, atenção/não se aplica/não verificável, construídos por API (ex.: X-INT-03 com condição de plugin inexistente; X-CERT-01 com visão de estudante) |
+| `tests/readonly_test.php` | Hashes de 17 tabelas do curso B antes e depois de três auditorias (admin, estudante, texto) idênticos; `timemodified`/`cacherev` inalterados |
 | `tests/locator_test.php` | URL esperada por locus; identificadores ausentes → sem link |
 | `tests/access_test.php` | Capacidade por arquétipo (estudante/professor não; gerente sim), definição sem risco declarado, nó de navegação só com a capacidade |
 | `tests/output_test.php` | Dados do template e renderização da página (cursos A/B) |
