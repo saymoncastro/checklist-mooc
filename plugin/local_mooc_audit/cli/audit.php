@@ -18,7 +18,7 @@
  * CLI: audit a course (read-only).
  *
  * php local/mooc_audit/cli/audit.php --courseid=3 [--userid=5] [--policy=/path/policy.json] [--json] [--out=/path/report.json]
- * [--snapshot]
+ * [--snapshot] [--record]
  *
  * @package    local_mooc_audit
  * @copyright  2026 Cefor/Ifes
@@ -31,7 +31,8 @@ require(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir . '/clilib.php');
 
 [$options, $unrecognized] = cli_get_params([
-    'courseid' => 0, 'userid' => 0, 'policy' => '', 'json' => false, 'out' => '', 'snapshot' => false, 'help' => false,
+    'courseid' => 0, 'userid' => 0, 'policy' => '', 'json' => false, 'out' => '', 'snapshot' => false, 'record' => false,
+    'help' => false,
 ], ['h' => 'help', 'c' => 'courseid']);
 
 if ($options['help'] || empty($options['courseid'])) {
@@ -46,6 +47,8 @@ if ($options['help'] || empty($options['courseid'])) {
         '                 schema em local/mooc_audit/schema/report-v1.0.schema.json',
         '  --out=FILE     grava o JSON do relatório (mesmo contrato e codificação da página) no arquivo',
         '  --snapshot     inclui o retrato completo no JSON',
+        '  --record       registra a auditoria no histórico (origem cli, solicitante 0; incompatível com --userid',
+        '                 e --snapshot, porque o histórico guarda só a visão de configuração)',
     ]));
     exit(0);
 }
@@ -61,12 +64,28 @@ if ($options['policy'] !== '') {
     }
 }
 
-$report = \local_mooc_audit\engine::audit(
-    (int) $options['courseid'],
-    $override,
-    (int) $options['userid'],
-    (bool) $options['snapshot']
-);
+if ($options['record']) {
+    if ($options['userid'] || $options['snapshot']) {
+        cli_error('--record não aceita --userid nem --snapshot');
+    }
+    [$run, $report, $error] = \local_mooc_audit\local\history\recorder::record_now(
+        (int) $options['courseid'],
+        \local_mooc_audit\local\history\run_store::ORIGIN_CLI,
+        0,
+        $override
+    );
+    if (!$report) {
+        cli_error("execução {$run->id}: {$run->status} " . ($error ? $error->getMessage() : $run->errors));
+    }
+    cli_writeln("execução {$run->id} registrada: {$run->status}; evolução: " . ($run->evolution ?? 'primeira auditoria'));
+} else {
+    $report = \local_mooc_audit\engine::audit(
+        (int) $options['courseid'],
+        $override,
+        (int) $options['userid'],
+        (bool) $options['snapshot']
+    );
+}
 
 if ($options['out'] !== '') {
     file_put_contents($options['out'], \local_mooc_audit\engine::to_json($report));

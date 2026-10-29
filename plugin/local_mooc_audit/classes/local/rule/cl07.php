@@ -57,7 +57,12 @@ class cl07 extends base {
     public function evaluate(array $s, array $p): array {
         $ed = $s['course']['enddate'];
         if (!$ed) {
-            return [$this->f(status::NAO_CONFORME, 'Configurações do curso > Data de término', 'não definida (0)')];
+            return [$this->f(
+                status::NAO_CONFORME,
+                'Configurações do curso > Data de término',
+                'não definida (0)',
+                ['check' => 'enddate']
+            )];
         }
         $dm = userdate($ed, '%d/%m', 99, false);
         $year = (int) userdate($ed, '%Y', 99, false);
@@ -66,7 +71,8 @@ class cl07 extends base {
             $ok ? status::CONFORME : status::NAO_CONFORME,
             'Configurações do curso > Data de término',
             'término=' . helpers::d($ed),
-            ['esperado' => implode('|', $p['allowed_end_dates']) . "/{$p['reoffer_year']}", 'orientacao' => $this->guidance()]
+            ['esperado' => implode('|', $p['allowed_end_dates']) . "/{$p['reoffer_year']}", 'orientacao' => $this->guidance(),
+            'check' => 'enddate']
         )];
     }
 }

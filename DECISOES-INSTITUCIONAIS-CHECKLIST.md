@@ -93,6 +93,24 @@ não tenham uma permissão escolhida pelo administrador.
 
 ---
 
+## 12. Histórico, lotes e acompanhamento (Auditor MOOC, spec 005) — **DECIDIDO em 2026-10-30 (recomendação aprovada pelo responsável do projeto)**
+
+1. **Registro das auditorias**: só execuções solicitadas explicitamente ("Executar auditoria", "Executar novamente",
+   lote, CLI com `--record`) entram no histórico. Abrir ou recarregar a página de auditoria **consulta** o resultado da
+   última auditoria guardada, sem executar nem gravar nada.
+2. **Retenção**: 365 dias, configurável (30–1825), mantendo sempre a última execução válida de cada sala existente. O
+   histórico de uma sala removida segue o mesmo prazo.
+3. **Desatualização**: aviso após 7 dias sem nova auditoria **e** sempre que houver alteração conhecida desde a
+   execução — na sala (configurações ou atividades), na política ou na versão do plugin (regras). O painel e a página
+   mostram sempre a data da execução e falam em "resultado da última auditoria", nunca em conformidade atual.
+4. **Gerentes de categoria**: no primeiro MVP o painel e os lotes ficam com gerentes de sistema; ampliar por categoria
+   será avaliado depois da homologação.
+5. **Lotes**: 2 auditorias simultâneas e no máximo **100 salas por lote** até medir na homologação.
+6. **Ciclo**: o ano de início da sala é o critério padrão de seleção; o lote pode informar explicitamente o ciclo (ano
+   da reoferta) a aplicar na auditoria das salas.
+
+---
+
 ## Informações adicionais necessárias
 
 1. Novo backup íntegro do curso 668 "Como criar um MOOC?" (o arquivo atual está corrompido).

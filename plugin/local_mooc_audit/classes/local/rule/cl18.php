@@ -57,7 +57,8 @@ class cl18 extends base {
         foreach ($p['forbidden_modules'] as $mod) {
             $gs = helpers::mods($s, $mod);
             if (!$gs) {
-                $out[] = $this->f(status::CONFORME, 'Atividades do curso', "nenhum módulo $mod");
+                $out[] = $this->f(status::CONFORME, 'Atividades do curso', "nenhum módulo $mod", [
+                    'check' => 'forbidden', 'subject' => $mod]);
             }
             foreach ($gs as $g) {
                 $deps = array_filter(helpers::mods($s, 'game'), fn($m) => ($m['extra']['sourcemodule'] ?? '') === 'glossary'
@@ -74,7 +75,7 @@ class cl18 extends base {
                         ['cmid' => $g['cmid'], 'gravidade' => $entries === 0 ? status::BLOQUEANTE : status::MEDIA,
                             'esperado' => 'entradas disponíveis para os jogos',
                         'orientacao' => $this->g('repopulate'),
-                        'locus' => self::LOCUS_MODULE_VIEW]
+                        'locus' => self::LOCUS_MODULE_VIEW, 'check' => 'forbidden']
                     );
                 } else {
                     $out[] = $this->f(
@@ -82,7 +83,7 @@ class cl18 extends base {
                         helpers::label($g),
                         "módulo $mod presente ($entries entradas) sem uso por jogos",
                         ['cmid' => $g['cmid'],
-                        'orientacao' => $this->guidance()]
+                        'orientacao' => $this->guidance(), 'check' => 'forbidden']
                     );
                 }
             }

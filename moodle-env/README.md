@@ -192,3 +192,36 @@ Site: http://localhost:8094 (admin / `Admin123!`, apenas local). Medição de de
 `docker cp plugin-results/0.4.0/make151.php moocaudit-s3-web:/tmp/ && docker exec -w /var/www/html moocaudit-s3-web php /tmp/make151.php`.
 Remover tudo: `docker rm -f moocaudit-s3-web moocaudit-s3-selenium && docker network disconnect moocaudit_s3 moocaudit-db-1 &&
 docker network rm moocaudit_s3 && docker exec moocaudit-db-1 dropdb -U moodle moodle_s3`.
+
+## Ambiente da spec 005 (histórico, lote e acompanhamento)
+
+Mesmo desenho das specs 002/003, com banco `moodle_s5`, porta 8095 e rede `moocaudit_s5`, montando o plugin do
+worktree da spec 005:
+
+```bash
+docker exec moocaudit-db-1 createdb -U moodle moodle_s5
+docker network create moocaudit_s5
+docker network connect --alias db moocaudit_s5 moocaudit-db-1
+docker run -d --name moocaudit-s5-web --network moocaudit_s5 -p 127.0.0.1:8095:80 \
+  -e MOODLE_DOCKER_DBTYPE=pgsql -e MOODLE_DOCKER_DBNAME=moodle_s5 -e MOODLE_DOCKER_DBUSER=moodle -e 'MOODLE_DOCKER_DBPASS=m@0dl3ing' \
+  -e MOODLE_DOCKER_WEB_HOST=localhost -e MOODLE_DOCKER_WEB_PORT=127.0.0.1:8095 -e MOODLE_DOCKER_RUNNING=1 -e MOODLE_DOCKER_BROWSER=chrome \
+  -v "$PROJECT_DIR/moodle-local/moodle:/var/www/html" -v "<worktree>/plugin/local_mooc_audit:/var/www/html/local/mooc_audit" \
+  -w /var/www/html moodlehq/moodle-php-apache:8.3
+docker exec moocaudit-s5-web bash -c 'mkdir -p /var/www/moodledata /var/www/behatdata /var/www/behatfaildumps && chown www-data /var/www/moodledata /var/www/behatdata /var/www/behatfaildumps && echo "127.0.0.1 webserver" >> /etc/hosts'
+docker exec -w /var/www/html moocaudit-s5-web php admin/cli/install_database.php --agree-license \
+  --fullname="Auditor MOOC (spec 005)" --shortname=s5 --adminpass='Admin123!' --adminemail=admin@example.com --lang=pt_br
+docker exec -w /var/www/html moocaudit-s5-web php local/mooc_audit/cli/make_fixtures.php      # A = 2, B = 3
+docker exec moocaudit-s5-web chown -R www-data /var/www/moodledata
+docker exec -w /var/www/html moocaudit-s5-web php admin/tool/phpunit/cli/init.php
+IP=$(docker inspect moocaudit-s5-web --format '{{(index .NetworkSettings.Networks "moocaudit_s5").IPAddress}}')
+docker run -d --name moocaudit-s5-selenium --network moocaudit_s5 --network-alias selenium --add-host "webserver:$IP" \
+  --shm-size=2g selenium/standalone-chrome:4
+docker exec -e MOODLE_DOCKER_BROWSER=chrome -w /var/www/html moocaudit-s5-web php admin/tool/behat/cli/init.php
+```
+
+Site: http://localhost:8095 (admin / `Admin123!`, apenas local). Medição do lote:
+`docker cp plugin-results/0.5.0/make_lote.php moocaudit-s5-web:/tmp/ && docker exec -w /var/www/html moocaudit-s5-web php /tmp/make_lote.php --n=100`
+(100 salas A/B na categoria "Lote de medição") e `php local/mooc_audit/cli/batch.php --category=<id> --run`; detalhes
+em `specs/005-auditoria-lote-historico/results.md`. Remover tudo: `docker rm -f moocaudit-s5-web moocaudit-s5-selenium &&
+docker network disconnect moocaudit_s5 moocaudit-db-1 && docker network rm moocaudit_s5 && docker exec moocaudit-db-1 dropdb -U moodle moodle_s5`.
+

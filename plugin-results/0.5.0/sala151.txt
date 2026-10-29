@@ -1,0 +1,4 @@
+lote 3: 2 enfileiradas, 0 reaproveitadas, 0 recusadas
+  curso    104  complete  BLOQUEADA              0.14s    27.1 MB  leituras   419  relatório   41393 bytes
+  curso    105  complete  BLOQUEADA              0.07s    28.9 MB  leituras   422  relatório   41324 bytes
+total 2: concluídas 2, parciais 0, falhas 0, pendentes 0; 0.2s; pico do processo 29.1 MB

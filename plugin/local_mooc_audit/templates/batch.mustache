@@ -1,0 +1,89 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+{{!
+    @template local_mooc_audit/batch
+
+    Progress and results of a batch (specs/005).
+
+    Context variables required for this template:
+    * id, name, date, requester, mode, criteria, total, pending, progress[] (status (label, cssclass), count)
+    * hasskipped, skippedtitle, skipped[] (courseid, reason); outside (optional)
+    * hasrows, rows[] (courseid, fullname, shortname, status (label, cssclass), overall, severities[] (label, count),
+      evolution[], errors[] (label, rule, message), date, reused, url)
+    * canretry, formurl, sesskey, dashboardurl
+
+    Example context (json):
+    {
+        "id": 1, "name": "Category — 29/10/26", "date": "29/10/26, 10:00", "requester": "Admin User", "mode": "Category",
+        "criteria": "Category: MOOC", "total": 2, "pending": false,
+        "progress": [{"status": {"label": "Complete", "cssclass": "badge-success"}, "count": 2}],
+        "hasskipped": false, "skippedtitle": "", "skipped": [], "outside": null, "hasrows": true,
+        "rows": [{"courseid": 2, "fullname": "Course A", "shortname": "A", "status": {"label": "Complete", "cssclass": "badge-success"},
+            "overall": "No non-conformities", "severities": [], "evolution": [], "errors": [], "date": "", "reused": false, "url": "#"}],
+        "canretry": false, "formurl": "#", "sesskey": "x", "dashboardurl": "#"
+    }
+}}
+<div class="local_mooc_audit-batch" data-batchid="{{id}}">
+    <dl class="row">
+        <dt class="col-sm-3">{{#str}} batch_requested_by, local_mooc_audit {{/str}}</dt><dd class="col-sm-9">{{requester}} · {{date}}</dd>
+        <dt class="col-sm-3">{{#str}} batch_criteria, local_mooc_audit {{/str}}</dt><dd class="col-sm-9">{{mode}}{{#criteria}} · {{criteria}}{{/criteria}}</dd>
+    </dl>
+    {{#pending}}<div class="alert alert-info" role="status">{{#str}} batch_cron_notice, local_mooc_audit {{/str}}</div>{{/pending}}
+    <h3 class="h5">{{#str}} batch_progress, local_mooc_audit {{/str}} ({{total}})</h3>
+    <ul class="list-inline" data-region="progress">
+        {{#progress}}<li class="list-inline-item"><span class="badge {{status.cssclass}}">{{status.label}}: {{count}}</span></li>{{/progress}}
+    </ul>
+    {{#canretry}}
+    <form method="post" action="{{formurl}}" class="mb-3">
+        <input type="hidden" name="sesskey" value="{{sesskey}}"><input type="hidden" name="action" value="retry"><input type="hidden" name="id" value="{{id}}">
+        <button type="submit" class="btn btn-secondary">{{#str}} batch_retry, local_mooc_audit {{/str}}</button>
+    </form>
+    {{/canretry}}
+    {{#outside}}<p class="text-muted">{{outside}}</p>{{/outside}}
+    {{#hasrows}}
+    <div class="table-responsive">
+    <table class="table table-sm table-striped generaltable" data-region="batch-runs">
+        <caption class="sr-only">{{name}}</caption>
+        <thead><tr>
+            <th scope="col">{{#str}} col_course, local_mooc_audit {{/str}}</th>
+            <th scope="col">{{#str}} col_status, local_mooc_audit {{/str}}</th>
+            <th scope="col">{{#str}} col_overall, local_mooc_audit {{/str}}</th>
+            <th scope="col">{{#str}} col_nc, local_mooc_audit {{/str}}</th>
+            <th scope="col">{{#str}} col_evolution, local_mooc_audit {{/str}}</th>
+            <th scope="col">{{#str}} col_date, local_mooc_audit {{/str}}</th>
+        </tr></thead>
+        <tbody>
+        {{#rows}}
+            <tr data-courseid="{{courseid}}">
+                <td><a href="{{url}}"><strong>{{shortname}}</strong></a><div class="small">{{fullname}} (id {{courseid}})</div></td>
+                <td><span class="badge {{status.cssclass}}">{{status.label}}</span>
+                    {{#errors}}<div class="small"><strong>{{label}}</strong>{{#rule}} ({{rule}}){{/rule}}: {{message}}</div>{{/errors}}</td>
+                <td>{{overall}}</td>
+                <td class="small">{{#severities}}{{#count}}<span class="text-nowrap mr-1">{{label}}: {{count}}</span> {{/count}}{{/severities}}</td>
+                <td>{{#evolution}}<span class="badge {{cssclass}} mr-1">{{label}}: {{count}}</span>{{/evolution}}</td>
+                <td class="small">{{date}}</td>
+            </tr>
+        {{/rows}}
+        </tbody>
+    </table>
+    </div>
+    {{/hasrows}}
+    {{#hasskipped}}
+    <h3 class="h5">{{skippedtitle}}</h3>
+    <ul data-region="skipped">{{#skipped}}<li>id {{courseid}}: {{reason}}</li>{{/skipped}}</ul>
+    {{/hasskipped}}
+    <p><a href="{{dashboardurl}}">{{#str}} dashboardmenu, local_mooc_audit {{/str}}</a></p>
+</div>

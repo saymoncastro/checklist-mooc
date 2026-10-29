@@ -63,14 +63,16 @@ class xint02 extends base {
                     helpers::label($m),
                     "arquivo \"{$fe['filename']}\" ({$fe['component']}/{$fe['filearea']}, {$fe['filesize']} bytes"
                         . ($fe['is_reference'] ? ', alias' : '') . ') registrado mas sem conteúdo legível no armazenamento',
-                    ['cmid' => $m['cmid'], 'orientacao' => $this->guidance()]
+                    ['cmid' => $m['cmid'], 'orientacao' => $this->guidance(), 'check' => 'storage',
+                        'subject' => "{$fe['component']}/{$fe['filearea']}/" . ($fe['filepath'] ?? '/') . $fe['filename']]
                 );
             }
         }
         return $out ?: [$this->f(
             status::CONFORME,
             'Arquivos dos módulos',
-            "$total arquivos com conteúdo legível no armazenamento"
+            "$total arquivos com conteúdo legível no armazenamento",
+            ['check' => 'summary']
         )];
     }
 }

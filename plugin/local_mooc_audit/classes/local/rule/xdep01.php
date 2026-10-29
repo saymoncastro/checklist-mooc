@@ -65,7 +65,7 @@ class xdep01 extends base {
                         helpers::label($m),
                         "condição completion cm={$c['cm']} não existe no curso",
                         ['cmid' => $m['cmid'],
-                        'orientacao' => $this->guidance()]
+                        'orientacao' => $this->guidance(), 'check' => 'missing_target', 'subject' => 'cm:' . (int) $c['cm']]
                     );
                 }
             }
@@ -78,11 +78,12 @@ class xdep01 extends base {
                         "Seção {$sec['number']}",
                         "condição completion cm={$c['cm']} não existe no curso",
                         ['locus' => self::LOCUS_SECTION,
-                        'section' => $sec['number']]
+                        'section' => $sec['number'], 'check' => 'missing_target', 'subject' => 'cm:' . (int) $c['cm']]
                     );
                 }
             }
         }
-        return $out ?: [$this->f(status::CONFORME, 'Restrições de acesso', 'todas as referências a módulos existem')];
+        return $out ?: [$this->f(status::CONFORME, 'Restrições de acesso', 'todas as referências a módulos existem', [
+            'check' => 'summary'])];
     }
 }

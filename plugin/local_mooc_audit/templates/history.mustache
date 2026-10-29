@@ -1,0 +1,75 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+{{!
+    @template local_mooc_audit/history
+
+    Recorded audits of a course, newest first (specs/005).
+
+    Context variables required for this template:
+    * rows[] - id, date, origin, requester, status (label, cssclass), overall, severities[] (label, count), hasreport,
+      evolution[] (label, count, cssclass), first, policy, reofferyear, version, url
+    * hasrows, paging (HTML), auditurl (optional)
+
+    Example context (json):
+    {
+        "rows": [{"id": 3, "date": "29/10/26, 10:00", "origin": "Audit page", "requester": "Admin User",
+            "status": {"label": "Complete", "cssclass": "badge-success"}, "overall": "Blocked",
+            "severities": [{"label": "Blocking", "count": 2}], "hasreport": true,
+            "evolution": [{"label": "Resolved", "count": 1, "cssclass": "badge-success"}], "first": false,
+            "policy": "2027 · ab12cd34", "reofferyear": 2027, "version": "0.5.0 (2026103000)", "url": "#"}],
+        "hasrows": true, "paging": "", "auditurl": "#"
+    }
+}}
+<div class="local_mooc_audit-history">
+    {{#auditurl}}<p><a class="btn btn-secondary" href="{{auditurl}}">{{#str}} runaudit, local_mooc_audit {{/str}}</a></p>{{/auditurl}}
+    {{^hasrows}}<p>{{#str}} history_none, local_mooc_audit {{/str}}</p>{{/hasrows}}
+    {{#hasrows}}
+    <div class="table-responsive">
+    <table class="table table-sm table-striped generaltable" data-region="history-runs">
+        <caption class="sr-only">{{#str}} history, local_mooc_audit {{/str}}</caption>
+        <thead><tr>
+            <th scope="col">{{#str}} label_runid, local_mooc_audit {{/str}}</th>
+            <th scope="col">{{#str}} col_date, local_mooc_audit {{/str}}</th>
+            <th scope="col">{{#str}} col_origin, local_mooc_audit {{/str}}</th>
+            <th scope="col">{{#str}} col_requester, local_mooc_audit {{/str}}</th>
+            <th scope="col">{{#str}} col_status, local_mooc_audit {{/str}}</th>
+            <th scope="col">{{#str}} col_overall, local_mooc_audit {{/str}}</th>
+            <th scope="col">{{#str}} col_nc, local_mooc_audit {{/str}}</th>
+            <th scope="col">{{#str}} col_evolution, local_mooc_audit {{/str}}</th>
+            <th scope="col">{{#str}} col_policy, local_mooc_audit {{/str}}</th>
+            <th scope="col">{{#str}} col_version, local_mooc_audit {{/str}}</th>
+        </tr></thead>
+        <tbody>
+        {{#rows}}
+            <tr data-runid="{{id}}">
+                <td><a href="{{url}}">{{id}}</a></td>
+                <td>{{date}}</td>
+                <td>{{origin}}</td>
+                <td>{{requester}}</td>
+                <td><span class="badge {{status.cssclass}}">{{status.label}}</span></td>
+                <td>{{overall}}</td>
+                <td>{{#hasreport}}{{#severities}}<span class="text-nowrap mr-1" title="{{label}}">{{label}}: {{count}}</span> {{/severities}}{{/hasreport}}</td>
+                <td>{{#first}}<span class="text-muted">—</span>{{/first}}{{#evolution}}<span class="badge {{cssclass}} mr-1">{{label}}: {{count}}</span>{{/evolution}}</td>
+                <td class="small">{{policy}}{{#reofferyear}} ({{reofferyear}}){{/reofferyear}}</td>
+                <td class="small">{{version}}</td>
+            </tr>
+        {{/rows}}
+        </tbody>
+    </table>
+    </div>
+    {{{paging}}}
+    {{/hasrows}}
+</div>

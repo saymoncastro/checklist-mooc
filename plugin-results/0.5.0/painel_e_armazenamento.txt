@@ -1,0 +1,7 @@
+painel: 104 salas, build 0.017s, render 0.055s, leituras 124, HTML 75884 bytes
+painel: 104 salas, build 0.003s, render 0.006s, leituras 12, HTML 75884 bytes
+painel: 104 salas, build 0.002s, render 0.006s, leituras 12, HTML 75884 bytes
+m_local_mooc_audit_policy: 48.0 kB
+m_local_mooc_audit_batch: 64.0 kB
+m_local_mooc_audit_run: 2040.0 kB
+execuções com relatório: 205; relatório médio 29.2 kB (máx. 40.4 kB); detalhes médios 2.1 kB

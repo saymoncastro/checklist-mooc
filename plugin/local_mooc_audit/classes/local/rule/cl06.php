@@ -58,7 +58,12 @@ class cl06 extends base {
         $sd = $s['course']['startdate'];
         $ed = $s['course']['enddate'];
         if (!$sd) {
-            return [$this->f(status::NAO_CONFORME, 'Configurações do curso > Data de início', 'não definida')];
+            return [$this->f(
+                status::NAO_CONFORME,
+                'Configurações do curso > Data de início',
+                'não definida',
+                ['check' => 'startdate']
+            )];
         }
         $probs = [];
         $year = (int) userdate($sd, '%Y', 99, false);
@@ -78,7 +83,7 @@ class cl06 extends base {
             'início=' . helpers::d($sd) . ' fim=' . helpers::d($ed),
             ['encontrado' => implode('; ', $probs) ?: 'ok',
             'esperado' => "{$p['required_start_date']}/{$p['reoffer_year']}",
-            'orientacao' => $this->guidance()]
+            'orientacao' => $this->guidance(), 'check' => 'startdate']
         )];
     }
 }

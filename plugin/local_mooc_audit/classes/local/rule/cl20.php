@@ -59,7 +59,7 @@ class cl20 extends base {
             (string) $hs === '1' ? status::CONFORME : status::NAO_CONFORME,
             'Configurações do curso > Formato > Seções escondidas',
             "hiddensections=" . var_export($hs, true),
-            ['esperado' => '1 (completamente invisíveis)']
+            ['esperado' => '1 (completamente invisíveis)', 'check' => 'hiddensections']
         );
         foreach ($s['sections'] as $sec) {
             if ($sec['number'] == 0) {
@@ -69,17 +69,18 @@ class cl20 extends base {
             $lbl = "Seção {$sec['number']} \"{$sec['name']}\"";
             if (!$mods) {
                 $out[] = $this->f(status::ATENCAO, $lbl, 'seção sem módulos', ['orientacao' => $this->g('emptysection'),
-                    'locus' => self::LOCUS_SECTION, 'section' => $sec['number']]);
+                    'locus' => self::LOCUS_SECTION, 'section' => $sec['number'], 'check' => 'content']);
             } else if (count(array_filter($mods, fn($c) => $s['modules'][$c]['modname'] !== 'label')) === 0) {
                 $out[] = $this->f(status::ATENCAO, $lbl, 'seção só com rótulos', ['gravidade' => status::BAIXA,
-                    'locus' => self::LOCUS_SECTION, 'section' => $sec['number']]);
+                    'locus' => self::LOCUS_SECTION, 'section' => $sec['number'], 'check' => 'content']);
             }
             if ($sec['rawname'] !== null && preg_match($p['generic_section_names'], helpers::norm($sec['rawname']))) {
                 $out[] = $this->f(
                     status::ATENCAO,
                     $lbl,
                     'nome genérico "' . $sec['rawname'] . '"',
-                    ['orientacao' => $this->g('genericname'), 'locus' => self::LOCUS_SECTION, 'section' => $sec['number']]
+                    ['orientacao' => $this->g('genericname'), 'locus' => self::LOCUS_SECTION, 'section' => $sec['number'],
+                    'check' => 'generic_name']
                 );
             }
             if (!$sec['visible'] && array_filter($mods, fn($c) => $s['modules'][$c]['completion'])) {
@@ -87,7 +88,8 @@ class cl20 extends base {
                     status::ATENCAO,
                     $lbl,
                     'seção oculta com atividades que têm conclusão',
-                    ['gravidade' => status::MEDIA, 'locus' => self::LOCUS_SECTION, 'section' => $sec['number']]
+                    ['gravidade' => status::MEDIA, 'locus' => self::LOCUS_SECTION, 'section' => $sec['number'],
+                    'check' => 'hidden_completion']
                 );
             }
         }

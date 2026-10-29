@@ -61,7 +61,7 @@ class cl21 extends base {
             $hasprogress ? status::CONFORME : status::NAO_CONFORME,
             'Blocos da página do curso',
             'blocos=' . json_encode($names, JSON_UNESCAPED_UNICODE) . ' (fonte: ' . $s['blocks_source'] . ')',
-            ['esperado' => 'bloco Progresso de Conclusão presente']
+            ['esperado' => 'bloco Progresso de Conclusão presente', 'check' => 'progress_block']
         );
         foreach ($p['required_blocks']['html'] as $t) {
             $ok = (bool) array_filter($titles, fn($x) => strpos($x, helpers::norm($t)) !== false);
@@ -69,7 +69,7 @@ class cl21 extends base {
                 $ok ? status::CONFORME : status::NAO_CONFORME,
                 'Blocos da página do curso',
                 "bloco \"$t\": " . ($ok ? 'presente' : 'ausente'),
-                ['orientacao' => $ok ? null : $this->guidance()]
+                ['orientacao' => $ok ? null : $this->guidance(), 'check' => 'html_block', 'subject' => helpers::norm($t)]
             );
         }
         return $out;

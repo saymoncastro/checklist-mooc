@@ -64,11 +64,13 @@ class xav01 extends base {
                         helpers::label($m),
                         "enunciado declara {$mm[1]} pontos; nota máxima={$gi['grademax']}",
                         ['cmid' => $m['cmid'],
-                        'orientacao' => $this->guidance()]
+                        'orientacao' => $this->guidance(), 'check' => 'intro_grade',
+                        'subject' => 'item:' . (int) $gi['itemnumber']]
                     );
                 }
             }
         }
-        return $out ?: [$this->f(status::CONFORME, 'Enunciados', 'sem divergências entre enunciado e pontuação')];
+        return $out ?: [$this->f(status::CONFORME, 'Enunciados', 'sem divergências entre enunciado e pontuação', [
+            'check' => 'summary'])];
     }
 }

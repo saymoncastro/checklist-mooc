@@ -1,0 +1,10 @@
+Execução final (decisão 12 aplicada, versão 2026103001), ambiente moocaudit-s5-web, 2026-10-30
+
+$ vendor/bin/phpunit --testsuite local_mooc_audit_testsuite
+OK (214 tests, 3417 assertions) — 02:19
+
+$ vendor/bin/behat --tags=@local_mooc_audit
+13 scenarios (13 passed), 210 steps (210 passed) — 1m29s
+
+$ phpcs --standard=moodle local/mooc_audit
+0 erros, 0 avisos

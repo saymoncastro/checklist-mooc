@@ -60,7 +60,7 @@ class xint03 extends base {
             $out[] = $this->f($installed ? status::CONFORME : status::NAO_CONFORME, "módulo $mod", ($installed
                 ? 'instalado (versão ' . $s['plugins']['installed']['mod'][$mod] . ')' : 'NÃO instalado')
                 . (in_array($mod, $std) ? '' : ' — plugin de terceiros'), ['gravidade' => in_array($mod, $std)
-                    ? status::INFORMATIVA : status::ALTA]);
+                    ? status::INFORMATIVA : status::ALTA, 'check' => 'plugin', 'subject' => "mod:$mod"]);
         }
         $stdav = \core_plugin_manager::standard_plugins_list('availability') ?: [];
         foreach ($s['plugins']['used']['availability'] as $type) {
@@ -70,9 +70,11 @@ class xint03 extends base {
                 "condição de acesso \"$type\"",
                 $installed ? 'plugin availability_' . $type . ' instalado' : 'plugin availability_' . $type
                     . ' AUSENTE: condições deste tipo são ignoradas silenciosamente',
-                ['gravidade' => in_array($type, $stdav) ? status::INFORMATIVA : status::ALTA]
+                ['gravidade' => in_array($type, $stdav) ? status::INFORMATIVA : status::ALTA, 'check' => 'plugin',
+                    'subject' => "availability:$type"]
             );
         }
-        return $out ?: [$this->f(status::NAO_APLICAVEL, 'Plugins', 'curso sem módulos nem condições de acesso')];
+        return $out ?: [$this->f(status::NAO_APLICAVEL, 'Plugins', 'curso sem módulos nem condições de acesso', [
+            'check' => 'applicability'])];
     }
 }

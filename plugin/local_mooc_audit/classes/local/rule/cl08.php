@@ -62,7 +62,7 @@ class cl08 extends base {
                 status::NAO_CONFORME,
                 'Métodos de inscrição',
                 'nenhuma instância de autoinscrição',
-                ['orientacao' => $this->g('add')]
+                ['orientacao' => $this->g('add'), 'check' => 'self_enrol']
             )];
         }
         $sd = $s['course']['startdate'];
@@ -90,7 +90,8 @@ class cl08 extends base {
                 "Métodos de inscrição > Autoinscrição (id {$e['id']})",
                 "status={$e['status']} novas_inscricoes={$e['customint6']} início=" . helpers::d($e['enrolstartdate']) . ' fim='
                     . helpers::d($e['enrolenddate']),
-                ['encontrado' => implode('; ', $probs) ?: 'ok', 'orientacao' => $this->guidance()]
+                ['encontrado' => implode('; ', $probs) ?: 'ok', 'orientacao' => $this->guidance(), 'check' => 'self_enrol',
+                'subject' => 'enrol:' . $e['id']]
             );
         }
         foreach ($s['enrols'] as $e) {
@@ -99,7 +100,8 @@ class cl08 extends base {
                     status::ATENCAO,
                     'Métodos de inscrição > Acesso de visitante',
                     'habilitado' . ($e['has_password'] ? ' com senha' : ''),
-                    ['gravidade' => status::INFORMATIVA, 'orientacao' => $this->g('guest')]
+                    ['gravidade' => status::INFORMATIVA, 'orientacao' => $this->g('guest'), 'check' => 'guest',
+                    'subject' => 'enrol:' . $e['id']]
                 );
             }
         }

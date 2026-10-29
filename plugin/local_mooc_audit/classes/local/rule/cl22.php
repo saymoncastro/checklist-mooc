@@ -39,7 +39,8 @@ class cl22 extends base {
     /** @var string */
     const SEVERITY = status::MEDIA;
     /** @var string[] */
-    const POLICY_KEYS = ['licence_label_text', 'licence_feedback_name', 'licence_certificate_name'];
+    const POLICY_KEYS = ['licence_label_text', 'licence_feedback_name', 'licence_certificate_name',
+        'required_certificate_module'];
     /** @var string */
     const LOCUS = self::LOCUS_MODULE_EDIT;
     /** @var string */
@@ -60,21 +61,21 @@ class cl22 extends base {
             $labels ? status::CONFORME : status::NAO_CONFORME,
             'Área do curso (seção 0)',
             'rótulo "' . $p['licence_label_text'] . '": ' . ($labels ? 'presente' : 'ausente'),
-            ['locus' => $labels ? self::LOCUS_NONE : self::LOCUS_IMPORT]
+            ['locus' => $labels ? self::LOCUS_NONE : self::LOCUS_IMPORT, 'check' => 'licence_label']
         );
         $fb = helpers::mods($s, 'feedback', $p['licence_feedback_name']);
         $out[] = $this->f(
             $fb ? status::CONFORME : status::NAO_CONFORME,
             'Atividades do curso',
             'pesquisa "' . $p['licence_feedback_name'] . '": ' . ($fb ? 'presente' : 'ausente'),
-            ['locus' => $fb ? self::LOCUS_NONE : self::LOCUS_IMPORT]
+            ['locus' => $fb ? self::LOCUS_NONE : self::LOCUS_IMPORT, 'check' => 'licence_feedback']
         );
         $dc = helpers::mods($s, $p['required_certificate_module'], $p['licence_certificate_name']);
         $out[] = $this->f(
             $dc ? status::CONFORME : status::NAO_CONFORME,
             'Atividades do curso',
             'declaração "' . $p['licence_certificate_name'] . '": ' . ($dc ? 'presente' : 'ausente'),
-            ['locus' => $dc ? self::LOCUS_NONE : self::LOCUS_IMPORT]
+            ['locus' => $dc ? self::LOCUS_NONE : self::LOCUS_IMPORT, 'check' => 'licence_certificate']
         );
         return $out;
     }

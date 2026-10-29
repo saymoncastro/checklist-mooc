@@ -20,7 +20,8 @@
  * Auditing and comparing are read-only (no risk declared: the audit reads course configuration, not personal data; see
  * specs/001 research R11). Assisted correction (specs/002) separates preparing a proposal (read) from applying it
  * (write); applying also requires moodle/course:manageactivities in the activity context. Auditing and both correction
- * capabilities are granted by default to managers and editing teachers (decision 11 of 2026-10-29, specs/002).
+ * capabilities are granted by default to managers and editing teachers (decision 11 of 2026-10-29, specs/002). The
+ * history of a course is read with local/mooc_audit:audit; the dashboard and the batches (specs/005) are for managers.
  *
  * @package    local_mooc_audit
  * @copyright  2026 Cefor/Ifes
@@ -63,6 +64,22 @@ $capabilities = [
         'contextlevel' => CONTEXT_COURSE,
         'archetypes' => [
             'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
+        ],
+    ],
+    // Consolidated dashboard of the audits and pages of the batches (specs/005). Read only.
+    'local/mooc_audit:viewdashboard' => [
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => [
+            'manager' => CAP_ALLOW,
+        ],
+    ],
+    // Request background audits of several courses (specs/005). Creates runs and tasks; never changes a course.
+    'local/mooc_audit:batchaudit' => [
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => [
             'manager' => CAP_ALLOW,
         ],
     ],

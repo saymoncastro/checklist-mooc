@@ -54,7 +54,8 @@
         "evidencia": {"type": ["string", "null"]},
         "encontrado": {"type": ["string", "null"]},
         "esperado": {"type": ["string", "null"]},
-        "orientacao": {"type": ["string", "null"]}
+        "orientacao": {"type": ["string", "null"]},
+        "occurrence": {"type": "string", "pattern": "^(CL-[0-9]{2}|X-[A-Z]+-[0-9]{2})\\|(course|cm:[0-9]+|sec:[0-9]+)\\|", "description": "Stable occurrence key rule|entity|check[|subject] (specs/005, additive)"}
       },
       "allOf": [
         {"if": {"properties": {"status": {"const": "NAO_CONFORME"}}}, "then": {"properties": {"local": {"type": "string", "minLength": 1}, "evidencia": {"type": "string", "minLength": 1}, "orientacao": {"type": "string", "minLength": 1}}}},

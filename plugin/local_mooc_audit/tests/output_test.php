@@ -87,7 +87,10 @@ final class output_test extends \advanced_testcase {
             'local_mooc_audit'
         )), $html);
         $this->assertStringContainsString(get_string('rerun', 'local_mooc_audit'), $html);
-        $this->assertStringContainsString('<form method="get"', $html);
+        // Running an audit records it (specs/005, decision 12.1): POST with sesskey and action=run, never GET.
+        $this->assertStringContainsString('<form method="post"', $html);
+        $this->assertStringContainsString('name="sesskey"', $html);
+        $this->assertMatchesRegularExpression('/name="action"\s+value="run"/', $html);
         // Evidence is rendered in full (the PoC truncated it at 300 characters).
         $longest = '';
         foreach ($audit['results'] as $r) {
@@ -186,5 +189,31 @@ final class output_test extends \advanced_testcase {
         $this->assertCount(local\catalog::count(), $data->conformant);
         $this->assertFalse($data->haserrors);
         $this->assertFalse($data->notices->has);
+    }
+
+    /**
+     * A stored report (history, specs/005) offers no re-run and its JSON link returns the stored run, never a new
+     * audit of index.php (code review finding 2).
+     */
+    public function test_stored_report_links(): void {
+        global $PAGE;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        [$a] = $this->getDataGenerator()->get_plugin_generator('local_mooc_audit')->create_course_a(2027);
+        $report = \local_mooc_audit\engine::audit((int) $a->id, ['reoffer_year' => 2027]);
+        $PAGE->set_url('/local/mooc_audit/history.php');
+        $PAGE->set_context(\context_course::instance($a->id));
+        $runurl = new \moodle_url('/local/mooc_audit/history.php', ['courseid' => $a->id, 'runid' => 7]);
+        $data = (new \local_mooc_audit\output\report(
+            $report,
+            $runurl,
+            false,
+            null,
+            new \moodle_url($runurl, ['format' => 'json'])
+        ))->export_for_template($PAGE->get_renderer('local_mooc_audit'));
+        $this->assertSame('', $data->rerunbutton);
+        $this->assertStringContainsString('/local/mooc_audit/history.php', $data->jsonurl);
+        $this->assertStringContainsString('runid=7', $data->jsonurl);
+        $this->assertStringNotContainsString('index.php', $data->jsonurl);
     }
 }

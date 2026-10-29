@@ -68,17 +68,18 @@ class xdep02 extends base {
                 if ($t['completion'] == 0) {
                     $out[] = $this->f(status::NAO_CONFORME, helpers::label($m), 'exige conclusão de ' . helpers::label($t)
                         . ' que NÃO tem acompanhamento de conclusão', ['cmid' => $m['cmid'],
-                        'orientacao' => $this->guidance()]);
+                        'orientacao' => $this->guidance(), 'check' => 'target_completion', 'subject' => 'cm:' . $t['cmid']]);
                 } else if ($t['visible'] == 0) {
                     $out[] = $this->f(status::ATENCAO, helpers::label($m), 'exige conclusão de módulo OCULTO '
-                        . helpers::label($t), ['cmid' => $m['cmid'], 'gravidade' => status::ALTA]);
+                        . helpers::label($t), ['cmid' => $m['cmid'], 'gravidade' => status::ALTA,
+                        'check' => 'target_completion', 'subject' => 'cm:' . $t['cmid']]);
                 }
                 if (in_array($c['e'] ?? 1, [2, 3]) && !$t['grade_items']) {
                     $out[] = $this->f(
                         status::NAO_CONFORME,
                         helpers::label($m),
                         'exige conclusão com aprovação/reprovação de módulo sem nota ' . helpers::label($t),
-                        ['cmid' => $m['cmid']]
+                        ['cmid' => $m['cmid'], 'check' => 'target_grade', 'subject' => 'cm:' . $t['cmid']]
                     );
                 }
             }
@@ -86,7 +87,8 @@ class xdep02 extends base {
         return $out ?: [$this->f(
             status::CONFORME,
             'Restrições de acesso',
-            'todas as condições de conclusão apontam para módulos com conclusão habilitada e visíveis'
+            'todas as condições de conclusão apontam para módulos com conclusão habilitada e visíveis',
+            ['check' => 'summary']
         )];
     }
 }

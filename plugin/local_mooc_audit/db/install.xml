@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="local/mooc_audit/db" VERSION="20261029" COMMENT="XMLDB file for Moodle local/mooc_audit"
+<XMLDB PATH="local/mooc_audit/db" VERSION="20261030" COMMENT="XMLDB file for Moodle local/mooc_audit"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -29,6 +29,74 @@
         <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid"/>
         <INDEX NAME="cmid" UNIQUE="false" FIELDS="cmid"/>
         <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="local_mooc_audit_policy" COMMENT="Effective policy applied by audit runs, stored once per content fingerprint (specs/005)">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="fingerprint" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false" COMMENT="sha1 of the canonical policy content"/>
+        <FIELD NAME="policyversion" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" COMMENT="Declared policy version"/>
+        <FIELD NAME="policy" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Canonical JSON of the effective policy"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="fingerprint" UNIQUE="true" FIELDS="fingerprint"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="local_mooc_audit_batch" COMMENT="Requests to audit several courses in the background (specs/005)">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Requester (0 = anonymised)"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Label"/>
+        <FIELD NAME="criteria" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="JSON: selection mode and parameters"/>
+        <FIELD NAME="skipped" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="JSON: courses refused or reusing a pending run"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
+        <INDEX NAME="timecreated" UNIQUE="false" FIELDS="timecreated"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="local_mooc_audit_run" COMMENT="One audit execution of a course, immutable once finished (specs/005)">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Audited course"/>
+        <FIELD NAME="batchid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Batch (0 = none)"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Requester (0 = process or anonymised)"/>
+        <FIELD NAME="origin" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="page, batch or cli"/>
+        <FIELD NAME="status" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="queued, running, complete, partial or failed"/>
+        <FIELD NAME="overall" TYPE="char" LENGTH="30" NOTNULL="false" SEQUENCE="false" COMMENT="Overall status of the report"/>
+        <FIELD NAME="policyid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Applied policy"/>
+        <FIELD NAME="pluginversion" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false" COMMENT="release (version) of the plugin"/>
+        <FIELD NAME="contractversion" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Report contract version"/>
+        <FIELD NAME="reofferyear" TYPE="int" LENGTH="4" NOTNULL="false" SEQUENCE="false" COMMENT="Effective reoffer year"/>
+        <FIELD NAME="coursecacherev" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="course.cacherev observed by the audit (detects later changes of the room)"/>
+        <FIELD NAME="summary" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="JSON summary of the report"/>
+        <FIELD NAME="report" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="JSON report (contract 1.0, without snapshot)"/>
+        <FIELD NAME="details" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="JSON: rule fingerprints, entities, metrics"/>
+        <FIELD NAME="previousrunid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Base run of the evolution"/>
+        <FIELD NAME="evolution" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="JSON: counts per evolution class"/>
+        <FIELD NAME="errors" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="JSON: failures and limitations"/>
+        <FIELD NAME="attempts" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Times a task started this run"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="timestarted" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="timefinished" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="courseid-id" UNIQUE="false" FIELDS="courseid, id"/>
+        <INDEX NAME="batchid" UNIQUE="false" FIELDS="batchid"/>
+        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
+        <INDEX NAME="status" UNIQUE="false" FIELDS="status"/>
+        <INDEX NAME="timefinished" UNIQUE="false" FIELDS="timefinished"/>
       </INDEXES>
     </TABLE>
   </TABLES>

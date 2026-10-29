@@ -90,11 +90,23 @@ class xdep04 extends base {
                 status::NAO_CONFORME,
                 'Grafo de restrições',
                 'ciclo: ' . implode(' → ', $c),
-                ['orientacao' => $this->guidance()]
+                ['orientacao' => $this->guidance(), 'check' => 'cycle', 'subject' => self::canonical($c)]
             ), $cycles);
         }
         $edges = array_sum(array_map('count', $g));
         return [$this->f(status::CONFORME, 'Grafo de restrições', count($g)
-            . " módulos com condições, $edges arestas, sem ciclos")];
+            . " módulos com condições, $edges arestas, sem ciclos", ['check' => 'summary'])];
+    }
+
+    /**
+     * Order-independent identity of a cycle (occurrence subject): the cycle rotated to start at its smallest cmid.
+     *
+     * @param int[] $cycle closed path (first cmid repeated at the end)
+     * @return string e.g. "12>15>19"
+     */
+    public static function canonical(array $cycle): string {
+        $nodes = array_slice($cycle, 0, -1);
+        $start = array_search(min($nodes), $nodes);
+        return implode('>', array_merge(array_slice($nodes, $start), array_slice($nodes, 0, $start)));
     }
 }

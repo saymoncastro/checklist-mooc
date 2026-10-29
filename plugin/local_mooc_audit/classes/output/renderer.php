@@ -65,4 +65,54 @@ class renderer extends plugin_renderer_base {
     public function render_comparison_report(comparison_report $page): string {
         return $this->render_from_template('local_mooc_audit/comparison', $page->export_for_template($this));
     }
+
+    /**
+     * Render the "since the previous audit" box (specs/005).
+     *
+     * @param run_summary $box
+     * @return string HTML
+     */
+    public function render_run_summary(run_summary $box): string {
+        return $this->render_from_template('local_mooc_audit/run_summary', $box->export_for_template($this));
+    }
+
+    /**
+     * Render the list of recorded audits of a course (specs/005).
+     *
+     * @param history_page $page
+     * @return string HTML
+     */
+    public function render_history_page(history_page $page): string {
+        return $this->render_from_template('local_mooc_audit/history', $page->export_for_template($this));
+    }
+
+    /**
+     * Render one recorded audit with its evolution (specs/005).
+     *
+     * @param run_page $page
+     * @return string HTML
+     */
+    public function render_run_page(run_page $page): string {
+        return $this->render_from_template('local_mooc_audit/run', $page->export_for_template($this));
+    }
+
+    /**
+     * Render the follow-up dashboard (specs/005).
+     *
+     * @param dashboard_page $page
+     * @return string HTML
+     */
+    public function render_dashboard_page(dashboard_page $page): string {
+        return $this->render_from_template('local_mooc_audit/dashboard', $page->export_for_template($this));
+    }
+
+    /**
+     * Render a batch (specs/005).
+     *
+     * @param batch_page $page
+     * @return string HTML
+     */
+    public function render_batch_page(batch_page $page): string {
+        return $this->render_from_template('local_mooc_audit/batch', $page->export_for_template($this));
+    }
 }

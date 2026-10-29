@@ -70,12 +70,14 @@ class xcont04 extends base {
                             status::NAO_CONFORME,
                             helpers::label($m) . " campo $field",
                             "@@PLUGINFILE@@$ref não encontrado entre os arquivos do módulo",
-                            ['cmid' => $m['cmid'], 'orientacao' => $this->guidance()]
+                            ['cmid' => $m['cmid'], 'orientacao' => $this->guidance(), 'check' => 'pluginfile',
+                                'subject' => "$field:$path"]
                         );
                     }
                 }
             }
         }
-        return $out ?: [$this->f(status::CONFORME, 'Conteúdos', 'todas as referências @@PLUGINFILE@@ resolvidas')];
+        return $out ?: [$this->f(status::CONFORME, 'Conteúdos', 'todas as referências @@PLUGINFILE@@ resolvidas', [
+            'check' => 'summary'])];
     }
 }
