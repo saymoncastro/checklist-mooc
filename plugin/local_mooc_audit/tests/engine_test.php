@@ -222,6 +222,54 @@ final class engine_test extends \advanced_testcase {
     }
 
     /**
+     * A rule that throws yields exactly one ERRO result with the message; every other rule is still evaluated and
+     * the error never counts as a non conformity.
+     */
+    public function test_rule_exception_is_isolated(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $course = $this->getDataGenerator()->create_course();
+        $broken = new class extends local\rule\base {
+            const ID = 'T-ERR-01';
+            const CATEGORY = category::PLUGINS_ENVIRONMENT;
+            const ORIGIN = 'test';
+            /**
+             * Always fails.
+             *
+             * @param array $s
+             * @param array $p
+             * @return array
+             */
+            public function evaluate(array $s, array $p): array {
+                throw new \RuntimeException('boom');
+            }
+            /**
+             * Metadata without language strings.
+             *
+             * @return array
+             */
+            public function meta(): array {
+                return ['id' => self::ID, 'title' => 'Broken rule', 'category' => self::CATEGORY, 'origin' => self::ORIGIN, 'type' => self::TYPE,
+                    'severity' => self::SEVERITY, 'policy_keys' => [], 'locus' => self::LOCUS, 'guidance' => '', 'source' => ''];
+            }
+        };
+        $rules = catalog::instances();
+        $rules = array_merge(array_slice($rules, 0, 3, true), ['T-ERR-01' => $broken], array_slice($rules, 3, null, true));
+        $snapshot = snapshot::build($course->id, 0);
+        $results = engine::run_rules($snapshot, policy::load(), $rules);
+
+        $err = array_values(array_filter($results, fn($r) => $r['rule'] === 'T-ERR-01'));
+        $this->assertCount(1, $err);
+        $this->assertSame(status::ERRO, $err[0]['status']);
+        $this->assertSame(get_string('rule_error', 'local_mooc_audit', 'RuntimeException: boom'), $err[0]['evidencia']);
+        $this->assertSame('none', $err[0]['locus']);
+        $this->assertCount(catalog::count() + 1, array_unique(array_column($results, 'rule')));
+        $summary = engine::summarize($results);
+        $this->assertSame(1, $summary['por_status'][status::ERRO]);
+        $this->assertSame(engine::summarize(array_filter($results, fn($r) => $r['rule'] !== 'T-ERR-01'))['overall_status'], $summary['overall_status']);
+    }
+
+    /**
      * Invalid or ill-typed admin policy: defaults are used and a warning is reported; valid overrides are applied.
      */
     public function test_policy_warnings(): void {

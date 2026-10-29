@@ -47,7 +47,7 @@ mecanismo nativo `core_course_external::import_course`).
 | Arquivo | Papel |
 |---|---|
 | `classes/snapshot.php` | Retrato JSON-serializável da sala (mesmo modelo do protótipo MBZ) |
-| `classes/policy.php` | Parâmetros institucionais (fora do código das regras); avisos de política inválida |
+| `classes/policy.php`, `classes/admin/setting_policyjson.php` | Parâmetros institucionais (fora do código das regras); avisos de política inválida; o setting rejeita JSON malformado antes de salvar |
 | `classes/local/rule/rule_interface.php`, `base.php` | Contrato de uma regra (`id()`, `meta()`, `evaluate()`) e construtor de findings |
 | `classes/local/rule/*.php` | Uma classe por regra: 18 `CL-*` (checklist) + 11 `X-*` (adicionais), com categoria, tipo, gravidade, chaves de política, locus e fonte |
 | `classes/local/catalog.php` | Lista explícita e ordenada das 29 regras |
@@ -60,7 +60,9 @@ mecanismo nativo `core_course_external::import_course`).
 | `classes/output/report.php`, `renderer.php`, `templates/report*.mustache` | Dados do relatório para o template (agrupamento por gravidade → categoria, listas de alertas, não verificados, erros, conformes, avisos) e renderização |
 | `tests/generator/lib.php` | Gerador de componente: cursos A (conforme) e B (inconsistente), usado pelo PHPUnit e por `cli/make_fixtures.php` |
 | `tests/characterization_test.php` + `tests/fixtures/expected_*.json` | Estados por regra dos cursos A/B congelados (proteção contra mudança de comportamento) |
-| `tests/engine_test.php` | Motor, contrato, política, isolamento, conclusão desabilitada no site, saída texto do CLI |
+| `tests/engine_test.php` | Motor, contrato, política, isolamento de regra com exceção (regra injetada), conclusão desabilitada no site, locus de importação, saída texto do CLI |
+| `tests/policy_test.php` | Padrões, override do administrador e por arquivo, tipos errados, ano de reoferta automático, validação do setting |
+| `tests/rule/xint03_test.php` | X-INT-03: plugin ausente (condição de tipo inexistente) → não conforme; padrão instalado → conforme; curso vazio → não se aplica |
 | `tests/locator_test.php` | URL esperada por locus; identificadores ausentes → sem link |
 | `tests/access_test.php` | Capacidade por arquétipo (estudante/professor não; gerente sim), definição sem risco declarado, nó de navegação só com a capacidade |
 | `tests/output_test.php` | Dados do template e renderização da página (cursos A/B) |

@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 if ($hassiteconfig) {
     $settings = new admin_settingpage('local_mooc_audit', get_string('pluginname', 'local_mooc_audit'));
     $ADMIN->add('localplugins', $settings);
-    $settings->add(new admin_setting_configtextarea(
+    $settings->add(new \local_mooc_audit\admin\setting_policyjson(
         'local_mooc_audit/policyjson',
         get_string('policyjson', 'local_mooc_audit'),
         get_string('policyjson_desc', 'local_mooc_audit'),

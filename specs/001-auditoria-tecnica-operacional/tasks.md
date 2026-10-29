@@ -18,8 +18,10 @@ depois cobertura por regra e acabamento. Caminhos relativos a `plugin/local_mooc
 **Status desta lista**: fases 1 e 2 autorizadas em 2026-10-28 e concluídas (T001–T047b); fase 3 (US1) autorizada em
 2026-10-29 e concluída (T048–T055, verificada no navegador contra os cursos A/B gerados); fase 4 (US2) autorizada e
 concluída em 2026-10-29 (T056–T059: `locator_test`, locus por finding incl. novo locus `import` →
-`/backup/import.php`, local como link com título, botão "Executar novamente"); fases 5–9 aguardam autorização após
-validação (ver `docs/relatorio-adocao-sdd.md`).
+`/backup/import.php`, local como link com título, botão "Executar novamente"); fase 5 (US3) autorizada e concluída em
+2026-10-29 (T060–T064: setting de política validado, `policy_test`, blocos de transparência testados, `xint03_test`,
+isolamento de exceção com regra injetada); fases 6–9 aguardam autorização após validação (ver
+`docs/relatorio-adocao-sdd.md`).
 
 ## Format: `[ID] [P?] [Story] Description`
 
@@ -141,11 +143,11 @@ inconformidades por gravidade e categoria, evidência completa, alertas, não ve
 
 **Independent Test**: `policy_test`, `engine_test` (isolamento), teste NC de X-INT-03, quickstart §5.4–5.5.
 
-- [ ] T060 [P] [US3] Criar `classes/admin/setting_policyjson.php` (extends `admin_setting_configtextarea`) com `validate()` que aceita vazio ou objeto JSON e devolve mensagem com `json_last_error_msg()`; usar em `settings.php`
-- [ ] T061 [P] [US3] Criar `tests/policy_test.php`: JSON inválido no setting → padrões aplicados + `policy_warnings` não vazio; chave desconhecida ignorada; chave com tipo errado → aviso + padrão; `reoffer_year` automático = ano + 1; `policy_version` com `+admin`
-- [ ] T062 [US3] Garantir no template que `policy_warnings` e `warnings` da coleta aparecem na seção Avisos e que o bloco "Não verificados ou não aplicáveis" (subtítulos "Não foi possível verificar" para NV e "Não se aplica a esta sala" para NA, com motivo) e o bloco "Erro na verificação" (ERRO, com mensagem) existem e não entram nas contagens de inconformidade (`summarize()` já separa por estado; `overall_status` ignora esses estados)
-- [ ] T063 [US3] Criar `tests/rule/xint03_test.php` com cenário NC: módulo cujo `availability` cita tipo de condição inexistente (`{"type":"naoexiste"}`) → NAO_CONFORME Alta para a condição; módulo padrão instalado → CONFORME Informativa; curso vazio → NAO_APLICAVEL
-- [ ] T064 [US3] Teste em `engine_test.php` de que uma regra que lança exceção (injetar via subclasse de `catalog` ou regra de teste registrada em `tests/fixtures/`) produz um único resultado ERRO para ela e as demais regras são avaliadas
+- [x] T060 [P] [US3] Criar `classes/admin/setting_policyjson.php` (extends `admin_setting_configtextarea`) com `validate()` que aceita vazio ou objeto JSON e devolve mensagem com `json_last_error_msg()`; usar em `settings.php`
+- [x] T061 [P] [US3] Criar `tests/policy_test.php`: JSON inválido no setting → padrões aplicados + `policy_warnings` não vazio; chave desconhecida ignorada; chave com tipo errado → aviso + padrão; `reoffer_year` automático = ano + 1; `policy_version` com `+admin`
+- [x] T062 [US3] Garantir no template que `policy_warnings` e `warnings` da coleta aparecem na seção Avisos e que o bloco "Não verificados ou não aplicáveis" (subtítulos "Não foi possível verificar" para NV e "Não se aplica a esta sala" para NA, com motivo) e o bloco "Erro na verificação" (ERRO, com mensagem) existem e não entram nas contagens de inconformidade (`summarize()` já separa por estado; `overall_status` ignora esses estados)
+- [x] T063 [US3] Criar `tests/rule/xint03_test.php` com cenário NC: módulo cujo `availability` cita tipo de condição inexistente (`{"type":"naoexiste"}`) → NAO_CONFORME Alta para a condição; módulo padrão instalado → CONFORME Informativa; curso vazio → NAO_APLICAVEL
+- [x] T064 [US3] Teste em `engine_test.php` de que uma regra que lança exceção (injetar via subclasse de `catalog` ou regra de teste registrada em `tests/fixtures/`) produz um único resultado ERRO para ela e as demais regras são avaliadas
 
 **Checkpoint**: US3 coberta por testes; quickstart §5.4 e §5.5 manuais.
 

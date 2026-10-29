@@ -96,6 +96,50 @@ final class output_test extends \advanced_testcase {
     }
 
     /**
+     * Transparency blocks: NAO_VERIFICAVEL with reason under "could not be verified", ERRO with message, policy and
+     * collection notices; none of them changes the overall status.
+     */
+    public function test_unverifiable_errors_and_notices(): void {
+        global $PAGE;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $course = $this->getDataGenerator()->create_course();
+        set_config('enablecompletion', 0);
+        set_config('policyjson', '{bad', 'local_mooc_audit');
+        $audit = engine::audit($course->id);
+        $audit['results'][] = ['rule' => 'T-ERR-01', 'titulo' => 'Broken rule', 'status' => status::ERRO, 'category' => 'plugins_environment',
+            'gravidade' => status::MEDIA, 'local' => null, 'evidencia' => 'RuntimeException: boom', 'encontrado' => null, 'esperado' => null,
+            'orientacao' => null, 'cmid' => null, 'locus' => 'none', 'link' => null, 'tipo' => 'tecnica', 'origem' => 'test', 'classe' => 'A'];
+        $audit['warnings'][] = 'block_manager falhou';
+        $audit['summary'] = engine::summarize($audit['results']);
+        $renderer = $PAGE->get_renderer('local_mooc_audit');
+        $data = (new report($audit, new \moodle_url('/local/mooc_audit/index.php', ['courseid' => $course->id])))->export_for_template($renderer);
+
+        $this->assertTrue($data->unverifiable->hasnv);
+        $this->assertContains(get_string('site_completion_disabled', 'local_mooc_audit'), array_column($data->unverifiable->nv, 'evidencia'));
+        foreach ($data->unverifiable->nv as $item) {
+            $this->assertNotEmpty($item->evidencia, $item->rule);
+        }
+        $this->assertTrue($data->haserrors);
+        $this->assertSame('RuntimeException: boom', $data->errors[0]->evidencia);
+        $this->assertTrue($data->notices->has);
+        $this->assertCount(1, $data->notices->policy);
+        $this->assertSame(['block_manager falhou'], $data->notices->collection);
+        $counts = array_column($data->counts_status, 'count', 'code');
+        $this->assertSame(1, $counts[status::ERRO]);
+        $this->assertGreaterThan(0, $counts[status::NAO_VERIFICAVEL]);
+        $this->assertSame($audit['summary']['overall_status'], $data->overall->code);
+
+        $html = $renderer->render(new report($audit, new \moodle_url('/local/mooc_audit/index.php', ['courseid' => $course->id])));
+        foreach (['section_unverifiable_nv', 'section_errors', 'section_notices'] as $key) {
+            $this->assertStringContainsString(get_string($key, 'local_mooc_audit'), $html, $key);
+        }
+        $this->assertStringContainsString(get_string('policy_invalid', 'local_mooc_audit', 'Syntax error'), $html);
+        $this->assertStringContainsString('block_manager falhou', $html);
+        $this->assertStringContainsString('RuntimeException: boom', $html);
+    }
+
+    /**
      * Course A: clean overall status, no non conformities, every rule in the conformant list.
      */
     public function test_export_course_a(): void {

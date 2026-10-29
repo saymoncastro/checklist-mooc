@@ -19,6 +19,7 @@ use local_mooc_audit\local\catalog;
 use local_mooc_audit\local\category;
 use local_mooc_audit\local\locator;
 use local_mooc_audit\local\rule\base;
+use local_mooc_audit\local\rule\rule_interface;
 use local_mooc_audit\local\status;
 
 /**
@@ -83,12 +84,13 @@ class engine {
      *
      * @param array $snapshot
      * @param array $policy
+     * @param rule_interface[]|null $rules rules to run keyed by id (default: the catalogue; tests may inject others)
      * @return array
      */
-    public static function run_rules(array $snapshot, array $policy): array {
+    public static function run_rules(array $snapshot, array $policy, ?array $rules = null): array {
         $results = [];
         $sitedisabled = empty($snapshot['site']['enablecompletion']) || empty($snapshot['site']['enableavailability']);
-        foreach (catalog::instances() as $id => $rule) {
+        foreach ($rules ?? catalog::instances() as $id => $rule) {
             $meta = $rule->meta();
             if ($sitedisabled && in_array($meta['category'], [category::COMPLETION_RESTRICTIONS, category::CERTIFICATION], true)) {
                 $findings = [['status' => status::NAO_VERIFICAVEL, 'local' => null, 'evidencia' => get_string('site_completion_disabled', 'local_mooc_audit'),
@@ -97,7 +99,8 @@ class engine {
                 try {
                     $findings = $rule->evaluate($snapshot, $policy);
                 } catch (\Throwable $e) {
-                    $findings = [['status' => status::ERRO, 'local' => null, 'evidencia' => get_class($e) . ': ' . $e->getMessage(), 'gravidade' => null,
+                    $findings = [['status' => status::ERRO, 'local' => null,
+                        'evidencia' => get_string('rule_error', 'local_mooc_audit', get_class($e) . ': ' . $e->getMessage()), 'gravidade' => null,
                         'locus' => base::LOCUS_NONE]];
                 }
             }
