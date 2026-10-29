@@ -61,7 +61,7 @@ class cl05 extends base {
             $ok ? status::CONFORME : status::NAO_CONFORME,
             'Configurações do curso > Categoria',
             "categoria=\"$cat\"",
-            ['esperado' => $p['target_category_name'], 'orientacao' => $this->guidance()]
+            ['esperado' => $p['target_category_name'], 'orientacao' => $this->guidance(), 'check' => 'category']
         )];
     }
 }

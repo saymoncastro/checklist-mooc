@@ -61,7 +61,7 @@ class cl04 extends base {
                 $ok ? status::CONFORME : status::NAO_CONFORME,
                 'Sumário do curso',
                 "link $link " . ($ok ? 'presente' : 'ausente'),
-                ['orientacao' => $this->guidance()]
+                ['orientacao' => $this->guidance(), 'check' => 'summary_link', 'subject' => $link]
             );
         }
         return $out;

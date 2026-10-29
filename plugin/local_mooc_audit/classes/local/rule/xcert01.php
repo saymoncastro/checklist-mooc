@@ -100,12 +100,14 @@ class xcert01 extends base {
                 helpers::label($c),
                 'cadeia transitiva de conclusão: ' . count($chain) . ' módulos; tipos de condição: ' . json_encode($types),
                 ['cmid' => $c['cmid'], 'encontrado' => $probs ? implode('; ', $probs) : 'cadeia estaticamente satisfazível',
-                'orientacao' => $this->guidance()]
+                'orientacao' => $this->guidance(), 'check' => 'chain']
             );
             if ($c['visible'] == 0) {
-                $out[] = $this->f(status::NAO_CONFORME, helpers::label($c), 'certificado oculto', ['cmid' => $c['cmid']]);
+                $out[] = $this->f(status::NAO_CONFORME, helpers::label($c), 'certificado oculto', ['cmid' => $c['cmid'],
+                    'check' => 'hidden']);
             }
         }
-        return $out ?: [$this->f(status::NAO_CONFORME, 'Atividades do curso', 'sem certificado de conclusão')];
+        return $out ?: [$this->f(status::NAO_CONFORME, 'Atividades do curso', 'sem certificado de conclusão', [
+            'check' => 'certificate_presence'])];
     }
 }

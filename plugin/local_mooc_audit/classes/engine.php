@@ -31,7 +31,7 @@ use local_mooc_audit\local\status;
  */
 class engine {
     /** @var string Engine version recorded in every report. */
-    const VERSION = '0.4.0';
+    const VERSION = '0.5.0';
     /** @var string Version of the JSON report contract (bumped only on incompatible changes). */
     const CONTRACT_VERSION = '1.0';
 
@@ -82,12 +82,18 @@ class engine {
         return $report;
     }
 
+    /** @var string Check code of the single result that replaces a rule which could not run (ERRO or NAO_VERIFICAVEL). */
+    const RULE_CHECK = '_rule';
+
     /**
      * Run every rule; an exception in one rule becomes an ERRO result and never aborts the audit.
      *
      * A rule that reads completion tracking (or access restrictions) cannot be verified when that feature is disabled
      * at site level: it is replaced by a single NAO_VERIFICAVEL result with the reason. Rules declare the dependency
      * through REQUIRES_COMPLETION / REQUIRES_AVAILABILITY.
+     *
+     * Every result gets an occurrence key (see occurrence()) built from the check code and subject the rule declares;
+     * those two auxiliary fields are not kept in the result.
      *
      * @param array $snapshot
      * @param array $policy
@@ -96,6 +102,7 @@ class engine {
      */
     public static function run_rules(array $snapshot, array $policy, ?array $rules = null): array {
         $results = [];
+        $seen = [];
         $nocompletion = empty($snapshot['site']['enablecompletion']);
         $noavailability = empty($snapshot['site']['enableavailability']);
         foreach ($rules ?? catalog::instances() as $id => $rule) {
@@ -109,7 +116,7 @@ class engine {
             if ($reason) {
                 $findings = [['status' => status::NAO_VERIFICAVEL, 'local' => null,
                     'evidencia' => get_string($reason, 'local_mooc_audit'),
-                    'gravidade' => null, 'locus' => base::LOCUS_NONE]];
+                    'gravidade' => null, 'locus' => base::LOCUS_NONE, 'check' => self::RULE_CHECK]];
             } else {
                 try {
                     $findings = $rule->evaluate($snapshot, $policy);
@@ -117,13 +124,14 @@ class engine {
                     $findings = [['status' => status::ERRO, 'local' => null,
                         'evidencia' => get_string('rule_error', 'local_mooc_audit', get_class($e) . ': ' . $e->getMessage()),
                             'gravidade' => null,
-                        'locus' => base::LOCUS_NONE]];
+                        'locus' => base::LOCUS_NONE, 'check' => self::RULE_CHECK]];
                 }
             }
             foreach ($findings as $f) {
                 $f = array_merge(['local' => null, 'evidencia' => null, 'encontrado' => null, 'esperado' => null,
                     'orientacao' => null,
-                    'gravidade' => null, 'cmid' => null, 'locus' => null, 'section' => null], $f);
+                    'gravidade' => null, 'cmid' => null, 'locus' => null, 'section' => null, 'check' => null,
+                    'subject' => null], $f);
                 $f['rule'] = $id;
                 $f['titulo'] = $meta['title'];
                 $f['origem'] = $meta['origin'];
@@ -138,10 +146,42 @@ class engine {
                 if ($f['status'] === status::NAO_CONFORME && ($f['orientacao'] === null || $f['orientacao'] === '')) {
                     $f['orientacao'] = $meta['guidance'];
                 }
+                $key = self::occurrence($id, $f);
+                // Safety net only: a collision is a defect of the rule (occurrence_test fails on the reference courses).
+                $seen[$key] = ($seen[$key] ?? 0) + 1;
+                $f['occurrence'] = $seen[$key] > 1 ? $key . '#' . $seen[$key] : $key;
+                unset($f['check'], $f['subject']);
                 $results[] = $f;
             }
         }
         return $results;
+    }
+
+    /**
+     * Stable occurrence key of a finding: rule|entity|check[|subject] (specs/005 research R2).
+     *
+     * The entity is the activity (cm:<cmid>), else the section (sec:<number>), else the course. The check is the code of
+     * the verified condition declared by the rule (the same whether the condition passes or fails) and the subject a
+     * semantic discriminator when the check repeats on the same entity. Never derived from the evidence text, the
+     * language or the position of the result.
+     *
+     * @param string $rule
+     * @param array $f finding with cmid, section, check and subject
+     * @return string
+     */
+    public static function occurrence(string $rule, array $f): string {
+        if (!empty($f['cmid'])) {
+            $entity = 'cm:' . (int) $f['cmid'];
+        } else if ($f['section'] !== null && $f['section'] !== '') {
+            $entity = 'sec:' . (int) $f['section'];
+        } else {
+            $entity = 'course';
+        }
+        $key = $rule . '|' . $entity . '|' . ($f['check'] ?? 'main');
+        if ($f['subject'] !== null && $f['subject'] !== '') {
+            $key .= '|' . str_replace('|', '/', (string) $f['subject']);
+        }
+        return $key;
     }
 
     /**

@@ -64,7 +64,7 @@ class cl13 extends base {
                 "tentativas permitidas=$a",
                 ['cmid' => $m['cmid'], 'esperado' => ($p['attempts_rule'] === 'exact' ? '= ' : '≥ ') . $p['min_quiz_attempts']
                     . ' (0 = ilimitadas)',
-                'orientacao' => $this->guidance()]
+                'orientacao' => $this->guidance(), 'check' => 'attempts']
             );
             $intro = helpers::norm(helpers::text($m['texts']['intro'] ?? ''));
             if (preg_match('/tentativas?\s*(?:permitidas?)?\s*[:\-]?\s*(\d+)/u', $intro, $mm)) {
@@ -74,7 +74,7 @@ class cl13 extends base {
                         helpers::label($m),
                         "enunciado declara {$mm[1]} tentativas; configurado=$a",
                         ['cmid' => $m['cmid'],
-                        'orientacao' => $this->g('intro')]
+                        'orientacao' => $this->g('intro'), 'check' => 'intro_attempts']
                     );
                 }
             } else if ($intro !== '') {
@@ -82,10 +82,11 @@ class cl13 extends base {
                     status::ATENCAO,
                     helpers::label($m),
                     'enunciado não menciona o número de tentativas',
-                    ['cmid' => $m['cmid'], 'gravidade' => status::BAIXA]
+                    ['cmid' => $m['cmid'], 'gravidade' => status::BAIXA, 'check' => 'intro_attempts']
                 );
             }
         }
-        return $out ?: [$this->f(status::NAO_APLICAVEL, 'Questionários', 'curso sem questionários')];
+        return $out ?: [$this->f(status::NAO_APLICAVEL, 'Questionários', 'curso sem questionários', [
+            'check' => 'applicability'])];
     }
 }

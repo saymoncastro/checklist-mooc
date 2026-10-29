@@ -57,16 +57,18 @@ class xstr01 extends base {
         foreach ($s['modules'] as $m) {
             if ($m['visible'] == 0) {
                 $out[] = $this->f(status::ATENCAO, helpers::label($m), 'módulo oculto' . ($m['visibleoncoursepage'] == 0
-                    ? ' (stealth)' : ''), ['cmid' => $m['cmid'], 'orientacao' => $this->guidance()]);
+                    ? ' (stealth)' : ''), ['cmid' => $m['cmid'], 'orientacao' => $this->guidance(),
+                    'check' => 'visibility']);
             } else if ($m['uservisible'] === false && $s['viewer_userid']) {
                 $out[] = $this->f(status::ATENCAO, helpers::label($m), 'indisponível para o usuário ' . $s['viewer_userid']
-                    . ': ' . helpers::text($m['availableinfo']), ['cmid' => $m['cmid'], 'gravidade' => status::INFORMATIVA]);
+                    . ': ' . helpers::text($m['availableinfo']), ['cmid' => $m['cmid'], 'gravidade' => status::INFORMATIVA,
+                    'check' => 'visibility']);
             }
             if ($m['modname'] !== 'label' && helpers::text($m['name']) === '') {
                 $out[] = $this->f(status::NAO_CONFORME, helpers::label($m), 'nome vazio', ['cmid' => $m['cmid'],
-                    'orientacao' => $this->g('name')]);
+                    'orientacao' => $this->g('name'), 'check' => 'name']);
             }
         }
-        return $out ?: [$this->f(status::CONFORME, 'Estrutura', 'sem módulos ocultos ou sem nome')];
+        return $out ?: [$this->f(status::CONFORME, 'Estrutura', 'sem módulos ocultos ou sem nome', ['check' => 'summary'])];
     }
 }

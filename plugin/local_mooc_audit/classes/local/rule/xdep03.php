@@ -64,11 +64,12 @@ class xdep03 extends base {
                         status::NAO_CONFORME,
                         helpers::label($m),
                         'condição de nota aponta para item inexistente id=' . ($c['id'] ?? 'null'),
-                        ['cmid' => $m['cmid']]
+                        ['cmid' => $m['cmid'], 'check' => 'grade_item', 'subject' => 'item:' . (int) ($c['id'] ?? 0)]
                     );
                 }
             }
         }
-        return $out ?: [$this->f(status::CONFORME, 'Restrições de acesso', 'todas as condições de nota resolvidas')];
+        return $out ?: [$this->f(status::CONFORME, 'Restrições de acesso', 'todas as condições de nota resolvidas', [
+            'check' => 'summary'])];
     }
 }

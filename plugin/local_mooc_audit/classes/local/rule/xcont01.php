@@ -62,21 +62,22 @@ class xcont01 extends base {
                         status::NAO_CONFORME,
                         helpers::label($m),
                         'sem texto e sem mídia/links',
-                        ['cmid' => $m['cmid'], 'orientacao' => $this->guidance()]
+                        ['cmid' => $m['cmid'], 'orientacao' => $this->guidance(), 'check' => 'empty_content']
                     );
                 }
                 if ($m['modname'] === 'book' && empty($m['extra']['chapters'])) {
-                    $out[] = $this->f(status::NAO_CONFORME, helpers::label($m), 'livro sem capítulos', ['cmid' => $m['cmid']]);
+                    $out[] = $this->f(status::NAO_CONFORME, helpers::label($m), 'livro sem capítulos', ['cmid' => $m['cmid'],
+                        'check' => 'book_chapters']);
                 }
             }
             if ($m['modname'] === 'quiz' && ($m['extra']['slots'] ?? 0) == 0) {
                 $out[] = $this->f(status::NAO_CONFORME, helpers::label($m), 'questionário sem questões', ['cmid' => $m['cmid'],
                     'gravidade' => status::ALTA,
-                    'locus' => self::LOCUS_MODULE_VIEW]);
+                    'locus' => self::LOCUS_MODULE_VIEW, 'check' => 'quiz_questions']);
             }
             if ($m['modname'] === 'feedback' && ($m['extra']['items'] ?? 0) == 0) {
                 $out[] = $this->f(status::NAO_CONFORME, helpers::label($m), 'pesquisa sem itens', ['cmid' => $m['cmid'],
-                    'locus' => self::LOCUS_MODULE_VIEW]);
+                    'locus' => self::LOCUS_MODULE_VIEW, 'check' => 'feedback_items']);
             }
             if (in_array($m['modname'], ['resource', 'folder'])) {
                 $content = array_filter($m['files']['list'], fn($fe) => $fe['filearea'] === 'content');
@@ -86,11 +87,11 @@ class xcont01 extends base {
                         helpers::label($m),
                         'recurso de arquivo sem nenhum arquivo associado',
                         ['cmid' => $m['cmid'], 'gravidade' => status::ALTA,
-                        'orientacao' => $this->g('reupload')]
+                        'orientacao' => $this->g('reupload'), 'check' => 'files']
                     );
                 }
             }
         }
-        return $out ?: [$this->f(status::CONFORME, 'Recursos', 'nenhum recurso vazio detectado')];
+        return $out ?: [$this->f(status::CONFORME, 'Recursos', 'nenhum recurso vazio detectado', ['check' => 'summary'])];
     }
 }

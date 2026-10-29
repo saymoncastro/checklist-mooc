@@ -62,10 +62,11 @@ class cl19 extends base {
                     status::NAO_CONFORME,
                     helpers::label($m),
                     "completion={$m['completion']}",
-                    ['cmid' => $m['cmid'], 'esperado' => '0', 'orientacao' => $this->guidance()]
+                    ['cmid' => $m['cmid'], 'esperado' => '0', 'orientacao' => $this->guidance(), 'check' => 'completion']
                 );
             }
         }
-        return $out ?: [$this->f(status::CONFORME, 'Rótulos', 'nenhum rótulo com conclusão habilitada')];
+        return $out ?: [$this->f(status::CONFORME, 'Rótulos', 'nenhum rótulo com conclusão habilitada', [
+            'check' => 'summary'])];
     }
 }

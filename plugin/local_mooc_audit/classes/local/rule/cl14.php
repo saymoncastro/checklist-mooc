@@ -64,21 +64,23 @@ class cl14 extends base {
                     status::NAO_VERIFICAVEL,
                     helpers::label($m),
                     'tipo sem campo de encerramento conhecido',
-                    ['cmid' => $m['cmid'], 'gravidade' => status::INFORMATIVA]
+                    ['cmid' => $m['cmid'], 'gravidade' => status::INFORMATIVA, 'check' => 'close_date']
                 );
             } else if (!$close) {
                 $out[] = $this->f(
                     status::NAO_CONFORME,
                     helpers::label($m),
                     'data de encerramento não definida',
-                    ['cmid' => $m['cmid'], 'orientacao' => $this->guidance()]
+                    ['cmid' => $m['cmid'], 'orientacao' => $this->guidance(), 'check' => 'close_date']
                 );
             } else {
                 $note = ($ed && $close != $ed) ? ' (≠ fim do curso ' . helpers::d($ed) . ')' : '';
                 $out[] = $this->f($note ? status::ATENCAO : status::CONFORME, helpers::label($m), 'encerramento='
-                    . helpers::d($close) . $note, ['cmid' => $m['cmid'], 'gravidade' => $note ? status::BAIXA : null]);
+                    . helpers::d($close) . $note, ['cmid' => $m['cmid'], 'gravidade' => $note ? status::BAIXA : null,
+                    'check' => 'close_date']);
             }
         }
-        return $out ?: [$this->f(status::NAO_APLICAVEL, 'Atividades avaliativas', 'nenhuma')];
+        return $out ?: [$this->f(status::NAO_APLICAVEL, 'Atividades avaliativas', 'nenhuma', [
+            'check' => 'applicability'])];
     }
 }

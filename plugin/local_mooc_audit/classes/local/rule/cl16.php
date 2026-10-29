@@ -60,7 +60,8 @@ class cl16 extends base {
     public function evaluate(array $s, array $p): array {
         $ev = helpers::mods($s, 'feedback', $p['required_feedback_evaluation']);
         if (!$ev) {
-            return [$this->f(status::NAO_CONFORME, 'Atividades do curso', 'nenhuma "' . $p['required_feedback_evaluation'] . '"')];
+            return [$this->f(status::NAO_CONFORME, 'Atividades do curso', 'nenhuma "' . $p['required_feedback_evaluation'] . '"',
+                ['check' => 'evaluation_presence'])];
         }
         $e = $ev[0];
         $req = [];
@@ -86,12 +87,12 @@ class cl16 extends base {
             ['cmid' => $e['cmid'], 'encontrado' => $missing ? 'faltam: ' . implode('; ', $missing) : 'todas as '
                 . count($graded) . ' atividades com nota exigidas',
             'esperado' => 'conclusão de todas as atividades com nota',
-            'orientacao' => $this->guidance()]
+            'orientacao' => $this->guidance(), 'check' => 'requires_graded']
         )];
         $op = $e['availability']['op'] ?? '&';
         if ($op !== '&') {
             $out[] = $this->f(status::ATENCAO, helpers::label($e), "operador raiz=$op", ['cmid' => $e['cmid'],
-                'esperado' => '& (todas)']);
+                'esperado' => '& (todas)', 'check' => 'root_operator']);
         }
         return $out;
     }

@@ -63,7 +63,7 @@ class cl17 extends base {
             if ($m['completion'] == 1) {
                 $out[] = $this->f(status::NAO_CONFORME, helpers::label($m), 'conclusão MANUAL', ['cmid' => $m['cmid'],
                     'esperado' => 'automática (ou nenhuma, para rótulos/fóruns institucionais)',
-                    'orientacao' => $this->guidance()]);
+                    'orientacao' => $this->guidance(), 'check' => 'completion']);
                 continue;
             }
             if ($m['completion'] == 2) {
@@ -73,7 +73,7 @@ class cl17 extends base {
                         status::ATENCAO,
                         helpers::label($m),
                         'conclusão automática sem nenhum critério',
-                        ['cmid' => $m['cmid']]
+                        ['cmid' => $m['cmid'], 'check' => 'completion']
                     );
                 } else if (
                     $exp && $exp !== 'none' && !in_array(explode('_', $exp)[0], $crit) && !($exp === 'posts_or_none'
@@ -86,7 +86,7 @@ class cl17 extends base {
                         'critérios=' . implode('+', $crit),
                         ['cmid' => $m['cmid'], 'esperado' => "critério '$exp' para {$m['modname']}",
                         'gravidade' => status::BAIXA,
-                        'orientacao' => $this->g('criteria')]
+                        'orientacao' => $this->g('criteria'), 'check' => 'completion']
                     );
                 }
                 if ($exp === 'none' && $m['modname'] === 'label') {
@@ -99,7 +99,7 @@ class cl17 extends base {
             $counts[1] ? status::ATENCAO : status::CONFORME,
             'Conclusão de atividades',
             "nenhuma={$counts[0]} manual={$counts[1]} automática={$counts[2]}",
-            ['gravidade' => status::INFORMATIVA]
+            ['gravidade' => status::INFORMATIVA, 'check' => 'summary']
         ));
         return $out;
     }

@@ -63,15 +63,16 @@ class cl09 extends base {
                     $names,
                     JSON_UNESCAPED_UNICODE
                 ),
-                ['orientacao' => $this->g('import'), 'locus' => self::LOCUS_IMPORT]
+                ['orientacao' => $this->g('import'), 'locus' => self::LOCUS_IMPORT, 'check' => 'forum_presence']
             )];
         }
         $m = $f[0];
-        $out = [$this->f(status::CONFORME, helpers::label($m), 'presente', ['cmid' => $m['cmid']])];
+        $out = [$this->f(status::CONFORME, helpers::label($m), 'presente', ['cmid' => $m['cmid'],
+            'check' => 'forum_presence'])];
         if ($m['completion'] != 0) {
             $out[] = $this->f(status::NAO_CONFORME, helpers::label($m), "completion={$m['completion']}", ['cmid' => $m['cmid'],
                 'esperado' => 'conclusão desabilitada',
-                'orientacao' => $this->guidance()]);
+                'orientacao' => $this->guidance(), 'check' => 'forum_completion']);
         }
         return $out;
     }

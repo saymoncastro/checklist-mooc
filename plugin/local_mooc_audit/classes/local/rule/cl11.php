@@ -60,17 +60,19 @@ class cl11 extends base {
                 status::NAO_CONFORME,
                 'Atividades do curso',
                 'nenhuma Pesquisa (feedback) ~ "' . $p['required_feedback_profile'] . '"',
-                ['orientacao' => $this->g('import'), 'locus' => self::LOCUS_IMPORT]
+                ['orientacao' => $this->g('import'), 'locus' => self::LOCUS_IMPORT, 'check' => 'profile_presence']
             )];
         }
         $pm = $prof[0];
-        $out = [$this->f(status::CONFORME, helpers::label($pm), 'presente', ['cmid' => $pm['cmid']])];
+        $out = [$this->f(status::CONFORME, helpers::label($pm), 'presente', ['cmid' => $pm['cmid'],
+            'check' => 'profile_presence'])];
         if ($pm['completion'] != 2 || ($pm['extra']['completionsubmit'] ?? 0) != 1) {
             $out[] = $this->f(
                 status::NAO_CONFORME,
                 helpers::label($pm),
                 "completion={$pm['completion']} completionsubmit=" . ($pm['extra']['completionsubmit'] ?? 'n/a'),
-                ['cmid' => $pm['cmid'], 'esperado' => 'conclusão automática ao enviar', 'orientacao' => $this->g('completion')]
+                ['cmid' => $pm['cmid'], 'esperado' => 'conclusão automática ao enviar', 'orientacao' => $this->g('completion'),
+                    'check' => 'profile_completion']
             );
         }
         $certs = helpers::certs($s, $p);
@@ -79,7 +81,7 @@ class cl11 extends base {
                 status::NAO_CONFORME,
                 'Atividades do curso',
                 'nenhum certificado de conclusão',
-                ['locus' => self::LOCUS_IMPORT]
+                ['locus' => self::LOCUS_IMPORT, 'check' => 'certificate_presence']
             );
         }
         foreach ($certs as $c) {
@@ -95,7 +97,7 @@ class cl11 extends base {
                 helpers::label($c),
                 'restrições de conclusão: cmids ' . json_encode($cms),
                 ['cmid' => $c['cmid'], 'esperado' => "exigir conclusão de cm={$pm['cmid']} (Pesquisa de Perfil)",
-                'orientacao' => $this->guidance()]
+                'orientacao' => $this->guidance(), 'check' => 'requires_profile']
             );
         }
         return $out;
