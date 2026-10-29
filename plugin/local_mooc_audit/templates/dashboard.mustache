@@ -1,0 +1,140 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+{{!
+    @template local_mooc_audit/dashboard
+
+    Audit follow-up dashboard (specs/005): counters, summed evolution, filters, one row per course, batches.
+
+    Context variables required for this template:
+    * scopenotice; tiles[] (label, count, cssclass, url); hasevolution, evolution[] (code, label, count, cssclass)
+    * formurl, categories[] (id, name, selected), subcats, q, situations[] and severities[] (code, label, selected), from, to
+    * hasrows, rows[] (id, fullname, shortname, category, startdate, situation (label, cssclass), pending, isstale, stale,
+      severities[] (label, count), attention, lastaudit, evolution[], reporturl, historyurl, runurl), paging (HTML)
+    * canbatch, batchurl, sesskey; hasbatches, batches[] (name, date, requester, total, done, failed, pending, url)
+    * hasremoved, removed[] (courseid, runs, url)
+
+    Example context (json):
+    {
+        "scopenotice": "No non-conformity detected refers only to the 29 rules.",
+        "tiles": [{"label": "Courses", "count": 3, "cssclass": "", "url": null}],
+        "hasevolution": false, "evolution": [], "formurl": "#",
+        "categories": [{"id": 0, "name": "Any", "selected": true}], "subcats": true, "q": "",
+        "situations": [{"code": "", "label": "Any", "selected": true}], "severities": [{"code": "", "label": "Any", "selected": true}],
+        "from": "", "to": "", "hasrows": true,
+        "rows": [{"id": 2, "fullname": "Course A", "shortname": "A", "category": "Open", "startdate": "01/01/27",
+            "situation": {"label": "Not audited", "cssclass": "badge-secondary"}, "pending": false, "isstale": false, "stale": "",
+            "severities": [], "attention": 0, "lastaudit": "", "evolution": [], "reporturl": "#", "historyurl": "#", "runurl": null}],
+        "paging": "", "canbatch": true, "batchurl": "#", "sesskey": "x", "hasbatches": false, "batches": [],
+        "hasremoved": false, "removed": []
+    }
+}}
+<div class="local_mooc_audit-dashboard">
+    <div class="alert alert-secondary small" role="note" data-region="scope-notice">{{scopenotice}}</div>
+
+    <h3 class="h5">{{#str}} dashboard_counts, local_mooc_audit {{/str}}</h3>
+    <ul class="list-inline" data-region="counters">
+        {{#tiles}}
+        <li class="list-inline-item mb-2"><div class="border rounded px-3 py-2 text-center">
+            <div class="h4 mb-0">{{#url}}<a href="{{url}}">{{count}}</a>{{/url}}{{^url}}{{count}}{{/url}}</div>
+            <div class="small">{{#cssclass}}<span class="badge {{cssclass}}">{{label}}</span>{{/cssclass}}{{^cssclass}}{{label}}{{/cssclass}}</div>
+        </div></li>
+        {{/tiles}}
+    </ul>
+    {{#hasevolution}}
+    <p data-region="evolution-sum"><strong>{{#str}} dashboard_evolution, local_mooc_audit {{/str}}:</strong>
+        {{#evolution}}<span class="badge {{cssclass}} mr-1">{{label}}: {{count}}</span>{{/evolution}}</p>
+    {{/hasevolution}}
+
+    <form method="get" action="{{formurl}}" class="mb-3" data-region="filters">
+        <div class="form-row">
+            <div class="col-md-3 mb-2"><label for="lma-cat">{{#str}} col_category, local_mooc_audit {{/str}}</label>
+                <select id="lma-cat" name="categoryid" class="custom-select">{{#categories}}<option value="{{id}}" {{#selected}}selected{{/selected}}>{{name}}</option>{{/categories}}</select>
+                <div class="form-check"><input type="hidden" name="subcats" value="0"><input class="form-check-input" type="checkbox" id="lma-sub" name="subcats" value="1" {{#subcats}}checked{{/subcats}}>
+                    <label class="form-check-label" for="lma-sub">{{#str}} batch_subcategories, local_mooc_audit {{/str}}</label></div></div>
+            <div class="col-md-3 mb-2"><label for="lma-q">{{#str}} dashboard_filter_q, local_mooc_audit {{/str}}</label>
+                <input id="lma-q" type="text" name="q" value="{{q}}" class="form-control"></div>
+            <div class="col-md-2 mb-2"><label for="lma-sit">{{#str}} col_situation, local_mooc_audit {{/str}}</label>
+                <select id="lma-sit" name="situation" class="custom-select">{{#situations}}<option value="{{code}}" {{#selected}}selected{{/selected}}>{{label}}</option>{{/situations}}</select></div>
+            <div class="col-md-2 mb-2"><label for="lma-sev">{{#str}} dashboard_filter_severity, local_mooc_audit {{/str}}</label>
+                <select id="lma-sev" name="severity" class="custom-select">{{#severities}}<option value="{{code}}" {{#selected}}selected{{/selected}}>{{label}}</option>{{/severities}}</select></div>
+            <div class="col-md-2 mb-2"><label for="lma-from">{{#str}} dashboard_filter_from, local_mooc_audit {{/str}}</label>
+                <input id="lma-from" type="date" name="from" value="{{from}}" class="form-control">
+                <label for="lma-to">{{#str}} dashboard_filter_to, local_mooc_audit {{/str}}</label>
+                <input id="lma-to" type="date" name="to" value="{{to}}" class="form-control"></div>
+        </div>
+        <button type="submit" class="btn btn-secondary">{{#str}} dashboard_filter, local_mooc_audit {{/str}}</button>
+    </form>
+
+    {{^hasrows}}<p>{{#str}} dashboard_nocourses, local_mooc_audit {{/str}}</p>{{/hasrows}}
+    {{#hasrows}}
+    <form method="post" action="{{batchurl}}">
+        <input type="hidden" name="sesskey" value="{{sesskey}}">
+        <input type="hidden" name="action" value="create">
+        <input type="hidden" name="mode" value="selection">
+        <div class="table-responsive">
+        <table class="table table-sm table-striped generaltable" data-region="courses">
+            <caption class="sr-only">{{#str}} dashboardmenu, local_mooc_audit {{/str}}</caption>
+            <thead><tr>
+                {{#canbatch}}<th scope="col"><span class="sr-only">{{#str}} col_select, local_mooc_audit {{/str}}</span></th>{{/canbatch}}
+                <th scope="col">{{#str}} col_course, local_mooc_audit {{/str}}</th>
+                <th scope="col">{{#str}} col_category, local_mooc_audit {{/str}}</th>
+                <th scope="col">{{#str}} col_startdate, local_mooc_audit {{/str}}</th>
+                <th scope="col">{{#str}} col_situation, local_mooc_audit {{/str}}</th>
+                <th scope="col">{{#str}} col_nc, local_mooc_audit {{/str}}</th>
+                <th scope="col">{{#str}} col_attention, local_mooc_audit {{/str}}</th>
+                <th scope="col">{{#str}} col_lastaudit, local_mooc_audit {{/str}}</th>
+                <th scope="col">{{#str}} col_evolution, local_mooc_audit {{/str}}</th>
+                <th scope="col">{{#str}} col_actions, local_mooc_audit {{/str}}</th>
+            </tr></thead>
+            <tbody>
+            {{#rows}}
+                <tr data-courseid="{{id}}">
+                    {{#canbatch}}<td><input type="checkbox" name="courseids[]" value="{{id}}" id="lma-c{{id}}" aria-label="{{shortname}}"></td>{{/canbatch}}
+                    <td><strong>{{shortname}}</strong><div class="small">{{fullname}} (id {{id}})</div></td>
+                    <td class="small">{{category}}</td>
+                    <td class="small">{{startdate}}</td>
+                    <td><span class="badge {{situation.cssclass}}" data-situation>{{situation.label}}</span>
+                        {{#pending}}<div class="small">{{#str}} situation_pending, local_mooc_audit {{/str}}</div>{{/pending}}
+                        {{#isstale}}<div class="small text-warning">{{#str}} situation_stale, local_mooc_audit {{/str}}: {{stale}}</div>{{/isstale}}</td>
+                    <td class="small">{{#severities}}{{#count}}<span class="text-nowrap mr-1">{{label}}: {{count}}</span> {{/count}}{{/severities}}</td>
+                    <td>{{attention}}</td>
+                    <td class="small">{{lastaudit}}</td>
+                    <td>{{#evolution}}<span class="badge {{cssclass}} mr-1">{{label}}: {{count}}</span>{{/evolution}}</td>
+                    <td class="small text-nowrap">{{#runurl}}<a href="{{runurl}}">{{#str}} history_view, local_mooc_audit {{/str}}</a> · {{/runurl}}<a href="{{historyurl}}">{{#str}} history, local_mooc_audit {{/str}}</a> · <a href="{{reporturl}}">{{#str}} runaudit, local_mooc_audit {{/str}}</a></td>
+                </tr>
+            {{/rows}}
+            </tbody>
+        </table>
+        </div>
+        {{{paging}}}
+        {{#canbatch}}<button type="submit" class="btn btn-primary">{{#str}} dashboard_audit_selected, local_mooc_audit {{/str}}</button>
+            <a class="btn btn-secondary ml-2" href="{{batchurl}}">{{#str}} batch_new, local_mooc_audit {{/str}}</a>{{/canbatch}}
+    </form>
+    {{/hasrows}}
+
+    <h3 class="h5 mt-4">{{#str}} batches_recent, local_mooc_audit {{/str}}</h3>
+    {{^hasbatches}}<p>{{#str}} batch_none, local_mooc_audit {{/str}}</p>{{/hasbatches}}
+    {{#hasbatches}}
+    <ul data-region="batches">
+        {{#batches}}<li><a href="{{url}}">{{name}}</a> · {{date}} · {{requester}} · {{done}}/{{total}}{{#failed}} · <span class="text-danger">{{#str}} runstatus_failed, local_mooc_audit {{/str}}: {{failed}}</span>{{/failed}}{{#pending}} · {{#str}} situation_pending, local_mooc_audit {{/str}}: {{pending}}{{/pending}}</li>{{/batches}}
+    </ul>
+    {{/hasbatches}}
+
+    {{#hasremoved}}
+    <h3 class="h5 mt-4">{{#str}} dashboard_removed, local_mooc_audit {{/str}}</h3>
+    <ul>{{#removed}}<li><a href="{{url}}">id {{courseid}}</a> ({{runs}})</li>{{/removed}}</ul>
+    {{/hasremoved}}
+</div>

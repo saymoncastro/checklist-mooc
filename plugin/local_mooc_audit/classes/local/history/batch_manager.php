@@ -57,7 +57,7 @@ class batch_manager {
      */
     public static function max_courses(): int {
         $max = (int) get_config('local_mooc_audit', 'batch_max_courses');
-        return $max > 0 ? $max : 300;
+        return $max > 0 ? min(2000, $max) : 300;
     }
 
     /**

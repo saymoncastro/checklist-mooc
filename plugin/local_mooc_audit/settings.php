@@ -32,6 +32,14 @@ $ADMIN->add('courses', new admin_externalpage(
     'local/mooc_audit:compare'
 ));
 
+// Audit follow-up dashboard and batches (specs/005): managers holding local/mooc_audit:viewdashboard.
+$ADMIN->add('courses', new admin_externalpage(
+    'local_mooc_audit_dashboard',
+    get_string('dashboardmenu', 'local_mooc_audit'),
+    new moodle_url('/local/mooc_audit/dashboard.php'),
+    'local/mooc_audit:viewdashboard'
+));
+
 if ($hassiteconfig) {
     $settings = new admin_settingpage('local_mooc_audit', get_string('pluginname', 'local_mooc_audit'));
     $ADMIN->add('localplugins', $settings);
@@ -70,11 +78,29 @@ if ($hassiteconfig) {
             ['class' => 'small']
         )
     ));
+    $settings->add(new admin_setting_heading(
+        'local_mooc_audit/historyheading',
+        get_string('setting_history_heading', 'local_mooc_audit'),
+        get_string('setting_history_heading_desc', 'local_mooc_audit')
+    ));
+    foreach (['history_retention_days' => 365, 'history_stale_days' => 7, 'batch_concurrency' => 2,
+            'batch_max_courses' => 300] as $name => $default) {
+        $settings->add(new admin_setting_configtext(
+            "local_mooc_audit/$name",
+            get_string("setting_$name", 'local_mooc_audit'),
+            get_string("setting_{$name}_desc", 'local_mooc_audit'),
+            $default,
+            PARAM_INT
+        ));
+    }
     $settings->add(new admin_setting_heading('local_mooc_audit/tools', '', html_writer::link(
         new moodle_url('/local/mooc_audit/index.php'),
         get_string('runaudit', 'local_mooc_audit')
     ) . ' · ' . html_writer::link(
         new moodle_url('/local/mooc_audit/compare.php'),
         get_string('comparemenu', 'local_mooc_audit')
+    ) . ' · ' . html_writer::link(
+        new moodle_url('/local/mooc_audit/dashboard.php'),
+        get_string('dashboardmenu', 'local_mooc_audit')
     )));
 }

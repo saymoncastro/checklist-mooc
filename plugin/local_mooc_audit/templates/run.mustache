@@ -1,0 +1,128 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+{{!
+    @template local_mooc_audit/run
+
+    One recorded audit: metadata, errors, evolution against a base run, assisted corrections of the period and the
+    stored report (specs/005).
+
+    Context variables required for this template:
+    * runid, recordof, status (label, cssclass), overall, origin, requester, policy, fingerprint, reofferyear, version
+    * haserrors, errors[] (label, rule, message); historyurl, jsonurl
+    * first, basemissing, hasbase, evolutiontitle, comparable, nochange, notes[], counts[] (code, label, count, cssclass)
+    * groups[] (code, label, cssclass, count, items[] with rule, title, local, link, before, after, evidence_before,
+      evidence_after, reason, successor, key)
+    * hascorrections, corrections[] (date, rule, cmid, field, oldvalue, newvalue, outcome, requester)
+    * hasbaseoptions, baseoptions[] (id, label, selected), formurl, courseid; hasreport, reporthtml (HTML)
+
+    Example context (json):
+    {
+        "runid": 5, "recordof": "Record of 29/10/26, 10:00: stored result, not recalculated.",
+        "status": {"label": "Complete", "cssclass": "badge-success"}, "overall": "Blocked", "origin": "Batch",
+        "requester": "Admin User", "policy": "2027-decisoes", "fingerprint": "ab12cd34ef56", "reofferyear": 2027,
+        "version": "0.5.0 (2026103000)", "haserrors": false, "errors": [], "historyurl": "#", "jsonurl": "#",
+        "first": false, "hasbase": true, "evolutiontitle": "Evolution since the audit of 28/10/26, 09:00",
+        "comparable": true, "nochange": false, "notes": [],
+        "counts": [{"code": "resolved", "label": "Resolved", "count": 1, "cssclass": "badge-success"}],
+        "groups": [{"code": "resolved", "label": "Resolved", "cssclass": "badge-success", "count": 1,
+            "items": [{"rule": "CL-13", "title": "Quiz attempts", "local": "Quiz 1", "link": "#", "before": "Non conformant",
+            "after": "Conformant", "evidence_before": "attempts=1", "evidence_after": "attempts=2", "reason": null,
+            "successor": null, "key": "CL-13|cm:42|attempts"}]}],
+        "hascorrections": false, "corrections": [], "hasbaseoptions": false, "baseoptions": [], "formurl": "#",
+        "courseid": 2, "hasreport": false, "reporthtml": ""
+    }
+}}
+<div class="local_mooc_audit-run" data-runid="{{runid}}">
+    <div class="alert alert-info" role="status">{{recordof}}</div>
+    <dl class="row mb-2">
+        <dt class="col-sm-3">{{#str}} label_runid, local_mooc_audit {{/str}}</dt>
+        <dd class="col-sm-9">{{runid}} <span class="badge {{status.cssclass}}">{{status.label}}</span> {{overall}}</dd>
+        <dt class="col-sm-3">{{#str}} col_origin, local_mooc_audit {{/str}}</dt>
+        <dd class="col-sm-9">{{origin}} · {{requester}}</dd>
+        <dt class="col-sm-3">{{#str}} label_policy, local_mooc_audit {{/str}}</dt>
+        <dd class="col-sm-9">{{policy}} <code>{{fingerprint}}</code>{{#reofferyear}} · {{#str}} label_reoffer_year, local_mooc_audit {{/str}} {{reofferyear}}{{/reofferyear}}</dd>
+        <dt class="col-sm-3">{{#str}} label_pluginversion, local_mooc_audit {{/str}}</dt>
+        <dd class="col-sm-9">{{version}}</dd>
+    </dl>
+    <p><a href="{{historyurl}}" class="mr-3">{{#str}} history, local_mooc_audit {{/str}}</a> <a href="{{jsonurl}}">JSON</a></p>
+
+    {{#haserrors}}
+    <h3 class="h5">{{#str}} errors_title, local_mooc_audit {{/str}}</h3>
+    <ul data-region="run-errors">{{#errors}}<li><strong>{{label}}</strong>{{#rule}} ({{rule}}){{/rule}}: {{message}}</li>{{/errors}}</ul>
+    {{/haserrors}}
+
+    <section class="mb-4" data-region="evolution">
+    {{#first}}<p>{{#str}} evolution_first, local_mooc_audit {{/str}}</p>{{/first}}
+    {{#basemissing}}<p>{{#str}} evolution_base_missing, local_mooc_audit {{/str}}</p>{{/basemissing}}
+    {{#hasbase}}
+        <h3 class="h5">{{evolutiontitle}}</h3>
+        {{#hasbaseoptions}}
+        <form method="get" action="{{formurl}}" class="form-inline mb-2">
+            <input type="hidden" name="courseid" value="{{courseid}}">
+            <input type="hidden" name="runid" value="{{runid}}">
+            <label for="local_mooc_audit-baseid" class="mr-2">{{#str}} history_compare_with, local_mooc_audit {{/str}}</label>
+            <select id="local_mooc_audit-baseid" name="baseid" class="custom-select mr-2">
+                {{#baseoptions}}<option value="{{id}}" {{#selected}}selected{{/selected}}>{{label}}</option>{{/baseoptions}}
+            </select>
+            <button type="submit" class="btn btn-secondary">{{#str}} history_view, local_mooc_audit {{/str}}</button>
+        </form>
+        {{/hasbaseoptions}}
+        {{#notes}}<div class="alert alert-warning">{{.}}</div>{{/notes}}
+        {{#comparable}}
+        <ul class="list-inline">
+            {{#counts}}<li class="list-inline-item"><span class="badge {{cssclass}}" data-evolution="{{code}}">{{label}}: {{count}}</span></li>{{/counts}}
+        </ul>
+        {{#nochange}}<p>{{#str}} evolution_none, local_mooc_audit {{/str}}</p>{{/nochange}}
+        {{#groups}}
+        <h4 class="h6 mt-3"><span class="badge {{cssclass}}">{{label}}</span> ({{count}})</h4>
+        <div class="table-responsive">
+        <table class="table table-sm generaltable" data-evolution-group="{{code}}">
+            <caption class="sr-only">{{label}}</caption>
+            <thead><tr>
+                <th scope="col">{{#str}} label_rule, local_mooc_audit {{/str}}</th>
+                <th scope="col">{{#str}} label_local, local_mooc_audit {{/str}}</th>
+                <th scope="col">{{#str}} evolution_before, local_mooc_audit {{/str}}</th>
+                <th scope="col">{{#str}} evolution_after, local_mooc_audit {{/str}}</th>
+            </tr></thead>
+            <tbody>
+            {{#items}}
+                <tr data-occurrence="{{key}}">
+                    <td><strong>{{rule}}</strong> {{title}}</td>
+                    <td>{{#link}}<a href="{{link}}">{{local}}</a>{{/link}}{{^link}}{{local}}{{/link}}
+                        {{#reason}}<div class="small text-muted">{{reason}}</div>{{/reason}}
+                        {{#successor}}<div class="small text-muted">{{successor}}</div>{{/successor}}</td>
+                    <td>{{before}}{{#evidence_before}}<div class="small text-muted">{{evidence_before}}</div>{{/evidence_before}}</td>
+                    <td>{{after}}{{#evidence_after}}<div class="small text-muted">{{evidence_after}}</div>{{/evidence_after}}</td>
+                </tr>
+            {{/items}}
+            </tbody>
+        </table>
+        </div>
+        {{/groups}}
+        {{/comparable}}
+
+        <h4 class="h6 mt-3">{{#str}} corrections_between, local_mooc_audit {{/str}}</h4>
+        <p class="small text-muted">{{#str}} corrections_between_notice, local_mooc_audit {{/str}}</p>
+        {{^hascorrections}}<p>{{#str}} corrections_none, local_mooc_audit {{/str}}</p>{{/hascorrections}}
+        {{#hascorrections}}
+        <ul data-region="corrections">
+            {{#corrections}}<li>{{date}} · {{rule}} · cmid {{cmid}} · {{field}}: {{oldvalue}} → {{newvalue}} ({{outcome}}, {{requester}})</li>{{/corrections}}
+        </ul>
+        {{/hascorrections}}
+    {{/hasbase}}
+    </section>
+    {{#hasreport}}{{{reporthtml}}}{{/hasreport}}
+</div>

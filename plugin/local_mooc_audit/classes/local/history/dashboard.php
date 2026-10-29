@@ -62,7 +62,7 @@ class dashboard {
      */
     public static function stale_days(): int {
         $days = (int) get_config('local_mooc_audit', 'history_stale_days');
-        return $days > 0 ? $days : 7;
+        return $days > 0 ? min(365, $days) : 7;
     }
 
     /**

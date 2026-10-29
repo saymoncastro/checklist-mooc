@@ -17,6 +17,9 @@
 /**
  * Technical audit of a course: read-only report page, in the course context.
  *
+ * Every audit opened here is recorded in the history (specs/005): the report shows the evolution since the previous
+ * recorded audit and links to the history of the course. The course itself is never modified.
+ *
  * Parameters: courseid (or id), required; format=html|json.
  *
  * @package    local_mooc_audit
@@ -71,10 +74,23 @@ $PAGE->set_title(get_string('pagetitle', 'local_mooc_audit', format_string($cour
 $PAGE->set_heading(format_string($course->fullname));
 
 // Configuration view (no test viewer): rules ignore per-user availability, so the result does not depend on who
-// opens the page.
-$report = \local_mooc_audit\engine::audit($course->id, null, 0);
+// opens the page. The audit is recorded (specs/005); a failure outside the rules is recorded too, then shown.
+[$run, $report, $error] = \local_mooc_audit\local\history\recorder::record_now(
+    (int) $course->id,
+    \local_mooc_audit\local\history\run_store::ORIGIN_PAGE,
+    (int) $USER->id
+);
+if ($error) {
+    throw $error;
+}
+if (!$report) {
+    throw new moodle_exception('invalidcourseid');
+}
 
 if ($format === 'json') {
+    $evolution = \local_mooc_audit\local\history\run_store::json($run, 'evolution');
+    $report['run'] = ['id' => (int) $run->id, 'status' => $run->status, 'previousrunid' => (int) $run->previousrunid,
+        'evolution' => $evolution];
     @header('Content-Type: application/json; charset=utf-8');
     echo \local_mooc_audit\engine::to_json($report);
     exit;
@@ -82,6 +98,10 @@ if ($format === 'json') {
 
 $renderer = $PAGE->get_renderer('local_mooc_audit');
 echo $OUTPUT->header();
+echo $renderer->render(new \local_mooc_audit\output\run_summary(
+    $run,
+    \local_mooc_audit\local\history\run_store::count_for_course((int) $course->id)
+));
 $withcorrections = has_capability('local/mooc_audit:preparecorrection', $context);
 $compareurl = has_capability('local/mooc_audit:compare', $context)
     ? new moodle_url('/local/mooc_audit/compare.php', ['target' => $course->id]) : null;

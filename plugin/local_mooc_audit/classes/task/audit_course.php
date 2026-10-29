@@ -51,7 +51,7 @@ class audit_course extends \core\task\adhoc_task {
      */
     protected function get_default_concurrency_limit(): int {
         $limit = (int) get_config('local_mooc_audit', 'batch_concurrency');
-        return $limit > 0 ? $limit : 2;
+        return $limit > 0 ? min(10, $limit) : 2;
     }
 
     /**
