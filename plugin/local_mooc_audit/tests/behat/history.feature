@@ -28,6 +28,7 @@ Feature: Audit history, evolution, batches and follow-up dashboard
     Given I log in as "teacher1"
     And I am on "Sala Histórico" course homepage
     And I navigate to "Technical audit" in current page administration
+    And I press "Run audit"
     Then I should see "First recorded audit of this course" in the "[data-region='run-summary']" "css_element"
     When I press "Run again"
     Then I should see "Persistent:" in the "[data-region='run-summary']" "css_element"

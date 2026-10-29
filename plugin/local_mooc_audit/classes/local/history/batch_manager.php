@@ -57,7 +57,7 @@ class batch_manager {
      */
     public static function max_courses(): int {
         $max = (int) get_config('local_mooc_audit', 'batch_max_courses');
-        return $max > 0 ? min(2000, $max) : 300;
+        return $max > 0 ? min(2000, $max) : 100;
     }
 
     /**
@@ -82,6 +82,8 @@ class batch_manager {
             'subcategories' => !empty($criteria['subcategories']),
             'courseids' => in_array($mode, [self::MODE_IDS, self::MODE_SELECTION], true) ? $ids : [],
             'startyear' => (int) ($criteria['startyear'] ?? 0),
+            // Explicit cycle (reoffer year) applied to the audits of the batch; 0 = the policy default (decision 12.6).
+            'reofferyear' => max(0, (int) ($criteria['reofferyear'] ?? 0)),
         ];
     }
 

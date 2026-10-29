@@ -87,7 +87,10 @@ final class output_test extends \advanced_testcase {
             'local_mooc_audit'
         )), $html);
         $this->assertStringContainsString(get_string('rerun', 'local_mooc_audit'), $html);
-        $this->assertStringContainsString('<form method="get"', $html);
+        // Running an audit records it (specs/005, decision 12.1): POST with sesskey and action=run, never GET.
+        $this->assertStringContainsString('<form method="post"', $html);
+        $this->assertStringContainsString('name="sesskey"', $html);
+        $this->assertMatchesRegularExpression('/name="action"\s+value="run"/', $html);
         // Evidence is rendered in full (the PoC truncated it at 300 characters).
         $longest = '';
         foreach ($audit['results'] as $r) {

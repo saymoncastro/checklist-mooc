@@ -2,12 +2,18 @@
 
 Todas as páginas exigem `require_login`; ações que escrevem exigem `require_sesskey()` e POST.
 
-## `index.php?courseid=N[&format=json]` (alterada)
+## `index.php?courseid=N[&format=json]` (alterada — decisão 12.1)
 
-- Inalterado: acesso (`local/mooc_audit:audit` no curso), relatório HTML/JSON (contrato 1.0).
-- Novo: a execução é registrada (`origin = page`). O JSON ganha, em cada resultado, `occurrence` (aditivo) e no topo
-  `run` = `{"id", "status", "previousrunid", "evolution"}` (aditivo). O HTML mostra o quadro "Desde a auditoria
-  anterior" (contagens por classe, link para a evolução) e o link "Histórico de auditorias".
+- Inalterado: acesso (`local/mooc_audit:audit` no curso), relatório HTML/JSON no contrato 1.0.
+- **GET consulta**: mostra o relatório da última execução válida guardada ("Resultado da última auditoria, executada em
+  …"), motivos de desatualização (sala alterada, idade, política, plugin), falha mais recente se houver, evolução e link
+  do histórico. Sem execução guardada: aviso e botão "Executar auditoria". Abrir ou recarregar nunca executa nem grava.
+- **POST `action=run` + `sesskey`** ("Executar auditoria"/"Executar novamente"): executa, registra (`origin = page`) e
+  redireciona para o GET com a notificação.
+- **`format=json`**: relatório guardado da última execução válida + `run` = `{"id", "status", "executed_at",
+  "previousrunid", "evolution"}`; cada resultado traz `occurrence`. Sem execução: HTTP 404 com `{"run": null}`.
+  **Mudança de comportamento** em relação à 0.4.0 (que recalculava a cada GET): consumidores que precisam de um
+  resultado novo usam a CLI (`--record`) ou, futuramente, a API da Spec 004.
 
 ## `history.php?courseid=N` — histórico da sala
 
@@ -41,7 +47,7 @@ Todas as páginas exigem `require_login`; ações que escrevem exigem `require_s
 ## `batch.php` — lotes
 
 - `batch.php` (GET): formulário de novo lote (`batchaudit`): modo `category` (+ subcategorias), `ids` (lista separada
-  por vírgula/espaço), `startyear`; botão "Pré-visualizar" mostra salas aceitas e recusadas (motivo); "Confirmar"
+  por vírgula/espaço), `startyear`; ciclo opcional (`reofferyear`, 0 = da política); botão "Pré-visualizar" mostra salas aceitas e recusadas (motivo); "Confirmar"
   cria o lote.
 - `batch.php` (POST `action=create`, `sesskey`): cria o lote a partir de `mode` + parâmetros ou `courseids[]`
   (seleção do painel); redireciona para `batch.php?id=B`.
@@ -62,7 +68,7 @@ Todas as páginas exigem `require_login`; ações que escrevem exigem `require_s
 
 - `cli/audit.php --courseid=N [--record]` (existente + opção): `--record` grava a execução (`origin = cli`,
   `userid = 0`).
-- `cli/batch.php --courses=1,2,3 | --category=C [--subcats] | --startyear=AAAA [--name=...] [--run]`: cria o lote como
+- `cli/batch.php --courses=1,2,3 | --category=C [--subcats] | --startyear=AAAA [--reofferyear=AAAA] [--name=...] [--run]`: cria o lote como
   o administrador (`userid` = admin principal) e, com `--run`, executa as tarefas do lote em série no próprio
   processo, imprimindo tempo e memória por sala (usado na medição de desempenho).
 

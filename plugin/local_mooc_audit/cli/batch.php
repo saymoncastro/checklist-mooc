@@ -37,7 +37,8 @@ use local_mooc_audit\local\history\run_store;
 use local_mooc_audit\task\audit_course;
 
 [$options, $unrecognized] = cli_get_params([
-    'courses' => '', 'category' => 0, 'subcats' => false, 'startyear' => 0, 'name' => '', 'run' => false, 'help' => false,
+    'courses' => '', 'category' => 0, 'subcats' => false, 'startyear' => 0, 'reofferyear' => 0, 'name' => '', 'run' => false,
+    'help' => false,
 ], ['h' => 'help']);
 
 if ($options['help'] || (!$options['courses'] && !$options['category'] && !$options['startyear'])) {
@@ -48,6 +49,7 @@ if ($options['help'] || (!$options['courses'] && !$options['category'] && !$opti
         '  --courses=1,2,3   lista de ids',
         '  --category=N      categoria; --subcats inclui subcategorias',
         '  --startyear=AAAA  salas cuja data de início está no ano',
+        '  --reofferyear=AAAA  ciclo (ano da reoferta) aplicado às auditorias; padrão: o da política',
         '  --name=TEXTO      nome do lote',
         '  --run             executa as tarefas do lote neste processo, em série, e imprime tempo e memória por sala',
     ]));
@@ -64,6 +66,7 @@ if ($options['courses']) {
 } else {
     $criteria = ['mode' => batch_manager::MODE_STARTYEAR, 'startyear' => (int) $options['startyear']];
 }
+$criteria['reofferyear'] = (int) $options['reofferyear'];
 $t0 = microtime(true);
 $out = batch_manager::create($criteria, (int) $admin->id, (string) $options['name']);
 if ($out['error']) {

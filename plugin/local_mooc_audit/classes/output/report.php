@@ -115,11 +115,12 @@ class report implements renderable, templatable {
         $data->reoffer_year = $r['reoffer_year'];
         $data->executed_at = userdate(strtotime($r['executed_at']));
         $data->total_s = $r['timing']['total_s'];
-        $rerun = new moodle_url($this->pageurl);
+        // Running an audit records it (specs/005, decision 12.1): an explicit POST with sesskey, never a link.
+        $rerun = new moodle_url($this->pageurl, ['action' => 'run']);
         $rerun->remove_params('format');
         $data->rerunurl = $rerun->out(false);
         $data->rerunbutton = $this->storedjsonurl ? ''
-            : $output->render(new single_button($rerun, get_string('rerun', 'local_mooc_audit'), 'get'));
+            : $output->render(new single_button($rerun, get_string('rerun', 'local_mooc_audit'), 'post'));
         $json = $this->storedjsonurl ?? new moodle_url($this->pageurl, ['format' => 'json']);
         $data->jsonurl = $json->out(false);
         $data->compareurl = $this->compareurl ? $this->compareurl->out(false) : null;

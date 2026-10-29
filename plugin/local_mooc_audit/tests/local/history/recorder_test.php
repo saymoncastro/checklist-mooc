@@ -250,14 +250,18 @@ final class recorder_test extends \advanced_testcase {
      * page audit and executed after it compares with the page audit (review finding 3).
      */
     public function test_base_is_chosen_by_time(): void {
-        global $USER;
+        global $DB, $USER;
         $b = $this->course_b();
         set_config('policyjson', json_encode(self::POLICY), 'local_mooc_audit');
-        $this->record($b->id);
+        [$first] = $this->record($b->id);
         $queued = recorder::queue((int) $b->id, (int) $USER->id, 0);
-        $this->waitForSecond();
         [$page] = $this->record($b->id);
-        $this->waitForSecond();
+        // Explicit times instead of waiting for the clock (the container clock is not reliable under load).
+        $now = time();
+        $DB->update_record(run_store::TABLE, (object) ['id' => $first->id, 'timestarted' => $now - 300,
+            'timefinished' => $now - 300]);
+        $DB->update_record(run_store::TABLE, (object) ['id' => $page->id, 'timestarted' => $now - 100,
+            'timefinished' => $now - 100]);
         ob_start();
         $this->runAdhocTasks(\local_mooc_audit\task\audit_course::class);
         ob_end_clean();

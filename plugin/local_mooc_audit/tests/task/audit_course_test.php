@@ -282,4 +282,21 @@ final class audit_course_test extends \advanced_testcase {
         $this->assertSame(run_store::QUEUED, run_store::get($lost)->status, 'left for the daily cleanup (stale)');
         $this->assertNotEquals($first['batchid'], $second['batchid']);
     }
+
+    /**
+     * A batch may set the cycle (reoffer year) applied to its audits (decision 12.6); the default is the policy year.
+     */
+    public function test_explicit_cycle(): void {
+        [$a, $b, $manager] = $this->setup_courses();
+        $out = batch_manager::create(['mode' => 'ids', 'courseids' => [$a->id], 'reofferyear' => 2031], $manager->id);
+        $plain = batch_manager::create(['mode' => 'ids', 'courseids' => [$b->id]], $manager->id);
+        $this->run_queue();
+        $run = run_store::get((int) batch_manager::runs(batch_manager::get($out['batchid']))[$a->id]->id);
+        $this->assertEquals(2031, $run->reofferyear);
+        $this->assertNotSame('SEM_INCONFORMIDADES', $run->overall, 'course A dated 2027 fails the dates of the 2031 cycle');
+        $this->assertEquals(self::YEAR, run_store::get((int) batch_manager::runs(
+            batch_manager::get($plain['batchid'])
+        )[$b->id]->id)->reofferyear);
+        $this->assertSame(100, batch_manager::max_courses(), 'decision 12.5');
+    }
 }

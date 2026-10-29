@@ -26,6 +26,7 @@ Feature: Assisted correction of a technical audit finding
   Scenario: A manager previews, confirms and sees the correction resolved by the re-audit
     Given I am on the "Curso de teste" "Course" page logged in as "manager1"
     And I navigate to "Technical audit" in current page administration
+    And I press "Run audit"
     When I click on "See correction proposal" "link" in the "CL-13" "table_row"
     Then I should see "Correction proposal"
     And I should see "Executable correction after confirmation"
@@ -43,6 +44,7 @@ Feature: Assisted correction of a technical audit finding
   Scenario: Cancelling a proposal changes nothing
     Given I am on the "Curso de teste" "Course" page logged in as "manager1"
     And I navigate to "Technical audit" in current page administration
+    And I press "Run audit"
     And I click on "See correction proposal" "link" in the "CL-13" "table_row"
     When I click on "Cancel" "link"
     Then I should see "Technical audit: Curso de teste"
@@ -53,6 +55,7 @@ Feature: Assisted correction of a technical audit finding
   Scenario: An editing teacher opens the audit and applies a correction
     Given I am on the "Curso de teste" "Course" page logged in as "teacher1"
     And I navigate to "Technical audit" in current page administration
+    And I press "Run audit"
     When I click on "See correction proposal" "link" in the "CL-13" "table_row"
     And I press "Confirm correction"
     Then I should see "Correction applied and confirmed: the re-audit no longer reports the non conformity."
@@ -65,6 +68,7 @@ Feature: Assisted correction of a technical audit finding
       | local/mooc_audit:preparecorrection | Allow      | teacher | Course       | CT1       |
     And I am on the "Curso de teste" "Course" page logged in as "teacher2"
     And I navigate to "Technical audit" in current page administration
+    And I press "Run audit"
     When I click on "See correction proposal" "link" in the "CL-13" "table_row"
     Then I should see "Correction proposal"
     And "Confirm correction" "button" should not exist

@@ -22,7 +22,7 @@ data são carimbos Unix. `userid = 0` significa "processo" (CLI) ou solicitante 
 | id | int(10) seq | não | |
 | userid | int(10) | não (padrão 0) | solicitante |
 | name | char(255) | não | rótulo dado pelo gestor (padrão: critério + data) |
-| criteria | text | não | JSON: `{"mode": "category"\|"ids"\|"startyear"\|"selection", "categoryid": int, "subcategories": bool, "courseids": [int], "startyear": int}` |
+| criteria | text | não | JSON: `{"mode": "category"\|"ids"\|"startyear"\|"selection", "categoryid": int, "subcategories": bool, "courseids": [int], "startyear": int, "reofferyear": int (0 = da política)}` |
 | skipped | text | sim | JSON: lista de `{"courseid": int, "reason": "not_found"\|"site"\|"permission"\|"duplicate", "runid": int?}`; `duplicate` aponta a execução reaproveitada |
 | timecreated | int(10) | não | |
 
@@ -43,6 +43,7 @@ data são carimbos Unix. `userid = 0` significa "processo" (CLI) ou solicitante 
 | pluginversion | char(40) | não | `release (version)` do plugin, ex.: `0.5.0 (2026103000)` |
 | contractversion | char(10) | não | versão do contrato do relatório (`1.0`) |
 | reofferyear | int(4) | sim | ano de reoferta efetivo |
+| coursecacherev | int(10) | sim | `course.cacherev` observado pela auditoria (upgrade 2026103001): diferente do atual = sala alterada depois da execução (decisão 12.3) |
 | summary | text | sim | JSON: `summary` do relatório (`por_status`, `nao_conformes_por_gravidade`, `regras`, `overall_status`) |
 | report | text | sim | JSON do relatório (contrato 1.0, sem `snapshot`, resultados com `occurrence`) |
 | details | text | sim | JSON: `{"rules": {"CL-13": {"p": hash12, "r": hash12}}, "modules": {"<cmid>": "<modname>\|<nome normalizado>"}, "sections": [ids das seções], "enrols": [ids das instâncias de inscrição], "metrics": {"seconds": f, "peak_mb": f, "db_reads": n, "db_writes": n}}` |
@@ -62,7 +63,7 @@ data são carimbos Unix. `userid = 0` significa "processo" (CLI) ou solicitante 
 queued ──(tarefa obtém trava)──▶ running ──▶ complete | partial | failed
    │                               │  (processo morto: trava liberada; tarefa refeita, attempts+1; >3 → failed/interrupted)
    └──(curso removido / permissão revogada / limpeza de presas)──▶ failed
-page/cli: registro criado já em running (síncrono)
+page (POST action=run)/cli: registro criado já em running (síncrono); abrir a página não cria execução
 ```
 
 - `complete`: relatório produzido, nenhum resultado `ERRO`.
@@ -118,7 +119,7 @@ nenhuma classificação.
 Reaproveitamento por um lote novo: só execução `queued` cuja tarefa ad hoc ainda existe, ou `running` iniciada há menos
 de 15 min; execuções mortas não bloqueiam a sala e a limpeza diária as marca como `stale`.
 
-Indicadores adicionais: `pending` (execução `queued`/`running` existente), `stale` com motivos `age`,
+Indicadores adicionais: `pending` (execução `queued`/`running` existente), `stale` com motivos `age`, `course_changed`,
 `policy_changed`, `plugin_changed` (com base na última execução **válida** — `complete`/`partial`).
 
 ## Configurações novas (`local_mooc_audit/…`)
@@ -128,7 +129,7 @@ Indicadores adicionais: `pending` (execução `queued`/`running` existente), `st
 | `history_retention_days` | 365 | 30–1825 |
 | `history_stale_days` | 7 | 1–365 |
 | `batch_concurrency` | 2 | 1–10 |
-| `batch_max_courses` | 300 | 1–2000 |
+| `batch_max_courses` | 100 | 1–2000 |
 
 ## Capacidades novas
 

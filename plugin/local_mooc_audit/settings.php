@@ -85,7 +85,7 @@ if ($hassiteconfig) {
     ));
     foreach (
         ['history_retention_days' => 365, 'history_stale_days' => 7, 'batch_concurrency' => 2,
-            'batch_max_courses' => 300] as $name => $default
+            'batch_max_courses' => 100] as $name => $default
     ) {
         $settings->add(new admin_setting_configtext(
             "local_mooc_audit/$name",

@@ -14,11 +14,12 @@ docker exec -w /var/www/html moocaudit-s5-web /tmp/cs/vendor/bin/phpcs --standar
 
 ## 2. Roteiro de homologação (manual, ~15 min)
 
-1. **Primeira e segunda auditoria** — entrar como professor editor da sala B, *Mais > Auditoria técnica*: o quadro
-   "Desde a auditoria anterior" diz "Primeira auditoria registrada". *Executar novamente*: todas as ocorrências como
-   **Persistentes**, nenhuma nova ou resolvida.
+1. **Primeira e segunda auditoria** — entrar como professor editor da sala B, *Mais > Auditoria técnica*: a página diz
+   que a sala ainda não foi auditada. *Executar auditoria*: "Primeira auditoria registrada". *Executar novamente*: todas
+   as ocorrências como **Persistentes**. Recarregar a página: o histórico continua com 2 execuções (abrir não grava).
 2. **Resolução** — corrigir as tentativas de "Questionário 1" (CL-13) pela correção assistida ou pela edição da
-   atividade; reabrir a auditoria: **Resolvidas: 1**. *Ver a evolução*: a correção aparece em "Correções assistidas
+   atividade; reabrir a auditoria: aviso "a sala foi alterada depois desta auditoria"; *Executar novamente*:
+   **Resolvidas: 1**. *Ver a evolução*: a correção aparece em "Correções assistidas
    registradas entre as duas auditorias", com o aviso de que a relação não é verificada.
 3. **Nova inconformidade** — ocultar uma página e reauditar: **Novas: 1** (X-STR-01).
 4. **Mudança de política** — em *Plugins locais > Auditoria MOOC*, colocar `{"min_quiz_attempts": 3}` e reauditar:

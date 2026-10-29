@@ -155,4 +155,26 @@ final class dashboard_test extends \advanced_testcase {
         }
         force_current_language('');
     }
+
+    /**
+     * A change of the room after its audit flags the result as outdated (decision 12.3), and a new audit clears it.
+     */
+    public function test_course_changed_after_audit(): void {
+        global $USER;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        set_config('policyjson', json_encode(['reoffer_year' => self::YEAR]), 'local_mooc_audit');
+        [$a] = $this->getDataGenerator()->get_plugin_generator('local_mooc_audit')->create_course_a(self::YEAR);
+        [$run] = recorder::record_now((int) $a->id, run_store::ORIGIN_PAGE, (int) $USER->id);
+        $this->assertNotEmpty($run->coursecacherev);
+        $stale = fn() => dashboard::build((int) $USER->id, ['q' => $a->shortname])['rows'][0]->stale;
+        $this->assertNotContains('course_changed', $stale());
+
+        $this->getDataGenerator()->create_module('page', ['course' => $a->id, 'section' => 1]);
+        $this->assertContains('course_changed', $stale());
+
+        $this->waitForSecond();
+        recorder::record_now((int) $a->id, run_store::ORIGIN_PAGE, (int) $USER->id);
+        $this->assertNotContains('course_changed', $stale());
+    }
 }

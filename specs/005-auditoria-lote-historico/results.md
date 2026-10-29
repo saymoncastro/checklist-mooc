@@ -49,8 +49,8 @@ PostgreSQL 17) · **Evidências:** `plugin-results/0.5.0/`.
 
 | Suíte | Resultado |
 |---|---|
-| PHPUnit (`local_mooc_audit_testsuite`) | **212 testes** (169 da linha de base + 43 novos), ver §3.1 — todos passando na execução final |
-| Behat (`@local_mooc_audit`) | **13 cenários, 193 passos**: 10 das Specs 001–003 (regressão) + 3 novos (`history.feature`), com verificação de acessibilidade (axe) |
+| PHPUnit (`local_mooc_audit_testsuite`) | **214 testes** (169 da linha de base + 45 novos), ver §3.1 — todos passando na execução final |
+| Behat (`@local_mooc_audit`) | **13 cenários, 210 passos**: 10 das Specs 001–003 (regressão) + 3 novos (`history.feature`), com verificação de acessibilidade (axe) |
 | PHPCS `moodle` | 0 erros, 0 avisos |
 | Caracterização A/B (Spec 001) | inalterada (`expected_A/B.json` sem regravação) |
 
@@ -87,8 +87,9 @@ PostgreSQL 17) · **Evidências:** `plugin-results/0.5.0/`.
 | Painel com 104 salas (`dashboard::build` + render) | 72 ms a frio, 8 ms a quente; página completa 0,74 s até o primeiro byte | ≤ 3 s |
 | Armazenamento | relatório médio 29 kB (máx. 40 kB) + detalhes 2 kB; tabela de execuções com 205 linhas = 2,0 MB em disco (TOAST comprime) | — |
 
-Projeção (estimativa, não medida): 100 salas auditadas semanalmente por um ano ≈ 5.200 execuções ≈ 50 MB; com
-recarregamentos frequentes da página o volume cresce proporcionalmente (decisão 12.1). Arquivos:
+Projeção (estimativa, não medida): 100 salas auditadas semanalmente por um ano ≈ 5.200 execuções ≈ 50 MB; abrir ou
+recarregar a página não grava nada (decisão 12.1). As salas sintéticas são pequenas: as medições do laboratório não
+garantem o desempenho no Moodle institucional, que tem mais arquivos, atividades, plugins e concorrência. Arquivos:
 `plugin-results/0.5.0/{lote100_serial.txt,lote100_fila.txt,sala151.txt,painel_e_armazenamento.txt}`; scripts
 `make_lote.php` e `measure.php` (só laboratório). As salas sintéticas são pequenas; salas reais com muitos arquivos e
 textos podem levar mais tempo (a 151 módulos é o pior caso conhecido).
@@ -113,7 +114,7 @@ triplas para HTML gerado no servidor, `install.xml` e `upgrade.php` coincidem.
 | Trilha de correções visível a quem só tem `audit` | baixa | **Corrigido**: exibida só com `preparecorrection` |
 | JSON com UTF-8 inválido podia gravar relatório vazio | risco | **Corrigido**: `JSON_INVALID_UTF8_SUBSTITUTE` + `JSON_THROW_ON_ERROR` |
 | `cli/batch.php --run` executava tarefas de execuções reaproveitadas de outros lotes | risco | **Corrigido** |
-| Cada abertura da página grava uma execução (volume; GET sem `sesskey`; o painel passa a mostrar "persistentes" após recarregar) | média | **Mantido como decisão institucional pendente (12.1)**; o impacto de CSRF é criar uma linha de histórico para quem já pode auditar |
+| Cada abertura da página grava uma execução (volume; GET sem `sesskey`; o painel passa a mostrar "persistentes" após recarregar) | média | **Corrigido pela decisão 12.1**: GET só consulta; executar é POST com `sesskey` |
 | Contexto pré-carregado no painel/lote (N+1 de `has_capability`) | média | **Não alterado**: medido 72 ms para 104 salas; revisitar acima de ~1.000 salas |
 | Página do lote mostra contagens incluindo salas fora do escopo do leitor; histórico de sala removida visível a todo `viewdashboard` | risco | **Aceito e documentado**: só gerentes têm a capacidade por padrão |
 | Corrida da limpeza de políticas órfãs (> 1 dia) com execução em andamento | risco | Aceito (janela de segundos vs. 24 h) |
@@ -132,10 +133,25 @@ triplas para HTML gerado no servidor, `install.xml` e `upgrade.php` coincidem.
 | CL-12 repetia três vezes o mesmo "não verificável" | **Corrigido**: um resultado no nível da sala (o tratamento genérico da evolução cobre o caso) |
 | `run_store::pending()` sem uso | **Removido** |
 
+### 5.2 Decisão 12 aplicada (2026-10-30)
+
+| Item | Implementação |
+|---|---|
+| 12.1 Registro | `index.php` GET só consulta a última execução guardada (HTML e JSON); POST `action=run` + `sesskey` executa e registra; botões "Executar auditoria"/"Executar novamente" usam POST; Behat confirma que recarregar não grava |
+| 12.2 Retenção | 365 dias com a última execução válida de cada sala (já implementado) |
+| 12.3 Desatualização | coluna `coursecacherev` (upgrade 2026103001) + `timemodified` do curso: motivo "a sala foi alterada depois desta auditoria" no painel e na página; texto "Resultado da última auditoria, executada em …"; teste |
+| 12.4 Gerentes de categoria | painel e lotes só com capacidade de sistema (já implementado) |
+| 12.5 Lotes | padrão de 100 salas por lote; concorrência 2 |
+| 12.6 Ciclo | ano de início como critério de seleção; campo "Ciclo (ano da reoferta)" no lote e `--reofferyear` na CLI, aplicado às auditorias do lote; teste |
+
+CI: `.github/workflows/moodle-plugin-ci.yml` (moodle-plugin-ci 4: lint, PHPCS, PHPDoc, validação, savepoints, Mustache,
+PHPUnit, Behat; Moodle 4.5, PHP 8.3, PostgreSQL, com os plugins de terceiros usados pelos testes).
+
 ## 6. Limitações
 
-- Registrar toda abertura da página é provisório (decisão 12.1); recarregar a página sem mudanças gera execuções com
-  tudo "persistente" e o painel mostra a evolução mais recente, não a "última com mudança".
+- Uma sala alterada logo depois da auditoria só é sinalizada pelo que o Moodle registra no curso (revisão do cache e
+  configurações); mudanças só no livro de notas ou na inscrição não alteram esses marcadores e dependem do prazo de 7
+  dias.
 - A impressão digital por regra não cobre o motor (`engine.php`); a evolução avisa quando a versão do plugin difere.
 - Uma ocorrência pode sumir porque a atividade saiu do escopo da regra (ex.: atividade deixou de ter nota) e será
   classificada como "resolvida": a regra executou e a entidade existe. A página mostra o estado "Antes/Agora" para
@@ -183,17 +199,16 @@ auditáveis pelo usuário; a tarefa reconfere as permissões ao executar; profes
 **O painel oferece valor operacional concreto para a equipe do Cefor?** Responde, sem abrir as salas, quais têm
 bloqueantes, quais requerem correções, quais não foram auditadas, quais estão desatualizadas e quantos problemas
 foram resolvidos, são novos ou persistem; filtra e dispara lotes. O valor real depende da homologação com a equipe de
-reofertas (SC-008) e da decisão 12.1.
+reofertas (SC-008).
 
 **A solução continua independente do MOOC Admin?** Sim: usa apenas o Moodle (tabelas próprias, fila de tarefas,
 travas, capacidades); nenhuma chamada externa.
 
-**Quais decisões institucionais ainda são necessárias?** Decisão 12 em `DECISOES-INSTITUCIONAIS-CHECKLIST.md`:
-registrar toda abertura da página ou só o botão; prazo de retenção e destino do histórico de salas removidas; prazo de
-desatualização; acesso de gerentes de categoria; concorrência e tamanho de lote em produção; critério de ciclo. Seguem
-pendentes a decisão 10 (nomes canônicos) e a validação do CL-14.
+**Quais decisões institucionais ainda são necessárias?** A decisão 12 foi tomada em 2026-10-30 (§5.2). Seguem pendentes
+a decisão 10 (nomes canônicos), a validação do CL-14 e a reavaliação, após a homologação, do limite de lote (12.5) e
+do acesso de gerentes de categoria (12.4).
 
 **A Spec 005 está pronta para homologação?** Está pronta para **homologação técnica no laboratório** (testes, Behat,
-PHPCS, revisão e medições concluídos). Não está pronta para produção: faltam a decisão 12, o roteiro de homologação
-com a equipe de reofertas ([quickstart.md](quickstart.md) §2) e uma medição em cópia do Moodle institucional com salas
-reais.
+PHPCS, revisão, medições e decisão 12 concluídos; CI configurada). Não está pronta para produção: faltam o roteiro de
+homologação com a equipe de reofertas ([quickstart.md](quickstart.md) §2) e uma medição em cópia do Moodle
+institucional com salas reais.

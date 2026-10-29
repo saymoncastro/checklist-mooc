@@ -64,6 +64,10 @@ class batch_form extends \moodleform {
         $mform->setType('startyear', PARAM_INT);
         $mform->setDefault('startyear', (int) date('Y') + 1);
         $mform->hideIf('startyear', 'mode', 'neq', batch_manager::MODE_STARTYEAR);
+        $mform->addElement('text', 'reofferyear', get_string('batch_reofferyear', 'local_mooc_audit'), ['size' => 6]);
+        $mform->setType('reofferyear', PARAM_INT);
+        $mform->setDefault('reofferyear', 0);
+        $mform->addHelpButton('reofferyear', 'batch_reofferyear', 'local_mooc_audit');
         $buttons = [
             $mform->createElement('submit', 'previewbutton', get_string('batch_preview', 'local_mooc_audit')),
             $mform->createElement('submit', 'submitbutton', get_string('batch_confirm', 'local_mooc_audit')),
@@ -87,6 +91,9 @@ class batch_form extends \moodleform {
                 || (int) $data['startyear'] > 2100)
         ) {
             $errors['startyear'] = get_string('invaliddata', 'error');
+        }
+        if ((int) ($data['reofferyear'] ?? 0) && ((int) $data['reofferyear'] < 2000 || (int) $data['reofferyear'] > 2100)) {
+            $errors['reofferyear'] = get_string('invaliddata', 'error');
         }
         return $errors;
     }

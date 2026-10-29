@@ -29,8 +29,10 @@ com a origem avaliada no ano da sua própria oferta. Restrita a gerentes, com a 
 leitura. 169 testes PHPUnit, 10 cenários Behat, PHPCS limpo. Evidências e medições em `plugin-results/0.4.0/`;
 especificação em `specs/003-comparacao-ofertas/`.
 
-**Estado (0.5.0, spec 005 — histórico, lote e acompanhamento, experimental):** toda auditoria aberta pela página da
-sala, por um lote ou pela CLI com `--record` é **registrada** (tabelas `local_mooc_audit_run`, `_policy`, `_batch`),
+**Estado (0.5.0, spec 005 — histórico, lote e acompanhamento, experimental):** a página *Auditoria técnica* da sala
+**consulta o resultado da última auditoria** (data, origem, solicitante e avisos de desatualização) e só executa quando
+alguém pede (*Executar auditoria* / *Executar novamente*, decisão 12). Toda auditoria solicitada pela página, por um lote
+ou pela CLI com `--record` é **registrada** (tabelas `local_mooc_audit_run`, `_policy`, `_batch`),
 com a política efetivamente aplicada guardada por impressão digital. Cada resultado tem uma **chave de ocorrência**
 estável (`regra|entidade|verificação[|discriminador]`), e cada execução é comparada com a anterior válida: novas,
 persistentes, resolvidas, estado/gravidade alterados, não verificáveis agora, não comparáveis (política ou código da
@@ -55,6 +57,11 @@ Especificação, medições e respostas em `specs/005-auditoria-lote-historico/`
 - **Falhas:** sala removida, permissão revogada, exceção fora das regras ou três interrupções terminam a execução como
   *Falhou* com o motivo; as demais salas seguem. *Reexecutar auditorias com falha* (página do lote) cria novas execuções;
   as falhas antigas ficam no histórico. Uma regra que lança exceção torna a execução *Parcial*.
+- **Desatualização:** a página e o painel mostram sempre "resultado da última auditoria" com a data e avisam quando a
+  sala foi alterada depois dela (revisão do cache do curso ou configurações), quando passou o prazo (7 dias), quando a
+  política ou a versão do plugin mudaram. Nada disso afirma conformidade atual.
+- **Ciclo e limite:** um lote pode informar o ciclo (ano da reoferta) aplicado às auditorias; até 100 salas por lote
+  (decisão 12.5, configurável).
 - **Retenção:** tarefa diária `\local_mooc_audit\task\cleanup_history` (03:17) remove execuções finais mais antigas
   que *Retenção do histórico* (padrão 365 dias, limite 30–1825), mantendo a última execução válida de cada sala
   existente; remove lotes vazios e políticas sem referência; marca como falha execuções presas há mais de um dia.
@@ -154,7 +161,7 @@ mecanismo nativo `core_course_external::import_course`).
 | `cli/audit.php`, `cli/compare.php` | Linha de comando |
 | `cli/make_scenarios.php` | Somente laboratório: cenários A–G da comparação (gerador + importação nativa) |
 | `lib.php` | Callback `local_mooc_audit_extend_navigation_course()`: entrada "Auditoria técnica" no menu do curso para quem tem a capacidade |
-| `index.php` | Página do relatório no contexto do curso (`courseid` ou `id`; `format=json`); local de cada resultado é link para a página de correção quando existe; botão "Executar novamente"; sem id, formulário de compatibilidade |
+| `index.php` | Página da auditoria no contexto do curso (`courseid` ou `id`): GET mostra o resultado da última auditoria guardada (`format=json` idem); POST `action=run` executa e registra; local de cada resultado é link para a página de correção quando existe; sem id, formulário de compatibilidade |
 | `classes/output/report.php`, `renderer.php`, `templates/report*.mustache` | Dados do relatório para o template (agrupamento por gravidade → categoria, listas de alertas, não verificados, erros, conformes, avisos) e renderização |
 | `tests/generator/lib.php` | Gerador de componente: cursos A (conforme) e B (inconsistente), usado pelo PHPUnit e por `cli/make_fixtures.php` |
 | `tests/characterization_test.php` + `tests/fixtures/expected_*.json` | Estados por regra dos cursos A/B congelados (proteção contra mudança de comportamento) |
@@ -240,8 +247,9 @@ vendor/bin/phpcs --standard=moodle local/mooc_audit             # moodlehq/moodl
   restauração. Ver `RELATORIO-POC-PLUGIN-MOODLE.md`.
 - Textos de evidência das regras ainda são gerados em português no código (orientações e títulos já estão em `lang/`).
 - Módulo com nome vazio não aparece no `modinfo` do Moodle; X-STR-01 só detecta nomes formados por espaços ou marcação.
-- Histórico (spec 005): toda abertura da página registra uma execução (decisão **[validar]**); a reauditoria da
-  correção assistida não é registrada (tem trilha própria). Mudanças no coletor comum (`snapshot`) não entram na
+- Histórico (spec 005): abrir a página não executa; o JSON de `index.php` devolve o último resultado guardado (antes
+  da 0.5.0 recalculava a cada GET). A reauditoria da correção assistida não é registrada (tem trilha própria): depois
+  de corrigir, a página avisa que a sala mudou e pede *Executar novamente*. Mudanças no coletor comum (`snapshot`) não entram na
   impressão digital por regra: a evolução avisa quando as versões do plugin diferem. Gerente só de categoria não acessa
   o painel (capacidades no sistema, constituição VIII). A comparação entre ofertas continua com a chave de local da
   spec 003.

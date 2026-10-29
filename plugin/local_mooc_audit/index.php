@@ -15,12 +15,14 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Technical audit of a course: read-only report page, in the course context.
+ * Technical audit of a course, in the course context (specs/001; decision 12.1 of specs/005).
  *
- * Every audit opened here is recorded in the history (specs/005): the report shows the evolution since the previous
- * recorded audit and links to the history of the course. The course itself is never modified.
+ * GET shows the result of the last recorded audit of the course, read-only: opening or reloading the page never runs
+ * nor records anything. "Run audit" / "Run again" (POST with sesskey, action=run) runs a new audit, records it in the
+ * history and redirects back to the page. format=json returns the last recorded report (contract 1.0 + run), or 404
+ * when the course has never been audited. The course itself is never modified.
  *
- * Parameters: courseid (or id), required; format=html|json.
+ * Parameters: courseid (or id), required; format=html|json; action=run (POST).
  *
  * @package    local_mooc_audit
  * @copyright  2026 Cefor/Ifes
@@ -34,6 +36,7 @@ if (!$courseid) {
     $courseid = optional_param('id', 0, PARAM_INT);
 }
 $format = optional_param('format', 'html', PARAM_ALPHA);
+$action = optional_param('action', '', PARAM_ALPHA);
 
 if (!$courseid) {
     // Compatibility entry (admin settings link): ask for the course id.
@@ -73,37 +76,70 @@ $PAGE->set_pagelayout('incourse');
 $PAGE->set_title(get_string('pagetitle', 'local_mooc_audit', format_string($course->fullname)));
 $PAGE->set_heading(format_string($course->fullname));
 
-// Configuration view (no test viewer): rules ignore per-user availability, so the result does not depend on who
-// opens the page. The audit is recorded (specs/005); a failure outside the rules is recorded too, then shown.
-[$run, $report, $error] = \local_mooc_audit\local\history\recorder::record_now(
-    (int) $course->id,
-    \local_mooc_audit\local\history\run_store::ORIGIN_PAGE,
-    (int) $USER->id
-);
-if ($error) {
-    throw $error;
-}
-if (!$report) {
-    throw new moodle_exception('invalidcourseid');
+use local_mooc_audit\local\history\dashboard;
+use local_mooc_audit\local\history\policy_store;
+use local_mooc_audit\local\history\recorder;
+use local_mooc_audit\local\history\run_store;
+
+if ($action === 'run') {
+    // Explicit request: run the audit (configuration view, no test viewer) and record it.
+    require_sesskey();
+    [$run, $report, $error] = recorder::record_now((int) $course->id, run_store::ORIGIN_PAGE, (int) $USER->id);
+    if ($report) {
+        redirect(
+            $url,
+            get_string('audit_recorded', 'local_mooc_audit', (int) $run->id),
+            null,
+            \core\output\notification::NOTIFY_SUCCESS
+        );
+    }
+    $message = $error ? get_class($error) . ': ' . $error->getMessage() : get_string('invalidcourseid', 'error');
+    redirect($url, get_string('audit_failed', 'local_mooc_audit', s($message)), null, \core\output\notification::NOTIFY_ERROR);
 }
 
+// Read-only from here: the last recorded audit (complete or partial) and, when newer, the last failed attempt.
+$run = run_store::latest_valid((int) $course->id);
+$report = $run ? run_store::json($run, 'report') : null;
+$lastfinal = run_store::latest_per_course(run_store::final_states(), [(int) $course->id], 'r.*')[(int) $course->id] ?? null;
+
 if ($format === 'json') {
-    $evolution = \local_mooc_audit\local\history\run_store::json($run, 'evolution');
-    $report['run'] = ['id' => (int) $run->id, 'status' => $run->status, 'previousrunid' => (int) $run->previousrunid,
-        'evolution' => $evolution];
     @header('Content-Type: application/json; charset=utf-8');
+    if (!$report) {
+        http_response_code(404);
+        echo json_encode(['run' => null, 'error' => get_string('audit_none', 'local_mooc_audit')], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+    $report['run'] = ['id' => (int) $run->id, 'status' => $run->status, 'executed_at' => date('c', (int) $run->timefinished),
+        'previousrunid' => (int) $run->previousrunid, 'evolution' => run_store::json($run, 'evolution')];
     echo \local_mooc_audit\engine::to_json($report);
     exit;
 }
 
 $renderer = $PAGE->get_renderer('local_mooc_audit');
+$runurl = new moodle_url($url, ['action' => 'run']);
 echo $OUTPUT->header();
-echo $renderer->render(new \local_mooc_audit\output\run_summary(
-    $run,
-    \local_mooc_audit\local\history\run_store::count_for_course((int) $course->id)
-));
-$withcorrections = has_capability('local/mooc_audit:preparecorrection', $context);
-$compareurl = has_capability('local/mooc_audit:compare', $context)
-    ? new moodle_url('/local/mooc_audit/compare.php', ['target' => $course->id]) : null;
-echo $renderer->render(new \local_mooc_audit\output\report($report, $url, $withcorrections, $compareurl));
+if (!$run) {
+    echo $OUTPUT->heading(get_string('auditmenu', 'local_mooc_audit'));
+    echo $OUTPUT->notification(get_string('audit_none', 'local_mooc_audit'), \core\output\notification::NOTIFY_INFO, false);
+    echo $OUTPUT->single_button(
+        $runurl,
+        get_string('runaudit', 'local_mooc_audit'),
+        'post',
+        ['type' => single_button::BUTTON_PRIMARY]
+    );
+} else {
+    $valid = $run;
+    $valid->fingerprint = $run->policyid ? (policy_store::get((int) $run->policyid)->fingerprint ?? null) : null;
+    $stale = dashboard::stale_reasons($valid, time(), policy_store::current_fingerprint(), run_store::plugin_version(), $course);
+    echo $renderer->render(new \local_mooc_audit\output\run_summary(
+        $run,
+        run_store::count_for_course((int) $course->id),
+        $stale,
+        $lastfinal && (int) $lastfinal->id !== (int) $run->id ? $lastfinal : null
+    ));
+    $withcorrections = has_capability('local/mooc_audit:preparecorrection', $context);
+    $compareurl = has_capability('local/mooc_audit:compare', $context)
+        ? new moodle_url('/local/mooc_audit/compare.php', ['target' => $course->id]) : null;
+    echo $renderer->render(new \local_mooc_audit\output\report($report, $url, $withcorrections, $compareurl));
+}
 echo $OUTPUT->footer();

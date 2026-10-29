@@ -53,14 +53,16 @@ recorrente de lotes (cada lote é solicitado por uma pessoa); exportação em pl
 Decisões do autor da especificação para não bloquear o incremento experimental, no mesmo formato das Specs 001–003.
 **[validar]** = exige confirmação institucional antes da homologação; as demais são premissas registradas.
 
-- Q: O que é uma "execução" e quando ela é registrada? → A: toda auditoria completa de uma sala solicitada por uma
-  pessoa ou processo: abertura da página "Auditoria técnica" da sala (inclusive o botão "Executar novamente" e o
-  formato JSON), cada sala de um lote e a CLI com a opção de registro. Cada execução vira um registro próprio, com
+- Q: O que é uma "execução" e quando ela é registrada? → A: toda auditoria completa de uma sala **solicitada
+  explicitamente** por uma pessoa ou processo: botões "Executar auditoria" e "Executar novamente" da página da sala
+  (POST com `sesskey`), cada sala de um lote e a CLI com a opção de registro. **Abrir ou recarregar a página apenas
+  consulta o resultado da última auditoria guardada**, sem executar nem gravar (decisão 12.1, 2026-10-30; a versão
+  inicial registrava cada abertura). Cada execução vira um registro próprio, com
   identificador, sala, data e hora, solicitante (usuário ou "processo"), origem (página, lote, CLI), versões do plugin
   e do contrato, política aplicada, ano de reoferta, estado, resultado geral, contagens, resultados estruturados,
   comparação com a execução anterior e erros/limitações. A reauditoria interna que a correção assistida (Spec 002)
   faz após aplicar uma correção **não** é registrada como execução: ela já tem registro próprio na trilha de
-  correções. **[validar]** registrar toda abertura da página (alternativa: só o botão "Executar novamente").
+  correções.
 - Q: Quais estados uma execução pode ter? → A: **na fila**, **em execução**, **concluída** (todas as regras
   executaram), **parcial** (relatório produzido, mas ao menos uma regra terminou em `ERRO`) e **falhou** (nenhum
   relatório: sala removida, permissão revogada, exceção fora das regras, interrupção repetida). `NAO_VERIFICAVEL`
@@ -106,7 +108,7 @@ Decisões do autor da especificação para não bloquear o incremento experiment
   (painel consolidado e páginas de lote, leitura) e **`local/mooc_audit:batchaudit`** (solicitar lotes, escrita). O
   painel e os lotes mostram apenas salas em que a pessoa também tem `local/mooc_audit:audit`, de modo que
   atribuições e proibições por categoria ou curso são respeitadas. Professores editores não ganham capacidade nova.
-  **[validar]** gerente de categoria sem papel no sistema não usa o painel nesta versão.
+  Gerente de categoria sem papel no sistema não usa o painel no primeiro MVP (decisão 12.4).
 - Q: Como as tarefas em segundo plano mantêm o escopo autorizado? → A: cada sala do lote é uma tarefa ad hoc
   executada em nome de quem solicitou; ao executar, a tarefa confere de novo `batchaudit` no sistema e `audit` no
   curso para aquela pessoa. Se a permissão foi revogada entre a solicitação e a execução, a execução falha com esse
@@ -114,7 +116,8 @@ Decisões do autor da especificação para não bloquear o incremento experiment
 - Q: Como selecionar salas para um lote? → A: por **categoria** (com ou sem subcategorias), por **lista de
   identificadores**, por **ano de início** da sala (data de início do curso; usada como ciclo porque é o único dado
   confiável disponível no Moodle) e por **seleção** de salas no painel. Salas fora da permissão, inexistentes ou o
-  curso do site são recusadas e listadas com o motivo. Um lote tem limite configurável de salas (padrão 300).
+  curso do site são recusadas e listadas com o motivo. Um lote tem limite configurável de salas (padrão 100, decisão
+  12.5) e pode informar explicitamente o **ciclo** (ano da reoferta) aplicado às suas auditorias (decisão 12.6).
 - Q: Como evitar execuções duplicadas e controlar recursos? → A: (1) se a sala já tem execução na fila ou em
   execução, o lote não cria outra e aponta para a existente; (2) uma trava por sala impede duas auditorias simultâneas
   da mesma sala; (3) o limite de concorrência nativo das tarefas ad hoc restringe quantas salas são auditadas ao mesmo
@@ -129,13 +132,15 @@ Decisões do autor da especificação para não bloquear o incremento experiment
   explica que "sem inconformidades detectadas" refere-se apenas às regras implementadas e não substitui a revisão
   pedagógica nem os testes funcionais de certificação.
 - Q: Quando um resultado está desatualizado? → A: quando a última execução válida é mais antiga que o prazo
-  configurado (padrão 7 dias), quando a política vigente difere da política da execução, ou quando a versão do plugin
-  mudou desde a execução. O motivo é exibido. **[validar]** prazo padrão.
+  configurado (padrão 7 dias), quando a **sala foi alterada depois da auditoria** (revisão do cache do curso diferente
+  da observada pela execução, ou configurações do curso modificadas depois do início dela), quando a política vigente
+  difere da política da execução, ou quando a versão do plugin mudou desde a execução. O motivo é exibido. A página e o
+  painel falam em "resultado da última auditoria", com a data, nunca em conformidade atual (decisão 12.3).
 - Q: Qual a retenção? → A: configurável, **padrão 365 dias** (mínimo 30, máximo 1825), aplicada por tarefa agendada
   diária: execuções concluídas há mais tempo que o prazo são removidas, **exceto a última execução válida de cada sala
   existente** (que representa o estado atual mostrado no painel). Execuções de salas removidas seguem o prazo sem
-  exceção. Lotes sem execuções e políticas não referenciadas são removidos. Não há retenção indefinida por omissão.
-  **[validar]** prazo e exceção da última execução; decisão sobre remover o histórico junto com a sala.
+  exceção. Lotes sem execuções e políticas não referenciadas são removidos. Não há retenção indefinida por omissão
+  (decisão 12.2).
 - Q: Que dados pessoais são guardados? → A: apenas o identificador de quem solicitou cada execução e cada lote. Os
   relatórios guardados são os da visão de configuração (sem usuário de teste), sem dados de estudantes, respostas,
   notas individuais ou conclusões. O privacy provider exporta e anonimiza (solicitante = 0) sem apagar o histórico
@@ -327,7 +332,8 @@ local; tempos, memória e tamanho das execuções registrados em `results.md`.
 
 **Histórico (prioridade máxima)**
 
-- **FR-001**: Toda auditoria iniciada pela página da sala, por um lote ou pela CLI com registro MUST gerar uma
+- **FR-001**: Toda auditoria solicitada explicitamente pela página da sala (POST), por um lote ou pela CLI com registro
+  MUST gerar uma
   execução persistida com: identificador, sala, data e hora de criação, início e término, solicitante (usuário ou 0 =
   processo), origem, versão do plugin, versão do contrato, referência à política aplicada (versão declarada e
   impressão digital do conteúdo), ano de reoferta, estado, resultado geral, contagens por estado e por gravidade,
@@ -338,8 +344,10 @@ local; tempos, memória e tamanho das execuções registrados em `results.md`.
   nova execução.
 - **FR-004**: A data de execução MUST ser distinta da data da oferta; o histórico MUST mostrar o ano de reoferta e o
   período da sala separadamente da data da auditoria.
-- **FR-005**: O relatório individual MUST mostrar o resumo da evolução desde a execução anterior e um link para o
-  histórico da sala.
+- **FR-005**: A página da sala MUST mostrar o resultado da última auditoria guardada (com data, origem e solicitante),
+  sem executar nem gravar ao ser aberta; MUST oferecer "Executar auditoria"/"Executar novamente" (POST + `sesskey`);
+  MUST mostrar o resumo da evolução desde a execução anterior, os motivos de desatualização e um link para o
+  histórico.
 - **FR-006**: O histórico MUST listar as execuções da sala (mais recente primeiro) e permitir abrir o relatório
   guardado de qualquer uma delas, sem recalcular.
 - **FR-007**: A reauditoria interna da correção assistida MUST NOT gerar execução no histórico.
@@ -376,7 +384,7 @@ local; tempos, memória e tamanho das execuções registrados em `results.md`.
 - **FR-019**: O sistema MUST evitar execuções simultâneas equivalentes (mesma sala na fila ou em execução) e MUST
   impedir duas auditorias simultâneas da mesma sala.
 - **FR-020**: A concorrência das tarefas MUST ser limitada por configuração (padrão 2) e o tamanho do lote por
-  configuração (padrão 300).
+  configuração (padrão 100); o lote MAY informar o ciclo (ano da reoferta) de suas auditorias.
 - **FR-021**: A falha de uma sala MUST NOT interromper o lote; erros MUST ser registrados na execução.
 - **FR-022**: Tarefas repetidas MUST ser idempotentes; tarefas interrompidas MUST ser retomadas até 3 tentativas e
   depois marcadas como falha "interrompida"; execuções presas sem tarefa MUST ser marcadas como falha pela limpeza.
@@ -395,7 +403,8 @@ local; tempos, memória e tamanho das execuções registrados em `results.md`.
 - **FR-027**: O painel MUST NOT usar "aprovado", selo de conformidade, percentual de conformidade ou nota; MUST exibir
   o aviso de escopo das regras.
 - **FR-028**: Uma sala MUST ser marcada como desatualizada, com motivo, quando a última execução válida excede o
-  prazo configurado, usou política diferente da vigente ou outra versão do plugin.
+  prazo configurado, a sala foi alterada depois da execução, ou a execução usou política diferente da vigente ou outra
+  versão do plugin.
 
 **Segurança, privacidade e retenção**
 

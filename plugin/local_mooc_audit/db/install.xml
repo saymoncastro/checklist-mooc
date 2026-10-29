@@ -76,6 +76,7 @@
         <FIELD NAME="pluginversion" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false" COMMENT="release (version) of the plugin"/>
         <FIELD NAME="contractversion" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Report contract version"/>
         <FIELD NAME="reofferyear" TYPE="int" LENGTH="4" NOTNULL="false" SEQUENCE="false" COMMENT="Effective reoffer year"/>
+        <FIELD NAME="coursecacherev" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="course.cacherev observed by the audit (detects later changes of the room)"/>
         <FIELD NAME="summary" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="JSON summary of the report"/>
         <FIELD NAME="report" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="JSON report (contract 1.0, without snapshot)"/>
         <FIELD NAME="details" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="JSON: rule fingerprints, entities, metrics"/>

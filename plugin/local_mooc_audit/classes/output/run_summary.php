@@ -24,27 +24,36 @@ use stdClass;
 use templatable;
 
 /**
- * "Since the previous audit" box shown above the report of the audit page (specs/005 FR-005).
+ * Header of the audit page (specs/005 FR-005, decision 12): the result shown is that of the last recorded audit, with
+ * its date, why it may be outdated, a newer failed attempt if any, and the evolution since the previous audit.
  *
  * @package    local_mooc_audit
  * @copyright  2026 Cefor/Ifes
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class run_summary implements renderable, templatable {
-    /** @var stdClass The run just recorded. */
+    /** @var stdClass The last recorded run with a report. */
     protected stdClass $run;
     /** @var int Number of runs of the course. */
     protected int $count;
+    /** @var string[] Why the result may be outdated (dashboard::stale_reasons()). */
+    protected array $stale;
+    /** @var stdClass|null A failed run newer than the shown one. */
+    protected ?stdClass $lastfailed;
 
     /**
      * Constructor.
      *
      * @param stdClass $run
      * @param int $count number of recorded runs of the course
+     * @param string[] $stale reasons why the result may be outdated
+     * @param stdClass|null $lastfailed a failed run newer than $run
      */
-    public function __construct(stdClass $run, int $count) {
+    public function __construct(stdClass $run, int $count, array $stale = [], ?stdClass $lastfailed = null) {
         $this->run = $run;
         $this->count = $count;
+        $this->stale = $stale;
+        $this->lastfailed = $lastfailed;
     }
 
     /**
@@ -58,6 +67,22 @@ class run_summary implements renderable, templatable {
         $courseid = (int) $this->run->courseid;
         $data = new stdClass();
         $data->runid = (int) $this->run->id;
+        $data->resultof = get_string('audit_result_of', 'local_mooc_audit', (object) [
+            'date' => history_helper::date((int) $this->run->timefinished),
+            'origin' => get_string('history_origin_' . $this->run->origin, 'local_mooc_audit'),
+            'requester' => history_helper::requester((int) $this->run->userid),
+        ]);
+        $data->stale = implode('; ', array_map(fn($r) => get_string(
+            'stale_' . $r,
+            'local_mooc_audit',
+            \local_mooc_audit\local\history\dashboard::stale_days()
+        ), $this->stale));
+        $data->isstale = (bool) $this->stale;
+        $data->lastfailed = $this->lastfailed ? get_string(
+            'audit_last_failed',
+            'local_mooc_audit',
+            history_helper::date((int) $this->lastfailed->timefinished)
+        ) : null;
         $data->status = history_helper::run_status($this->run->status);
         $data->historyurl = (new moodle_url('/local/mooc_audit/history.php', ['courseid' => $courseid]))->out(false);
         $data->historylabel = get_string('history_link', 'local_mooc_audit', $this->count);

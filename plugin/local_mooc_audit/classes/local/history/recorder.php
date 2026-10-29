@@ -117,6 +117,8 @@ class recorder {
             $policyid = policy_store::ensure($policy);
             $report = engine::audit_with_policy((int) $run->courseid, $policy, 0, true, $rules);
             $details = ['rules' => fingerprint::rules($policy, $rules)] + self::entities($report['snapshot']);
+            // Read after the snapshot: building a cold course cache may set the revision (decision 12.3).
+            $cacherev = (int) $DB->get_field('course', 'cacherev', ['id' => $run->courseid]);
             unset($report['snapshot']);
 
             $errors = [];
@@ -156,6 +158,7 @@ class recorder {
                 'overall' => $report['summary']['overall_status'],
                 'policyid' => $policyid,
                 'reofferyear' => (int) $report['reoffer_year'],
+                'coursecacherev' => $cacherev,
                 'summary' => $report['summary'],
                 'report' => $report,
                 'details' => $details,

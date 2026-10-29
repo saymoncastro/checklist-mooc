@@ -19,12 +19,14 @@
     "Since the previous audit" box above the report of the audit page (specs/005).
 
     Context variables required for this template:
-    * runid, status (code, label, cssclass), historyurl, historylabel, evolutionurl
+    * runid, resultof, isstale, stale, lastfailed (optional), status (code, label, cssclass), historyurl, historylabel,
+      evolutionurl
     * first, comparable, nochange, counts[] (code, label, count, cssclass), notes[], haserrors, errors[] (label, rule, message)
 
     Example context (json):
     {
-        "runid": 12, "status": {"code": "complete", "label": "Complete", "cssclass": "badge-success"},
+        "runid": 12, "resultof": "Result of the last audit, run on 29/10/26 10:00 (Audit page, Admin User).",
+        "isstale": false, "stale": "", "lastfailed": null, "status": {"code": "complete", "label": "Complete", "cssclass": "badge-success"},
         "historyurl": "#", "historylabel": "Audit history (3)", "evolutionurl": "#",
         "first": false, "comparable": true, "nochange": false,
         "counts": [{"code": "resolved", "label": "Resolved", "count": 1, "cssclass": "badge-success"}],
@@ -33,9 +35,12 @@
 }}
 <div class="local_mooc_audit-runsummary card mb-3" data-region="run-summary">
     <div class="card-body py-2">
-        <h4 class="h6 mb-2">{{#str}} evolution_summary, local_mooc_audit {{/str}}
+        <p class="mb-2" data-region="result-of"><strong>{{resultof}}</strong>
             <small class="text-muted">({{#str}} label_runid, local_mooc_audit {{/str}} {{runid}},
-                <span class="badge {{status.cssclass}}">{{status.label}}</span>)</small></h4>
+                <span class="badge {{status.cssclass}}">{{status.label}}</span>)</small></p>
+        {{#isstale}}<div class="alert alert-warning py-1 mb-2" data-region="stale">{{#str}} audit_stale, local_mooc_audit {{/str}} {{stale}}</div>{{/isstale}}
+        {{#lastfailed}}<div class="alert alert-danger py-1 mb-2">{{lastfailed}}</div>{{/lastfailed}}
+        <h4 class="h6 mb-2">{{#str}} evolution_summary, local_mooc_audit {{/str}}</h4>
         {{#first}}<p class="mb-1">{{#str}} evolution_first, local_mooc_audit {{/str}}</p>{{/first}}
         {{#comparable}}
             {{#nochange}}<p class="mb-1">{{#str}} evolution_none, local_mooc_audit {{/str}}</p>{{/nochange}}

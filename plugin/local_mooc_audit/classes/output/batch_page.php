@@ -81,6 +81,9 @@ class batch_page implements renderable, templatable {
                 . ($cat ? $cat->get_formatted_name() : $criteria['categoryid'])
                 . (!empty($criteria['subcategories']) ? ' (+ ' . get_string('batch_subcategories', 'local_mooc_audit') . ')' : '');
         }
+        if (!empty($criteria['reofferyear'])) {
+            $parts[] = get_string('batch_reofferyear', 'local_mooc_audit') . ': ' . $criteria['reofferyear'];
+        }
         if (!empty($criteria['startyear'])) {
             $parts[] = get_string('batch_startyear', 'local_mooc_audit') . ': ' . $criteria['startyear'];
         }

@@ -117,7 +117,8 @@ class dashboard {
             $params['q1'] = $params['q2'] = '%' . $DB->sql_like_escape($f['q']) . '%';
         }
         $courses = $DB->get_records_sql(
-            'SELECT c.id, c.shortname, c.fullname, c.category, c.startdate, c.visible, cc.name AS categoryname
+            'SELECT c.id, c.shortname, c.fullname, c.category, c.startdate, c.visible, c.cacherev, c.timemodified,
+                    cc.name AS categoryname
                FROM {course} c JOIN {course_categories} cc ON cc.id = c.category
               WHERE ' . implode(' AND ', $where) . '
            ORDER BY c.fullname, c.id',
@@ -136,7 +137,7 @@ class dashboard {
     protected static function latest(array $courseids, array $states): array {
         global $DB;
         $runs = run_store::latest_per_course($states, $courseids, 'r.id, r.courseid, r.status, r.overall, r.policyid,
-            r.pluginversion, r.summary, r.evolution, r.timefinished');
+            r.pluginversion, r.summary, r.evolution, r.coursecacherev, r.timestarted, r.timefinished');
         $policyids = array_unique(array_filter(array_map(fn($r) => (int) $r->policyid, $runs)));
         $fps = $policyids ? $DB->get_records_list(policy_store::TABLE, 'id', $policyids, '', 'id, fingerprint') : [];
         foreach ($runs as $r) {
@@ -172,13 +173,29 @@ class dashboard {
      * @param int $now
      * @param string $policyfp fingerprint of the policy in force
      * @param string $version current plugin version label
-     * @return string[] age, policy_changed, plugin_changed
+     * @param \stdClass|null $course course with cacherev and timemodified (known change of the room since the run)
+     * @return string[] age, course_changed, policy_changed, plugin_changed
      */
-    public static function stale_reasons(?\stdClass $valid, int $now, string $policyfp, string $version): array {
+    public static function stale_reasons(
+        ?\stdClass $valid,
+        int $now,
+        string $policyfp,
+        string $version,
+        ?\stdClass $course = null
+    ): array {
         if (!$valid) {
             return [];
         }
         $out = [];
+        // Activities and sections bump the course cache revision, course settings timemodified; the audit itself never
+        // changes either (readonly_test). Runs recorded before the revision was stored compare timemodified only.
+        if ($course) {
+            $started = (int) ($valid->timestarted ?? $valid->timefinished);
+            $seen = $valid->coursecacherev ?? null;
+            if (($seen !== null && (int) $course->cacherev !== (int) $seen) || (int) $course->timemodified > $started) {
+                $out[] = 'course_changed';
+            }
+        }
         if ($valid->timefinished < $now - self::stale_days() * DAYSECS) {
             $out[] = 'age';
         }
@@ -225,7 +242,7 @@ class dashboard {
                 'final' => $final,
                 'valid' => $valid,
                 'pending' => isset($pending[$id]),
-                'stale' => self::stale_reasons($valid, $now, $policyfp, $version),
+                'stale' => self::stale_reasons($valid, $now, $policyfp, $version, $c),
                 'severity' => $bysev,
                 'attention' => (int) ($summary['por_status'][status::ATENCAO] ?? 0),
                 'evolution' => $valid ? (run_store::json($valid, 'evolution')['counts'] ?? null) : null,

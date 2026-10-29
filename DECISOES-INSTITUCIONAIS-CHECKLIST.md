@@ -93,21 +93,21 @@ não tenham uma permissão escolhida pelo administrador.
 
 ---
 
-## 12. Histórico, lotes e acompanhamento (Auditor MOOC, spec 005) — **PENDENTE (padrões provisórios)**
+## 12. Histórico, lotes e acompanhamento (Auditor MOOC, spec 005) — **DECIDIDO em 2026-10-30 (recomendação aprovada pelo responsável do projeto)**
 
-O incremento 0.5.0 adota padrões conservadores e configuráveis; cada item precisa de confirmação antes da homologação:
-
-1. **Registrar toda abertura da página de auditoria** como execução no histórico (padrão atual) ou só o botão
-   "Executar novamente".
-2. **Retenção do histórico**: 365 dias (limite 30–1825), mantendo a última auditoria válida de cada sala existente.
-   Decidir também se o histórico de uma sala removida deve ser apagado junto com ela (hoje segue a retenção).
-3. **Prazo de desatualização**: 7 dias sem nova auditoria (além de mudança de política ou de versão do plugin).
-4. **Gerentes de categoria**: o painel e os lotes usam capacidades de sistema (constituição VIII); um gerente só de
-   categoria não os acessa. Decidir se a equipe de reofertas terá papel de sistema ou se a constituição deve admitir
-   contexto de categoria.
-5. **Concorrência e tamanho de lote** no servidor institucional: 2 auditorias simultâneas e 300 salas por lote.
-6. **Critério de ciclo**: o lote usa o ano da data de início da sala; confirmar se a equipe precisa de outro
-   identificador de ciclo (categoria, sufixo da sigla) a ser padronizado.
+1. **Registro das auditorias**: só execuções solicitadas explicitamente ("Executar auditoria", "Executar novamente",
+   lote, CLI com `--record`) entram no histórico. Abrir ou recarregar a página de auditoria **consulta** o resultado da
+   última auditoria guardada, sem executar nem gravar nada.
+2. **Retenção**: 365 dias, configurável (30–1825), mantendo sempre a última execução válida de cada sala existente. O
+   histórico de uma sala removida segue o mesmo prazo.
+3. **Desatualização**: aviso após 7 dias sem nova auditoria **e** sempre que houver alteração conhecida desde a
+   execução — na sala (configurações ou atividades), na política ou na versão do plugin (regras). O painel e a página
+   mostram sempre a data da execução e falam em "resultado da última auditoria", nunca em conformidade atual.
+4. **Gerentes de categoria**: no primeiro MVP o painel e os lotes ficam com gerentes de sistema; ampliar por categoria
+   será avaliado depois da homologação.
+5. **Lotes**: 2 auditorias simultâneas e no máximo **100 salas por lote** até medir na homologação.
+6. **Ciclo**: o ano de início da sala é o critério padrão de seleção; o lote pode informar explicitamente o ciclo (ano
+   da reoferta) a aplicar na auditoria das salas.
 
 ---
 

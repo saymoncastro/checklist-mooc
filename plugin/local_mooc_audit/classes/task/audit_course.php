@@ -74,6 +74,18 @@ class audit_course extends \core\task\adhoc_task {
     }
 
     /**
+     * Policy override of a batch: the explicit cycle (reoffer year) it asked for, if any (decision 12.6).
+     *
+     * @param int $batchid
+     * @return array|null
+     */
+    public static function policy_override(int $batchid): ?array {
+        $batch = $batchid ? \local_mooc_audit\local\history\batch_manager::get($batchid) : null;
+        $year = $batch ? (int) (json_decode($batch->criteria, true)['reofferyear'] ?? 0) : 0;
+        return $year ? ['reoffer_year' => $year] : null;
+    }
+
+    /**
      * Run the audit.
      */
     public function execute() {
@@ -109,7 +121,7 @@ class audit_course extends \core\task\adhoc_task {
             if (!run_store::start($runid)) {
                 return;
             }
-            [$done] = recorder::execute($runid);
+            [$done] = recorder::execute($runid, self::policy_override((int) $run->batchid));
             mtrace("local_mooc_audit: run $runid course {$run->courseid} → {$done->status}");
         } finally {
             $lock->release();

@@ -144,7 +144,8 @@ class run_store {
         if (!in_array($status, self::final_states(), true)) {
             throw new \coding_exception('Not a final state: ' . $status);
         }
-        $allowed = ['overall', 'policyid', 'reofferyear', 'summary', 'report', 'details', 'previousrunid', 'evolution',
+        $allowed = ['overall', 'policyid', 'reofferyear', 'coursecacherev', 'summary', 'report', 'details', 'previousrunid',
+            'evolution',
             'errors', 'pluginversion'];
         $set = ['status = :status', 'timefinished = :timefinished'];
         $params = ['status' => $status, 'timefinished' => time(), 'id' => $id, 'queued' => self::QUEUED,

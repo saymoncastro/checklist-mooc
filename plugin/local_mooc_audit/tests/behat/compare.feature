@@ -62,6 +62,7 @@ Feature: Comparison between two offers of a MOOC
   Scenario: The audit report links to the comparison with the new offer as target
     Given I am on the "Acessibilidade 2027" "Course" page logged in as "manager1"
     And I navigate to "Technical audit" in current page administration
+    And I press "Run audit"
     When I click on "Compare with the previous offer" "link"
     Then I should see "Compare offers"
     And I should see "Acessibilidade 2027" in the "#fitem_id_target" "css_element"
@@ -69,6 +70,7 @@ Feature: Comparison between two offers of a MOOC
   Scenario: An editing teacher of both courses audits them but is not offered the comparison
     Given I am on the "Acessibilidade 2027" "Course" page logged in as "teacher1"
     When I navigate to "Technical audit" in current page administration
+    And I press "Run audit"
     Then I should see "Technical audit: Acessibilidade 2027"
     And I should not see "Compare with the previous offer"
 

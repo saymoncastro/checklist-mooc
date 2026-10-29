@@ -22,6 +22,12 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['audit_failed'] = 'A auditoria não pôde ser concluída e foi registrada como falha: {$a}';
+$string['audit_last_failed'] = 'Uma tentativa de auditoria mais recente, em {$a}, falhou; o resultado exibido é o da última auditoria concluída.';
+$string['audit_none'] = 'Esta sala ainda não foi auditada. Execute a auditoria para registrar o primeiro resultado.';
+$string['audit_recorded'] = 'Auditoria executada e registrada (execução {$a}).';
+$string['audit_result_of'] = 'Resultado da última auditoria, executada em {$a->date} ({$a->origin}, {$a->requester}).';
+$string['audit_stale'] = 'Este resultado pode não descrever mais a sala:';
 $string['auditmenu'] = 'Auditoria técnica';
 $string['batch_accepted'] = 'Salas a auditar ({$a})';
 $string['batch_category'] = 'Categoria';
@@ -45,6 +51,8 @@ $string['batch_none'] = 'Nenhum lote solicitado ainda.';
 $string['batch_outside_permission'] = '{$a} salas deste lote estão fora da sua permissão e não são listadas.';
 $string['batch_preview'] = 'Pré-visualizar';
 $string['batch_progress'] = 'Andamento';
+$string['batch_reofferyear'] = 'Ciclo (ano da reoferta)';
+$string['batch_reofferyear_help'] = 'Ano da oferta para a qual as salas estão sendo preparadas, aplicado a todas as auditorias do lote. 0 = o ano da política institucional (por padrão, o ano seguinte ao da auditoria).';
 $string['batch_requested_by'] = 'Solicitado por';
 $string['batch_retried'] = '{$a} auditorias enfileiradas novamente.';
 $string['batch_retry'] = 'Reexecutar auditorias com falha';
@@ -224,7 +232,7 @@ $string['col_overall'] = 'Resultado';
 $string['col_policy'] = 'Política';
 $string['col_requester'] = 'Solicitante';
 $string['col_select'] = 'Selecionar';
-$string['col_situation'] = 'Situação';
+$string['col_situation'] = 'Resultado da última auditoria';
 $string['col_startdate'] = 'Início';
 $string['col_status'] = 'Estado da execução';
 $string['col_version'] = 'Plugin';
@@ -236,7 +244,7 @@ $string['corrections_none'] = 'Nenhuma correção assistida registrada no perío
 $string['courseid'] = 'Id do curso';
 $string['dashboard_audit_selected'] = 'Auditar as salas selecionadas';
 $string['dashboard_audited'] = 'Auditadas';
-$string['dashboard_counts'] = 'Salas no filtro';
+$string['dashboard_counts'] = 'Salas no filtro, pelo resultado da última auditoria';
 $string['dashboard_evolution'] = 'Problemas desde a auditoria anterior de cada sala';
 $string['dashboard_filter'] = 'Filtrar';
 $string['dashboard_filter_any'] = 'Todas';
@@ -607,7 +615,7 @@ $string['section_warnings'] = 'Alertas';
 $string['setting_batch_concurrency'] = 'Auditorias simultâneas em segundo plano';
 $string['setting_batch_concurrency_desc'] = 'Quantas salas a fila de tarefas audita ao mesmo tempo (1–10). $CFG->task_concurrency_limit, quando definido para \\local_mooc_audit\\task\\audit_course, tem precedência.';
 $string['setting_batch_max_courses'] = 'Tamanho máximo do lote';
-$string['setting_batch_max_courses_desc'] = 'Número máximo de salas aceitas em um lote (1–2000).';
+$string['setting_batch_max_courses_desc'] = 'Número máximo de salas aceitas em um lote (1–2000; decisão 12.5: 100 até medir no ambiente institucional).';
 $string['setting_history_heading'] = 'Histórico, lotes e painel';
 $string['setting_history_heading_desc'] = 'Retenção e limites das auditorias registradas (specs/005). Os padrões são conservadores e dependem de decisão institucional.';
 $string['setting_history_retention_days'] = 'Retenção do histórico (dias)';
@@ -629,6 +637,7 @@ $string['situation_not_audited'] = 'Não auditada';
 $string['situation_pending'] = 'Na fila ou em execução';
 $string['situation_stale'] = 'Desatualizada';
 $string['stale_age'] = 'mais de {$a} dias';
+$string['stale_course_changed'] = 'a sala foi alterada depois desta auditoria';
 $string['stale_plugin_changed'] = 'plugin atualizado desde então';
 $string['stale_policy_changed'] = 'política alterada desde então';
 $string['status_atencao'] = 'Atenção';

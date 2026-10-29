@@ -127,5 +127,15 @@ function xmldb_local_mooc_audit_upgrade($oldversion) {
         }
         upgrade_plugin_savepoint(true, 2026103000, 'local', 'mooc_audit');
     }
+
+    if ($oldversion < 2026103001) {
+        // Decision 12.3: remember the course cache revision seen by each run, to flag rooms changed after the audit.
+        $table = new xmldb_table('local_mooc_audit_run');
+        $field = new xmldb_field('coursecacherev', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'reofferyear');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        upgrade_plugin_savepoint(true, 2026103001, 'local', 'mooc_audit');
+    }
     return true;
 }

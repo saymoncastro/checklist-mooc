@@ -25,10 +25,15 @@ Feature: Technical audit of a course
       | quiz     | Questionário 1 | CT1    | 1        |
 
   @javascript @accessibility
-  Scenario: A manager opens the report from the course menu and runs it again
+  Scenario: A manager opens the audit from the course menu, runs it, runs it again and reloads it
     Given I am on the "Curso de teste" "Course" page logged in as "manager1"
     When I navigate to "Technical audit" in current page administration
-    Then I should see "Technical audit: Curso de teste"
+    Then I should see "This course has not been audited yet"
+    And "Overall status" "heading" should not exist
+    And I press "Run audit"
+    Then I should see "Audit run and recorded"
+    And I should see "Technical audit: Curso de teste"
+    And I should see "Result of the last audit, run on" in the "[data-region='result-of']" "css_element"
     And "Overall status" "heading" should exist
     And I should see "Blocked" in the ".local_mooc_audit-overall" "css_element"
     And "h4#local_mooc_audit-nonconformities" "css_element" should exist
@@ -43,11 +48,17 @@ Feature: Technical audit of a course
     When I press "Run again"
     Then I should see "Technical audit: Curso de teste"
     And I should see "Blocked" in the ".local_mooc_audit-overall" "css_element"
+    And I should see "Audit history (2)"
+    # Opening or reloading the page only shows the last result: nothing is run nor recorded (decision 12.1).
+    When I reload the page
+    Then I should see "Audit history (2)"
+    And I should not see "Audit run and recorded"
 
   @javascript
   Scenario: Editing teachers open the audit; non-editing teachers and students do not see the entry
     Given I am on the "Curso de teste" "Course" page logged in as "teacher1"
     When I navigate to "Technical audit" in current page administration
+    And I press "Run audit"
     Then I should see "Technical audit: Curso de teste"
     And I log out
     And I am on the "Curso de teste" "Course" page logged in as "teacher2"
