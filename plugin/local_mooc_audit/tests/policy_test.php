@@ -90,6 +90,33 @@ final class policy_test extends \advanced_testcase {
     }
 
     /**
+     * Changing a canonical name in the admin policy changes what CL-09 looks for, without code changes; the report
+     * shows the customised policy version.
+     */
+    public function test_canonical_name_change_applies_to_rules(): void {
+        global $DB;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        [$course, $ids] = $this->getDataGenerator()->get_plugin_generator('local_mooc_audit')->create_course_a(2027);
+        $cm = get_coursemodule_from_id('forum', $ids['forum'], $course->id, false, MUST_EXIST);
+        $DB->set_field('forum', 'name', 'Fórum de dúvidas', ['id' => $cm->instance]);
+        rebuild_course_cache($course->id, true);
+
+        $cl09 = fn(array $report) => array_values(array_filter($report['results'], fn($r) => $r['rule'] === 'CL-09'));
+        $report = engine::audit($course->id, ['reoffer_year' => 2027]);
+        $this->assertSame(policy::DEFAULT_VERSION, $report['policy_version']);
+        $this->assertSame([\local_mooc_audit\local\status::NAO_CONFORME], array_column($cl09($report), 'status'));
+        $this->assertSame('import', $cl09($report)[0]['locus']);
+
+        set_config('policyjson', json_encode(['required_forum_name' => 'Fórum de dúvidas', 'policy_version' => '2027-decisao-10']), 'local_mooc_audit');
+        $report = engine::audit($course->id, ['reoffer_year' => 2027]);
+        $this->assertSame('2027-decisao-10+admin', $report['policy_version']);
+        $this->assertSame([], $report['policy_warnings']);
+        $this->assertSame([\local_mooc_audit\local\status::CONFORME], array_column($cl09($report), 'status'));
+        $this->assertStringContainsString('Fórum de dúvidas', $cl09($report)[0]['local']);
+    }
+
+    /**
      * The admin setting rejects malformed JSON and non-objects before saving, and accepts empty or an object.
      */
     public function test_setting_validation(): void {

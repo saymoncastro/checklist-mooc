@@ -22,8 +22,10 @@ concluída em 2026-10-29 (T056–T059: `locator_test`, locus por finding incl. n
 2026-10-29 (T060–T064: setting de política validado, `policy_test`, blocos de transparência testados, `xint03_test`,
 isolamento de exceção com regra injetada); fase 6 (US4) autorizada e concluída em 2026-10-29 (T065–T066:
 `contract_test` valida A/B contra o schema 1.0 — agora com o locus `import` e distribuído em
-`plugin/local_mooc_audit/schema/` —, codificação única `engine::to_json()` na página e no CLI); fases 7–9 aguardam
-autorização após validação (ver `docs/relatorio-adocao-sdd.md`).
+`plugin/local_mooc_audit/schema/` —, codificação única `engine::to_json()` na página e no CLI); fase 7 (US5) autorizada
+e concluída em 2026-10-29 (T067–T068: lista de chaves com tipo e padrão e JSON de referência gerados de
+`policy::defaults()` no setting; teste de nome canônico alterado → CL-09 pelo novo nome e versão `+admin`); fases 8–9
+aguardam autorização após validação (ver `docs/relatorio-adocao-sdd.md`).
 
 ## Format: `[ID] [P?] [Story] Description`
 
@@ -172,8 +174,8 @@ inconformidades por gravidade e categoria, evidência completa, alertas, não ve
 
 **Independent Test**: quickstart §5.5; `policy_test`.
 
-- [ ] T067 [US5] Atualizar `settings.php`: descrição do setting lista cada chave de `policy::defaults()` com tipo e exemplo (string `policyjson_desc` gerada a partir de `defaults()` para não divergir), e exibe o JSON padrão atual como referência (somente leitura)
-- [ ] T068 [US5] Acrescentar em `policy_test.php` o cenário "nome canônico do fórum alterado na política → CL-09 avalia pelo novo nome" (usa o gerador: curso A com fórum renomeado)
+- [x] T067 [US5] Atualizar `settings.php`: descrição do setting lista cada chave de `policy::defaults()` com tipo e exemplo (string `policyjson_desc` gerada a partir de `defaults()` para não divergir), e exibe o JSON padrão atual como referência (somente leitura)
+- [x] T068 [US5] Acrescentar em `policy_test.php` o cenário "nome canônico do fórum alterado na política → CL-09 avalia pelo novo nome" (usa o gerador: curso A com fórum renomeado)
 
 ---
 

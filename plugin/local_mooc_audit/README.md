@@ -34,8 +34,10 @@ php local/mooc_audit/cli/compare.php --source=8 --target=10
 ```
 
 Política institucional: padrões em `classes/policy.php` (decisões de 2026-10-28); sobrescrever em
-*Administração do site > Plugins > Plugins locais > Auditoria MOOC* (JSON) ou com `--policy`. O ano da reoferta,
-quando não informado, é o ano seguinte ao da execução.
+*Administração do site > Plugins > Plugins locais > Auditoria MOOC* (JSON) ou com `--policy`. A página de
+administração lista as chaves aceitas com tipo e valor padrão e mostra o JSON padrão da versão, ambos gerados de
+`policy::defaults()`; JSON inválido é recusado ao salvar. O relatório mostra a versão da política aplicada (sufixo
+`+admin` quando há personalização). O ano da reoferta, quando não informado, é o ano seguinte ao da execução.
 
 Scripts **apenas para ambientes de teste** (recusam rodar fora de `localhost`): `cli/make_fixtures.php`
 (cria os cursos A — referência — e B — inconsistente; exige o autoloader do Composer do site de desenvolvimento, porque o
@@ -63,7 +65,7 @@ mecanismo nativo `core_course_external::import_course`).
 | `tests/characterization_test.php` + `tests/fixtures/expected_*.json` | Estados por regra dos cursos A/B congelados (proteção contra mudança de comportamento) |
 | `tests/engine_test.php` | Motor, contrato, política, isolamento de regra com exceção (regra injetada), conclusão desabilitada no site, locus de importação, saída texto do CLI |
 | `tests/contract_test.php` | Relatórios de A/B válidos contra o schema (validador mínimo sem biblioteca), campos da PoC preservados, ida e volta do JSON |
-| `tests/policy_test.php` | Padrões, override do administrador e por arquivo, tipos errados, ano de reoferta automático, validação do setting |
+| `tests/policy_test.php` | Padrões, override do administrador e por arquivo, tipos errados, ano de reoferta automático, validação do setting, nome canônico alterado aplicado a CL-09 |
 | `tests/rule/xint03_test.php` | X-INT-03: plugin ausente (condição de tipo inexistente) → não conforme; padrão instalado → conforme; curso vazio → não se aplica |
 | `tests/locator_test.php` | URL esperada por locus; identificadores ausentes → sem link |
 | `tests/access_test.php` | Capacidade por arquétipo (estudante/professor não; gerente sim), definição sem risco declarado, nó de navegação só com a capacidade |
