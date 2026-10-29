@@ -1,0 +1,153 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_mooc_audit/report
+
+    Technical audit report of a course (contract 1.0), sections in the order of contracts/page.md.
+
+    Context variables required for this template:
+    * course - object with id, shortname, fullname
+    * executed_at, reoffer_year, policy_version, engine, total_s, jsonurl, rerunurl, rerunbutton (HTML)
+    * inventory - object with startdate, enddate, category, visible, sections, modules, modules_by_type[], grade_items, files, files_missing, enrols, blocks
+    * overall - object with code, label, cssclass
+    * counts_status[] - objects with label, count, cssclass; counts_severity[] - objects with label, count; rules_total
+    * nonconformities, warnings - objects with count, has and groups[] (label, count, categories[] with title and items[])
+    * unverifiable - object with has, hasnv, nv[], hasna, na[]; errors[], haserrors; conformant[], hasconformant
+    * notices - object with has, policy[], collection[]
+
+    Example context (json):
+    {
+        "course": {"id": 8, "shortname": "MOOC_TESTE_A", "fullname": "MOOC teste A"},
+        "executed_at": "29 October 2026, 10:00", "reoffer_year": 2027, "policy_version": "2026-10", "engine": "local_mooc_audit 0.2.0",
+        "total_s": 0.4, "jsonurl": "#", "rerunurl": "#", "rerunbutton": "<button>Run again</button>",
+        "inventory": {"startdate": "2027-01-01 00:00", "enddate": "2027-12-31 23:59", "category": "Inscrições Abertas", "visible": "Yes",
+            "sections": 4, "modules": 12, "modules_by_type": [{"type": "quiz", "count": 2}], "grade_items": 3, "files": 5, "files_missing": 0,
+            "enrols": "manual, self", "blocks": "html, completionstatus"},
+        "overall": {"code": "SEM_INCONFORMIDADES", "label": "No non-conformities", "cssclass": "alert-success"},
+        "counts_status": [{"label": "Non conformant", "count": 0, "cssclass": "badge-danger"}],
+        "counts_severity": [{"label": "Blocking", "count": 0}], "rules_total": 29,
+        "nonconformities": {"count": 0, "has": false, "groups": []},
+        "warnings": {"count": 0, "has": false, "groups": []},
+        "unverifiable": {"has": false, "hasnv": false, "nv": [], "hasna": false, "na": []},
+        "errors": [], "haserrors": false,
+        "conformant": [{"rule": "CL-04", "title": "Course summary contains the institutional buttons"}], "hasconformant": true,
+        "notices": {"has": false, "policy": [], "collection": []}
+    }
+}}
+<div class="local_mooc_audit-report">
+    <div class="local_mooc_audit-header mb-3">
+        <h3>{{#str}} auditmenu, local_mooc_audit {{/str}}: {{course.fullname}} <small class="text-muted">[{{course.shortname}}] (id {{course.id}})</small></h3>
+        <dl class="row mb-2">
+            <dt class="col-sm-3">{{#str}} label_executed_at, local_mooc_audit {{/str}}</dt>
+            <dd class="col-sm-9">{{executed_at}} ({{total_s}} s)</dd>
+            <dt class="col-sm-3">{{#str}} label_reoffer_year, local_mooc_audit {{/str}}</dt>
+            <dd class="col-sm-9">{{reoffer_year}}</dd>
+            <dt class="col-sm-3">{{#str}} label_policy, local_mooc_audit {{/str}}</dt>
+            <dd class="col-sm-9">{{policy_version}}</dd>
+            <dt class="col-sm-3">{{#str}} label_engine, local_mooc_audit {{/str}}</dt>
+            <dd class="col-sm-9">{{engine}} ({{#str}} label_contract, local_mooc_audit {{/str}} {{contract_version}})</dd>
+        </dl>
+        <div class="d-flex align-items-center local_mooc_audit-actions">
+            {{{rerunbutton}}}
+            <a href="{{jsonurl}}" class="ml-3 local_mooc_audit-json">{{#str}} jsonlink, local_mooc_audit {{/str}}</a>
+        </div>
+    </div>
+
+    <h4>{{#str}} label_inventory, local_mooc_audit {{/str}}</h4>
+    <table class="table table-sm table-bordered w-auto local_mooc_audit-inventory">
+        <tbody>
+            <tr><th scope="row">{{#str}} label_period, local_mooc_audit {{/str}}</th><td>{{inventory.startdate}} → {{inventory.enddate}}</td></tr>
+            <tr><th scope="row">{{#str}} label_category, local_mooc_audit {{/str}}</th><td>{{inventory.category}}</td></tr>
+            <tr><th scope="row">{{#str}} label_visible, local_mooc_audit {{/str}}</th><td>{{inventory.visible}}</td></tr>
+            <tr><th scope="row">{{#str}} label_sections, local_mooc_audit {{/str}}</th><td>{{inventory.sections}}</td></tr>
+            <tr><th scope="row">{{#str}} label_modules, local_mooc_audit {{/str}}</th><td>{{inventory.modules}}{{#inventory.modules_by_type}} · {{type}}: {{count}}{{/inventory.modules_by_type}}</td></tr>
+            <tr><th scope="row">{{#str}} label_grade_items, local_mooc_audit {{/str}}</th><td>{{inventory.grade_items}}</td></tr>
+            <tr><th scope="row">{{#str}} label_files, local_mooc_audit {{/str}}</th><td>{{inventory.files}} ({{#str}} label_files_missing, local_mooc_audit {{/str}}: {{inventory.files_missing}})</td></tr>
+            <tr><th scope="row">{{#str}} label_enrols, local_mooc_audit {{/str}}</th><td>{{inventory.enrols}}</td></tr>
+            <tr><th scope="row">{{#str}} label_blocks, local_mooc_audit {{/str}}</th><td>{{inventory.blocks}}</td></tr>
+        </tbody>
+    </table>
+
+    <h4>{{#str}} label_overall, local_mooc_audit {{/str}}</h4>
+    <div class="alert {{overall.cssclass}} local_mooc_audit-overall local_mooc_audit-overall-{{overall.code}}" role="status">
+        <strong>{{overall.label}}</strong>
+    </div>
+    <table class="table table-sm table-bordered w-auto local_mooc_audit-counts">
+        <caption class="sr-only">{{#str}} label_bystatus, local_mooc_audit {{/str}}</caption>
+        <thead><tr>{{#counts_status}}<th scope="col">{{label}}</th>{{/counts_status}}<th scope="col">{{#str}} label_rules, local_mooc_audit {{/str}}</th></tr></thead>
+        <tbody><tr>{{#counts_status}}<td><span class="badge {{cssclass}}">{{count}}</span></td>{{/counts_status}}<td>{{rules_total}}</td></tr></tbody>
+    </table>
+    <table class="table table-sm table-bordered w-auto local_mooc_audit-counts-severity">
+        <caption class="sr-only">{{#str}} label_bysev, local_mooc_audit {{/str}}</caption>
+        <thead><tr>{{#counts_severity}}<th scope="col">{{label}}</th>{{/counts_severity}}</tr></thead>
+        <tbody><tr>{{#counts_severity}}<td>{{count}}</td>{{/counts_severity}}</tr></tbody>
+    </table>
+
+    <h4 id="local_mooc_audit-nonconformities">{{#str}} section_nonconformities, local_mooc_audit {{/str}} ({{nonconformities.count}})</h4>
+    {{^nonconformities.has}}<p class="text-muted">{{#str}} none_in_section, local_mooc_audit {{/str}}</p>{{/nonconformities.has}}
+    {{#nonconformities.groups}}
+        {{> local_mooc_audit/report_group }}
+    {{/nonconformities.groups}}
+
+    <h4 id="local_mooc_audit-warnings">{{#str}} section_warnings, local_mooc_audit {{/str}} ({{warnings.count}})</h4>
+    {{^warnings.has}}<p class="text-muted">{{#str}} none_in_section, local_mooc_audit {{/str}}</p>{{/warnings.has}}
+    {{#warnings.groups}}
+        {{> local_mooc_audit/report_group }}
+    {{/warnings.groups}}
+
+    <h4 id="local_mooc_audit-unverifiable">{{#str}} section_unverifiable, local_mooc_audit {{/str}}</h4>
+    {{^unverifiable.has}}<p class="text-muted">{{#str}} none_in_section, local_mooc_audit {{/str}}</p>{{/unverifiable.has}}
+    {{#unverifiable.hasnv}}
+        <h5>{{#str}} section_unverifiable_nv, local_mooc_audit {{/str}}</h5>
+        <table class="table table-sm table-striped">
+            <thead><tr><th scope="col">{{#str}} label_rule, local_mooc_audit {{/str}}</th><th scope="col">{{#str}} label_local, local_mooc_audit {{/str}}</th><th scope="col">{{#str}} label_reason, local_mooc_audit {{/str}}</th></tr></thead>
+            <tbody>{{#unverifiable.nv}}<tr><td><strong>{{rule}}</strong> {{title}}</td><td>{{#haslink}}<a href="{{link}}" title="{{linktitle}}">{{local}}</a>{{/haslink}}{{^haslink}}{{local}}{{/haslink}}</td><td>{{evidencia}}</td></tr>{{/unverifiable.nv}}</tbody>
+        </table>
+    {{/unverifiable.hasnv}}
+    {{#unverifiable.hasna}}
+        <h5>{{#str}} section_unverifiable_na, local_mooc_audit {{/str}}</h5>
+        <table class="table table-sm table-striped">
+            <thead><tr><th scope="col">{{#str}} label_rule, local_mooc_audit {{/str}}</th><th scope="col">{{#str}} label_local, local_mooc_audit {{/str}}</th><th scope="col">{{#str}} label_reason, local_mooc_audit {{/str}}</th></tr></thead>
+            <tbody>{{#unverifiable.na}}<tr><td><strong>{{rule}}</strong> {{title}}</td><td>{{#haslink}}<a href="{{link}}" title="{{linktitle}}">{{local}}</a>{{/haslink}}{{^haslink}}{{local}}{{/haslink}}</td><td>{{evidencia}}</td></tr>{{/unverifiable.na}}</tbody>
+        </table>
+    {{/unverifiable.hasna}}
+
+    {{#haserrors}}
+    <h4 id="local_mooc_audit-errors">{{#str}} section_errors, local_mooc_audit {{/str}}</h4>
+    <table class="table table-sm table-striped">
+        <thead><tr><th scope="col">{{#str}} label_rule, local_mooc_audit {{/str}}</th><th scope="col">{{#str}} label_message, local_mooc_audit {{/str}}</th></tr></thead>
+        <tbody>{{#errors}}<tr><td><strong>{{rule}}</strong> {{title}}</td><td>{{evidencia}}</td></tr>{{/errors}}</tbody>
+    </table>
+    {{/haserrors}}
+
+    <h4 id="local_mooc_audit-conformant">{{#str}} section_conformant, local_mooc_audit {{/str}}</h4>
+    {{^hasconformant}}<p class="text-muted">{{#str}} none_in_section, local_mooc_audit {{/str}}</p>{{/hasconformant}}
+    {{#hasconformant}}
+    <ul class="local_mooc_audit-conformant list-unstyled">
+        {{#conformant}}<li><span class="badge badge-success">{{rule}}</span> {{title}} <small class="text-muted">({{category}})</small></li>{{/conformant}}
+    </ul>
+    {{/hasconformant}}
+
+    <h4 id="local_mooc_audit-notices">{{#str}} section_notices, local_mooc_audit {{/str}}</h4>
+    {{^notices.has}}<p class="text-muted">{{#str}} none_in_section, local_mooc_audit {{/str}}</p>{{/notices.has}}
+    {{#notices.has}}
+    <ul class="local_mooc_audit-notices">
+        {{#notices.policy}}<li class="local_mooc_audit-notice-policy">{{#str}} label_policy, local_mooc_audit {{/str}}: {{.}}</li>{{/notices.policy}}
+        {{#notices.collection}}<li class="local_mooc_audit-notice-collection">{{#str}} label_collection, local_mooc_audit {{/str}}: {{.}}</li>{{/notices.collection}}
+    </ul>
+    {{/notices.has}}
+</div>

@@ -15,7 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Capabilities for local_mooc_audit. All read-only.
+ * Capabilities for local_mooc_audit. All read-only; no risk declared (the audit reads course configuration, not
+ * personal data; see specs/001 research R11).
  *
  * @package    local_mooc_audit
  * @copyright  2026 Cefor/Ifes
@@ -27,7 +28,6 @@ defined('MOODLE_INTERNAL') || die();
 $capabilities = [
     // Run a read-only audit of a course and see the report.
     'local/mooc_audit:audit' => [
-        'riskbitmask' => RISK_PERSONAL,
         'captype' => 'read',
         'contextlevel' => CONTEXT_COURSE,
         'archetypes' => [
@@ -36,7 +36,6 @@ $capabilities = [
     ],
     // Compare two courses (source x imported target).
     'local/mooc_audit:compare' => [
-        'riskbitmask' => RISK_PERSONAL,
         'captype' => 'read',
         'contextlevel' => CONTEXT_SYSTEM,
         'archetypes' => [

@@ -1,0 +1,108 @@
+{
+    "CL-04": [
+        "CONFORME|Média",
+        "CONFORME|Média"
+    ],
+    "CL-05": [
+        "CONFORME|Baixa"
+    ],
+    "CL-06": [
+        "CONFORME|Alta"
+    ],
+    "CL-07": [
+        "CONFORME|Alta"
+    ],
+    "CL-08": [
+        "CONFORME|Alta"
+    ],
+    "CL-09": [
+        "CONFORME|Média"
+    ],
+    "CL-11": [
+        "CONFORME|Alta",
+        "CONFORME|Alta"
+    ],
+    "CL-12": [
+        "CONFORME|Alta",
+        "CONFORME|Alta",
+        "CONFORME|Alta"
+    ],
+    "CL-13": [
+        "CONFORME|Alta",
+        "CONFORME|Alta"
+    ],
+    "CL-14": [
+        "CONFORME|Média",
+        "CONFORME|Média"
+    ],
+    "CL-16": [
+        "CONFORME|Alta"
+    ],
+    "CL-17": [
+        "CONFORME|Informativa"
+    ],
+    "CL-18": [
+        "CONFORME|Média"
+    ],
+    "CL-19": [
+        "CONFORME|Baixa"
+    ],
+    "CL-20": [
+        "CONFORME|Baixa"
+    ],
+    "CL-21": [
+        "CONFORME|Média",
+        "CONFORME|Média",
+        "CONFORME|Média",
+        "CONFORME|Média"
+    ],
+    "CL-22": [
+        "CONFORME|Média",
+        "CONFORME|Média",
+        "CONFORME|Média"
+    ],
+    "CL-23": [
+        "CONFORME|Bloqueante",
+        "CONFORME|Bloqueante"
+    ],
+    "X-AV-01": [
+        "CONFORME|Média"
+    ],
+    "X-CERT-01": [
+        "CONFORME|Bloqueante"
+    ],
+    "X-CONT-01": [
+        "CONFORME|Média"
+    ],
+    "X-CONT-04": [
+        "CONFORME|Média"
+    ],
+    "X-DEP-01": [
+        "CONFORME|Alta"
+    ],
+    "X-DEP-02": [
+        "CONFORME|Bloqueante"
+    ],
+    "X-DEP-03": [
+        "CONFORME|Alta"
+    ],
+    "X-DEP-04": [
+        "CONFORME|Bloqueante"
+    ],
+    "X-INT-02": [
+        "CONFORME|Alta"
+    ],
+    "X-INT-03": [
+        "CONFORME|Alta",
+        "CONFORME|Informativa",
+        "CONFORME|Informativa",
+        "CONFORME|Informativa",
+        "CONFORME|Informativa",
+        "CONFORME|Informativa",
+        "CONFORME|Informativa",
+        "CONFORME|Informativa"
+    ],
+    "X-STR-01": [
+        "CONFORME|Baixa"
+    ]
+}

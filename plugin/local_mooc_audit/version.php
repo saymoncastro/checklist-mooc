@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version metadata for local_mooc_audit (prova de conceito).
+ * Version metadata for local_mooc_audit.
  *
  * @package    local_mooc_audit
  * @copyright  2026 Cefor/Ifes
@@ -25,8 +25,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'local_mooc_audit';
-$plugin->version   = 2026102802;
+$plugin->version   = 2026102901;
 $plugin->requires  = 2024100700; // Moodle 4.5.
 $plugin->supported = [405, 405];
 $plugin->maturity  = MATURITY_ALPHA;
-$plugin->release   = '0.1.0-poc';
+$plugin->release   = '0.2.0';

@@ -65,3 +65,67 @@ docker exec -i -w /var/www/html moocaudit-webserver-1 vendor/bin/phpunit local/m
 ```
 
 Site: http://localhost:8091 (admin / `Admin!2026local`, apenas local). Nenhuma credencial ou dado de produção.
+
+## Testar código de um worktree sem tocar o laboratório
+
+O contêiner `moocaudit-webserver-1` monta o plugin da cópia principal. Para rodar o PHPUnit sobre outra cópia (ex.: um
+worktree do git) sem recriar o laboratório, use um segundo contêiner com a mesma árvore do Moodle, o plugin do worktree
+montado por cima e um banco próprio:
+
+```bash
+docker exec moocaudit-db-1 createdb -U moodle moodle_wt
+docker run -d --name moocaudit-wt --network moocaudit_default \
+  -e MOODLE_DOCKER_DBTYPE=pgsql -e MOODLE_DOCKER_DBNAME=moodle_wt -e MOODLE_DOCKER_DBUSER=moodle -e 'MOODLE_DOCKER_DBPASS=m@0dl3ing' \
+  -e MOODLE_DOCKER_WEB_HOST=localhost -e MOODLE_DOCKER_WEB_PORT=127.0.0.1:8091 -e MOODLE_DOCKER_RUNNING=1 \
+  -v "$PROJECT_DIR/moodle-local/moodle:/var/www/html" \
+  -v "<worktree>/plugin/local_mooc_audit:/var/www/html/local/mooc_audit" \
+  -w /var/www/html moodlehq/moodle-php-apache:8.3 tail -f /dev/null
+docker exec -w /var/www/html moocaudit-wt php admin/tool/phpunit/cli/init.php
+docker exec -w /var/www/html moocaudit-wt vendor/bin/phpunit --testsuite local_mooc_audit_testsuite
+```
+
+Para **ver a página** do plugin do worktree no navegador, um segundo contêiner com Apache, porta própria (8092) e o
+mesmo banco `moodle_wt` (as tabelas do site regular, prefixo `m_`, convivem com as do PHPUnit, prefixo `t_`); o
+`moodledata` fica dentro do contêiner e se perde ao removê-lo:
+
+```bash
+docker run -d --name moocaudit-wt-web --network moocaudit_default -p 127.0.0.1:8092:80 \
+  -e MOODLE_DOCKER_DBTYPE=pgsql -e MOODLE_DOCKER_DBNAME=moodle_wt -e MOODLE_DOCKER_DBUSER=moodle -e 'MOODLE_DOCKER_DBPASS=m@0dl3ing' \
+  -e MOODLE_DOCKER_WEB_HOST=localhost -e MOODLE_DOCKER_WEB_PORT=127.0.0.1:8092 -e MOODLE_DOCKER_RUNNING=1 \
+  -v "$PROJECT_DIR/moodle-local/moodle:/var/www/html" \
+  -v "<worktree>/plugin/local_mooc_audit:/var/www/html/local/mooc_audit" \
+  -w /var/www/html moodlehq/moodle-php-apache:8.3
+docker exec moocaudit-wt-web bash -c 'mkdir -p /var/www/moodledata && chown www-data:www-data /var/www/moodledata'
+docker exec -w /var/www/html moocaudit-wt-web php admin/cli/install_database.php --agree-license \
+  --fullname="Auditor MOOC (worktree)" --shortname=wt --adminpass='Admin123!' --adminemail=admin@example.com --lang=pt_br
+docker exec -w /var/www/html moocaudit-wt-web php local/mooc_audit/cli/make_fixtures.php   # cursos A e B
+docker exec moocaudit-wt-web chown -R www-data:www-data /var/www/moodledata
+```
+
+Site: http://localhost:8092 (admin / `Admin123!`, apenas local). Remover: `docker rm -f moocaudit-wt-web`.
+
+Para **rodar o Behat** do plugin sem tocar o laboratório nem contêineres de outros projetos: um Selenium próprio na
+rede `moocaudit_default` com o apelido `selenium`, que resolve `webserver` para o contêiner web do worktree, e o nome
+`webserver` apontado para o próprio contêiner web (o `behat_wwwroot` do `config.php` é `http://webserver`):
+
+```bash
+IP=$(docker inspect moocaudit-wt-web --format '{{(index .NetworkSettings.Networks "moocaudit_default").IPAddress}}')
+docker run -d --name moocaudit-wt-selenium --network moocaudit_default --network-alias selenium \
+  --add-host "webserver:$IP" --shm-size=2g selenium/standalone-chrome:4
+docker exec moocaudit-wt-web bash -c 'echo "127.0.0.1 webserver" >> /etc/hosts; mkdir -p /var/www/behatdata /var/www/behatfaildumps; chown www-data /var/www/behatdata /var/www/behatfaildumps'
+docker exec -e MOODLE_DOCKER_BROWSER=chrome -w /var/www/html moocaudit-wt-web php admin/tool/behat/cli/init.php
+docker exec -e MOODLE_DOCKER_BROWSER=chrome -w /var/www/html moocaudit-wt-web php admin/tool/behat/cli/run.php --tags=@local_mooc_audit
+```
+
+PHPCS (`moodlehq/moodle-cs`) fora da árvore do Moodle, no contêiner de testes:
+
+```bash
+docker exec moocaudit-wt bash -c 'mkdir -p /tmp/cs && cd /tmp/cs && php -r "copy(\"https://getcomposer.org/download/latest-stable/composer.phar\", \"composer.phar\");" \
+  && php composer.phar config --no-interaction allow-plugins.dealerdirect/phpcodesniffer-composer-installer true \
+  && php composer.phar require --no-interaction moodlehq/moodle-cs'
+docker exec -w /var/www/html moocaudit-wt /tmp/cs/vendor/bin/phpcs --standard=moodle local/mooc_audit
+```
+
+Para regravar as expectativas de caracterização após uma mudança de comportamento documentada:
+`docker exec -e LOCAL_MOOC_AUDIT_WRITE_EXPECTED=1 -w /var/www/html moocaudit-wt vendor/bin/phpunit local/mooc_audit/tests/characterization_test.php`.
+Remover depois: `docker rm -f moocaudit-wt moocaudit-wt-web moocaudit-wt-selenium && docker exec moocaudit-db-1 dropdb -U moodle moodle_wt`.

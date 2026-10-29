@@ -16,7 +16,6 @@
 
 namespace local_mooc_audit;
 
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Builds a read-only, JSON-serialisable snapshot of a live course ("CourseSnapshot").
@@ -35,13 +34,13 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class snapshot {
-
     /** @var array Columns read per module table (whitelist). Text fields listed separately. */
     const MODULE_FIELDS = [
         'quiz' => ['attempts', 'timeopen', 'timeclose', 'grade', 'sumgrades', 'grademethod', 'completionminattempts',
             'completionattemptsexhausted', 'completionpass', 'timelimit'],
         'feedback' => ['completionsubmit', 'anonymous', 'timeopen', 'timeclose', 'multiple_submit'],
-        'forum' => ['type', 'completiondiscussions', 'completionreplies', 'completionposts', 'duedate', 'cutoffdate', 'grade_forum'],
+        'forum' => ['type', 'completiondiscussions', 'completionreplies', 'completionposts', 'duedate', 'cutoffdate',
+            'grade_forum'],
         'url' => ['externalurl', 'display'],
         'page' => ['display'],
         'label' => [],
@@ -52,7 +51,8 @@ class snapshot {
         'choice' => ['completionsubmit', 'timeclose', 'allowupdate'],
         'data' => ['completionentries', 'timeavailableto', 'approval'],
         'assign' => ['duedate', 'cutoffdate', 'grade', 'allowsubmissionsfromdate', 'completionsubmit', 'nosubmissions'],
-        'game' => ['sourcemodule', 'glossaryid', 'glossarycategoryid', 'quizid', 'bookid', 'gamekind', 'grade', 'timeclose', 'timeopen'],
+        'game' => ['sourcemodule', 'glossaryid', 'glossarycategoryid', 'quizid', 'bookid', 'gamekind', 'grade', 'timeclose',
+            'timeopen'],
         'hvp' => ['main_library_id', 'completionpass'],
         'simplecertificate' => ['certificateimage', 'secondimage', 'requiredtime', 'coursename', 'certdate', 'certgrade',
             'enablesecondpage', 'printqrcode'],
@@ -116,7 +116,7 @@ class snapshot {
             'warnings' => [],
         ];
 
-        // --- Course.
+        // Course.
         $category = \core_course_category::get($course->category, IGNORE_MISSING, true);
         $s['course'] = [
             'id' => (int) $course->id,
@@ -137,7 +137,7 @@ class snapshot {
             'formatoptions' => $format->get_format_options(),
         ];
 
-        // --- Sections.
+        // Sections.
         foreach ($modinfo->get_section_info_all() as $section) {
             $s['sections'][(int) $section->id] = [
                 'id' => (int) $section->id,
@@ -154,7 +154,7 @@ class snapshot {
             ];
         }
 
-        // --- Grade book (course level).
+        // Grade book (course level).
         foreach (\grade_category::fetch_all(['courseid' => $courseid]) ?: [] as $cat) {
             $s['grade']['categories'][(int) $cat->id] = [
                 'id' => (int) $cat->id, 'fullname' => $cat->fullname, 'parent' => $cat->parent ? (int) $cat->parent : null,
@@ -185,7 +185,7 @@ class snapshot {
         $s['grade']['items_total'] = count($allitems);
         $s['grade']['all_items'] = $allitems;
 
-        // --- Modules.
+        // Modules.
         foreach ($modinfo->get_cms() as $cm) {
             if ($cm->deletioninprogress) {
                 continue;
@@ -203,7 +203,8 @@ class snapshot {
                 'availableinfo' => is_string($cm->availableinfo) ? $cm->availableinfo : '',
                 'completion' => (int) $cm->completion,
                 'completionview' => (int) $cm->completionview,
-                'completiongradeitemnumber' => $cm->completiongradeitemnumber === null ? null : (int) $cm->completiongradeitemnumber,
+                'completiongradeitemnumber' => $cm->completiongradeitemnumber === null ? null
+                    : (int) $cm->completiongradeitemnumber,
                 'completionpassgrade' => (int) $cm->completionpassgrade,
                 'completionexpected' => (int) $cm->completionexpected,
                 'availability' => self::decode_availability($cm->availability),
@@ -228,11 +229,17 @@ class snapshot {
                 $s['warnings'][] = "{$cm->modname} {$cm->id}: " . $e->getMessage();
             }
             // Files of the module context and whether their content really exists in the file store.
-            $filerecs = $DB->get_records_select('files', 'contextid = :ctx AND filename <> :dot',
-                ['ctx' => $cm->context->id, 'dot' => '.'], 'id', 'id, component, filearea, itemid, filepath, filename, filesize, mimetype, referencefileid');
+            $filerecs = $DB->get_records_select(
+                'files',
+                'contextid = :ctx AND filename <> :dot',
+                ['ctx' => $cm->context->id, 'dot' => '.'],
+                'id',
+                'id, component, filearea, itemid, filepath, filename, filesize, mimetype, referencefileid'
+            );
             foreach ($filerecs as $fr) {
                 $m['files']['count']++;
-                $entry = ['id' => (int) $fr->id, 'component' => $fr->component, 'filearea' => $fr->filearea, 'filepath' => $fr->filepath,
+                $entry = ['id' => (int) $fr->id, 'component' => $fr->component, 'filearea' => $fr->filearea,
+                    'filepath' => $fr->filepath,
                     'filename' => $fr->filename, 'filesize' => (int) $fr->filesize, 'mimetype' => $fr->mimetype,
                     'is_reference' => $fr->referencefileid !== null, 'readable' => null];
                 $stored = $fs->get_file_by_id($fr->id);
@@ -252,7 +259,7 @@ class snapshot {
             $s['modules'][(int) $cm->id] = $m;
         }
 
-        // --- Enrolment instances (all, including disabled).
+        // Enrolment instances (all, including disabled).
         foreach (enrol_get_instances($courseid, false) as $inst) {
             $s['enrols'][] = [
                 'id' => (int) $inst->id, 'enrol' => $inst->enrol, 'status' => (int) $inst->status, 'name' => $inst->name,
@@ -262,13 +269,13 @@ class snapshot {
             ];
         }
 
-        // --- Blocks shown on the course page (course-level AND inherited from parent contexts).
+        // Blocks shown on the course page (course-level AND inherited from parent contexts).
         self::load_blocks($s, $course, $context);
         foreach ($s['blocks'] as $b) {
             $s['plugins']['used']['block'][$b['name']] = true;
         }
 
-        // --- Installed plugins of the relevant types.
+        // Installed plugins of the relevant types.
         $pm = \core_plugin_manager::instance();
         foreach (['mod', 'block', 'availability', 'qtype'] as $type) {
             $s['plugins']['installed'][$type] = $pm->get_installed_plugins($type);
@@ -278,7 +285,7 @@ class snapshot {
         }
         unset($list);
 
-        // --- Course completion criteria.
+        // Course completion criteria.
         $completion = new \completion_info($course);
         $s['completion_criteria'] = $completion->is_enabled() ? count($completion->get_criteria()) : 0;
 
@@ -297,7 +304,7 @@ class snapshot {
         $fields = self::MODULE_FIELDS[$modname] ?? [];
         $texts = self::MODULE_TEXTS[$modname] ?? ['intro'];
         $columns = $DB->get_columns($modname);
-        $select = array_values(array_filter(array_unique(array_merge(['id'], $fields, $texts)), function($c) use ($columns) {
+        $select = array_values(array_filter(array_unique(array_merge(['id'], $fields, $texts)), function ($c) use ($columns) {
             return isset($columns[$c]);
         }));
         $rec = $DB->get_record($modname, ['id' => $instanceid], implode(',', $select), IGNORE_MISSING);
@@ -338,16 +345,26 @@ class snapshot {
                 break;
             case 'hvp':
                 if (!empty($rec->main_library_id)) {
-                    $lib = $DB->get_record('hvp_libraries', ['id' => $rec->main_library_id], 'machine_name, major_version, minor_version', IGNORE_MISSING);
+                    $lib = $DB->get_record(
+                        'hvp_libraries',
+                        ['id' => $rec->main_library_id],
+                        'machine_name, major_version, minor_version',
+                        IGNORE_MISSING
+                    );
                     $m['extra']['machine_name'] = $lib ? "{$lib->machine_name} {$lib->major_version}.{$lib->minor_version}" : null;
                 }
                 break;
             case 'game':
                 if (!empty($rec->glossaryid)) {
-                    $m['extra']['glossary_entries_available'] = $DB->count_records('glossary_entries', ['glossaryid' => $rec->glossaryid]);
+                    $m['extra']['glossary_entries_available'] = $DB->count_records(
+                        'glossary_entries',
+                        ['glossaryid' => $rec->glossaryid]
+                    );
                     if (!empty($rec->glossarycategoryid)) {
                         $m['extra']['glossary_category_entries'] = $DB->count_records_sql(
-                            'SELECT COUNT(1) FROM {glossary_entries_categories} ec WHERE ec.categoryid = :cat', ['cat' => $rec->glossarycategoryid]);
+                            'SELECT COUNT(1) FROM {glossary_entries_categories} ec WHERE ec.categoryid = :cat',
+                            ['cat' => $rec->glossarycategoryid]
+                        );
                     }
                 }
                 break;
@@ -398,13 +415,14 @@ class snapshot {
         }
         // Fallback: block instances whose parent context is the course or an ancestor showing in subcontexts.
         $ctxids = $context->get_parent_context_ids(true);
-        list($insql, $params) = $DB->get_in_or_equal($ctxids, SQL_PARAMS_NAMED);
+        [$insql, $params] = $DB->get_in_or_equal($ctxids, SQL_PARAMS_NAMED);
         $sql = "SELECT bi.* FROM {block_instances} bi WHERE bi.parentcontextid $insql
                   AND (bi.parentcontextid = :ctx OR bi.showinsubcontexts = 1)
                   AND (bi.pagetypepattern = '*' OR bi.pagetypepattern LIKE 'course-view%')";
         $params['ctx'] = $context->id;
         foreach ($DB->get_records_sql($sql, $params) as $inst) {
-            $config = $inst->configdata ? @unserialize(base64_decode($inst->configdata), ['allowed_classes' => ['stdClass']]) : null;
+            $config = $inst->configdata ? @unserialize(base64_decode($inst->configdata), ['allowed_classes' => ['stdClass']])
+                : null;
             $parent = \context::instance_by_id($inst->parentcontextid, IGNORE_MISSING);
             $s['blocks'][] = [
                 'instanceid' => (int) $inst->id, 'name' => $inst->blockname,

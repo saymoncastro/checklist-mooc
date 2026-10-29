@@ -16,7 +16,11 @@
 
 namespace local_mooc_audit;
 
-defined('MOODLE_INTERNAL') || die();
+use local_mooc_audit\local\catalog;
+use local_mooc_audit\local\locator;
+use local_mooc_audit\local\rule\base;
+use local_mooc_audit\local\rule\rule_interface;
+use local_mooc_audit\local\status;
 
 /**
  * Runs the rule catalogue over a snapshot, isolating failures per rule, and aggregates the report.
@@ -27,29 +31,44 @@ defined('MOODLE_INTERNAL') || die();
  */
 class engine {
     /** @var string Engine version recorded in every report. */
-    const VERSION = '0.1.0-poc';
+    const VERSION = '0.2.0';
+    /** @var string Version of the JSON report contract (bumped only on incompatible changes). */
+    const CONTRACT_VERSION = '1.0';
 
     /**
      * Audit a course.
      *
      * @param int $courseid
      * @param array|null $policyoverride
-     * @param int $userid viewer for uservisible (0 = current user)
+     * @param int $userid test viewer whose availability is evaluated (0 = none: rules check the configuration only)
      * @param bool $includesnapshot include the full snapshot in the report
      * @return array report
      */
-    public static function audit(int $courseid, ?array $policyoverride = null, int $userid = 0, bool $includesnapshot = false): array {
+    public static function audit(
+        int $courseid,
+        ?array $policyoverride = null,
+        int $userid = 0,
+        bool $includesnapshot = false
+    ): array {
         $policy = policy::load($policyoverride);
         $t0 = microtime(true);
         $snapshot = snapshot::build($courseid, $userid);
         $tsnap = microtime(true) - $t0;
         $results = self::run_rules($snapshot, $policy);
+        foreach ($results as &$r) {
+            $url = locator::url_for($r, $courseid, $snapshot['modules'], $snapshot['sections']);
+            $r['link'] = $url ? $url->out(false) : null;
+        }
+        unset($r);
         $report = [
+            'contract_version' => self::CONTRACT_VERSION,
             'engine' => 'local_mooc_audit ' . self::VERSION,
             'policy_version' => $policy['policy_version'],
+            'policy_warnings' => $policy['warnings'] ?? [],
             'reoffer_year' => $policy['reoffer_year'],
             'executed_at' => date('c'),
-            'course' => ['id' => $snapshot['course']['id'], 'shortname' => $snapshot['course']['shortname'], 'fullname' => $snapshot['course']['fullname']],
+            'course' => ['id' => $snapshot['course']['id'], 'shortname' => $snapshot['course']['shortname'],
+                'fullname' => $snapshot['course']['fullname']],
             'viewer_userid' => $userid,
             'timing' => ['snapshot_s' => round($tsnap, 3), 'total_s' => round(microtime(true) - $t0, 3)],
             'inventory' => self::inventory($snapshot),
@@ -66,24 +85,59 @@ class engine {
     /**
      * Run every rule; an exception in one rule becomes an ERRO result and never aborts the audit.
      *
+     * A rule that reads completion tracking (or access restrictions) cannot be verified when that feature is disabled
+     * at site level: it is replaced by a single NAO_VERIFICAVEL result with the reason. Rules declare the dependency
+     * through REQUIRES_COMPLETION / REQUIRES_AVAILABILITY.
+     *
      * @param array $snapshot
      * @param array $policy
+     * @param rule_interface[]|null $rules rules to run keyed by id (default: the catalogue; tests may inject others)
      * @return array
      */
-    public static function run_rules(array $snapshot, array $policy): array {
+    public static function run_rules(array $snapshot, array $policy, ?array $rules = null): array {
         $results = [];
-        foreach (rules::catalog() as $id => [$titulo, $origem, $classe, $gravidade, $method]) {
-            try {
-                $findings = rules::$method($snapshot, $policy);
-            } catch (\Throwable $e) {
-                $findings = [['status' => rules::ERRO, 'local' => null, 'evidencia' => get_class($e) . ': ' . $e->getMessage(), 'gravidade' => null]];
+        $nocompletion = empty($snapshot['site']['enablecompletion']);
+        $noavailability = empty($snapshot['site']['enableavailability']);
+        foreach ($rules ?? catalog::instances() as $id => $rule) {
+            $meta = $rule->meta();
+            $reason = null;
+            if ($nocompletion && !empty($meta['requires_completion'])) {
+                $reason = 'site_completion_disabled';
+            } else if ($noavailability && !empty($meta['requires_availability'])) {
+                $reason = 'site_availability_disabled';
+            }
+            if ($reason) {
+                $findings = [['status' => status::NAO_VERIFICAVEL, 'local' => null,
+                    'evidencia' => get_string($reason, 'local_mooc_audit'),
+                    'gravidade' => null, 'locus' => base::LOCUS_NONE]];
+            } else {
+                try {
+                    $findings = $rule->evaluate($snapshot, $policy);
+                } catch (\Throwable $e) {
+                    $findings = [['status' => status::ERRO, 'local' => null,
+                        'evidencia' => get_string('rule_error', 'local_mooc_audit', get_class($e) . ': ' . $e->getMessage()),
+                            'gravidade' => null,
+                        'locus' => base::LOCUS_NONE]];
+                }
             }
             foreach ($findings as $f) {
+                $f = array_merge(['local' => null, 'evidencia' => null, 'encontrado' => null, 'esperado' => null,
+                    'orientacao' => null,
+                    'gravidade' => null, 'cmid' => null, 'locus' => null, 'section' => null], $f);
                 $f['rule'] = $id;
-                $f['titulo'] = $titulo;
-                $f['origem'] = $origem;
-                $f['classe'] = $classe;
-                $f['gravidade'] = $f['gravidade'] ?? $gravidade;
+                $f['titulo'] = $meta['title'];
+                $f['origem'] = $meta['origin'];
+                $f['classe'] = 'A';
+                $f['category'] = $meta['category'];
+                $f['tipo'] = $meta['type'];
+                $f['gravidade'] = $f['gravidade'] ?? $meta['severity'];
+                $f['locus'] = $f['locus'] ?? $meta['locus'];
+                if (empty($f['cmid']) && in_array($f['locus'], [base::LOCUS_MODULE_EDIT, base::LOCUS_MODULE_VIEW], true)) {
+                    $f['locus'] = base::LOCUS_NONE;
+                }
+                if ($f['status'] === status::NAO_CONFORME && ($f['orientacao'] === null || $f['orientacao'] === '')) {
+                    $f['orientacao'] = $meta['guidance'];
+                }
                 $results[] = $f;
             }
         }
@@ -121,7 +175,10 @@ class engine {
     }
 
     /**
-     * Count results by status and severity.
+     * Count results by status and severity and derive the overall status of the course.
+     *
+     * Only NAO_CONFORME results influence the overall status: BLOQUEADA when one of them is Bloqueante,
+     * REQUER_CORRECOES when there is any, SEM_INCONFORMIDADES otherwise.
      *
      * @param array $results
      * @return array
@@ -131,53 +188,86 @@ class engine {
         $bysev = [];
         foreach ($results as $r) {
             $bystatus[$r['status']] = ($bystatus[$r['status']] ?? 0) + 1;
-            if ($r['status'] === rules::NAO_CONFORME) {
+            if ($r['status'] === status::NAO_CONFORME) {
                 $bysev[$r['gravidade']] = ($bysev[$r['gravidade']] ?? 0) + 1;
             }
         }
-        return ['por_status' => $bystatus, 'nao_conformes_por_gravidade' => $bysev, 'regras' => count(rules::catalog())];
+        if (!empty($bysev[status::BLOQUEANTE])) {
+            $overall = status::OVERALL_BLOCKED;
+        } else if ($bysev) {
+            $overall = status::OVERALL_NEEDS_FIX;
+        } else {
+            $overall = status::OVERALL_CLEAN;
+        }
+        return ['por_status' => $bystatus, 'nao_conformes_por_gravidade' => $bysev, 'regras' => catalog::count(),
+            'overall_status' => $overall];
     }
 
     /**
-     * Plain-text rendering of a report (non conforming first).
+     * JSON serialisation of a report (contract 1.0): the single encoding used by the page and the CLI.
+     *
+     * @param array $report
+     * @return string
+     */
+    public static function to_json(array $report): string {
+        return json_encode($report, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    }
+
+    /**
+     * Plain-text rendering of a report (CLI): header, inventory, overall status, every non conformant result first,
+     * conformant rules compacted, then the policy and data collection notices. Labels come from the language pack.
      *
      * @param array $report
      * @return string
      */
     public static function render_text(array $report): string {
-        $order = [rules::NAO_CONFORME => 0, rules::ATENCAO => 1, rules::ERRO => 2, rules::NV => 3, rules::NA => 4, rules::CONFORME => 5];
-        $sev = ['Bloqueante' => 0, 'Alta' => 1, 'Média' => 2, 'Baixa' => 3, 'Informativa' => 4];
+        $str = fn(string $key, $a = null) => get_string($key, 'local_mooc_audit', $a);
         $results = $report['results'];
-        usort($results, fn($a, $b) => [$order[$a['status']] ?? 9, $sev[$a['gravidade']] ?? 9, $a['rule']] <=> [$order[$b['status']] ?? 9, $sev[$b['gravidade']] ?? 9, $b['rule']]);
+        usort($results, fn($a, $b) => [status::status_rank($a['status']), status::severity_rank($a['gravidade']), $a['rule']]
+            <=> [status::status_rank($b['status']), status::severity_rank($b['gravidade']), $b['rule']]);
         $inv = $report['inventory'];
         $lines = [];
-        $lines[] = "=== {$report['course']['fullname']} [{$report['course']['shortname']}] (id {$report['course']['id']}) — {$report['engine']} / política {$report['policy_version']} (ano {$report['reoffer_year']})";
-        $lines[] = "Período: {$inv['startdate']} → {$inv['enddate']} | categoria: {$inv['category']['name']} | visível: {$inv['visible']} | tempo: {$report['timing']['total_s']}s";
-        $lines[] = 'Seções: ' . $inv['sections'] . ' | módulos: ' . $inv['modules'] . ' ' . json_encode($inv['modules_by_type']) . ' | arquivos: ' . $inv['files'] . ' (sem conteúdo: ' . $inv['files_missing_in_storage'] . ')';
-        $lines[] = 'Blocos: ' . json_encode($inv['blocks']) . ' | inscrição: ' . json_encode($inv['enrols']);
-        $lines[] = 'Resumo: ' . json_encode($report['summary']['por_status']) . ' | não conformes por gravidade: ' . json_encode($report['summary']['nao_conformes_por_gravidade'], JSON_UNESCAPED_UNICODE);
+        $c = $report['course'];
+        $lines[] = "=== {$c['fullname']} [{$c['shortname']}] (id {$c['id']}) — {$report['engine']}"
+            . " / {$str('label_policy')} {$report['policy_version']}"
+            . " ({$str('label_reoffer_year')} {$report['reoffer_year']})";
+        $lines[] = "{$str('label_period')}: {$inv['startdate']} → {$inv['enddate']}"
+            . " | {$str('label_category')}: {$inv['category']['name']}"
+            . " | {$str('label_visible')}: {$inv['visible']} | {$str('label_time')}: {$report['timing']['total_s']}s";
+        $lines[] = "{$str('label_sections')}: {$inv['sections']} | {$str('label_modules')}: {$inv['modules']} "
+            . json_encode($inv['modules_by_type'])
+            . " | {$str('label_files')}: {$inv['files']} ({$str('label_files_missing')}: {$inv['files_missing_in_storage']})";
+        $lines[] = "{$str('label_blocks')}: " . json_encode($inv['blocks']) . " | {$str('label_enrols')}: "
+            . json_encode($inv['enrols']);
+        $lines[] = "{$str('label_overall')}: " . $str('overall_' . strtolower($report['summary']['overall_status']))
+            . ' | ' . json_encode($report['summary']['por_status'])
+            . " | {$str('label_bysev')}: " . json_encode($report['summary']['nao_conformes_por_gravidade'], JSON_UNESCAPED_UNICODE);
         foreach ($results as $r) {
-            if ($r['status'] === rules::CONFORME) {
+            if ($r['status'] === status::CONFORME) {
                 continue;
             }
             $lines[] = sprintf('  [%-15s] %-9s %-11s %s', $r['status'], $r['rule'], $r['gravidade'], $r['titulo']);
-            $lines[] = '      local: ' . $r['local'];
-            $lines[] = '      evidência: ' . mb_substr((string) $r['evidencia'], 0, 400);
-            if (!empty($r['encontrado'])) {
-                $lines[] = '      encontrado: ' . mb_substr((string) $r['encontrado'], 0, 300);
+            $lines[] = "      {$str('label_local')}: " . $r['local'] . ($r['link'] ? ' → ' . $r['link'] : '');
+            $lines[] = "      {$str('label_evidence')}: " . $r['evidencia'];
+            if ((string) $r['encontrado'] !== '') {
+                $lines[] = "      {$str('label_found')}: " . $r['encontrado'];
             }
-            if (!empty($r['esperado'])) {
-                $lines[] = '      esperado: ' . $r['esperado'];
+            if ((string) $r['esperado'] !== '') {
+                $lines[] = "      {$str('label_expected')}: " . $r['esperado'];
             }
-            if (!empty($r['orientacao'])) {
-                $lines[] = '      orientação: ' . $r['orientacao'];
+            if ((string) $r['orientacao'] !== '') {
+                $lines[] = "      {$str('label_guidance')}: " . $r['orientacao'];
             }
         }
-        $conf = array_unique(array_map(fn($r) => $r['rule'], array_filter($results, fn($r) => $r['status'] === rules::CONFORME)));
+        $notconf = array_unique(array_column(array_filter($results, fn($r) => $r['status'] !== status::CONFORME), 'rule'));
+        $conf = array_values(array_diff(array_unique(array_column($results, 'rule')), $notconf));
         sort($conf);
-        $lines[] = '  (conformes omitidos: ' . implode(', ', $conf) . ')';
-        if ($report['warnings']) {
-            $lines[] = '  avisos: ' . json_encode($report['warnings'], JSON_UNESCAPED_UNICODE);
+        $lines[] = "  ({$str('label_conformant_omitted')}: " . implode(', ', $conf) . ')';
+        foreach ($report['policy_warnings'] as $w) {
+            $lines[] = "  {$str('label_policy')}: " . $w;
+        }
+        foreach ($report['warnings'] as $w) {
+            $lines[] = "  {$str('label_collection')}: " . (is_string($w) ? $w : json_encode($w, JSON_UNESCAPED_UNICODE));
         }
         return implode("\n", $lines) . "\n";
     }

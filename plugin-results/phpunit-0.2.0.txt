@@ -1,0 +1,156 @@
+Moodle 4.5.15 (Build: 20261005), 215f44380bdc3ccf852a3a22e34f8423ff64033a
+Php: 8.3.35, pgsql: 17.11 (Debian 17.11-1.pgdg13+2), OS: Linux 6.8.0-117-generic aarch64
+PHPUnit 9.6.34 by Sebastian Bergmann and contributors.
+
+access_test (local_mooc_audit\access_test)
+ ✔ Capability by archetype
+ ✔ Capability definition
+ ✔ Navigation node
+
+characterization_test (local_mooc_audit\characterization_test)
+ ✔ Course a
+ ✔ Course b
+
+contract_test (local_mooc_audit\contract_test)
+ ✔ Reports validate against schema
+ ✔ Validator detects violations
+ ✔ Json roundtrip
+
+engine_test (local_mooc_audit\engine_test)
+ ✔ Quiz attempts and grade sum
+ ✔ Policy override and isolation
+ ✔ Contract fields and overall status
+ ✔ Site completion disabled
+ ✔ Render text
+ ✔ Import locus for missing components
+ ✔ Rule exception is isolated
+ ✔ Site availability disabled
+ ✔ Policy warnings
+
+cl04_test (local_mooc_audit\local\rule\cl04_test)
+ ✔ Summary links
+
+cl05_test (local_mooc_audit\local\rule\cl05_test)
+ ✔ Category
+
+cl06_test (local_mooc_audit\local\rule\cl06_test)
+ ✔ Start date
+
+cl07_test (local_mooc_audit\local\rule\cl07_test)
+ ✔ End date
+
+cl08_test (local_mooc_audit\local\rule\cl08_test)
+ ✔ Self enrolment
+
+cl09_test (local_mooc_audit\local\rule\cl09_test)
+ ✔ Forum
+
+cl11_test (local_mooc_audit\local\rule\cl11_test)
+ ✔ Profile survey
+
+cl12_test (local_mooc_audit\local\rule\cl12_test)
+ ✔ Gradebook
+
+cl13_test (local_mooc_audit\local\rule\cl13_test)
+ ✔ Attempts
+
+cl14_test (local_mooc_audit\local\rule\cl14_test)
+ ✔ Closing dates
+
+cl16_test (local_mooc_audit\local\rule\cl16_test)
+ ✔ Evaluation restrictions
+
+cl17_test (local_mooc_audit\local\rule\cl17_test)
+ ✔ Completion criteria
+
+cl18_test (local_mooc_audit\local\rule\cl18_test)
+ ✔ Glossary
+
+cl19_test (local_mooc_audit\local\rule\cl19_test)
+ ✔ Labels
+
+cl20_test (local_mooc_audit\local\rule\cl20_test)
+ ✔ Sections
+
+cl21_test (local_mooc_audit\local\rule\cl21_test)
+ ✔ Blocks
+
+cl22_test (local_mooc_audit\local\rule\cl22_test)
+ ✔ Licence components
+
+cl23_test (local_mooc_audit\local\rule\cl23_test)
+ ✔ Certificate conditions
+
+xav01_test (local_mooc_audit\local\rule\xav01_test)
+ ✔ Statement points
+
+xcert01_test (local_mooc_audit\local\rule\xcert01_test)
+ ✔ Reachability
+
+xcont01_test (local_mooc_audit\local\rule\xcont01_test)
+ ✔ Empty resources
+
+xcont04_test (local_mooc_audit\local\rule\xcont04_test)
+ ✔ Pluginfile references
+
+xdep01_test (local_mooc_audit\local\rule\xdep01_test)
+ ✔ Orphan conditions
+
+xdep02_test (local_mooc_audit\local\rule\xdep02_test)
+ ✔ Impossible conditions
+
+xdep03_test (local_mooc_audit\local\rule\xdep03_test)
+ ✔ Grade conditions
+
+xdep04_test (local_mooc_audit\local\rule\xdep04_test)
+ ✔ Cycles
+
+xint02_test (local_mooc_audit\local\rule\xint02_test)
+ ✔ Missing content
+
+xint03_test (local_mooc_audit\local\rule\xint03_test)
+ ✔ Empty course is not applicable
+ ✔ Installed and missing
+
+xstr01_test (local_mooc_audit\local\rule\xstr01_test)
+ ✔ Structure
+
+locator_test (local_mooc_audit\locator_test)
+ ✔ Url for with data set "module_edit"
+ ✔ Url for with data set "module_view"
+ ✔ Url for with data set "course_settings"
+ ✔ Url for with data set "enrol"
+ ✔ Url for with data set "gradebook"
+ ✔ Url for with data set "blocks"
+ ✔ Url for with data set "section"
+ ✔ Url for with data set "import"
+ ✔ Url for with data set "none"
+ ✔ Url for with data set "missing locus"
+ ✔ Url for with data set "module_edit, unknown cmid"
+ ✔ Url for with data set "module_view, no cmid"
+ ✔ Url for with data set "section without number"
+ ✔ Url for with data set "section, unknown number"
+ ✔ Loci and titles
+
+output_test (local_mooc_audit\output_test)
+ ✔ Export and render course b
+ ✔ Unverifiable errors and notices
+ ✔ Names escaped once
+ ✔ Export course a
+
+policy_test (local_mooc_audit\policy_test)
+ ✔ Defaults
+ ✔ Invalid json setting
+ ✔ Admin override
+ ✔ Override precedence
+ ✔ Canonical name change applies to rules
+ ✔ Strict types
+ ✔ List is not a policy
+ ✔ Setting validation
+
+readonly_test (local_mooc_audit\readonly_test)
+ ✔ Audit does not modify the course
+
+Time: 00:46.869, Memory: 121.00 MB
+
+OK (75 tests, 1720 assertions)

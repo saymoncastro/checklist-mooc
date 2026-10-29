@@ -1,0 +1,137 @@
+=== Curso B — inconsistente [MOOC_TESTE_B] (id 5) — local_mooc_audit 0.2.0 / Política 2027-decisoes-2026-10-28 (Ano da reoferta 2027)
+Período: 2026-01-01 00:00 → 2027-06-30 01:00 | Categoria: Inscrições Abertas | Visível: 1 | tempo: 0.094s
+Seções: 5 | Módulos: 21 {"feedback":3,"forum":2,"game":1,"glossary":1,"label":1,"page":8,"quiz":2,"resource":1,"simplecertificate":2} | Arquivos: 1 (sem conteúdo no armazenamento: 1)
+Blocos: ["completion_progress","html","html"] | Métodos de inscrição: ["manual","guest(off)","self(off)"]
+Situação geral: Bloqueada | {"CONFORME":28,"NAO_CONFORME":25,"ATENCAO":5} | Inconformidades por gravidade: {"Alta":9,"Média":9,"Bloqueante":5,"Baixa":2}
+  [NAO_CONFORME   ] CL-18     Bloqueante  Glossário: proibido se colaborativo; vazio se fonte de jogos
+      Local: glossary "Glossário de termos" (cmid=42) → http://localhost:8092/mod/glossary/view.php?id=42
+      Evidência: glossário com 0 entradas; fonte de 1 jogos: game "Palavras cruzadas" (cmid=43) [entradas na categoria: n/a]
+      Esperado: entradas disponíveis para os jogos
+      Orientação: As entradas não vêm em backup/importação sem usuários: repovoar (importar XML do glossário) ou trocar a fonte dos jogos para o banco de questões.
+  [NAO_CONFORME   ] CL-23     Bloqueante  Certificado condicionado à Avaliação do curso e à nota mínima no total
+      Local: simplecertificate "Certificado digital de conclusão" (cmid=46) → http://localhost:8092/course/modedit.php?update=46
+      Evidência: condições de nota=[]
+      Esperado: nota ≥ 60 no total do curso
+      Orientação: Adicionar ao certificado as restrições: conclusão da Avaliação do curso e nota mínima no Total do curso, com operador "todas".
+  [NAO_CONFORME   ] X-CERT-01 Bloqueante  Alcançabilidade estática do certificado
+      Local: simplecertificate "Certificado digital de conclusão" (cmid=46) → http://localhost:8092/course/modedit.php?update=46
+      Evidência: cadeia transitiva de conclusão: 6 módulos; tipos de condição: {"completion":2}
+      Encontrado: page "Aprofundamento" (cmid=36) sem conclusão; page "Leitura obrigatória (oculta)" (cmid=39) oculto
+      Orientação: Verificação estática; a emissão real exige usuário de teste.
+  [NAO_CONFORME   ] X-DEP-02  Bloqueante  Condição exige conclusão de módulo sem conclusão ou oculto
+      Local: quiz "Questionário 1" (cmid=40) → http://localhost:8092/course/modedit.php?update=40
+      Evidência: exige conclusão de page "Aprofundamento" (cmid=36) que NÃO tem acompanhamento de conclusão
+      Orientação: Habilitar conclusão no módulo-alvo ou remover a condição; do contrário ela nunca será satisfeita.
+  [NAO_CONFORME   ] X-DEP-04  Bloqueante  Ciclos no grafo de dependências de conclusão
+      Local: Grafo de restrições
+      Evidência: ciclo: 48 → 49 → 48
+      Orientação: Remover uma das condições para quebrar o ciclo.
+  [NAO_CONFORME   ] CL-06     Alta        Data de início correta (01/01 do ano da reoferta)
+      Local: Configurações do curso > Data de início → http://localhost:8092/course/edit.php?id=5
+      Evidência: início=01/01/2026 00:00 fim=30/06/2027 01:00
+      Encontrado: ano=2026 ≠ 2027
+      Esperado: 01/01/2027
+      Orientação: Ajustar a data de início da oferta.
+  [NAO_CONFORME   ] CL-07     Alta        Data de término correta (31/12 do ano da reoferta)
+      Local: Configurações do curso > Data de término → http://localhost:8092/course/edit.php?id=5
+      Evidência: término=30/06/2027 01:00
+      Esperado: 31/12/2027
+      Orientação: Ajustar a data de término conforme o calendário do Cefor.
+  [NAO_CONFORME   ] CL-08     Alta        Autoinscrição habilitada com período correto
+      Local: Métodos de inscrição > Autoinscrição (id 12) → http://localhost:8092/enrol/instances.php?id=5
+      Evidência: status=1 novas_inscricoes=1 início=(não definida) fim=(não definida)
+      Encontrado: método desabilitado; datas de inscrição não definidas
+      Orientação: Editar a Autoinscrição: habilitar, permitir novas inscrições e alinhar as datas com as do curso.
+  [NAO_CONFORME   ] CL-12     Alta        Livro de notas: soma 100, agregação Natural, sem excluir vazias
+      Local: Livro de notas > categoria raiz → http://localhost:8092/grade/edit/tree/index.php?id=5
+      Evidência: aggregateonlygraded=1 (excluir notas vazias)
+      Orientação: Desmarcar "Excluir notas vazias": com ela ligada, a condição de 60 pontos do certificado é relativa só às atividades já avaliadas.
+  [NAO_CONFORME   ] CL-13     Alta        Questionários com ao menos duas tentativas (e enunciado coerente)
+      Local: quiz "Questionário 1" (cmid=40) → http://localhost:8092/course/modedit.php?update=40
+      Evidência: tentativas permitidas=1
+      Esperado: ≥ 2 (0 = ilimitadas)
+      Orientação: Editar configurações do questionário > Nota > Tentativas permitidas.
+  [NAO_CONFORME   ] CL-13     Alta        Questionários com ao menos duas tentativas (e enunciado coerente)
+      Local: quiz "Questionário 1" (cmid=40) → http://localhost:8092/course/modedit.php?update=40
+      Evidência: enunciado declara 2 tentativas; configurado=1
+      Orientação: Corrigir o enunciado ou a configuração.
+  [NAO_CONFORME   ] CL-16     Alta        Avaliação do curso restrita à conclusão de todas as atividades com nota
+      Local: feedback "Avaliação do curso" (cmid=44) → http://localhost:8092/course/modedit.php?update=44
+      Evidência: exige conclusão de cmids [40]
+      Encontrado: faltam: quiz "Questionário 2" (cmid=41); game "Palavras cruzadas" (cmid=43)
+      Esperado: conclusão de todas as atividades com nota
+      Orientação: Adicionar as restrições de conclusão faltantes.
+  [NAO_CONFORME   ] X-CONT-01 Alta        Recursos vazios (página/rótulo sem conteúdo, questionário sem questões, arquivo sem arquivo)
+      Local: quiz "Questionário 2" (cmid=41) → http://localhost:8092/mod/quiz/view.php?id=41
+      Evidência: questionário sem questões
+      Orientação: Preencher ou remover o recurso.
+  [NAO_CONFORME   ] X-INT-02  Alta        Arquivos registrados sem conteúdo no armazenamento do Moodle
+      Local: resource "Apostila (arquivo perdido)" (cmid=50) → http://localhost:8092/course/modedit.php?update=50
+      Evidência: arquivo "apostila.txt" (mod_resource/content, 19 bytes) registrado mas sem conteúdo legível no armazenamento
+      Orientação: Reenviar o arquivo. Se for alias (Arquivos do servidor), o original foi removido ou não foi copiado.
+  [NAO_CONFORME   ] CL-09     Média      Fórum institucional "Espaço de interação" presente e sem conclusão
+      Local: forum "Espaço de interação" (cmid=32) → http://localhost:8092/course/modedit.php?update=32
+      Evidência: completion=1
+      Esperado: conclusão desabilitada
+      Orientação: Desabilitar a conclusão de atividade do fórum institucional.
+  [NAO_CONFORME   ] CL-14     Média      Atividades avaliativas com data de encerramento
+      Local: quiz "Questionário 1" (cmid=40) → http://localhost:8092/course/modedit.php?update=40
+      Evidência: data de encerramento não definida
+      Orientação: Definir a data de encerramento.
+  [NAO_CONFORME   ] CL-14     Média      Atividades avaliativas com data de encerramento
+      Local: game "Palavras cruzadas" (cmid=43) → http://localhost:8092/course/modedit.php?update=43
+      Evidência: data de encerramento não definida
+      Orientação: Definir a data de encerramento.
+  [NAO_CONFORME   ] CL-17     Média      Conclusão automática com critério adequado ao tipo
+      Local: forum "Espaço de interação" (cmid=32) → http://localhost:8092/course/modedit.php?update=32
+      Evidência: conclusão MANUAL
+      Esperado: automática (ou nenhuma, para rótulos/fóruns institucionais)
+      Orientação: Trocar para conclusão automática com o critério adequado ao tipo.
+  [NAO_CONFORME   ] CL-17     Média      Conclusão automática com critério adequado ao tipo
+      Local: label "label" (cmid=34) → http://localhost:8092/course/modedit.php?update=34
+      Evidência: conclusão MANUAL
+      Esperado: automática (ou nenhuma, para rótulos/fóruns institucionais)
+      Orientação: Trocar para conclusão automática com o critério adequado ao tipo.
+  [NAO_CONFORME   ] CL-21     Média      Blocos padrão presentes na página do curso
+      Local: Blocos da página do curso → http://localhost:8092/course/view.php?id=5
+      Evidência: bloco "Acessibilidade": ausente
+      Orientação: Adicionar o bloco HTML padrão (ou verificar o bloco de site correspondente).
+  [NAO_CONFORME   ] X-AV-01   Média      Enunciado × configuração (pontos)
+      Local: quiz "Questionário 2" (cmid=41) → http://localhost:8092/course/modedit.php?update=41
+      Evidência: enunciado declara 50 pontos; nota máxima=40
+      Orientação: Alinhar enunciado e nota máxima.
+  [NAO_CONFORME   ] X-CONT-01 Média      Recursos vazios (página/rótulo sem conteúdo, questionário sem questões, arquivo sem arquivo)
+      Local: page "Página sem conteúdo" (cmid=37) → http://localhost:8092/course/modedit.php?update=37
+      Evidência: sem texto e sem mídia/links
+      Orientação: Preencher ou remover o recurso.
+  [NAO_CONFORME   ] X-CONT-04 Média      Referências @@PLUGINFILE@@ sem arquivo correspondente
+      Local: page "Página com imagem perdida" (cmid=38) campo content → http://localhost:8092/course/modedit.php?update=38
+      Evidência: @@PLUGINFILE@@/banner.png não encontrado entre os arquivos do módulo
+      Orientação: Imagem/arquivo quebrado: reenviar no editor. Típico de aliases não restaurados ("unable to restore alias").
+  [NAO_CONFORME   ] CL-19     Baixa       Rótulos sem conclusão de atividade
+      Local: label "label" (cmid=34) → http://localhost:8092/course/modedit.php?update=34
+      Evidência: completion=1
+      Orientação: Desabilitar a conclusão no rótulo.
+  [NAO_CONFORME   ] CL-20     Baixa       Seções: ocultas invisíveis, sem seções vazias ou com nome genérico
+      Local: Configurações do curso > Formato > Seções escondidas → http://localhost:8092/course/edit.php?id=5
+      Evidência: hiddensections=0
+      Esperado: 1 (completamente invisíveis)
+      Orientação: Marcar "Seções escondidas são completamente invisíveis" nas configurações do curso.
+  [ATENCAO        ] X-DEP-02  Alta        Condição exige conclusão de módulo sem conclusão ou oculto
+      Local: quiz "Questionário 1" (cmid=40) → http://localhost:8092/course/modedit.php?update=40
+      Evidência: exige conclusão de módulo OCULTO page "Leitura obrigatória (oculta)" (cmid=39)
+  [ATENCAO        ] CL-14     Baixa       Atividades avaliativas com data de encerramento
+      Local: quiz "Questionário 2" (cmid=41) → http://localhost:8092/course/modedit.php?update=41
+      Evidência: encerramento=31/12/2027 23:59 (≠ fim do curso 30/06/2027 01:00)
+  [ATENCAO        ] CL-20     Baixa       Seções: ocultas invisíveis, sem seções vazias ou com nome genérico
+      Local: Seção 3 "Topic 3" → http://localhost:8092/course/section.php?id=19
+      Evidência: nome genérico "Topic 3"
+      Orientação: Nomear a seção conforme o conteúdo.
+  [ATENCAO        ] X-STR-01  Baixa       Módulos ocultos, invisíveis ao usuário ou com nome vazio
+      Local: page "Leitura obrigatória (oculta)" (cmid=39) → http://localhost:8092/course/modedit.php?update=39
+      Evidência: módulo oculto
+      Orientação: Confirmar se deve permanecer oculto.
+  [ATENCAO        ] CL-17     Informativa Conclusão automática com critério adequado ao tipo
+      Local: Conclusão de atividades
+      Evidência: nenhuma=10 manual=2 automática=9
+  (regras conformes omitidas: CL-04, CL-05, CL-11, CL-22, X-DEP-01, X-DEP-03, X-INT-03)

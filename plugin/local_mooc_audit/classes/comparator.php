@@ -16,7 +16,6 @@
 
 namespace local_mooc_audit;
 
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Experimental comparator between a source course and an imported target course.
@@ -30,12 +29,13 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class comparator {
-
     /** @var array Course settings expected to change in a reoffer (reported as "expected differences"). */
-    const EXPECTED_COURSE_DIFFS = ['id', 'contextid', 'shortname', 'fullname', 'startdate', 'enddate', 'timecreated', 'timemodified', 'category'];
+    const EXPECTED_COURSE_DIFFS = ['id', 'contextid', 'shortname', 'fullname', 'startdate', 'enddate', 'timecreated',
+        'timemodified', 'category'];
 
     /** @var array Module attributes compared once two modules are matched. */
-    const MODULE_FIELDS = ['visible', 'visibleoncoursepage', 'completion', 'completionview', 'completiongradeitemnumber', 'completionpassgrade', 'sectionnumber'];
+    const MODULE_FIELDS = ['visible', 'visibleoncoursepage', 'completion', 'completionview', 'completiongradeitemnumber',
+        'completionpassgrade', 'sectionnumber'];
 
     /**
      * Compare two snapshots.
@@ -45,15 +45,22 @@ class comparator {
      * @return array
      */
     public static function compare(array $src, array $dst): array {
-        $report = ['source' => $src['course']['id'], 'target' => $dst['course']['id'], 'course_diffs' => [], 'expected_course_diffs' => [],
-            'matched' => [], 'missing_in_target' => [], 'extra_in_target' => [], 'ambiguous' => [], 'modified' => [], 'preserved' => 0, 'notes' => []];
+        $report = ['source' => $src['course']['id'], 'target' => $dst['course']['id'], 'course_diffs' => [],
+            'expected_course_diffs' => [],
+            'matched' => [], 'missing_in_target' => [], 'extra_in_target' => [], 'ambiguous' => [], 'modified' => [],
+                'preserved' => 0, 'notes' => []];
 
         foreach ($src['course'] as $k => $v) {
             if (in_array($k, ['summary', 'formatoptions'])) {
                 $v = is_array($v) ? json_encode($v) : trim((string) $v);
-                $w = is_array($dst['course'][$k] ?? null) ? json_encode($dst['course'][$k]) : trim((string) ($dst['course'][$k] ?? ''));
+                $w = is_array($dst['course'][$k] ?? null) ? json_encode($dst['course'][$k]) : trim((string) ($dst['course'][$k]
+                    ?? ''));
                 if ($v !== $w) {
-                    $report['course_diffs'][] = ['field' => $k, 'source' => mb_substr($v, 0, 120), 'target' => mb_substr($w, 0, 120)];
+                    $report['course_diffs'][] = ['field' => $k, 'source' => mb_substr($v, 0, 120), 'target' => mb_substr(
+                        $w,
+                        0,
+                        120
+                    )];
                 }
                 continue;
             }
@@ -99,16 +106,20 @@ class comparator {
             if (count($cands) === 1) {
                 $used[] = $cands[0];
                 $map[$m['cmid']] = $cands[0];
-                $report['matched'][] = ['source_cmid' => $m['cmid'], 'target_cmid' => $cands[0], 'modname' => $m['modname'], 'name' => $m['name'], 'how' => $how];
+                $report['matched'][] = ['source_cmid' => $m['cmid'], 'target_cmid' => $cands[0], 'modname' => $m['modname'],
+                    'name' => $m['name'], 'how' => $how];
             } else if (count($cands) > 1) {
-                $report['ambiguous'][] = ['source_cmid' => $m['cmid'], 'modname' => $m['modname'], 'name' => $m['name'], 'candidates' => $cands];
+                $report['ambiguous'][] = ['source_cmid' => $m['cmid'], 'modname' => $m['modname'], 'name' => $m['name'],
+                    'candidates' => $cands];
             } else {
-                $report['missing_in_target'][] = ['source_cmid' => $m['cmid'], 'modname' => $m['modname'], 'name' => $m['name'], 'section' => $m['sectionnumber']];
+                $report['missing_in_target'][] = ['source_cmid' => $m['cmid'], 'modname' => $m['modname'], 'name' => $m['name'],
+                    'section' => $m['sectionnumber']];
             }
         }
         foreach ($dst['modules'] as $m) {
             if (!in_array($m['cmid'], $used)) {
-                $report['extra_in_target'][] = ['target_cmid' => $m['cmid'], 'modname' => $m['modname'], 'name' => $m['name'], 'section' => $m['sectionnumber']];
+                $report['extra_in_target'][] = ['target_cmid' => $m['cmid'], 'modname' => $m['modname'], 'name' => $m['name'],
+                    'section' => $m['sectionnumber']];
             }
         }
 
@@ -123,7 +134,10 @@ class comparator {
                 }
             }
             foreach ($a['extra'] as $k => $v) {
-                if (in_array($k, ['missing_instance', 'glossary_entries_available', 'glossary_category_entries', 'main_library_id'])) {
+                if (
+                    in_array($k, ['missing_instance', 'glossary_entries_available', 'glossary_category_entries',
+                    'main_library_id'])
+                ) {
                     continue;
                 }
                 if (array_key_exists($k, $b['extra']) && $b['extra'][$k] != $v) {
@@ -133,15 +147,22 @@ class comparator {
             // Availability: remap source cmids/grade item ids through the match map before comparing.
             $remapped = self::remap_availability($a['availability'], $map, $src, $dst);
             if (json_encode(self::normalise_tree($remapped)) !== json_encode(self::normalise_tree($b['availability']))) {
-                $diffs[] = ['field' => 'availability', 'source' => $a['availability_raw'], 'target' => $b['availability_raw'], 'source_remapped' => json_encode($remapped)];
+                $diffs[] = ['field' => 'availability', 'source' => $a['availability_raw'], 'target' => $b['availability_raw'],
+                    'source_remapped' => json_encode($remapped)];
             }
             $ga = array_map(fn($g) => [$g['itemnumber'], $g['gradetype'], $g['grademax']], $a['grade_items']);
             $gb = array_map(fn($g) => [$g['itemnumber'], $g['gradetype'], $g['grademax']], $b['grade_items']);
             if ($ga != $gb) {
                 $diffs[] = ['field' => 'grade_items', 'source' => $ga, 'target' => $gb];
             }
-            $fa = array_map(fn($f) => $f['filearea'] . ':' . $f['filepath'] . $f['filename'] . ':' . $f['filesize'], $a['files']['list']);
-            $fb = array_map(fn($f) => $f['filearea'] . ':' . $f['filepath'] . $f['filename'] . ':' . $f['filesize'], $b['files']['list']);
+            $fa = array_map(
+                fn($f) => $f['filearea'] . ':' . $f['filepath'] . $f['filename'] . ':' . $f['filesize'],
+                $a['files']['list']
+            );
+            $fb = array_map(
+                fn($f) => $f['filearea'] . ':' . $f['filepath'] . $f['filename'] . ':' . $f['filesize'],
+                $b['files']['list']
+            );
             sort($fa);
             sort($fb);
             if ($fa != $fb) {
@@ -151,20 +172,26 @@ class comparator {
             $tb = array_map(fn($t) => md5(trim((string) $t)), $b['texts']);
             foreach ($ta as $k => $h) {
                 if (($tb[$k] ?? null) !== $h) {
-                    $diffs[] = ['field' => "texts.$k", 'source' => mb_substr(rules::text($a['texts'][$k]), 0, 80), 'target' => mb_substr(rules::text($b['texts'][$k] ?? ''), 0, 80)];
+                    $diffs[] = ['field' => "texts.$k",
+                        'source' => mb_substr(\local_mooc_audit\local\helpers::text($a['texts'][$k]), 0, 80),
+                        'target' => mb_substr(\local_mooc_audit\local\helpers::text($b['texts'][$k] ?? ''), 0, 80)];
                 }
             }
             if ($diffs) {
-                $report['modified'][] = ['source_cmid' => $scm, 'target_cmid' => $tcm, 'modname' => $a['modname'], 'name' => $a['name'], 'diffs' => $diffs,
-                    'problematic' => (bool) array_filter($diffs, fn($d) => !in_array($d['field'], ['texts.intro', 'texts.content']) || true)];
+                $report['modified'][] = ['source_cmid' => $scm, 'target_cmid' => $tcm, 'modname' => $a['modname'],
+                    'name' => $a['name'], 'diffs' => $diffs,
+                    'problematic' => (bool) array_filter($diffs, fn($d) => !in_array($d['field'], ['texts.intro',
+                        'texts.content']) || true)];
             } else {
                 $report['preserved']++;
             }
         }
 
         // Enrolment, blocks, grade settings.
-        $ea = array_map(fn($e) => "{$e['enrol']}:status={$e['status']}:start={$e['enrolstartdate']}:end={$e['enrolenddate']}:new={$e['customint6']}", $src['enrols']);
-        $eb = array_map(fn($e) => "{$e['enrol']}:status={$e['status']}:start={$e['enrolstartdate']}:end={$e['enrolenddate']}:new={$e['customint6']}", $dst['enrols']);
+        $enrolkey = fn($e) => "{$e['enrol']}:status={$e['status']}:start={$e['enrolstartdate']}"
+            . ":end={$e['enrolenddate']}:new={$e['customint6']}";
+        $ea = array_map($enrolkey, $src['enrols']);
+        $eb = array_map($enrolkey, $dst['enrols']);
         sort($ea);
         sort($eb);
         if ($ea != $eb) {
@@ -180,10 +207,13 @@ class comparator {
         $ra = $src['grade']['categories'][$src['grade']['course_item']['iteminstance'] ?? 0] ?? null;
         $rb = $dst['grade']['categories'][$dst['grade']['course_item']['iteminstance'] ?? 0] ?? null;
         if ($ra && $rb && ($ra['aggregation'] != $rb['aggregation'] || $ra['aggregateonlygraded'] != $rb['aggregateonlygraded'])) {
-            $report['course_diffs'][] = ['field' => 'grade_root_category', 'source' => [$ra['aggregation'], $ra['aggregateonlygraded']], 'target' => [$rb['aggregation'], $rb['aggregateonlygraded']]];
+            $report['course_diffs'][] = ['field' => 'grade_root_category', 'source' => [$ra['aggregation'],
+                $ra['aggregateonlygraded']], 'target' => [$rb['aggregation'], $rb['aggregateonlygraded']]];
         }
-        $report['summary'] = ['source_modules' => count($src['modules']), 'target_modules' => count($dst['modules']), 'matched' => count($map),
-            'preserved' => $report['preserved'], 'modified' => count($report['modified']), 'missing_in_target' => count($report['missing_in_target']),
+        $report['summary'] = ['source_modules' => count($src['modules']), 'target_modules' => count($dst['modules']),
+            'matched' => count($map),
+            'preserved' => $report['preserved'], 'modified' => count($report['modified']),
+                'missing_in_target' => count($report['missing_in_target']),
             'extra_in_target' => count($report['extra_in_target']), 'ambiguous' => count($report['ambiguous'])];
         return $report;
     }
@@ -195,7 +225,7 @@ class comparator {
      * @return string
      */
     protected static function key_full(array $m): string {
-        return $m['modname'] . '|' . $m['sectionnumber'] . '|' . rules::norm($m['name']);
+        return $m['modname'] . '|' . $m['sectionnumber'] . '|' . \local_mooc_audit\local\helpers::norm($m['name']);
     }
 
     /**
@@ -205,7 +235,7 @@ class comparator {
      * @return string
      */
     protected static function key_name(array $m): string {
-        return $m['modname'] . '|' . rules::norm($m['name']);
+        return $m['modname'] . '|' . \local_mooc_audit\local\helpers::norm($m['name']);
     }
 
     /**
@@ -234,7 +264,7 @@ class comparator {
         if (!$tree) {
             return $tree;
         }
-        $walk = function(array $node) use (&$walk, $map, $src, $dst) {
+        $walk = function (array $node) use (&$walk, $map, $src, $dst) {
             if (isset($node['c'])) {
                 $node['c'] = array_map($walk, $node['c']);
                 return $node;
@@ -295,10 +325,12 @@ class comparator {
     public static function render_text(array $r): string {
         $l = ["=== Comparação curso {$r['source']} (origem) → {$r['target']} (destino)", 'Resumo: ' . json_encode($r['summary'])];
         foreach ($r['expected_course_diffs'] as $d) {
-            $l[] = '  [esperado]   ' . $d['field'] . ': ' . json_encode($d['source'], JSON_UNESCAPED_UNICODE) . ' → ' . json_encode($d['target'], JSON_UNESCAPED_UNICODE);
+            $l[] = '  [esperado]   ' . $d['field'] . ': ' . json_encode($d['source'], JSON_UNESCAPED_UNICODE) . ' → '
+                . json_encode($d['target'], JSON_UNESCAPED_UNICODE);
         }
         foreach ($r['course_diffs'] as $d) {
-            $l[] = '  [curso]      ' . $d['field'] . ': ' . json_encode($d['source'], JSON_UNESCAPED_UNICODE) . ' → ' . json_encode($d['target'], JSON_UNESCAPED_UNICODE);
+            $l[] = '  [curso]      ' . $d['field'] . ': ' . json_encode($d['source'], JSON_UNESCAPED_UNICODE) . ' → '
+                . json_encode($d['target'], JSON_UNESCAPED_UNICODE);
         }
         foreach ($r['missing_in_target'] as $m) {
             $l[] = "  [AUSENTE]    {$m['modname']} \"{$m['name']}\" (origem cmid {$m['source_cmid']}, seção {$m['section']})";
@@ -307,19 +339,22 @@ class comparator {
             $l[] = "  [ADICIONAL]  {$m['modname']} \"{$m['name']}\" (destino cmid {$m['target_cmid']}, seção {$m['section']})";
         }
         foreach ($r['ambiguous'] as $m) {
-            $l[] = "  [AMBÍGUO]    {$m['modname']} \"{$m['name']}\" (origem cmid {$m['source_cmid']}) candidatos " . json_encode($m['candidates']);
+            $l[] = "  [AMBÍGUO]    {$m['modname']} \"{$m['name']}\" (origem cmid {$m['source_cmid']}) candidatos "
+                . json_encode($m['candidates']);
         }
         foreach ($r['modified'] as $m) {
             $l[] = "  [MODIFICADO] {$m['modname']} \"{$m['name']}\" ({$m['source_cmid']} → {$m['target_cmid']})";
             foreach ($m['diffs'] as $d) {
-                $l[] = '       ' . $d['field'] . ': ' . mb_substr(json_encode($d['source'], JSON_UNESCAPED_UNICODE), 0, 160) . ' → ' . mb_substr(json_encode($d['target'], JSON_UNESCAPED_UNICODE), 0, 160);
+                $l[] = '       ' . $d['field'] . ': ' . mb_substr(json_encode($d['source'], JSON_UNESCAPED_UNICODE), 0, 160)
+                    . ' → ' . mb_substr(json_encode($d['target'], JSON_UNESCAPED_UNICODE), 0, 160);
             }
         }
         $hows = [];
         foreach ($r['matched'] as $m) {
             $hows[$m['how']] = ($hows[$m['how']] ?? 0) + 1;
         }
-        $l[] = '  correspondências por estratégia: ' . json_encode($hows, JSON_UNESCAPED_UNICODE) . "; preservados sem diferença: {$r['preserved']}";
+        $l[] = '  correspondências por estratégia: ' . json_encode($hows, JSON_UNESCAPED_UNICODE)
+            . "; preservados sem diferença: {$r['preserved']}";
         return implode("\n", $l) . "\n";
     }
 }

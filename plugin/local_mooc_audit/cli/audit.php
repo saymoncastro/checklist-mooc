@@ -17,7 +17,8 @@
 /**
  * CLI: audit a course (read-only).
  *
- * php local/mooc_audit/cli/audit.php --courseid=3 [--userid=5] [--policy=/path/policy.json] [--json] [--out=/path/report.json] [--snapshot]
+ * php local/mooc_audit/cli/audit.php --courseid=3 [--userid=5] [--policy=/path/policy.json] [--json] [--out=/path/report.json]
+ * [--snapshot]
  *
  * @package    local_mooc_audit
  * @copyright  2026 Cefor/Ifes
@@ -29,31 +30,49 @@ define('CLI_SCRIPT', true);
 require(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir . '/clilib.php');
 
-list($options, $unrecognized) = cli_get_params([
+[$options, $unrecognized] = cli_get_params([
     'courseid' => 0, 'userid' => 0, 'policy' => '', 'json' => false, 'out' => '', 'snapshot' => false, 'help' => false,
 ], ['h' => 'help', 'c' => 'courseid']);
 
 if ($options['help'] || empty($options['courseid'])) {
-    cli_writeln("Auditoria MOOC somente leitura de um curso.\n\nOpções:\n  --courseid=N   curso a auditar (obrigatório)\n  --userid=N     usuário cuja visão define 'uservisible' (0 = admin)\n  --policy=FILE  JSON com parâmetros de política que sobrescrevem os padrões\n  --json         imprime o relatório em JSON em vez de texto\n  --out=FILE     grava o JSON do relatório no arquivo\n  --snapshot     inclui o retrato completo no JSON");
+    cli_writeln(implode("\n", [
+        'Auditoria MOOC somente leitura de um curso.',
+        '',
+        'Opções:',
+        '  --courseid=N   curso a auditar (obrigatório)',
+        "  --userid=N     usuário cuja visão define 'uservisible' (0 = admin)",
+        '  --policy=FILE  JSON com parâmetros de política que sobrescrevem os padrões',
+        '  --json         imprime o relatório em JSON (contrato 1.0) em vez de texto;',
+        '                 schema em local/mooc_audit/schema/report-v1.0.schema.json',
+        '  --out=FILE     grava o JSON do relatório (mesmo contrato e codificação da página) no arquivo',
+        '  --snapshot     inclui o retrato completo no JSON',
+    ]));
     exit(0);
 }
 
 \core\session\manager::set_user(get_admin());
 $override = null;
 if ($options['policy'] !== '') {
-    $override = json_decode(file_get_contents($options['policy']), true);
-    if (!is_array($override)) {
-        cli_error('Arquivo de política inválido.');
+    $text = is_readable($options['policy']) ? file_get_contents($options['policy']) : false;
+    $error = get_string('filenotfound', 'error');
+    $override = $text === false ? null : \local_mooc_audit\policy::decode_object($text, $error);
+    if ($override === null) {
+        cli_error(get_string('policyjson_invalid', 'local_mooc_audit', $error));
     }
 }
 
-$report = \local_mooc_audit\engine::audit((int) $options['courseid'], $override, (int) $options['userid'], (bool) $options['snapshot']);
+$report = \local_mooc_audit\engine::audit(
+    (int) $options['courseid'],
+    $override,
+    (int) $options['userid'],
+    (bool) $options['snapshot']
+);
 
 if ($options['out'] !== '') {
-    file_put_contents($options['out'], json_encode($report, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+    file_put_contents($options['out'], \local_mooc_audit\engine::to_json($report));
 }
 if ($options['json']) {
-    echo json_encode($report, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), "\n";
+    echo \local_mooc_audit\engine::to_json($report), "\n";
 } else {
     echo \local_mooc_audit\engine::render_text($report);
 }

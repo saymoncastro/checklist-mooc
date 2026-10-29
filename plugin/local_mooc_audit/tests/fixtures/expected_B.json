@@ -1,0 +1,118 @@
+{
+    "CL-04": [
+        "CONFORME|Média",
+        "CONFORME|Média"
+    ],
+    "CL-05": [
+        "CONFORME|Baixa"
+    ],
+    "CL-06": [
+        "NAO_CONFORME|Alta"
+    ],
+    "CL-07": [
+        "NAO_CONFORME|Alta"
+    ],
+    "CL-08": [
+        "NAO_CONFORME|Alta"
+    ],
+    "CL-09": [
+        "CONFORME|Média",
+        "NAO_CONFORME|Média"
+    ],
+    "CL-11": [
+        "CONFORME|Alta",
+        "CONFORME|Alta"
+    ],
+    "CL-12": [
+        "CONFORME|Alta",
+        "CONFORME|Alta",
+        "NAO_CONFORME|Alta"
+    ],
+    "CL-13": [
+        "CONFORME|Alta",
+        "NAO_CONFORME|Alta",
+        "NAO_CONFORME|Alta"
+    ],
+    "CL-14": [
+        "ATENCAO|Baixa",
+        "NAO_CONFORME|Média",
+        "NAO_CONFORME|Média"
+    ],
+    "CL-16": [
+        "NAO_CONFORME|Alta"
+    ],
+    "CL-17": [
+        "ATENCAO|Informativa",
+        "NAO_CONFORME|Média",
+        "NAO_CONFORME|Média"
+    ],
+    "CL-18": [
+        "NAO_CONFORME|Bloqueante"
+    ],
+    "CL-19": [
+        "NAO_CONFORME|Baixa"
+    ],
+    "CL-20": [
+        "ATENCAO|Baixa",
+        "NAO_CONFORME|Baixa"
+    ],
+    "CL-21": [
+        "CONFORME|Média",
+        "CONFORME|Média",
+        "CONFORME|Média",
+        "NAO_CONFORME|Média"
+    ],
+    "CL-22": [
+        "CONFORME|Média",
+        "CONFORME|Média",
+        "CONFORME|Média"
+    ],
+    "CL-23": [
+        "CONFORME|Bloqueante",
+        "NAO_CONFORME|Bloqueante"
+    ],
+    "X-AV-01": [
+        "NAO_CONFORME|Média"
+    ],
+    "X-CERT-01": [
+        "NAO_CONFORME|Bloqueante"
+    ],
+    "X-CONT-01": [
+        "NAO_CONFORME|Alta",
+        "NAO_CONFORME|Média"
+    ],
+    "X-CONT-04": [
+        "NAO_CONFORME|Média"
+    ],
+    "X-DEP-01": [
+        "CONFORME|Alta"
+    ],
+    "X-DEP-02": [
+        "ATENCAO|Alta",
+        "NAO_CONFORME|Bloqueante"
+    ],
+    "X-DEP-03": [
+        "CONFORME|Alta"
+    ],
+    "X-DEP-04": [
+        "NAO_CONFORME|Bloqueante"
+    ],
+    "X-INT-02": [
+        "NAO_CONFORME|Alta"
+    ],
+    "X-INT-03": [
+        "CONFORME|Alta",
+        "CONFORME|Alta",
+        "CONFORME|Informativa",
+        "CONFORME|Informativa",
+        "CONFORME|Informativa",
+        "CONFORME|Informativa",
+        "CONFORME|Informativa",
+        "CONFORME|Informativa",
+        "CONFORME|Informativa",
+        "CONFORME|Informativa"
+    ],
+    "X-STR-01": [
+        "ATENCAO|Baixa"
+    ]
+}
