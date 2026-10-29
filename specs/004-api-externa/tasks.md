@@ -9,7 +9,7 @@ fase por vez, só após autorização).
 
 ## Phase 1: Setup
 
-- [ ] T001 Conferir a base: se o PR #5 foi mesclado, rebasear a branch sobre `main`; confirmar que `run_store::
+- [ ] T001 Conferir a base (`main` com a Spec 005 mesclada, 5fe93b3 ou posterior): confirmar que `run_store::
   alive_pending`/`reusable_pending`, `recorder::queue`, `audit_course::authorised`, `dashboard::stale_reasons` e o GET
   de `index.php` continuam como descritos em `research.md` R1/R6/R7/R10; registrar divergências em `research.md`.
 - [ ] T002 Ambiente isolado `moocaudit-s4-web` (porta 8096, banco `moodle_s4`, rede `moocaudit_s4`) com a receita da

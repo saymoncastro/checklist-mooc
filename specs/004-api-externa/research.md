@@ -1,12 +1,12 @@
 # Research: API Externa (Spec 004)
 
 Fase 0 do plano. Cada item: **Decisão**, **Racional**, **Alternativas**. Fontes conferidas no código do Moodle 4.5.15
-do ambiente `moocaudit-s5-web` (somente leitura) e no plugin 0.5.0 da branch da Spec 005 (d211191).
+do ambiente `moocaudit-s5-web` (somente leitura) e no plugin 0.5.0 da Spec 005 (d211191; mesclada no `main` em 5fe93b3).
 
 ## R1 — Estado de partida
 
-**Decisão**: partir da branch `claude/spec-005-auditoria-lote-948e09` (PR #5 aberto) e rebasear sobre o `main` quando
-ele for mesclado. Reaproveitar, sem mudar comportamento: `run_store` (estados, `alive_pending`, `reusable_pending`,
+**Decisão**: especificada sobre a branch da Spec 005 (d211191) e rebaseada sobre o `main` após o merge do PR #5
+(5fe93b3; diferença só na CI). Reaproveitar, sem mudar comportamento: `run_store` (estados, `alive_pending`, `reusable_pending`,
 `latest_valid`, `latest_per_course`), `recorder::queue`/`execute`, `task\audit_course` (trava `course_<id>`,
 tentativas, retomada), `evolution::compare`, `dashboard::stale_reasons`, `policy_store`, `history\access`,
 `schema/report-v1.0.schema.json` e `tests/helper/schema_validator.php`.
@@ -14,8 +14,8 @@ tentativas, retomada), `evolution::compare`, `dashboard::stale_reasons`, `policy
 **Racional**: a 004 é camada de integração; toda regra de negócio (o que é pendente viva, última válida,
 desatualização, evolução) já existe e tem testes. Duplicá-la na API criaria duas verdades.
 
-**Alternativas**: esperar o merge do PR #5 (atrasaria a especificação sem ganho; o plano não depende de detalhes que a
-revisão do PR possa mudar, e a tarefa T001 confere isso).
+**Alternativas**: esperar o merge do PR #5 para começar (atrasaria a especificação sem ganho; a tarefa T001 confere de
+novo a base antes de implementar).
 
 ## R2 — Mecanismo: Web Services nativos do Moodle 4.5
 

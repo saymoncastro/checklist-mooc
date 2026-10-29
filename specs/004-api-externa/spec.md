@@ -7,9 +7,9 @@
 **Status**: Draft — especificação para validação; nada implementado. Itens **[validar]** dependem de confirmação do
 responsável do projeto antes da implementação.
 
-**Base**: branch `claude/spec-005-auditoria-lote-948e09` em d211191 (PR #5, Spec 005, ainda aberto; plugin 0.5.0,
-versão 2026103001). Esta especificação depende do histórico persistido da Spec 005 (execuções, política aplicada,
-chave de ocorrência, evolução, fila em segundo plano) e deve ser rebaseada sobre o `main` quando o PR #5 for mesclado.
+**Base**: `main` em 5fe93b3 (Spec 005 mesclada pelo PR #5; plugin 0.5.0, versão 2026103001). Especificada sobre a
+branch da Spec 005 em d211191; o que entrou depois no PR #5 (bc96235) só altera a CI. Esta especificação depende do
+histórico persistido da Spec 005 (execuções, política aplicada, chave de ocorrência, evolução, fila em segundo plano).
 Não cria outro motor, outra fila nem outro formato de relatório.
 
 **Input**: User description: "Spec 004 — API externa do plugin local_mooc_audit. Web Services nativos do Moodle,
@@ -445,8 +445,8 @@ contrato publicado.
 
 ## Assumptions
 
-- O PR #5 (Spec 005) será mesclado sem mudança de comportamento no histórico, na fila e na regra de "pendente viva";
-  se mudar, esta especificação é revista antes do plano.
+- A Spec 005 foi mesclada (PR #5) sem mudança de comportamento no histórico, na fila e na regra de "pendente viva" em
+  relação à versão especificada; uma mudança futura nessas regras exige revisar esta especificação.
 - O Moodle de produção permite habilitar Web Services e um protocolo (REST) e gerar tokens; essa configuração é do
   administrador do site, fora do plugin.
 - O MOOC Admin (ou outro cliente) localiza a sala pelo id do Moodle; se só tiver sigla ou `idnumber`, usa as funções
