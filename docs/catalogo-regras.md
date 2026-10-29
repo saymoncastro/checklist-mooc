@@ -39,6 +39,16 @@ catálogo ampliado (X-*) e as verificações só possíveis na sala ativa (ENV-*
 
 ---
 
+### Chave de ocorrência (spec 005)
+
+Todo achado de uma regra declara o código da verificação (`check`) e, quando a mesma verificação se repete na mesma
+entidade, um discriminador semântico (`subject`). O motor publica `occurrence = regra|entidade|verificação[|discriminador]`
+(entidade = `cm:<cmid>`, `sec:<número>` ou `course`), usada pelo histórico para acompanhar o mesmo problema entre
+auditorias. A tabela de verificações por regra está em `specs/005-auditoria-lote-historico/research.md` (R2). Ao criar ou
+alterar uma regra: manter o mesmo `check` para o estado conforme e não conforme da mesma condição, declarar em
+`POLICY_KEYS` toda chave de política lida (protegido por `tests/policy_dependency_test.php`) e garantir chaves únicas
+(`tests/occurrence_test.php`).
+
 ## A. Itens do checklist institucional (CL-01 … CL-29)
 
 | ID | Origem | Tipo | Descrição | Política | Status (plugin) | Evidência usada | Testes | FP | Compl. | Prio. |

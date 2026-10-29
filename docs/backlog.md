@@ -61,16 +61,17 @@ histórico (persistência mínima somente se a especificação a justificar).
 - Integração opcional com o MOOC Admin como consumidor; nenhum dado do MOOC Admin é pré-requisito.
 - Fora: escrita via API; disparo de correções; auditoria em lote via API (usa 005).
 
-## 005 — Auditoria em lote, histórico e acompanhamento (proposta de escopo)
+## 005 — Auditoria em lote, histórico e acompanhamento (especificada em `specs/005-auditoria-lote-historico/`; incremento experimental 0.5.0 entregue para revisão)
 
-- Seleção de cursos por categoria, período ou lista de ids.
-- Execução por tarefa ad hoc nativa do Moodle, uma por curso, com idempotência e limite de concorrência.
-- Persistência de execuções (curso, política, versão do motor, data, JSON, síntese) e de resultados com impressão
-  digital estável (regra + local) para comparar execuções: novo / resolvido / persistente.
-- Consolidação de pendências por categoria/ciclo; indicadores de conformidade; acompanhamento da resolução.
-- Página de gestão com filtros e exportação (JSON/CSV).
-- Atualização do `privacy/provider` se a persistência incluir quem executou.
-- Fora: notificações automáticas; bloqueio de publicação.
+- Execuções persistidas e imutáveis (página, lote, CLI), com a política aplicada guardada por impressão digital.
+- Chave estável de ocorrência (`regra|entidade|verificação[|discriminador]`) declarada pelas regras; evolução entre
+  execuções: nova, persistente, resolvida, estado/gravidade alterados, não verificável, não comparável (política ou
+  regra mudou), recurso removido ou substituído; correções da Spec 002 listadas no período sem atribuição.
+- Lotes por categoria, ids, ano de início ou seleção no painel, em tarefas ad hoc com concorrência limitada, trava por
+  sala, reconferência de permissão e retomada após interrupção; reexecução de falhas.
+- Painel de acompanhamento com situação por sala, desatualização, filtros e evolução somada, sem selo nem percentual.
+- Retenção configurável, privacy provider atualizado. Fora: exportação CSV, notificações, agendamento recorrente de
+  lotes, correção em lote, API (Spec 004), adoção da chave de ocorrência na comparação entre ofertas (Spec 003).
 
 ## Itens de catálogo sem especificação própria (entram como incrementos de regras)
 
