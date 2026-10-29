@@ -37,7 +37,7 @@ histórico (persistência mínima somente se a especificação a justificar).
 - Fora: correções que exigem decisão pedagógica (restrições da Avaliação, certificado, glossário/jogos).
 - Pré-requisitos: 001 entregue; decisão institucional sobre quem pode corrigir; princípio IV da constituição.
 
-## 003 — Comparação entre ofertas (proposta de escopo)
+## 003 — Comparação entre ofertas (especificada em `specs/003-comparacao-ofertas/`; incremento experimental 0.4.0 entregue para revisão)
 
 - Seleção de sala de origem e de destino (ids, com busca por nome).
 - Correspondência de módulos por atributos estáveis (tipo + seção + nome → tipo + nome → tipo + seção + posição),

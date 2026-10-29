@@ -44,6 +44,8 @@ class cl06 extends base {
     const LOCUS = self::LOCUS_COURSE_SETTINGS;
     /** @var string */
     const SOURCE = 'Checklist item 6; decisões institucionais 3 e 6 (início 01/01 do ano da reoferta)';
+    /** @var bool Depends on the dates/category/enrolment of the offer (specs/003). */
+    const OFFER_CYCLE = true;
 
     /**
      * Evaluate.

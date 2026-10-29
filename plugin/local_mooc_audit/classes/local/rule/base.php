@@ -70,6 +70,9 @@ abstract class base implements rule_interface {
     const REQUIRES_COMPLETION = false;
     /** @var bool The rule reads access restrictions (not verifiable when restrictions are disabled on the site). */
     const REQUIRES_AVAILABILITY = false;
+    /** @var bool The rule depends on the year/dates of the offer (comparison between offers, specs/003): its problems in
+     * a new room are pending items of the new offer, never problems inherited from the previous offer. */
+    const OFFER_CYCLE = false;
 
     /**
      * Stable id.
@@ -110,6 +113,7 @@ abstract class base implements rule_interface {
             'source' => static::SOURCE,
             'requires_completion' => static::REQUIRES_COMPLETION,
             'requires_availability' => static::REQUIRES_AVAILABILITY,
+            'offer_cycle' => static::OFFER_CYCLE,
         ];
     }
 

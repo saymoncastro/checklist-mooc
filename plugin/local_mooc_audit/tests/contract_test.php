@@ -20,8 +20,8 @@ namespace local_mooc_audit;
  * JSON report contract 1.0: the reports of courses A and B validate against schema/report-v1.0.schema.json, keep
  * every field of the PoC, and page and CLI share one encoding.
  *
- * The validator below covers only the JSON Schema subset the contract uses (type, const, enum, pattern, required,
- * properties, additionalProperties, items, $ref to $defs, allOf/if/then, minLength); no external library.
+ * The validator (tests/helper/schema_validator.php, shared with the comparison contract) covers only the JSON Schema
+ * subset the contracts use; no external library.
  *
  * @package    local_mooc_audit
  * @copyright  2026 Cefor/Ifes
@@ -31,6 +31,8 @@ namespace local_mooc_audit;
 final class contract_test extends \advanced_testcase {
     /** @var array Decoded schema. */
     private array $schema;
+    /** @var \local_mooc_audit\tests\schema_validator Validator of the schema. */
+    private \local_mooc_audit\tests\schema_validator $validator;
 
     /**
      * Load the schema shipped with the plugin.
@@ -38,98 +40,12 @@ final class contract_test extends \advanced_testcase {
     protected function setUp(): void {
         global $CFG;
         parent::setUp();
-        $this->schema = json_decode(file_get_contents($CFG->dirroot . '/local/mooc_audit/schema/report-v1.0.schema.json'), true);
+        require_once($CFG->dirroot . '/local/mooc_audit/tests/helper/schema_validator.php');
+        $this->validator = new \local_mooc_audit\tests\schema_validator(
+            $CFG->dirroot . '/local/mooc_audit/schema/report-v1.0.schema.json'
+        );
+        $this->schema = $this->validator->schema();
         $this->assertIsArray($this->schema);
-    }
-
-    /**
-     * Validate a value against a (sub)schema, collecting errors with their JSON path.
-     *
-     * @param mixed $value decoded JSON (arrays for objects and lists)
-     * @param array $schema
-     * @param string $path
-     * @param array $errors by reference
-     */
-    private function validate($value, array $schema, string $path, array &$errors): void {
-        if (isset($schema['$ref'])) {
-            $ref = explode('/', ltrim($schema['$ref'], '#/'));
-            $target = $this->schema;
-            foreach ($ref as $k) {
-                $target = $target[$k];
-            }
-            $this->validate($value, $target, $path, $errors);
-            return;
-        }
-        if (isset($schema['const']) && $value !== $schema['const']) {
-            $errors[] = "$path: expected const " . json_encode($schema['const']) . ', got ' . json_encode($value);
-        }
-        if (isset($schema['enum']) && !in_array($value, $schema['enum'], true)) {
-            $errors[] = "$path: " . json_encode($value) . ' not in enum';
-        }
-        if (isset($schema['type'])) {
-            $types = (array) $schema['type'];
-            $ok = false;
-            foreach ($types as $t) {
-                $ok = $ok || match ($t) {
-                    'string' => is_string($value),
-                    'integer' => is_int($value),
-                    'number' => is_int($value) || is_float($value),
-                    'boolean' => is_bool($value),
-                    'null' => $value === null,
-                    'array' => is_array($value) && array_is_list($value),
-                    'object' => is_array($value) && (!array_is_list($value) || $value === []),
-                    default => false,
-                };
-            }
-            if (!$ok) {
-                $errors[] = "$path: type " . json_encode($value) . ' is not ' . implode('|', $types);
-                return;
-            }
-        }
-        if (
-            isset($schema['pattern']) && is_string($value) && !preg_match('/' . str_replace('/', '\/', $schema['pattern'])
-            . '/u', $value)
-        ) {
-            $errors[] = "$path: \"$value\" does not match {$schema['pattern']}";
-        }
-        if (isset($schema['minLength']) && is_string($value) && mb_strlen($value) < $schema['minLength']) {
-            $errors[] = "$path: shorter than {$schema['minLength']}";
-        }
-        if (is_array($value)) {
-            foreach ($schema['required'] ?? [] as $key) {
-                if (!array_key_exists($key, $value)) {
-                    $errors[] = "$path: missing required \"$key\"";
-                }
-            }
-            foreach ($schema['properties'] ?? [] as $key => $sub) {
-                if (array_key_exists($key, $value)) {
-                    $this->validate($value[$key], $sub, "$path.$key", $errors);
-                }
-            }
-            if (isset($schema['additionalProperties']) && is_array($schema['additionalProperties'])) {
-                foreach ($value as $key => $v) {
-                    if (!isset($schema['properties'][$key])) {
-                        $this->validate($v, $schema['additionalProperties'], "$path.$key", $errors);
-                    }
-                }
-            }
-            if (isset($schema['items']) && array_is_list($value)) {
-                foreach ($value as $i => $v) {
-                    $this->validate($v, $schema['items'], "{$path}[$i]", $errors);
-                }
-            }
-        }
-        foreach ($schema['allOf'] ?? [] as $sub) {
-            if (isset($sub['if'])) {
-                $cond = [];
-                $this->validate($value, $sub['if'], $path, $cond);
-                if (!$cond && isset($sub['then'])) {
-                    $this->validate($value, $sub['then'], $path, $errors);
-                }
-            } else {
-                $this->validate($value, $sub, $path, $errors);
-            }
-        }
     }
 
     /**
@@ -146,7 +62,7 @@ final class contract_test extends \advanced_testcase {
         foreach ([$a, $b] as $course) {
             $report = json_decode(engine::to_json(engine::audit($course->id, ['reoffer_year' => 2027])), true);
             $errors = [];
-            $this->validate($report, $this->schema, '$', $errors);
+            $this->validator->validate($report, $this->schema, '$', $errors);
             $this->assertSame([], $errors, $course->shortname);
             foreach ($poc as $key) {
                 $this->assertArrayHasKey($key, $report, $course->shortname);
@@ -156,7 +72,7 @@ final class contract_test extends \advanced_testcase {
         // With the snapshot included it is still valid.
         $report = json_decode(engine::to_json(engine::audit($b->id, ['reoffer_year' => 2027], 0, true)), true);
         $errors = [];
-        $this->validate($report, $this->schema, '$', $errors);
+        $this->validator->validate($report, $this->schema, '$', $errors);
         $this->assertSame([], $errors);
         $this->assertArrayHasKey('snapshot', $report);
     }
@@ -184,7 +100,7 @@ final class contract_test extends \advanced_testcase {
         $this->assertNotNull($nc);
         $report['results'][$nc]['orientacao'] = '';
         $errors = [];
-        $this->validate($report, $this->schema, '$', $errors);
+        $this->validator->validate($report, $this->schema, '$', $errors);
         $joined = implode("\n", $errors);
         $this->assertStringContainsString('$.contract_version: expected const', $joined);
         $this->assertStringContainsString('$.summary.overall_status', $joined);

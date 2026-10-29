@@ -44,6 +44,8 @@ class cl05 extends base {
     const LOCUS = self::LOCUS_COURSE_SETTINGS;
     /** @var string */
     const SOURCE = 'Checklist item 5; decisão institucional 3';
+    /** @var bool Depends on the dates/category/enrolment of the offer (specs/003). */
+    const OFFER_CYCLE = true;
 
     /**
      * Evaluate.

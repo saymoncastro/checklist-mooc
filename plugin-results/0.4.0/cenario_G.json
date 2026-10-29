@@ -1,0 +1,428 @@
+{
+    "contract": "comparison",
+    "contract_version": "1.0",
+    "engine": "local_mooc_audit 0.4.0",
+    "executed_at": "2026-10-29T16:45:25+00:00",
+    "timing": {
+        "snapshot_source_s": 0.056,
+        "snapshot_target_s": 0.013,
+        "rules_s": 0.023,
+        "compare_s": 0.023,
+        "total_s": 0.115,
+        "memory_peak_mb": 30
+    },
+    "source": {
+        "id": 6,
+        "shortname": "CEN_A",
+        "fullname": "Curso A — referência",
+        "startdate": "2026-01-01 00:00",
+        "enddate": "2026-12-31 23:59",
+        "category": "Inscrições Abertas",
+        "sections": 5,
+        "modules": 13,
+        "modules_by_type": {
+            "feedback": 3,
+            "forum": 2,
+            "label": 1,
+            "page": 3,
+            "quiz": 2,
+            "simplecertificate": 2
+        },
+        "overall_status": "SEM_INCONFORMIDADES"
+    },
+    "target": {
+        "id": 17,
+        "shortname": "CEN_G_NOVA",
+        "fullname": "Curso A — referência",
+        "startdate": "2026-01-01 00:00",
+        "enddate": "2026-12-31 23:59",
+        "category": "Inscrições Abertas",
+        "sections": 5,
+        "modules": 14,
+        "modules_by_type": {
+            "feedback": 3,
+            "forum": 3,
+            "label": 1,
+            "page": 3,
+            "quiz": 2,
+            "simplecertificate": 2
+        },
+        "overall_status": "REQUER_CORRECOES"
+    },
+    "policy": {
+        "version": "2027-decisoes-2026-10-28",
+        "target_reoffer_year": 2027,
+        "source_reoffer_year": 2026,
+        "source_basis": "startdate",
+        "cycle_rules": [
+            "CL-05",
+            "CL-06",
+            "CL-07",
+            "CL-08",
+            "CL-14"
+        ],
+        "note": "Destino avaliado pela política 2027-decisoes-2026-10-28 para a reoferta 2027; origem avaliada pela mesma política no contexto da sua própria oferta (2026), para não tratar como herdado o que só mudou de ano."
+    },
+    "summary": {
+        "source_modules": 13,
+        "target_modules": 14,
+        "preserved": 12,
+        "modified": 0,
+        "modified_relevant": 0,
+        "missing_in_target": 0,
+        "extra_in_target": 0,
+        "ambiguous_groups": 1,
+        "ambiguous_source_modules": 1,
+        "duplicates_in_target": 1,
+        "matches_by_confidence": {
+            "alta": 12
+        },
+        "course_diffs_relevant": 0,
+        "expected_identifier_changes": 33,
+        "audit_counts": {
+            "pendencia_oferta": 3,
+            "novo_no_destino": 0,
+            "novo_em_atividade_adicional": 0,
+            "persistente": 0,
+            "indeterminado": 0,
+            "nao_verificavel_no_destino": 0,
+            "ausente_no_destino": 0,
+            "resolvido_no_destino": 0,
+            "nao_aplicavel_no_destino": 0
+        },
+        "possibly_inverted": false,
+        "verdict": "REVISAR"
+    },
+    "matches": [
+        {
+            "source_cmid": 72,
+            "target_cmid": 186,
+            "modname": "page",
+            "source_name": "Informações sobre o curso",
+            "target_name": "Informações sobre o curso",
+            "source_section": 0,
+            "target_section": 0,
+            "strategy": "type_section_name",
+            "confidence": "alta",
+            "state": "preservada",
+            "relevance": "nenhuma",
+            "problematic": false,
+            "diffs": [],
+            "expected_count": 2
+        },
+        {
+            "source_cmid": 73,
+            "target_cmid": 187,
+            "modname": "forum",
+            "source_name": "Espaço de interação",
+            "target_name": "Espaço de interação",
+            "source_section": 0,
+            "target_section": 0,
+            "strategy": "type_section_name",
+            "confidence": "alta",
+            "state": "preservada",
+            "relevance": "nenhuma",
+            "problematic": false,
+            "diffs": [],
+            "expected_count": 2
+        },
+        {
+            "source_cmid": 74,
+            "target_cmid": 188,
+            "modname": "feedback",
+            "source_name": "Pesquisa de Perfil",
+            "target_name": "Pesquisa de Perfil",
+            "source_section": 0,
+            "target_section": 0,
+            "strategy": "type_section_name",
+            "confidence": "alta",
+            "state": "preservada",
+            "relevance": "nenhuma",
+            "problematic": false,
+            "diffs": [],
+            "expected_count": 2
+        },
+        {
+            "source_cmid": 75,
+            "target_cmid": 189,
+            "modname": "label",
+            "source_name": "label",
+            "target_name": "label",
+            "source_section": 0,
+            "target_section": 0,
+            "strategy": "type_section_name",
+            "confidence": "alta",
+            "state": "preservada",
+            "relevance": "nenhuma",
+            "problematic": false,
+            "diffs": [],
+            "expected_count": 2
+        },
+        {
+            "source_cmid": 76,
+            "target_cmid": 190,
+            "modname": "page",
+            "source_name": "Conceitos iniciais",
+            "target_name": "Conceitos iniciais",
+            "source_section": 1,
+            "target_section": 1,
+            "strategy": "type_section_name",
+            "confidence": "alta",
+            "state": "preservada",
+            "relevance": "nenhuma",
+            "problematic": false,
+            "diffs": [],
+            "expected_count": 2
+        },
+        {
+            "source_cmid": 77,
+            "target_cmid": 191,
+            "modname": "page",
+            "source_name": "Aprofundamento",
+            "target_name": "Aprofundamento",
+            "source_section": 2,
+            "target_section": 2,
+            "strategy": "type_section_name",
+            "confidence": "alta",
+            "state": "preservada",
+            "relevance": "nenhuma",
+            "problematic": false,
+            "diffs": [],
+            "expected_count": 2
+        },
+        {
+            "source_cmid": 78,
+            "target_cmid": 192,
+            "modname": "quiz",
+            "source_name": "Questionário 1",
+            "target_name": "Questionário 1",
+            "source_section": 3,
+            "target_section": 3,
+            "strategy": "type_section_name",
+            "confidence": "alta",
+            "state": "preservada",
+            "relevance": "nenhuma",
+            "problematic": false,
+            "diffs": [],
+            "expected_count": 4
+        },
+        {
+            "source_cmid": 79,
+            "target_cmid": 193,
+            "modname": "quiz",
+            "source_name": "Questionário 2",
+            "target_name": "Questionário 2",
+            "source_section": 3,
+            "target_section": 3,
+            "strategy": "type_section_name",
+            "confidence": "alta",
+            "state": "preservada",
+            "relevance": "nenhuma",
+            "problematic": false,
+            "diffs": [],
+            "expected_count": 3
+        },
+        {
+            "source_cmid": 80,
+            "target_cmid": 194,
+            "modname": "feedback",
+            "source_name": "Avaliação do curso",
+            "target_name": "Avaliação do curso",
+            "source_section": 4,
+            "target_section": 4,
+            "strategy": "type_section_name",
+            "confidence": "alta",
+            "state": "preservada",
+            "relevance": "nenhuma",
+            "problematic": false,
+            "diffs": [],
+            "expected_count": 3
+        },
+        {
+            "source_cmid": 81,
+            "target_cmid": 195,
+            "modname": "feedback",
+            "source_name": "Licença para capacitação",
+            "target_name": "Licença para capacitação",
+            "source_section": 4,
+            "target_section": 4,
+            "strategy": "type_section_name",
+            "confidence": "alta",
+            "state": "preservada",
+            "relevance": "nenhuma",
+            "problematic": false,
+            "diffs": [],
+            "expected_count": 2
+        },
+        {
+            "source_cmid": 82,
+            "target_cmid": 196,
+            "modname": "simplecertificate",
+            "source_name": "Certificado digital de conclusão",
+            "target_name": "Certificado digital de conclusão",
+            "source_section": 4,
+            "target_section": 4,
+            "strategy": "type_section_name",
+            "confidence": "alta",
+            "state": "preservada",
+            "relevance": "nenhuma",
+            "problematic": false,
+            "diffs": [],
+            "expected_count": 3
+        },
+        {
+            "source_cmid": 83,
+            "target_cmid": 197,
+            "modname": "simplecertificate",
+            "source_name": "Declaração licença para capacitação",
+            "target_name": "Declaração licença para capacitação",
+            "source_section": 4,
+            "target_section": 4,
+            "strategy": "type_section_name",
+            "confidence": "alta",
+            "state": "preservada",
+            "relevance": "nenhuma",
+            "problematic": false,
+            "diffs": [],
+            "expected_count": 2
+        }
+    ],
+    "missing_in_target": [],
+    "extra_in_target": [],
+    "ambiguities": [
+        {
+            "reason": "duplicado_no_destino",
+            "modname": "forum",
+            "name": "Avisos",
+            "source": [
+                {
+                    "cmid": 71,
+                    "section": 0,
+                    "position": 0
+                }
+            ],
+            "target": [
+                {
+                    "cmid": 184,
+                    "section": 0,
+                    "position": 0
+                },
+                {
+                    "cmid": 185,
+                    "section": 0,
+                    "position": 1
+                }
+            ],
+            "settings_identical": true,
+            "explanation": "Uma atividade na origem e 2 com o mesmo tipo e nome no destino (duplicidade): confira qual deve permanecer; nenhuma foi escolhida automaticamente."
+        }
+    ],
+    "course_diffs": [
+        {
+            "scope": "course",
+            "field": "shortname",
+            "source": "CEN_A",
+            "target": "CEN_G_NOVA",
+            "kind": "esperada",
+            "code": "offer_setting",
+            "explanation": "Configuração da oferta alterada (shortname: CEN_A → CEN_G_NOVA): esperado em uma nova oferta; a conformidade é verificada pela política da nova oferta."
+        },
+        {
+            "scope": "enrol",
+            "field": "self.status",
+            "source": 0,
+            "target": 1,
+            "kind": "esperada",
+            "code": "offer_setting",
+            "explanation": "Configuração da oferta alterada (self.status: 0 → 1): esperado em uma nova oferta; a conformidade é verificada pela política da nova oferta."
+        },
+        {
+            "scope": "enrol",
+            "field": "self.enrolstartdate",
+            "source": "01/01/2026 00:00",
+            "target": "(não definida)",
+            "kind": "esperada",
+            "code": "offer_setting",
+            "explanation": "Configuração da oferta alterada (self.enrolstartdate: 01/01/2026 00:00 → (não definida)): esperado em uma nova oferta; a conformidade é verificada pela política da nova oferta."
+        },
+        {
+            "scope": "enrol",
+            "field": "self.enrolenddate",
+            "source": "31/12/2026 23:59",
+            "target": "(não definida)",
+            "kind": "esperada",
+            "code": "offer_setting",
+            "explanation": "Configuração da oferta alterada (self.enrolenddate: 31/12/2026 23:59 → (não definida)): esperado em uma nova oferta; a conformidade é verificada pela política da nova oferta."
+        }
+    ],
+    "audit": {
+        "items": [
+            {
+                "classification": "pendencia_oferta",
+                "rule": "CL-06",
+                "title": "Data de início correta (01/01 do ano da reoferta)",
+                "category": "offer_enrol",
+                "severity": "Alta",
+                "status_source": "CONFORME",
+                "status_target": "NAO_CONFORME",
+                "local": "Configurações do curso > Data de início",
+                "cmid_source": null,
+                "cmid_target": null,
+                "link": "http://localhost:8094/course/edit.php?id=17",
+                "evidence_source": "início=01/01/2026 00:00 fim=31/12/2026 23:59",
+                "evidence_target": "início=01/01/2026 00:00 fim=31/12/2026 23:59",
+                "guidance": "Ajustar a data de início da oferta.",
+                "key": "CL-06|t:configuracoes do curso > data de inicio"
+            },
+            {
+                "classification": "pendencia_oferta",
+                "rule": "CL-07",
+                "title": "Data de término correta (31/12 do ano da reoferta)",
+                "category": "offer_enrol",
+                "severity": "Alta",
+                "status_source": "CONFORME",
+                "status_target": "NAO_CONFORME",
+                "local": "Configurações do curso > Data de término",
+                "cmid_source": null,
+                "cmid_target": null,
+                "link": "http://localhost:8094/course/edit.php?id=17",
+                "evidence_source": "término=31/12/2026 23:59",
+                "evidence_target": "término=31/12/2026 23:59",
+                "guidance": "Ajustar a data de término conforme o calendário do Cefor.",
+                "key": "CL-07|t:configuracoes do curso > data de termino"
+            },
+            {
+                "classification": "pendencia_oferta",
+                "rule": "CL-08",
+                "title": "Autoinscrição habilitada com período correto",
+                "category": "offer_enrol",
+                "severity": "Alta",
+                "status_source": "CONFORME",
+                "status_target": "NAO_CONFORME",
+                "local": "Métodos de inscrição > Autoinscrição (id 48)",
+                "cmid_source": null,
+                "cmid_target": null,
+                "link": "http://localhost:8094/enrol/instances.php?id=17",
+                "evidence_source": "status=0 novas_inscricoes=1 início=01/01/2026 00:00 fim=31/12/2026 23:59",
+                "evidence_target": "status=1 novas_inscricoes=1 início=(não definida) fim=(não definida)",
+                "guidance": "Editar a Autoinscrição: habilitar, permitir novas inscrições e alinhar as datas com as do curso.",
+                "key": "CL-08|t:metodos de inscricao > autoinscricao"
+            }
+        ],
+        "counts": {
+            "pendencia_oferta": 3,
+            "novo_no_destino": 0,
+            "novo_em_atividade_adicional": 0,
+            "persistente": 0,
+            "indeterminado": 0,
+            "nao_verificavel_no_destino": 0,
+            "ausente_no_destino": 0,
+            "resolvido_no_destino": 0,
+            "nao_aplicavel_no_destino": 0
+        },
+        "source_policy_version": "2027-decisoes-2026-10-28",
+        "target_policy_version": "2027-decisoes-2026-10-28"
+    },
+    "manual_pairs": [],
+    "warnings": []
+}

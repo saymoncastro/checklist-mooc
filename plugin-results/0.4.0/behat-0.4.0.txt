@@ -1,0 +1,16 @@
+Running single behat site:
+Moodle 4.5.15 (Build: 20261005), 215f44380bdc3ccf852a3a22e34f8423ff64033a
+Php: 8.3.35, pgsql: 17.11 (Debian 17.11-1.pgdg13+2), OS: Linux 6.8.0-117-generic aarch64
+Run optional tests:
+- Accessibility: Yes
+- SCSS deprecations: No
+- Icon deprecations: Yes
+Server OS "Linux", Browser: "chrome"
+Started at 30-10-2026, 00:51
+...................................................................... 70
+...................................................................... 140
+....
+
+10 scenarios (10 passed)
+144 steps (144 passed)
+1m6.71s (84.19Mb)

@@ -1,0 +1,180 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_mooc_audit/comparison
+
+    Comparison between two offers (contract comparison 1.0), sections in the order of specs/003 FR-022. Read-only: no
+    correction action.
+
+    Context variables required for this template:
+    * source, target - objects with label, id, shortname, fullname, startdate, enddate, category, modules, overalllabel,
+      overallclass, auditurl
+    * executed_at, total_s, engine, contract, policy (version, target_reoffer_year, source_reoffer_year, note), jsonurl,
+      rerunurl, inverturl, inverted
+    * verdict (code, label, cssclass), counts[] (label, count)
+    * pending[], previous[] - groups with code, label, description, count, items[]; haspending, hasprevious
+    * missing[], hasmissing; ambiguities[], hasambiguities, manualaction, manualhidden[]
+    * modified[] (each with diffs[]), hasmodified; extra[], hasextra; coursetable {diffs[]} or null, hascoursediffs;
+      expectedtable {diffs[]}, hasexpected, expectedids
+    * preserved[], preservedcount, haspreserved; warnings[], haswarnings
+
+    Example context (json):
+    {
+        "source": {"label": "Source", "id": 2, "shortname": "A", "fullname": "Course A", "startdate": "2026-01-01 00:00",
+            "enddate": "2026-12-31 23:59", "category": "Old", "modules": 13, "overalllabel": "No non-conformities",
+            "overallclass": "alert-success", "auditurl": "#"},
+        "target": {"label": "Target", "id": 4, "shortname": "A_2027", "fullname": "Course A", "startdate": "2027-01-01 00:00",
+            "enddate": "2027-12-31 23:59", "category": "Open", "modules": 14, "overalllabel": "No non-conformities",
+            "overallclass": "alert-success", "auditurl": "#"},
+        "executed_at": "29 October 2026", "total_s": 0.5, "engine": "local_mooc_audit 0.4.0", "contract": "comparison 1.0",
+        "policy": {"version": "2027", "target_reoffer_year": 2027, "source_reoffer_year": 2026, "note": "Policy note"},
+        "jsonurl": "#", "rerunurl": "#", "inverturl": "#", "inverted": false,
+        "verdict": {"code": "CONFERIR", "label": "Check", "cssclass": "alert-warning"},
+        "counts": [{"label": "Preserved", "count": 12}],
+        "pending": [], "haspending": false, "previous": [], "hasprevious": false,
+        "missing": [], "hasmissing": false, "ambiguities": [], "hasambiguities": false, "manualaction": "#", "manualhidden": [],
+        "modified": [], "hasmodified": false, "extra": [], "hasextra": false, "coursetable": null, "hascoursediffs": false,
+        "expectedtable": null, "hasexpected": false, "expectedids": "5 identifiers changed",
+        "preserved": [], "preservedcount": 0, "haspreserved": false, "warnings": [], "haswarnings": false
+    }
+}}
+<div class="local_mooc_audit-comparison">
+    <div class="local_mooc_audit-header mb-3">
+        <h3>{{#str}} comparemenu, local_mooc_audit {{/str}}</h3>
+        <table class="table table-sm table-bordered local_mooc_audit-sides">
+            <caption class="sr-only">{{#str}} comparemenu, local_mooc_audit {{/str}}</caption>
+            <thead>
+                <tr><th scope="col"></th><th scope="col">{{source.label}}</th><th scope="col">{{target.label}}</th></tr>
+            </thead>
+            <tbody>
+                <tr><th scope="row">{{#str}} cmp_activity, local_mooc_audit {{/str}}</th>
+                    <td class="local_mooc_audit-source">{{source.fullname}} <small class="text-muted">[{{source.shortname}}] (id {{source.id}})</small></td>
+                    <td class="local_mooc_audit-target">{{target.fullname}} <small class="text-muted">[{{target.shortname}}] (id {{target.id}})</small></td></tr>
+                <tr><th scope="row">{{#str}} label_period, local_mooc_audit {{/str}}</th>
+                    <td>{{source.startdate}} → {{source.enddate}}</td><td>{{target.startdate}} → {{target.enddate}}</td></tr>
+                <tr><th scope="row">{{#str}} label_category, local_mooc_audit {{/str}}</th><td>{{source.category}}</td><td>{{target.category}}</td></tr>
+                <tr><th scope="row">{{#str}} label_modules, local_mooc_audit {{/str}}</th><td>{{source.modules}}</td><td>{{target.modules}}</td></tr>
+                <tr><th scope="row">{{#str}} label_reoffer_year, local_mooc_audit {{/str}}</th><td>{{policy.source_reoffer_year}}</td><td>{{policy.target_reoffer_year}}</td></tr>
+                <tr><th scope="row">{{#str}} cmp_audit_label, local_mooc_audit {{/str}}</th>
+                    <td><a href="{{source.auditurl}}">{{source.overalllabel}}</a></td><td><a href="{{target.auditurl}}">{{target.overalllabel}}</a></td></tr>
+            </tbody>
+        </table>
+        <dl class="row mb-2">
+            <dt class="col-sm-3">{{#str}} label_executed_at, local_mooc_audit {{/str}}</dt><dd class="col-sm-9">{{executed_at}} ({{total_s}} s)</dd>
+            <dt class="col-sm-3">{{#str}} label_policy, local_mooc_audit {{/str}}</dt><dd class="col-sm-9">{{policy.version}} — {{policy.note}}</dd>
+            <dt class="col-sm-3">{{#str}} label_engine, local_mooc_audit {{/str}}</dt><dd class="col-sm-9">{{engine}} ({{#str}} label_contract, local_mooc_audit {{/str}} {{contract}})</dd>
+        </dl>
+        {{#inverted}}<div class="alert alert-warning local_mooc_audit-inverted" role="alert">{{#str}} cmp_inverted, local_mooc_audit {{/str}} <a href="{{inverturl}}">{{#str}} cmp_invert, local_mooc_audit {{/str}}</a></div>{{/inverted}}
+        <div class="d-flex align-items-center">
+            <a href="{{rerunurl}}" class="btn btn-secondary">{{#str}} cmp_rerun, local_mooc_audit {{/str}}</a>
+            <a href="{{jsonurl}}" class="ml-3 local_mooc_audit-json">{{#str}} jsonlink, local_mooc_audit {{/str}}</a>
+        </div>
+    </div>
+
+    <h4 id="local_mooc_audit-summary">{{#str}} cmp_section_summary, local_mooc_audit {{/str}}</h4>
+    <div class="alert {{verdict.cssclass}} local_mooc_audit-verdict local_mooc_audit-verdict-{{verdict.code}}" role="status"><strong>{{verdict.label}}</strong></div>
+    <table class="table table-sm table-bordered w-auto local_mooc_audit-cmpcounts">
+        <caption class="sr-only">{{#str}} cmp_section_summary, local_mooc_audit {{/str}}</caption>
+        <tbody>{{#counts}}<tr><th scope="row">{{label}}</th><td>{{count}}</td></tr>{{/counts}}</tbody>
+    </table>
+    <p class="small text-muted">{{#str}} cmp_legend, local_mooc_audit {{/str}}</p>
+
+    <h4 id="local_mooc_audit-pending">{{#str}} cmp_section_pending, local_mooc_audit {{/str}}</h4>
+    {{^haspending}}<p class="text-muted">{{#str}} cmp_none_in_section, local_mooc_audit {{/str}}</p>{{/haspending}}
+    {{#pending}}{{> local_mooc_audit/comparison_pending }}{{/pending}}
+    {{#hasprevious}}
+    <h5>{{#str}} cmp_pending_previous, local_mooc_audit {{/str}}</h5>
+    {{#previous}}{{> local_mooc_audit/comparison_pending }}{{/previous}}
+    {{/hasprevious}}
+
+    <h4 id="local_mooc_audit-missing">{{#str}} cmp_section_missing, local_mooc_audit {{/str}}</h4>
+    {{^hasmissing}}<p class="text-muted">{{#str}} cmp_none_in_section, local_mooc_audit {{/str}}</p>{{/hasmissing}}
+    {{#hasmissing}}
+    <ul class="local_mooc_audit-missing">{{#missing}}<li><span class="badge badge-danger">{{modname}}</span> {{name}} <small class="text-muted">({{#str}} label_section, local_mooc_audit {{/str}} {{section}}, id {{cmid}})</small></li>{{/missing}}</ul>
+    {{/hasmissing}}
+
+    <h4 id="local_mooc_audit-ambiguous">{{#str}} cmp_section_ambiguous, local_mooc_audit {{/str}}</h4>
+    {{^hasambiguities}}<p class="text-muted">{{#str}} cmp_none_in_section, local_mooc_audit {{/str}}</p>{{/hasambiguities}}
+    {{#hasambiguities}}
+    <p class="small">{{#str}} cmp_manual_help, local_mooc_audit {{/str}}</p>
+    <form method="get" action="{{manualaction}}" class="local_mooc_audit-manual">
+        {{#manualhidden}}<input type="hidden" name="{{name}}" value="{{value}}">{{/manualhidden}}
+        {{#ambiguities}}
+        <div class="card mb-2 local_mooc_audit-ambiguity local_mooc_audit-ambiguity-{{reason}}">
+            <div class="card-body">
+                <h5 class="card-title"><span class="badge badge-warning">{{modname}}</span> {{name}}</h5>
+                <p class="mb-1">{{reasonlabel}}</p>
+                <p class="mb-1 small text-muted">{{settings}}</p>
+                <p class="mb-1 small">{{#str}} cmp_candidates, local_mooc_audit {{/str}}:
+                    {{#targets}}<a href="{{url}}" target="_blank">{{#str}} label_section, local_mooc_audit {{/str}} {{section}}, {{#str}} cmp_position, local_mooc_audit {{/str}} {{positionlabel}} (id {{cmid}})</a>; {{/targets}}</p>
+                {{#pickers}}
+                <div class="form-inline">
+                    <label for="{{id}}" class="mr-2">{{#str}} cmp_side_source, local_mooc_audit {{/str}} (id {{source.cmid}}) — {{#str}} cmp_choose_candidate, local_mooc_audit {{/str}}</label>
+                    <select name="pair[]" id="{{id}}" class="custom-select">
+                        {{#options}}<option value="{{value}}">{{label}}</option>{{/options}}
+                    </select>
+                </div>
+                {{/pickers}}
+            </div>
+        </div>
+        {{/ambiguities}}
+        <button type="submit" class="btn btn-primary">{{#str}} cmp_rerun_manual, local_mooc_audit {{/str}}</button>
+    </form>
+    {{/hasambiguities}}
+
+    <h4 id="local_mooc_audit-modified">{{#str}} cmp_section_modified, local_mooc_audit {{/str}}</h4>
+    {{^hasmodified}}<p class="text-muted">{{#str}} cmp_none_in_section, local_mooc_audit {{/str}}</p>{{/hasmodified}}
+    {{#modified}}
+    <div class="local_mooc_audit-modified-item mb-3">
+        <h5><span class="badge {{kindclass}}">{{kindlabel}}</span> {{modname}}: <a href="{{targeturl}}">{{target_name}}</a>
+            <small class="text-muted">({{strategylabel}}; <span class="badge {{confidenceclass}}">{{confidencelabel}}</span>)</small></h5>
+        {{> local_mooc_audit/comparison_diffs }}
+    </div>
+    {{/modified}}
+
+    <h4 id="local_mooc_audit-extra">{{#str}} cmp_section_extra, local_mooc_audit {{/str}}</h4>
+    {{^hasextra}}<p class="text-muted">{{#str}} cmp_none_in_section, local_mooc_audit {{/str}}</p>{{/hasextra}}
+    {{#hasextra}}
+    <ul class="local_mooc_audit-extra">{{#extra}}<li><span class="badge {{kindclass}}">{{kindlabel}}</span> {{modname}}: {{name}} <small class="text-muted">({{#str}} label_section, local_mooc_audit {{/str}} {{section}}, id {{cmid}}) {{duplicate}}</small> — {{explanation}}</li>{{/extra}}</ul>
+    {{/hasextra}}
+
+    <h4 id="local_mooc_audit-course">{{#str}} cmp_section_course, local_mooc_audit {{/str}}</h4>
+    {{^hascoursediffs}}<p class="text-muted">{{#str}} cmp_none_in_section, local_mooc_audit {{/str}}</p>{{/hascoursediffs}}
+    {{#coursetable}}{{> local_mooc_audit/comparison_diffs }}{{/coursetable}}
+
+    <h4 id="local_mooc_audit-expected">{{#str}} cmp_section_expected, local_mooc_audit {{/str}}</h4>
+    <p>{{expectedids}}</p>
+    {{#hasexpected}}
+    <details class="local_mooc_audit-expected">
+        <summary>{{#str}} cmp_section_expected, local_mooc_audit {{/str}}</summary>
+        {{#expectedtable}}{{> local_mooc_audit/comparison_diffs }}{{/expectedtable}}
+    </details>
+    {{/hasexpected}}
+
+    <h4 id="local_mooc_audit-preserved">{{#str}} cmp_section_preserved, local_mooc_audit {{/str}} ({{preservedcount}})</h4>
+    {{^haspreserved}}<p class="text-muted">{{#str}} cmp_none_in_section, local_mooc_audit {{/str}}</p>{{/haspreserved}}
+    {{#haspreserved}}
+    <details class="local_mooc_audit-preserved" open>
+        <summary>{{#str}} cmp_section_preserved, local_mooc_audit {{/str}}</summary>
+        <ul class="list-unstyled">{{#preserved}}<li><span class="badge badge-success">{{modname}}</span> {{target_name}} <small class="text-muted">({{#str}} label_section, local_mooc_audit {{/str}} {{target_section}}; {{strategylabel}}; <span class="badge {{confidenceclass}}">{{confidencelabel}}</span>)</small></li>{{/preserved}}</ul>
+    </details>
+    {{/haspreserved}}
+
+    <h4 id="local_mooc_audit-warnings">{{#str}} cmp_section_warnings, local_mooc_audit {{/str}}</h4>
+    {{^haswarnings}}<p class="text-muted">{{#str}} cmp_none_in_section, local_mooc_audit {{/str}}</p>{{/haswarnings}}
+    {{#haswarnings}}<ul class="local_mooc_audit-cmpwarnings">{{#warnings}}<li>{{.}}</li>{{/warnings}}</ul>{{/haswarnings}}
+</div>

@@ -83,5 +83,7 @@ if ($format === 'json') {
 $renderer = $PAGE->get_renderer('local_mooc_audit');
 echo $OUTPUT->header();
 $withcorrections = has_capability('local/mooc_audit:preparecorrection', $context);
-echo $renderer->render(new \local_mooc_audit\output\report($report, $url, $withcorrections));
+$compareurl = has_capability('local/mooc_audit:compare', $context)
+    ? new moodle_url('/local/mooc_audit/compare.php', ['target' => $course->id]) : null;
+echo $renderer->render(new \local_mooc_audit\output\report($report, $url, $withcorrections, $compareurl));
 echo $OUTPUT->footer();

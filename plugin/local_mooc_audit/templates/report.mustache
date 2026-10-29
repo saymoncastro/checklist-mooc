@@ -21,7 +21,7 @@
 
     Context variables required for this template:
     * course - object with id, shortname, fullname
-    * executed_at, reoffer_year, policy_version, engine, total_s, jsonurl, rerunurl, rerunbutton (HTML)
+    * executed_at, reoffer_year, policy_version, engine, total_s, jsonurl, rerunurl, rerunbutton (HTML), compareurl (optional)
     * inventory - object with startdate, enddate, category, visible, sections, modules, modules_by_type[], grade_items, files, files_missing, enrols, blocks
     * overall - object with code, label, cssclass
     * counts_status[] - objects with label, count, cssclass; counts_severity[] - objects with label, count; rules_total
@@ -64,6 +64,7 @@
         <div class="d-flex align-items-center local_mooc_audit-actions">
             {{{rerunbutton}}}
             <a href="{{jsonurl}}" class="ml-3 local_mooc_audit-json">{{#str}} jsonlink, local_mooc_audit {{/str}}</a>
+            {{#compareurl}}<a href="{{compareurl}}" class="ml-3 local_mooc_audit-compare">{{#str}} comparelink, local_mooc_audit {{/str}}</a>{{/compareurl}}
         </div>
     </div>
 

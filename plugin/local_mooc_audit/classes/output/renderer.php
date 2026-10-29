@@ -55,4 +55,14 @@ class renderer extends plugin_renderer_base {
     public function render_correction_result(correction_result $page): string {
         return $this->render_from_template('local_mooc_audit/correction_result', $page->export_for_template($this));
     }
+
+    /**
+     * Render a comparison between two offers (specs/003).
+     *
+     * @param comparison_report $page
+     * @return string HTML
+     */
+    public function render_comparison_report(comparison_report $page): string {
+        return $this->render_from_template('local_mooc_audit/comparison', $page->export_for_template($this));
+    }
 }

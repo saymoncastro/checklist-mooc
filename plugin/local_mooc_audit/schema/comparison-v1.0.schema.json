@@ -1,0 +1,190 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cefor.ifes.edu.br/schemas/local_mooc_audit/comparison-1.0.json",
+  "title": "Comparação entre ofertas MOOC (local_mooc_audit) — contrato comparison 1.0",
+  "description": "Resultado de comparator::run(): duas salas (origem = oferta anterior, destino = nova oferta), correspondências de atividades, diferenças classificadas e relação entre as auditorias. Independente do contrato 1.0 da auditoria individual. Sem dados pessoais.",
+  "type": "object",
+  "required": ["contract", "contract_version", "engine", "executed_at", "timing", "source", "target", "policy", "summary",
+    "matches", "missing_in_target", "extra_in_target", "ambiguities", "course_diffs", "audit", "manual_pairs", "warnings"],
+  "properties": {
+    "contract": {"const": "comparison"},
+    "contract_version": {"const": "1.0"},
+    "engine": {"type": "string", "pattern": "^local_mooc_audit "},
+    "executed_at": {"type": "string", "minLength": 1},
+    "timing": {
+      "type": "object",
+      "required": ["snapshot_source_s", "snapshot_target_s", "rules_s", "compare_s", "total_s", "memory_peak_mb"],
+      "additionalProperties": {"type": "number"}
+    },
+    "source": {"$ref": "#/$defs/side"},
+    "target": {"$ref": "#/$defs/side"},
+    "policy": {
+      "type": "object",
+      "required": ["version", "target_reoffer_year", "source_reoffer_year", "source_basis", "cycle_rules", "note"],
+      "properties": {
+        "version": {"type": "string"},
+        "target_reoffer_year": {"type": "integer"},
+        "source_reoffer_year": {"type": ["integer", "null"]},
+        "source_basis": {"enum": ["startdate", "sem_contexto"]},
+        "cycle_rules": {"type": "array", "items": {"type": "string", "pattern": "^(CL-\\d{2}|X-[A-Z]+-\\d{2})$"}},
+        "note": {"type": "string"}
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": ["source_modules", "target_modules", "preserved", "modified", "modified_relevant", "missing_in_target",
+        "extra_in_target", "ambiguous_groups", "ambiguous_source_modules", "duplicates_in_target", "matches_by_confidence",
+        "course_diffs_relevant", "audit_counts", "possibly_inverted", "verdict"],
+      "properties": {
+        "matches_by_confidence": {"type": "object", "additionalProperties": {"type": "integer"}},
+        "audit_counts": {"type": "object", "additionalProperties": {"type": "integer"}},
+        "possibly_inverted": {"type": "boolean"},
+        "verdict": {"enum": ["REVISAR", "CONFERIR", "SEM_DIFERENCAS_RELEVANTES"]}
+      },
+      "additionalProperties": {"type": ["integer", "object", "string", "boolean"]}
+    },
+    "matches": {"type": "array", "items": {"$ref": "#/$defs/match"}},
+    "missing_in_target": {"type": "array", "items": {"$ref": "#/$defs/moduleref"}},
+    "extra_in_target": {
+      "type": "array",
+      "items": {
+        "allOf": [{"$ref": "#/$defs/moduleref"}],
+        "type": "object",
+        "required": ["kind", "code"],
+        "properties": {"kind": {"$ref": "#/$defs/kind"}, "code": {"enum": ["extra_graded", "extra_resource"]}}
+      }
+    },
+    "ambiguities": {"type": "array", "items": {"$ref": "#/$defs/ambiguity"}},
+    "course_diffs": {"type": "array", "items": {"$ref": "#/$defs/difference"}},
+    "audit": {
+      "type": "object",
+      "required": ["items", "counts", "source_policy_version", "target_policy_version"],
+      "properties": {
+        "items": {"type": "array", "items": {"$ref": "#/$defs/audititem"}},
+        "counts": {"type": "object", "additionalProperties": {"type": "integer"}},
+        "source_policy_version": {"type": "string"},
+        "target_policy_version": {"type": "string"}
+      }
+    },
+    "manual_pairs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["source_cmid", "target_cmid", "accepted", "reason"],
+        "properties": {
+          "source_cmid": {"type": "integer"},
+          "target_cmid": {"type": "integer"},
+          "accepted": {"type": "boolean"},
+          "reason": {"type": ["string", "null"]}
+        }
+      }
+    },
+    "warnings": {"type": "array", "items": {"type": "string"}}
+  },
+  "$defs": {
+    "kind": {"enum": ["esperada", "relevante", "informativa"]},
+    "status": {"enum": ["CONFORME", "NAO_CONFORME", "ATENCAO", "NAO_APLICAVEL", "NAO_VERIFICAVEL", "ERRO"]},
+    "side": {
+      "type": "object",
+      "required": ["id", "shortname", "fullname", "startdate", "enddate", "category", "sections", "modules",
+        "modules_by_type", "overall_status"],
+      "properties": {
+        "id": {"type": "integer"},
+        "shortname": {"type": "string"},
+        "fullname": {"type": "string"},
+        "startdate": {"type": ["string", "null"]},
+        "enddate": {"type": ["string", "null"]},
+        "category": {"type": ["string", "null"]},
+        "sections": {"type": "integer"},
+        "modules": {"type": "integer"},
+        "modules_by_type": {"type": "object", "additionalProperties": {"type": "integer"}},
+        "overall_status": {"enum": ["BLOQUEADA", "REQUER_CORRECOES", "SEM_INCONFORMIDADES"]}
+      }
+    },
+    "moduleref": {
+      "type": "object",
+      "required": ["cmid", "modname", "name", "section"],
+      "properties": {
+        "cmid": {"type": "integer"},
+        "modname": {"type": "string"},
+        "name": {"type": "string"},
+        "section": {"type": "integer"}
+      }
+    },
+    "difference": {
+      "type": "object",
+      "required": ["scope", "field", "source", "target", "kind", "code", "explanation"],
+      "properties": {
+        "scope": {"enum": ["module", "course", "section", "enrol", "block", "grade"]},
+        "field": {"type": "string", "minLength": 1},
+        "kind": {"$ref": "#/$defs/kind"},
+        "code": {"type": "string", "pattern": "^[a-z_]+$"},
+        "explanation": {"type": "string", "minLength": 1},
+        "dependents": {"type": "array", "items": {"type": "object", "required": ["cmid", "modname", "name"]}}
+      }
+    },
+    "match": {
+      "type": "object",
+      "required": ["source_cmid", "target_cmid", "modname", "source_name", "target_name", "source_section",
+        "target_section", "strategy", "confidence", "state", "relevance", "problematic", "diffs", "expected_count"],
+      "properties": {
+        "source_cmid": {"type": "integer"},
+        "target_cmid": {"type": "integer"},
+        "modname": {"type": "string"},
+        "source_name": {"type": "string"},
+        "target_name": {"type": "string"},
+        "source_section": {"type": "integer"},
+        "target_section": {"type": "integer"},
+        "strategy": {"enum": ["manual", "type_section_name", "type_section_name_content", "type_name", "type_content",
+          "type_section_position"]},
+        "confidence": {"enum": ["alta", "media", "manual"]},
+        "state": {"enum": ["preservada", "modificada"]},
+        "relevance": {"enum": ["relevante", "informativa", "esperada", "nenhuma"]},
+        "problematic": {"type": "boolean"},
+        "diffs": {"type": "array", "items": {"$ref": "#/$defs/difference"}},
+        "expected_count": {"type": "integer"}
+      },
+      "allOf": [
+        {"if": {"properties": {"relevance": {"const": "relevante"}}}, "then": {"properties": {"problematic": {"const": true}}}},
+        {"if": {"properties": {"relevance": {"enum": ["informativa", "esperada", "nenhuma"]}}}, "then": {"properties": {"problematic": {"const": false}}}}
+      ]
+    },
+    "ambiguity": {
+      "type": "object",
+      "required": ["reason", "modname", "name", "source", "target", "settings_identical", "explanation"],
+      "properties": {
+        "reason": {"enum": ["duplicado_no_destino", "duplicado_na_origem", "conteudo_equivalente", "mesmo_nome"]},
+        "modname": {"type": "string"},
+        "name": {"type": "string"},
+        "source": {"type": "array", "items": {"type": "object", "required": ["cmid", "section", "position"]}},
+        "target": {"type": "array", "items": {"type": "object", "required": ["cmid", "section", "position"]}},
+        "settings_identical": {"type": "boolean"},
+        "explanation": {"type": "string", "minLength": 1}
+      }
+    },
+    "audititem": {
+      "type": "object",
+      "required": ["classification", "rule", "title", "category", "severity", "status_source", "status_target", "local",
+        "cmid_source", "cmid_target", "link", "evidence_source", "evidence_target", "guidance", "key"],
+      "properties": {
+        "classification": {"enum": ["persistente", "novo_no_destino", "novo_em_atividade_adicional", "indeterminado",
+          "pendencia_oferta", "nao_verificavel_no_destino", "resolvido_no_destino", "ausente_no_destino",
+          "nao_aplicavel_no_destino"]},
+        "rule": {"type": "string", "pattern": "^(CL-\\d{2}|X-[A-Z]+-\\d{2})$"},
+        "title": {"type": "string"},
+        "category": {"type": "string"},
+        "severity": {"type": ["string", "null"]},
+        "status_source": {"enum": ["CONFORME", "NAO_CONFORME", "ATENCAO", "NAO_APLICAVEL", "NAO_VERIFICAVEL", "ERRO", null]},
+        "status_target": {"enum": ["CONFORME", "NAO_CONFORME", "ATENCAO", "NAO_APLICAVEL", "NAO_VERIFICAVEL", "ERRO", null]},
+        "local": {"type": ["string", "null"]},
+        "cmid_source": {"type": ["integer", "null"]},
+        "cmid_target": {"type": ["integer", "null"]},
+        "link": {"type": ["string", "null"]},
+        "evidence_source": {"type": ["string", "null"]},
+        "evidence_target": {"type": ["string", "null"]},
+        "guidance": {"type": ["string", "null"]},
+        "key": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}
