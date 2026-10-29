@@ -37,6 +37,8 @@ use local_mooc_audit\snapshot;
 class planner {
     /** @var strategy_base[] Strategies, in order of preference per rule. */
     protected array $strategies;
+    /** @var string[]|null Rules of the shipped strategies (memoised: the report asks once per result). */
+    protected static ?array $rules = null;
 
     /**
      * Constructor.
@@ -67,7 +69,7 @@ class planner {
      * @return string[]
      */
     public static function rules(): array {
-        return array_values(array_unique(array_map(fn($s) => $s::RULE, self::default_strategies())));
+        return self::$rules ??= array_values(array_unique(array_map(fn($s) => $s::RULE, self::default_strategies())));
     }
 
     /**
@@ -96,6 +98,19 @@ class planner {
             }
         }
         throw new \coding_exception('Unknown correction strategy ' . $p->strategy);
+    }
+
+    /**
+     * Hash of the policy values that drive a proposal: an administrator may change them without changing the version
+     * label. The per-request reference time and the load warnings are excluded.
+     *
+     * @param array $policy
+     * @return string
+     */
+    public static function policy_hash(array $policy): string {
+        unset($policy['reference_timestamp'], $policy['warnings']);
+        ksort($policy);
+        return sha1(json_encode($policy));
     }
 
     /**
@@ -153,7 +168,7 @@ class planner {
             $after = engine::run_rules($strategy->simulate($snapshot, $p), $policy);
             $p->impact = verifier::compare($results, $after, $ruleid, $cmid);
             if (!$p->impact['targetresolved']) {
-                $p->blockers[] = get_string(
+                $p->blockers['notresolved'] = get_string(
                     'fix_blocker_notresolved',
                     'local_mooc_audit',
                     implode('; ', array_map(fn($r) => $r['evidencia'], array_filter($after, fn($r) => $r['rule'] === $ruleid
@@ -161,14 +176,16 @@ class planner {
                 );
             }
             if ($p->impact['introduced']) {
-                $p->blockers[] = get_string('fix_blocker_introduced', 'local_mooc_audit', implode('; ', $p->impact['introduced']));
+                $introduced = implode('; ', $p->impact['introduced']);
+                $p->blockers['introduced'] = get_string('fix_blocker_introduced', 'local_mooc_audit', $introduced);
             }
         }
 
         $p->state['cacherev'] = facts::cacherev($courseid);
+        $p->state['policy'] = self::policy_hash($policy);
         $coursecontext = \context_course::instance($courseid);
         $modcontext = \context_module::instance($cmid);
-        $p->roles = facts::roles_with($coursecontext, ['local/mooc_audit:applycorrection', 'moodle/course:manageactivities']);
+        $p->roles = facts::roles_with($coursecontext, $strategy->capabilities());
         $p->canexecute = has_capability('local/mooc_audit:applycorrection', $coursecontext)
             && has_capability('moodle/course:manageactivities', $modcontext);
         return $p;

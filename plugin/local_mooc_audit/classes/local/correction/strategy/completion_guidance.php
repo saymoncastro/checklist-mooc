@@ -67,7 +67,7 @@ class completion_guidance extends base {
         $p->editurl = $this->edit_url($p->cmid, 'id_activitycompletionheader');
         $p->justification = $this->str('cl17_justification', $m['modname']);
         $p->effect = $this->str('cl17_effect');
-        $p->blockers[] = $this->str('cl17_guided_only');
+        $p->blockers['guided_only'] = $this->str('cl17_guided_only');
 
         // Who depends on the completion of this activity, directly or transitively.
         $reach = $this->dependents($s, $p->cmid);
@@ -112,23 +112,8 @@ class completion_guidance extends base {
         if ((int) $m['completion'] === COMPLETION_TRACKING_MANUAL) {
             return $this->str('cl17_mode_manual');
         }
-        $crit = [];
-        if ($m['completionview']) {
-            $crit[] = 'view';
-        }
-        if ($m['completiongradeitemnumber'] !== null) {
-            $crit[] = 'grade';
-        }
-        foreach (
-            ['completionsubmit' => 'submit', 'completionentries' => 'entries', 'completionposts' => 'posts',
-            'completiondiscussions' => 'posts', 'completionreplies' => 'posts', 'completionminattempts' => 'attempts',
-            'completionattemptsexhausted' => 'attempts', 'completionpass' => 'grade'] as $k => $v
-        ) {
-            if (!empty($m['extra'][$k])) {
-                $crit[] = $v;
-            }
-        }
-        return $this->str('cl17_mode_automatic', $crit ? implode(' + ', array_unique($crit)) : '—');
+        $crit = helpers::completion_criteria($m);
+        return $this->str('cl17_mode_automatic', $crit ? implode(' + ', $crit) : '—');
     }
 
     /**

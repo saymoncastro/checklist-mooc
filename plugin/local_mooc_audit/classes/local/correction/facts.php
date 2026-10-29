@@ -74,6 +74,9 @@ class facts {
      */
     public static function quiz_overrides(int $quizid, ?string $field = null): int {
         global $DB;
+        if ($field !== null && !in_array($field, ['attempts', 'timeopen', 'timeclose', 'timelimit', 'password'], true)) {
+            throw new \coding_exception('Unknown quiz override column: ' . $field);
+        }
         if ($field === null) {
             return $DB->count_records('quiz_overrides', ['quiz' => $quizid]);
         }

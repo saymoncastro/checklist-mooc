@@ -16,7 +16,7 @@ da equipe técnica.
 identificada oferecem "Ver proposta de correção" (problema, local, regra, valor atual, valor proposto, justificativa,
 impacto simulado, riscos/dependências/impedimentos, quem pode executar). Executáveis mediante confirmação: tentativas de
 questionário (CL-13) e encerramento de questionário igual ao término do curso (CL-14). Orientadas: CL-14 dos demais
-tipos e critério de conclusão (CL-17). 113 testes PHPUnit, 6 cenários Behat, PHPCS limpo. Matriz das 29 regras em
+tipos e critério de conclusão (CL-17). 117 testes PHPUnit, 6 cenários Behat, PHPCS limpo. Matriz das 29 regras em
 `specs/002-correcao-assistida/correction-matrix.md`; evidências em `plugin-results/0.3.0/`.
 
 ## Instalação
@@ -154,7 +154,7 @@ mudam).
 ## Verificação
 
 ```bash
-vendor/bin/phpunit --testsuite local_mooc_audit_testsuite      # 113 testes
+vendor/bin/phpunit --testsuite local_mooc_audit_testsuite      # 117 testes
 php admin/tool/behat/cli/run.php --tags=@local_mooc_audit       # exige Selenium; ver moodle-env/README.md
 vendor/bin/phpcs --standard=moodle local/mooc_audit             # moodlehq/moodle-cs
 ```

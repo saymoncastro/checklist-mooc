@@ -61,5 +61,5 @@ atualizado; `access_test` e `audit_page.feature` ajustados). **LOW** — janela 
 | Capacidades | `audit`, `compare` | + `preparecorrection`, `applycorrection` |
 | Contrato JSON | 1.0 | 1.0 (inalterado) |
 | Resultados das 29 regras | referência | idênticos (caracterização A/B; curso A antes/depois idêntico) |
-| Testes | 75 PHPUnit, 2 Behat | 113 PHPUnit, 6 Behat |
+| Testes | 75 PHPUnit, 2 Behat | 117 PHPUnit, 6 Behat |
 | Privacidade | `null_provider` | provider com metadados, exportação e anonimização |

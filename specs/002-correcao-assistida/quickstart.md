@@ -11,7 +11,7 @@ docker exec -e MOODLE_DOCKER_BROWSER=chrome -w /var/www/html moocaudit-s2-web ph
 docker exec -w /var/www/html moocaudit-s2-web /tmp/cs/vendor/bin/phpcs --standard=moodle local/mooc_audit
 ```
 
-Esperado: 113 testes OK; 6 cenários Behat OK; PHPCS sem erros nem avisos.
+Esperado: 117 testes OK; 6 cenários Behat OK; PHPCS sem erros nem avisos.
 
 ## Manual (≈ 10 min)
 

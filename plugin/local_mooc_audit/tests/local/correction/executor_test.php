@@ -24,7 +24,8 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/local/mooc_audit/tests/helper/correction_testcase.php');
-foreach (['failing_write', 'unreadable_write', 'reaudit_fails_executor', 'nowait_executor'] as $double) {
+$doubles = ['failing_write', 'unreadable_write', 'cache_fails_after_commit', 'reaudit_fails_executor', 'nowait_executor'];
+foreach ($doubles as $double) {
     require_once($CFG->dirroot . "/local/mooc_audit/tests/fixtures/correction/$double.php");
 }
 
@@ -195,6 +196,11 @@ final class executor_test extends correction_testcase {
                 rebuild_course_cache($course->id, true);
             },
             'policy changed' => fn() => set_config('policyjson', '{"policy_version": "outra"}', 'local_mooc_audit'),
+            'policy values changed, same label' => fn() => set_config(
+                'policyjson',
+                '{"policy_version": "outra", "completion_expected": {"page": "none"}}',
+                'local_mooc_audit'
+            ),
         ];
         foreach ($changes as $label => $change) {
             $p = $this->plan($course, 'CL-13', $q->coursemodule);
@@ -440,6 +446,26 @@ final class executor_test extends correction_testcase {
         $this->assertStringContainsString('simulated re-audit failure', $r['message']);
         $this->assertSame(verifier::ERROR, $this->trail()[0]->reaudit);
         $this->assertEquals(2, $this->quizrow($q)->attempts);
+    }
+
+    /**
+     * The cache refresh fails after the commit: the value is kept and recorded, but the outcome is not a plain success.
+     */
+    public function test_cache_refresh_failure_after_commit(): void {
+        global $PAGE;
+        $course = $this->ccourse();
+        $q = $this->quiz($course, 'Q', 1, 50, 0, '<p>Tentativas permitidas: 2.</p>');
+        $planner = new planner([new cache_fails_after_commit()]);
+        $p = $planner->plan($course->id, 'CL-13', $q->coursemodule, $this->policy());
+        $r = (new executor($planner))->execute($course->id, 'CL-13', $q->coursemodule, $p->fingerprint(), $this->policy());
+        $this->assertSame(executor::APPLIED, $r['status']);
+        $this->assertStringContainsString('simulated cache failure', $r['cacheerror']);
+        $this->assertEquals(2, $this->quizrow($q)->attempts);
+        $this->assertStringContainsString('simulated cache failure', $this->trail()[0]->details);
+        $url = new \moodle_url('/local/mooc_audit/index.php');
+        $html = $PAGE->get_renderer('local_mooc_audit')->render(new \local_mooc_audit\output\correction_result($r, $url, $url));
+        $this->assertStringNotContainsString('alert-success', $html);
+        $this->assertStringContainsString(get_string('fix_result_applied_cache', 'local_mooc_audit'), $html);
     }
 
     /**

@@ -218,7 +218,8 @@ dependências e ausência do botão de confirmar; conferir que POST de confirma�
 - Questionário com tentativas apenas de prévia (professor) → não conta como dado de estudante.
 - Substituições de usuário/grupo (`quiz_overrides`) → aviso: continuam prevalecendo para quem as tem.
 - `attempts = 0` (ilimitadas) → conforme; nunca proposto.
-- Política alterada entre prévia e confirmação → impressão digital muda; conflito.
+- Política alterada entre prévia e confirmação (rótulo de versão **ou** valores) → impressão digital muda; conflito.
+- Encerramento atual anterior ao término do curso (alerta do CL-14) → nunca adiado automaticamente; orientação.
 - Conclusão desabilitada no site → CL-17 já é `NAO_VERIFICAVEL` (Spec 001); sem proposta.
 - Duas confirmações simultâneas da mesma atividade → trava por atividade; a segunda espera ou falha sem gravar.
 - Fuso horário: datas exibidas no fuso do usuário e do servidor; o valor gravado é o mesmo instante do término do
@@ -257,7 +258,8 @@ dependências e ausência do botão de confirmar; conferir que POST de confirma�
   executável.
 - **FR-023**: CL-13 MUST NOT propor redução de tentativas nem alterar o método de cálculo da nota.
 - **FR-024**: CL-14 MUST usar como data proposta o término do curso e MUST exigir término definido, conforme ao CL-07,
-  no futuro e posterior à abertura da atividade.
+  no futuro e posterior à abertura da atividade. MUST NOT adiar automaticamente um encerramento já definido antes do
+  término do curso (pode ser escolha pedagógica): esse caso é orientado (revisão de código, 2026-10-29).
 - **FR-025**: CL-17 MUST indicar o critério da política para o tipo, as dependências de conclusão (restrições de
   acesso de módulos e seções, critérios de conclusão do curso), a relação com a Avaliação do curso e o certificado,
   e os registros de conclusão existentes.

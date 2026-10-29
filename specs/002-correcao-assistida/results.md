@@ -15,7 +15,7 @@ contêineres da Spec 001 e produção intocados.
 | 4 | Implementação experimental | `plugin/local_mooc_audit/classes/local/correction/`, `correction.php`, `db/` |
 | 5 | Interface de prévia e confirmação | `correction.php`, `templates/correction*.mustache`, ação no relatório |
 | 6 | Registro mínimo | tabela `local_mooc_audit_fix` + evento `correction_applied` |
-| 7 | Testes automatizados | 38 PHPUnit novos (113 no total), 4 cenários Behat novos (6 no total) |
+| 7 | Testes automatizados | 42 PHPUnit novos (117 no total), 4 cenários Behat novos (6 no total) |
 | 8–9 | Evidências e antes/depois | `plugin-results/0.3.0/` |
 | 10 | Revisão de segurança | §4 |
 | 11 | Constituição e Spec 001 | `analysis.md` |
@@ -25,7 +25,7 @@ contêineres da Spec 001 e produção intocados.
 
 | Suíte | Resultado |
 |---|---|
-| PHPUnit `local_mooc_audit_testsuite` | **113 testes, 2019 asserções, OK** (75 da Spec 001, incluindo caracterização A/B e contrato 1.0, + 38 novos) |
+| PHPUnit `local_mooc_audit_testsuite` | **117 testes, 2036 asserções, OK** (75 da Spec 001, incluindo caracterização A/B e contrato 1.0, + 42 novos) |
 | Behat `@local_mooc_audit` | **6 cenários, 82 passos, OK** (2 da Spec 001 + 4 novos; acessibilidade axe na prévia; professor editor aplica, professor não editor não) |
 | PHPCS `moodle` | 0 erros, 0 avisos |
 | `php -l` | sem erros |
@@ -81,6 +81,22 @@ impressão digital, escape de saída, privacidade e definição das capacidades.
 | 3 | Atualização do cache do curso e evento dentro da transação: um rollback poderia deixar cache em revisão nova | baixa | Corrigido: `after_commit()` chamado pelo executor depois do commit |
 | 4 | "Quem pode executar" listava papéis só com `applycorrection` | baixa | Corrigido: papéis com as duas capacidades |
 | 5 | Evento com `crud = u` / `LEVEL_OTHER` | baixa | Ajustado para `crud = c` (objeto = linha da trilha) e `LEVEL_TEACHING` |
+
+### 4.2 Code review (2026-10-29)
+
+Revisão de código em nível alto do PR #2: 10 achados, todos corrigidos neste PR.
+
+| # | Achado | Correção |
+|---|---|---|
+| 1 | CL-14 adiava automaticamente um encerramento definido antes do término do curso | Impedimento `later`: adiar prazo é orientação (FR-024 atualizado) |
+| 2 | Impressão digital usava só o rótulo da política | Hash dos valores da política no estado (`planner::policy_hash`) |
+| 3 | Impressão digital dependia do texto traduzido dos impedimentos | Impedimentos com códigos estáveis; a impressão digital usa os códigos |
+| 4 | Falha na atualização do cache após o commit ainda exibia sucesso | Resultado `applied_cache` sem alerta de sucesso; erro registrado na trilha |
+| 5–6 | Critérios de conclusão e campos de encerramento duplicados entre regras e estratégias | `helpers::completion_criteria()`, `helpers::close_date()`, `helpers::CLOSE_FIELDS` usados por CL-14, CL-17 e estratégias |
+| 7 | `planner::eligible()` recriava as estratégias a cada resultado | Lista de regras memorizada |
+| 8 | Limpeza de cache redundante | Só `rebuild_course_cache()` |
+| 9 | Nome de coluna interpolado em SQL | Lista branca em `facts::quiz_overrides()` |
+| 10 | Atividade obtida duas vezes no executor | `run()` recebe o `cm_info` verificado em `execute()` |
 
 As evidências da interface (§3, `plugin-results/0.3.0/`) foram coletadas antes dessas correções; uma reexecução real
 com o código final (trilha #3 e #4, `Questionário 4`) aplicou e resolveu CL-13 e CL-14 novamente.

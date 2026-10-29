@@ -17,6 +17,7 @@
 namespace local_mooc_audit\local\correction\strategy;
 
 use local_mooc_audit\local\correction\proposal;
+use local_mooc_audit\local\helpers;
 
 /**
  * CL-14 on graded activities other than quizzes: guided proposal (category B).
@@ -33,16 +34,6 @@ use local_mooc_audit\local\correction\proposal;
 class close_date_guidance extends base {
     /** @var string */
     const RULE = 'CL-14';
-
-    /** @var array Close-date columns read by CL-14, per type (first non empty wins). */
-    const FIELDS = [
-        'assign' => ['cutoffdate', 'duedate'],
-        'forum' => ['cutoffdate', 'duedate'],
-        'choice' => ['timeclose'],
-        'feedback' => ['timeclose'],
-        'game' => ['timeclose'],
-        'data' => ['timeavailableto'],
-    ];
 
     /**
      * Every graded type except quizzes.
@@ -64,18 +55,15 @@ class close_date_guidance extends base {
         $m = $ctx['module'];
         $end = (int) $ctx['snapshot']['course']['enddate'];
         $type = $m['modname'];
-        $close = 0;
-        foreach (self::FIELDS[$type] ?? [] as $f) {
-            $close = $close ?: (int) ($m['extra'][$f] ?? 0);
-        }
+        $close = (int) helpers::close_date($m);
         $p->category = proposal::CATEGORY_GUIDED;
         $p->currentdisplay = $this->date($close);
         $p->proposeddisplay = $this->date($end);
         $p->editurl = $this->edit_url($p->cmid);
         $p->justification = $this->str('cl14_justification');
-        $known = isset(self::FIELDS[$type]);
+        $known = isset(helpers::CLOSE_FIELDS[$type]);
         $p->effect = $this->str($known ? 'cl14_guided_field_' . $type : 'cl14_guided_field_unknown');
-        $p->blockers[] = $this->str('cl14_guided_reason', $type);
+        $p->blockers['guided_type'] = $this->str('cl14_guided_reason', $type);
         $start = (int) $ctx['snapshot']['course']['startdate'];
         $p->dependencies[] = $this->str('cl14_period', (object) ['start' => $this->date($start), 'end' => $this->date($end)]);
         $p->dependencies[] = $this->str('cl14_dep_cl07');

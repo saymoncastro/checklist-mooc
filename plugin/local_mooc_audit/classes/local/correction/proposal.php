@@ -71,7 +71,7 @@ class proposal {
     public string $effect = '';
     /** @var string[] Risks and warnings (do not prevent execution). */
     public array $risks = [];
-    /** @var string[] Impediments (any of them makes the proposal not executable). */
+    /** @var string[] Impediments keyed by a stable code (any of them makes the proposal not executable). */
     public array $blockers = [];
     /** @var string[] What depends on the activity or what the correction depends on. */
     public array $dependencies = [];
@@ -121,8 +121,9 @@ class proposal {
     }
 
     /**
-     * Fingerprint of the state the proposal was built on. Any change of course revision, instance, values, policy or
-     * impediments changes it.
+     * Fingerprint of the state the proposal was built on. Any change of course revision, instance, values, policy (label
+     * and values) or impediments changes it. Impediments count by their codes, never by their localised texts, so that
+     * the language or the timezone of the user does not matter.
      *
      * @return string sha256 hex
      */
@@ -131,7 +132,7 @@ class proposal {
         ksort($state);
         return hash('sha256', json_encode([
             $this->ruleid, $this->courseid, $this->cmid, $this->strategy, $this->field, (string) $this->current,
-            (string) $this->proposed, $this->policyversion, $state, $this->blockers, $this->is_executable(),
+            (string) $this->proposed, $this->policyversion, $state, array_keys($this->blockers), $this->is_executable(),
         ]));
     }
 }

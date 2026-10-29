@@ -55,7 +55,8 @@ de novo e o momento de conclusão ("esgotar tentativas"), e mudar o encerramento
 ## R3 — Detecção de conflito e concorrência
 
 **Decisão**: impressão digital `sha256` de: curso, atividade, regra, estratégia, campo, valor atual, valor proposto,
-`course.cacherev`, `timemodified` da instância, versão da política, condições de bloqueio. `cacherev` é incrementado
+`course.cacherev`, `timemodified` da instância, versão **e valores** da política (hash sem o carimbo de tempo da
+requisição) e **códigos** dos impedimentos (nunca o texto traduzido, que depende do idioma e do fuso do usuário). `cacherev` é incrementado
 pelo núcleo a cada `rebuild_course_cache` (edição de atividade, seção, configurações do curso), então cobre "o curso
 foi modificado". Na confirmação, a proposta é reconstruída do banco e a impressão digital comparada; diferença →
 conflito, nada é gravado. Concorrência entre duas confirmações: `\core\lock\lock_config::get_lock_factory()` com

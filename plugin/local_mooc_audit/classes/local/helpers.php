@@ -24,6 +24,63 @@ namespace local_mooc_audit\local;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class helpers {
+    /** @var array Close-date columns per graded type (first non empty wins; specs/001 CL-14 and specs/002). */
+    const CLOSE_FIELDS = [
+        'quiz' => ['timeclose'],
+        'game' => ['timeclose'],
+        'choice' => ['timeclose'],
+        'feedback' => ['timeclose'],
+        'assign' => ['cutoffdate', 'duedate'],
+        'forum' => ['cutoffdate', 'duedate'],
+        'data' => ['timeavailableto'],
+    ];
+
+    /** @var array Module completion columns and the criterion each one expresses (CL-17 and its correction proposal). */
+    const COMPLETION_FIELDS = [
+        'completionsubmit' => 'submit', 'completionentries' => 'entries', 'completionposts' => 'posts',
+        'completiondiscussions' => 'posts', 'completionreplies' => 'posts', 'completionminattempts' => 'attempts',
+        'completionattemptsexhausted' => 'attempts', 'completionpass' => 'grade',
+    ];
+
+    /**
+     * Close date of a graded activity: 0 when not set, null when the type has no known close-date column.
+     *
+     * @param array $m snapshot module
+     * @return int|null
+     */
+    public static function close_date(array $m): ?int {
+        if (!isset(self::CLOSE_FIELDS[$m['modname']])) {
+            return null;
+        }
+        $close = 0;
+        foreach (self::CLOSE_FIELDS[$m['modname']] as $field) {
+            $close = $close ?: (int) ($m['extra'][$field] ?? 0);
+        }
+        return $close;
+    }
+
+    /**
+     * Automatic completion criteria of a module (view, grade, submit, entries, posts, attempts), without duplicates.
+     *
+     * @param array $m snapshot module
+     * @return string[]
+     */
+    public static function completion_criteria(array $m): array {
+        $crit = [];
+        if ($m['completionview']) {
+            $crit[] = 'view';
+        }
+        if ($m['completiongradeitemnumber'] !== null) {
+            $crit[] = 'grade';
+        }
+        foreach (self::COMPLETION_FIELDS as $field => $criterion) {
+            if (!empty($m['extra'][$field])) {
+                $crit[] = $criterion;
+            }
+        }
+        return array_values(array_unique($crit));
+    }
+
     /**
      * Normalise text for comparisons (lowercase, no accents, collapsed spaces).
      *

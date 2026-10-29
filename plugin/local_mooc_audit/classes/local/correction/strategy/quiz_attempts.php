@@ -84,7 +84,7 @@ class quiz_attempts extends base {
             $p->field = null;
             $p->proposeddisplay = (string) $min;
             $p->effect = $this->str('cl13_reduce_effect');
-            $p->blockers[] = $this->str('cl13_noreduce');
+            $p->blockers['noreduce'] = $this->str('cl13_noreduce');
             return;
         }
 
@@ -95,10 +95,10 @@ class quiz_attempts extends base {
 
         $quizid = (int) $m['instanceid'];
         if ($n = facts::quiz_attempts($quizid)) {
-            $p->blockers[] = $this->str('blocker_attempts', $n);
+            $p->blockers['attempts'] = $this->str('blocker_attempts', $n);
         }
         if ($n = facts::grades($m)) {
-            $p->blockers[] = $this->str('blocker_grades', $n);
+            $p->blockers['grades'] = $this->str('blocker_grades', $n);
         }
         if ($n = facts::learners($p->cmid, 'mod/quiz:attempt')) {
             $p->risks[] = $this->str('risk_learners', $n);

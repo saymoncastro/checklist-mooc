@@ -25,7 +25,8 @@ use local_mooc_audit\local\status;
  *
  * The course end date is the reference of the rule (CL-14 warns when the close date differs from it). The proposal is
  * executable only when that end date is defined, conformant to the policy (CL-07), in the future and after the quiz
- * opening, and when no student attempted the quiz or has a grade. The value written is the same instant as the course
+ * opening, when the change does not move an existing close date later (an earlier deadline may be intentional), and
+ * when no student attempted the quiz or has a grade. The value written is the same instant as the course
  * end date: no timezone conversion.
  *
  * Writing mirrors core's own single-setting update of a quiz date (mod_quiz_core_calendar_event_timestart_updated):
@@ -77,25 +78,29 @@ class quiz_timeclose extends base {
         $p->dependencies[] = $this->str('cl14_dep_cl07');
 
         if (!$end) {
-            $p->blockers[] = $this->str('cl14_noenddate');
+            $p->blockers['noenddate'] = $this->str('cl14_noenddate');
         } else {
             $cl07 = array_column(array_filter($ctx['results'], fn($r) => $r['rule'] === 'CL-07'), 'status');
             if (in_array(status::NAO_CONFORME, $cl07, true)) {
-                $p->blockers[] = $this->str('cl14_enddate_policy');
+                $p->blockers['enddate_policy'] = $this->str('cl14_enddate_policy');
             }
             if ($end <= time()) {
-                $p->blockers[] = $this->str('cl14_enddate_past');
+                $p->blockers['enddate_past'] = $this->str('cl14_enddate_past');
             }
             if ($open && $open >= $end) {
-                $p->blockers[] = $this->str('cl14_open_after', $this->date($open));
+                $p->blockers['open_after'] = $this->str('cl14_open_after', $this->date($open));
+            }
+            if ($close && $close < $end) {
+                // An earlier close date may be a pedagogical choice: moving the deadline later is never automatic.
+                $p->blockers['later'] = $this->str('cl14_later', $this->date($close));
             }
         }
         $quizid = (int) $m['instanceid'];
         if ($n = facts::quiz_attempts($quizid)) {
-            $p->blockers[] = $this->str('blocker_attempts', $n);
+            $p->blockers['attempts'] = $this->str('blocker_attempts', $n);
         }
         if ($n = facts::grades($m)) {
-            $p->blockers[] = $this->str('blocker_grades', $n);
+            $p->blockers['grades'] = $this->str('blocker_grades', $n);
         }
         if ($n = facts::learners($p->cmid, 'mod/quiz:attempt')) {
             $p->risks[] = $this->str('cl14_risk_learners', $n);

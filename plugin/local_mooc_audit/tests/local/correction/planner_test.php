@@ -199,6 +199,49 @@ final class planner_test extends correction_testcase {
     }
 
     /**
+     * CL-14 warning (close date ≠ course end): bringing a later close date back to the course end is executable;
+     * moving an earlier close date later is not (it may be intentional).
+     */
+    public function test_cl14_never_moves_a_deadline_later(): void {
+        $y = $this->year();
+        $course = $this->ccourse();
+        $early = $this->quiz($course, 'Antes', 2, 50, $this->ts("$y-11-30 23:59"), '<p>Tentativas permitidas: 2.</p>');
+        $late = $this->quiz($course, 'Depois', 2, 50, $this->ts(($y + 1) . "-01-15 23:59"), '<p>Tentativas permitidas: 2.</p>');
+        $p = $this->plan($course, 'CL-14', $early->coursemodule);
+        $this->assertFalse($p->is_executable());
+        $this->assertArrayHasKey('later', $p->blockers);
+        $p = $this->plan($course, 'CL-14', $late->coursemodule);
+        $this->assertTrue($p->is_executable(), json_encode($p->blockers));
+        $this->assertSame((int) $course->enddate, $p->proposed);
+    }
+
+    /**
+     * Impediments are keyed by stable codes and the fingerprint uses the codes: the user's language does not change it.
+     */
+    public function test_fingerprint_does_not_depend_on_language(): void {
+        $y = $this->year();
+        $course = $this->ccourse(['enddate' => $this->ts("$y-06-30 23:59")]);
+        $q = $this->quiz($course, 'Q', 2, 50, 0, '<p>Tentativas permitidas: 2.</p>');
+        $p = $this->plan($course, 'CL-14', $q->coursemodule);
+        $this->assertArrayHasKey('enddate_policy', $p->blockers);
+        $fp = $p->fingerprint();
+        $p->blockers = array_map(fn($text) => strrev($text), $p->blockers);
+        $this->assertSame($fp, $p->fingerprint());
+    }
+
+    /**
+     * The policy values are part of the state, not only the version label.
+     */
+    public function test_policy_hash(): void {
+        $base = \local_mooc_audit\policy::load($this->policy());
+        $same = \local_mooc_audit\policy::load($this->policy());
+        $this->assertSame(planner::policy_hash($base), planner::policy_hash($same), 'reference time excluded');
+        $other = \local_mooc_audit\policy::load($this->policy() + ['completion_expected' => ['page' => 'none']]);
+        $this->assertSame($base['policy_version'], $other['policy_version']);
+        $this->assertNotSame(planner::policy_hash($base), planner::policy_hash($other));
+    }
+
+    /**
      * CL-14 on an assignment: guided, with the field of the type.
      */
     public function test_cl14_other_types_are_guided(): void {

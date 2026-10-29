@@ -65,8 +65,14 @@ class correction_result implements renderable, templatable {
         $r = $this->result;
         $p = $r['proposal'];
         $status = $r['status'];
-        $key = $status === executor::APPLIED ? 'applied_' . $r['reaudit'] : $status;
-        $success = $status === executor::APPLIED && $r['reaudit'] === verifier::RESOLVED;
+        $cacheerror = ($r['cacheerror'] ?? '') !== '';
+        if ($status === executor::APPLIED) {
+            // A failed cache refresh after the commit is reported before the re-audit outcome.
+            $key = $cacheerror ? 'applied_cache' : 'applied_' . $r['reaudit'];
+        } else {
+            $key = $status;
+        }
+        $success = $status === executor::APPLIED && $r['reaudit'] === verifier::RESOLVED && !$cacheerror;
         $data = (object) [
             'status' => $status,
             'success' => $success,

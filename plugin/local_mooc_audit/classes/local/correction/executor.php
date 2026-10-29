@@ -71,7 +71,8 @@ class executor {
      * @param int $cmid
      * @param string $fingerprint fingerprint of the proposal the user confirmed
      * @param array|null $policyoverride
-     * @return array status (class constants), proposal, reaudit, comparison, message, fixid
+     * @return array status (class constants), proposal, reaudit, comparison, message, fixid, cacheerror (failure of the
+     *               cache refresh after the commit)
      */
     public function execute(int $courseid, string $ruleid, int $cmid, string $fingerprint, ?array $policyoverride = null): array {
         require_capability('local/mooc_audit:applycorrection', \context_course::instance($courseid));
@@ -86,7 +87,7 @@ class executor {
             return $this->result(self::BUSY);
         }
         try {
-            return $this->run($courseid, $ruleid, $cmid, $fingerprint, $policyoverride);
+            return $this->run($cm, $ruleid, $fingerprint, $policyoverride);
         } finally {
             $lock->release();
         }
@@ -95,15 +96,16 @@ class executor {
     /**
      * The checks and the write, under the lock.
      *
-     * @param int $courseid
+     * @param \cm_info $cm the activity checked by execute()
      * @param string $ruleid
-     * @param int $cmid
      * @param string $fingerprint
      * @param array|null $policyoverride
      * @return array
      */
-    protected function run(int $courseid, string $ruleid, int $cmid, string $fingerprint, ?array $policyoverride): array {
+    protected function run(\cm_info $cm, string $ruleid, string $fingerprint, ?array $policyoverride): array {
         global $DB;
+        $courseid = (int) $cm->course;
+        $cmid = (int) $cm->id;
         $p = $this->planner->plan($courseid, $ruleid, $cmid, $policyoverride);
         if (!$p) {
             return $this->result(self::NOTHING);
@@ -116,7 +118,6 @@ class executor {
         }
         $strategy = $this->planner->strategy_for($p);
 
-        $cm = get_fast_modinfo($courseid)->get_cm($cmid);
         try {
             $transaction = $DB->start_delegated_transaction();
             try {
@@ -141,11 +142,13 @@ class executor {
 
         $comparison = null;
         $message = '';
+        $cacheerror = '';
         // Cache refresh and standard event only after the commit (a rollback must not leave a cache at a new revision).
+        // If it fails, the value is kept but the outcome is never presented as a plain success.
         try {
             $strategy->after_commit($cm);
         } catch (\Throwable $e) {
-            $message = self::short($e);
+            $cacheerror = self::short($e);
         }
         try {
             $after = $this->reaudit($courseid, $policyoverride);
@@ -154,13 +157,17 @@ class executor {
             $details = ['resolved' => $comparison['resolved'], 'introduced' => $comparison['introduced']];
         } catch (\Throwable $e) {
             $reaudit = verifier::ERROR;
-            $message = trim($message . ' ' . self::short($e));
+            $message = self::short($e);
             $details = ['error' => $message];
+        }
+        if ($cacheerror !== '') {
+            $details['cacheerror'] = $cacheerror;
+            $message = trim($message . ' ' . $cacheerror);
         }
         $id = trail::record($p, trail::APPLIED, $reaudit, $details);
         trail::log_applied($id, $p, $reaudit);
         return $this->result(self::APPLIED, $p, ['reaudit' => $reaudit, 'comparison' => $comparison, 'message' => $message,
-            'fixid' => $id]);
+            'fixid' => $id, 'cacheerror' => $cacheerror]);
     }
 
     /**
@@ -184,7 +191,7 @@ class executor {
      */
     protected function result(string $status, ?proposal $p = null, array $extra = []): array {
         return array_merge(['status' => $status, 'proposal' => $p, 'reaudit' => verifier::SKIPPED, 'comparison' => null,
-            'message' => '', 'fixid' => null], $extra);
+            'message' => '', 'fixid' => null, 'cacheerror' => ''], $extra);
     }
 
     /**

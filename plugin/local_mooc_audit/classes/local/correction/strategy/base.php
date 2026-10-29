@@ -187,7 +187,6 @@ abstract class base {
      * @param \cm_info $cm
      */
     public function after_commit(\cm_info $cm): void {
-        \course_modinfo::purge_course_module_cache($cm->course, $cm->id);
         rebuild_course_cache($cm->course, true);
         \core\event\course_module_updated::create_from_cm($cm)->trigger();
     }
