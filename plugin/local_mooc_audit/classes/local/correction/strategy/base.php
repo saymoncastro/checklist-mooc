@@ -19,6 +19,7 @@ namespace local_mooc_audit\local\correction\strategy;
 use local_mooc_audit\local\correction\conflict_exception;
 use local_mooc_audit\local\correction\facts;
 use local_mooc_audit\local\correction\proposal;
+use local_mooc_audit\local\status;
 use moodle_url;
 
 /**
@@ -132,6 +133,18 @@ abstract class base {
         $server = userdate($ts, get_string('strftimedatetime', 'langconfig'), \core_date::get_server_timezone());
         return $user === $server ? $user : $this->str('date_twozones', (object) ['user' => $user, 'server' => $server,
             'tz' => \core_date::get_server_timezone()]);
+    }
+
+    /**
+     * Whether the audit marked the course end date as not following the policy (CL-07): the close date rules use it as
+     * their reference, so a proposal must not present it as the value to set (B-10 of docs/revisao-geral).
+     *
+     * @param array $ctx planner context with the audit results
+     * @return bool
+     */
+    protected function enddate_nonconformant(array $ctx): bool {
+        $cl07 = array_column(array_filter($ctx['results'] ?? [], fn($r) => $r['rule'] === 'CL-07'), 'status');
+        return in_array(status::NAO_CONFORME, $cl07, true);
     }
 
     /**

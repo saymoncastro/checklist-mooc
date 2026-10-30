@@ -69,7 +69,7 @@
         <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Audited course"/>
         <FIELD NAME="batchid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Batch (0 = none)"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Requester (0 = process or anonymised)"/>
-        <FIELD NAME="origin" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="page, batch or cli"/>
+        <FIELD NAME="origin" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="page, batch, cli or correction"/>
         <FIELD NAME="status" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="queued, running, complete, partial or failed"/>
         <FIELD NAME="overall" TYPE="char" LENGTH="30" NOTNULL="false" SEQUENCE="false" COMMENT="Overall status of the report"/>
         <FIELD NAME="policyid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Applied policy"/>

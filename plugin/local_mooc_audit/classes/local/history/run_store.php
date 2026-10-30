@@ -53,6 +53,8 @@ class run_store {
     const ORIGIN_BATCH = 'batch';
     /** @var string Command line. */
     const ORIGIN_CLI = 'cli';
+    /** @var string Re-audit recorded right after an applied assisted correction (specs/002). */
+    const ORIGIN_CORRECTION = 'correction';
 
     /**
      * Final states.

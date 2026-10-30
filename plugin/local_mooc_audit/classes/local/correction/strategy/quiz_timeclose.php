@@ -18,7 +18,6 @@ namespace local_mooc_audit\local\correction\strategy;
 
 use local_mooc_audit\local\correction\facts;
 use local_mooc_audit\local\correction\proposal;
-use local_mooc_audit\local\status;
 
 /**
  * CL-14 on a quiz: set the close date to the course end date (category A).
@@ -80,9 +79,9 @@ class quiz_timeclose extends base {
         if (!$end) {
             $p->blockers['noenddate'] = $this->str('cl14_noenddate');
         } else {
-            $cl07 = array_column(array_filter($ctx['results'], fn($r) => $r['rule'] === 'CL-07'), 'status');
-            if (in_array(status::NAO_CONFORME, $cl07, true)) {
+            if ($this->enddate_nonconformant($ctx)) {
                 $p->blockers['enddate_policy'] = $this->str('cl14_enddate_policy');
+                $p->proposeddisplay = $this->str('cl14_proposed_after_cl07', $this->date($end));
             }
             if ($end <= time()) {
                 $p->blockers['enddate_past'] = $this->str('cl14_enddate_past');

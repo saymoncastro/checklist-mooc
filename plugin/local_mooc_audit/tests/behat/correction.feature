@@ -37,6 +37,10 @@ Feature: Assisted correction of a technical audit finding
     When I press "Confirm correction"
     Then I should see "Correction applied and confirmed: the re-audit no longer reports the non conformity."
     And I should see "attempts: 1 → 2"
+    # The re-audit is recorded: back on the report, CL-13 is no longer listed as a finding.
+    And I click on "Back to the report" "link"
+    And I should see "Re-audit after an assisted correction"
+    And "CL-13" "table_row" should not exist
     And I am on the "Avaliação do Tópico 1" "quiz activity editing" page
     And the field "Attempts allowed" matches value "2"
 

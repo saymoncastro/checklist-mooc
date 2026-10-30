@@ -254,6 +254,26 @@ final class planner_test extends correction_testcase {
         $this->assertFalse($p->is_executable());
         $this->assertStringContainsString('Due date', $p->effect);
         $this->assertStringContainsString('assign', implode(' ', $p->blockers));
+        $this->assertArrayNotHasKey('enddate_policy', $p->blockers);
+        $this->assertStringNotContainsString('CL-07', $p->proposeddisplay);
+    }
+
+    /**
+     * Course end out of policy (CL-07): neither the guided nor the blocked executable proposal presents the current end
+     * date as the value to set (B-10 of docs/revisao-geral).
+     */
+    public function test_cl14_does_not_propose_an_end_date_out_of_policy(): void {
+        $y = $this->year();
+        $course = $this->ccourse(['enddate' => $this->ts("$y-06-30 23:59")]);
+        $a = $this->getDataGenerator()->create_module('assign', ['course' => $course->id, 'name' => 'Tarefa', 'grade' => 10,
+            'duedate' => 0, 'cutoffdate' => 0]);
+        $q = $this->quiz($course, 'Q', 2, 50, 0, '<p>Tentativas permitidas: 2.</p>');
+        foreach ([$a->cmid, $q->coursemodule] as $cmid) {
+            $p = $this->plan($course, 'CL-14', $cmid);
+            $this->assertFalse($p->is_executable());
+            $this->assertArrayHasKey('enddate_policy', $p->blockers);
+            $this->assertStringContainsString('CL-07', $p->proposeddisplay);
+        }
     }
 
     /**

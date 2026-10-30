@@ -137,11 +137,14 @@ class dashboard {
     protected static function latest(array $courseids, array $states): array {
         global $DB;
         $runs = run_store::latest_per_course($states, $courseids, 'r.id, r.courseid, r.status, r.overall, r.policyid,
-            r.pluginversion, r.summary, r.evolution, r.coursecacherev, r.timestarted, r.timefinished');
+            r.pluginversion, r.summary, r.evolution, r.coursecacherev, r.timestarted, r.timefinished, r.details');
         $policyids = array_unique(array_filter(array_map(fn($r) => (int) $r->policyid, $runs)));
         $fps = $policyids ? $DB->get_records_list(policy_store::TABLE, 'id', $policyids, '', 'id, fingerprint') : [];
         foreach ($runs as $r) {
             $r->fingerprint = $fps[$r->policyid]->fingerprint ?? null;
+            // Keep only the code fingerprint of the details (a few kB per room otherwise).
+            $r->codefp = self::run_code($r);
+            unset($r->details);
         }
         return $runs;
     }
@@ -172,7 +175,7 @@ class dashboard {
      * @param \stdClass|null $valid
      * @param int $now
      * @param string $policyfp fingerprint of the policy in force
-     * @param string $version current plugin version label
+     * @param string $version current plugin version label (compared only for runs recorded without rule fingerprints)
      * @param \stdClass|null $course course with cacherev and timemodified (known change of the room since the run)
      * @return string[] age, course_changed, policy_changed, plugin_changed
      */
@@ -202,10 +205,26 @@ class dashboard {
         if ((string) $valid->fingerprint !== $policyfp) {
             $out[] = 'policy_changed';
         }
-        if ($valid->pluginversion !== $version) {
+        // A new plugin version only outdates the result when the code of the rules changed (A-03 of docs/revisao-geral).
+        $code = self::run_code($valid);
+        if ($code !== null ? $code !== fingerprint::current_code() : $valid->pluginversion !== $version) {
             $out[] = 'plugin_changed';
         }
         return $out;
+    }
+
+    /**
+     * Code fingerprint of the rules that produced a run (from its details), or null when the run did not record it.
+     *
+     * @param \stdClass $run run with codefp (dashboard rows) or details
+     * @return string|null
+     */
+    public static function run_code(\stdClass $run): ?string {
+        if (property_exists($run, 'codefp')) {
+            return $run->codefp;
+        }
+        $rules = run_store::json($run, 'details')['rules'] ?? null;
+        return is_array($rules) && $rules ? fingerprint::code($rules) : null;
     }
 
     /**

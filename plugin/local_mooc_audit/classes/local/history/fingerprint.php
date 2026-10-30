@@ -43,6 +43,8 @@ class fingerprint {
     protected static array $sources = [];
     /** @var string|null Hash of the shared code. */
     protected static ?string $shared = null;
+    /** @var string|null Code fingerprint of the installed rules (current_code()). */
+    protected static ?string $current = null;
 
     /**
      * Canonical JSON: object keys sorted recursively, lists kept in order.
@@ -113,6 +115,28 @@ class fingerprint {
             $out[$id] = ['p' => substr(sha1(self::canonical($slice)), 0, 12), 'r' => self::source($rule)];
         }
         return $out;
+    }
+
+    /**
+     * Fingerprint of the code of a set of rules, without their policy slices: changes when a rule is added, removed or
+     * edited (or the code the rules share), not on every plugin version (A-03 of docs/revisao-geral).
+     *
+     * @param array $rules rule id => ['p' => …, 'r' => …], as in the "rules" entry of a run's details
+     * @return string
+     */
+    public static function code(array $rules): string {
+        $codes = array_map(fn($x) => is_array($x) ? (string) ($x['r'] ?? '') : '', $rules);
+        ksort($codes);
+        return sha1(self::canonical($codes));
+    }
+
+    /**
+     * Code fingerprint of the rules installed now.
+     *
+     * @return string
+     */
+    public static function current_code(): string {
+        return self::$current ??= self::code(self::rules([]));
     }
 
     /**

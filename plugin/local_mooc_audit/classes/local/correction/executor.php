@@ -17,7 +17,8 @@
 namespace local_mooc_audit\local\correction;
 
 use core\lock\lock_config;
-use local_mooc_audit\engine;
+use local_mooc_audit\local\history\recorder;
+use local_mooc_audit\local\history\run_store;
 
 /**
  * Applies a confirmed correction proposal. The only class of the plugin that writes to course data.
@@ -26,7 +27,8 @@ use local_mooc_audit\engine;
  * manageactivities in the activity) → activity exists → per-activity lock → proposal rebuilt from the database →
  * fingerprint equal to the confirmed one → executable → in one transaction: the strategy re-reads the stored value and
  * the student data, writes, and the value is read back through the module API (any mismatch rolls back) → commit →
- * cache refresh and course_module_updated → full re-audit compared with the state before → trail row and log event.
+ * cache refresh and course_module_updated → full re-audit, recorded in the history and compared with the state before →
+ * trail row and log event.
  * Success is reported only for an applied correction whose value was read back.
  *
  * @package    local_mooc_audit
@@ -54,6 +56,9 @@ class executor {
     /** @var planner */
     protected planner $planner;
 
+    /** @var int|null Recorded re-audit of the last execution (null when it was not recorded). */
+    protected ?int $runid = null;
+
     /**
      * Constructor.
      *
@@ -72,7 +77,7 @@ class executor {
      * @param string $fingerprint fingerprint of the proposal the user confirmed
      * @param array|null $policyoverride
      * @return array status (class constants), proposal, reaudit, comparison, message, fixid, cacheerror (failure of the
-     *               cache refresh after the commit)
+     *               cache refresh after the commit), runid (recorded re-audit)
      */
     public function execute(int $courseid, string $ruleid, int $cmid, string $fingerprint, ?array $policyoverride = null): array {
         require_capability('local/mooc_audit:applycorrection', \context_course::instance($courseid));
@@ -150,11 +155,13 @@ class executor {
         } catch (\Throwable $e) {
             $cacheerror = self::short($e);
         }
+        $this->runid = null;
         try {
             $after = $this->reaudit($courseid, $policyoverride);
             $comparison = verifier::compare($p->baseline, $after['results'], $ruleid, $cmid);
             $reaudit = $comparison['outcome'];
-            $details = ['resolved' => $comparison['resolved'], 'introduced' => $comparison['introduced']];
+            $details = ['resolved' => $comparison['resolved'], 'introduced' => $comparison['introduced'],
+                'runid' => $this->runid];
         } catch (\Throwable $e) {
             $reaudit = verifier::ERROR;
             $message = self::short($e);
@@ -167,18 +174,30 @@ class executor {
         $id = trail::record($p, trail::APPLIED, $reaudit, $details);
         trail::log_applied($id, $p, $reaudit);
         return $this->result(self::APPLIED, $p, ['reaudit' => $reaudit, 'comparison' => $comparison, 'message' => $message,
-            'fixid' => $id, 'cacheerror' => $cacheerror]);
+            'fixid' => $id, 'cacheerror' => $cacheerror, 'runid' => $this->runid]);
     }
 
     /**
-     * Full audit after the write (same engine and view as the audit page).
+     * Full audit after the write, recorded in the history (specs/005) so that the report page, the history and the
+     * dashboard show the state after the correction instead of the audit that found the problem.
      *
      * @param int $courseid
      * @param array|null $policyoverride
      * @return array report
      */
     protected function reaudit(int $courseid, ?array $policyoverride): array {
-        return engine::audit($courseid, $policyoverride, 0);
+        global $USER;
+        [$run, $report, $error] = recorder::record_now(
+            $courseid,
+            run_store::ORIGIN_CORRECTION,
+            (int) $USER->id,
+            $policyoverride
+        );
+        if (!$report) {
+            throw $error ?? new \moodle_exception('audit_failed', 'local_mooc_audit', '', (string) ($run->status ?? ''));
+        }
+        $this->runid = (int) $run->id;
+        return $report;
     }
 
     /**
@@ -191,7 +210,7 @@ class executor {
      */
     protected function result(string $status, ?proposal $p = null, array $extra = []): array {
         return array_merge(['status' => $status, 'proposal' => $p, 'reaudit' => verifier::SKIPPED, 'comparison' => null,
-            'message' => '', 'fixid' => null, 'cacheerror' => ''], $extra);
+            'message' => '', 'fixid' => null, 'cacheerror' => '', 'runid' => null], $extra);
     }
 
     /**

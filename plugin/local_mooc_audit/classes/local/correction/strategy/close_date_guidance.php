@@ -67,6 +67,11 @@ class close_date_guidance extends base {
         $start = (int) $ctx['snapshot']['course']['startdate'];
         $p->dependencies[] = $this->str('cl14_period', (object) ['start' => $this->date($start), 'end' => $this->date($end)]);
         $p->dependencies[] = $this->str('cl14_dep_cl07');
+        if ($end && $this->enddate_nonconformant($ctx)) {
+            // The current end date is wrong: following the proposal would only have to be redone (B-10).
+            $p->blockers['enddate_policy'] = $this->str('cl14_enddate_policy');
+            $p->proposeddisplay = $this->str('cl14_proposed_after_cl07', $this->date($end));
+        }
         if ($type === 'assign') {
             $p->risks[] = $this->str('cl14_risk_assign');
         } else if ($type === 'game') {
