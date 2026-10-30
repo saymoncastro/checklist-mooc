@@ -4,7 +4,7 @@
 > cá para que o pacote distribuído traga um README curto, voltado a administradores (`plugin/local_mooc_audit/README.md`).
 > Instalação e uso: [docs/instalacao.md](../instalacao.md) e [docs/guia-do-usuario.md](../guia-do-usuario.md).
 
-Plugin local (versão 0.6.0, entregas das specs 001, 002, 003, 004 e 005, etapas 1 e 2 da estabilização e compatibilidade com o Moodle 5.3) que audita uma sala existente a partir do seu `courseid`, sem depender do MOOC Admin
+Plugin local (versão 0.9.0, entregas das specs 001 a 005, fases 1 a 3 da spec 006, etapas 1 e 2 da estabilização e compatibilidade com o Moodle 5.3) que audita uma sala existente a partir do seu `courseid`, sem depender do MOOC Admin
 nem de arquivos `.mbz`. A **auditoria é somente leitura**; a **correção assistida** (spec 002) é um componente separado
 que só escreve após prévia, confirmação explícita e revalidação. Reaproveita o catálogo de regras e as decisões institucionais do projeto `checklist-mooc`.
 
@@ -71,6 +71,11 @@ selos de estado passaram das classes `badge-*` do Bootstrap 4 (depreciadas no Mo
 pedir a auditoria de uma sala, acompanhar a execução e ler o resultado da última auditoria guardada. Detalhes na seção
 "API externa" abaixo e no guia [API.md](../../plugin/local_mooc_audit/API.md).
 
+**Estado (0.7.0–0.9.0, spec 006 — experiência do relatório, fases 1 a 3):** o relatório explica cada problema em
+linguagem do Moodle, mostra a situação da sala e por onde começar, e a correção assistida deixa de exibir códigos.
+Nenhuma regra, estado, gravidade ou chave de ocorrência mudou. Detalhes na seção "Relatório" abaixo e em
+`specs/006-experiencia-relatorio/results.md`.
+
 ### API externa (0.6.0, spec 004)
 
 - **Funções** (serviço "Auditor MOOC", `local_mooc_audit`): `local_mooc_audit_request_audit` (põe a auditoria na fila;
@@ -109,6 +114,32 @@ pedir a auditoria de uma sala, acompanhar a execução e ler o resultado da últ
   existente; remove lotes vazios e políticas sem referência; marca como falha execuções presas há mais de um dia.
 - **CLI:** `php local/mooc_audit/cli/audit.php --courseid=N --record` e
   `php local/mooc_audit/cli/batch.php --category=C [--subcats] | --courses=1,2 | --startyear=AAAA [--run]`.
+
+### Relatório (0.7.0–0.9.0, spec 006)
+
+- **Textos montados ao exibir (0.7.0):** `local\presentation\catalog` escolhe, por `regra + check` (lidos do resultado
+  ou da chave de ocorrência), o problema, o porquê, a correção, as alternativas, quem pode fazer e como confirmar
+  (`msg_*` em `lang/`); `finding` os monta com os nomes atuais das atividades, a política da execução e as permissões
+  de quem vê. Ações levam à seção certa do formulário (`modedit.php?update=…&showonly=…`, `editsection.php`,
+  inscrição, configurações do curso com retorno ao relatório) e só aparecem se a atividade existe e a pessoa pode usar
+  a tela. Precedências (condição de acesso inválida antes de salvar o formulário; datas do curso antes das de inscrição
+  e encerramento; total de notas antes da nota mínima do certificado) e plugins exigidos ausentes são avisados.
+- **Estrutura (0.8.0):** topo com situação, números por natureza e "Comece por aqui" (até três problemas, os que
+  destravam outros primeiro); visões por prioridade e por atividade (cookie `local_mooc_audit_view`, lido antes do
+  cabeçalho); `presentation\causes` agrupa só relações demonstráveis (mesma correção assistida, mesma conclusão,
+  certificado ausente, atividade oculta); impacto prático e selo para verificações por texto ou por nome;
+  "Verificações manuais"; detalhes técnicos recolhidos no fim; linhas empilhadas abaixo de 768 px.
+- **Contrato 1.1 (0.9.0):** aditivo ao 1.0. Cada resultado mantém `check` e `subject` e ganha `evidence_level`
+  (`proven`, `heuristic`, `name_match`, `static`); uma lista fechada de verificações ganha `params` (encontrado e
+  exigido) e `subjects` (atividades relacionadas). `local\details::for_result()` os calcula no motor a partir do retrato
+  e da política, **fora das classes de regra**: a impressão digital do código das regras não muda e execuções
+  anteriores não ficam desatualizadas. Números passam por `details::num()` (inteiro quando exato) para sobreviver à ida e
+  volta do JSON. Execuções gravadas em 1.0 continuam abrindo (os textos usam a chave de ocorrência); a API devolve o
+  relatório guardado com o seu `contract_version`.
+- **Correção assistida em linguagem do Moodle (0.9.0):** prévia e resultado usam a frase do problema e o nome da
+  atividade (`finding::describer()`, injetado em `verifier::compare()` pelo planejador e pelo executor), o rótulo do
+  campo do formulário e os estados em palavras; sem a letra da categoria; capacidades técnicas só para quem não pode
+  executar.
 
 ## Instalação
 
@@ -194,7 +225,7 @@ Scripts **apenas para ambientes de teste** (recusam rodar se o host não for loc
 gerador de questões do núcleo carrega classes do PHPUnit) e `cli/make_import.php` (cria sala vazia e importa com o
 mecanismo nativo `core_course_external::import_course`).
 
-## Estrutura (0.7.0)
+## Estrutura (0.9.0)
 
 | Arquivo | Papel |
 |---|---|
@@ -205,8 +236,8 @@ mecanismo nativo `core_course_external::import_course`).
 | `classes/local/catalog.php` | Lista explícita e ordenada das 29 regras |
 | `classes/local/devsite.php` | Guarda dos scripts de dados de teste (host local e depuração de desenvolvedor) |
 | `classes/local/{status,category,helpers,locator}.php` | Estados/gravidades, 8 categorias, helpers compartilhados, mapeamento finding → URL de correção (loci: configurações/página do módulo, configurações do curso, inscrição, livro de notas, blocos, seção, importação, nenhum) |
-| `classes/engine.php` | Execução isolada das regras, situação geral, contrato JSON 1.0 (`to_json()` é a única codificação, usada pela página e pelo CLI), renderização texto |
-| `schema/report-v1.0.schema.json` | JSON Schema do contrato 1.0 (a spec aponta para este arquivo por link simbólico: fonte única); validado por `tests/contract_test.php` |
+| `classes/engine.php` | Execução isolada das regras, situação geral, contrato JSON 1.1 (`to_json()` é a única codificação, usada pela página e pelo CLI), renderização texto |
+| `schema/report-v1.0.schema.json`, `schema/report-v1.1.schema.json` | JSON Schema dos contratos 1.0 (a spec 001 aponta para este arquivo por link simbólico: fonte única) e 1.1 (spec 006, aditivo; o gerado hoje); validados por `tests/contract_test.php` |
 | `classes/comparator.php` | Comparação entre ofertas (spec 003): `run()` (dois retratos, auditoria do destino com a política vigente e da origem no ano dela, relação), `compare()` estrutural, `require_access()`, contrato `comparison` 1.0 (`to_json()`), texto da CLI |
 | `classes/local/comparison/matcher.php` | Correspondência sem ids: passes com unicidade nos dois lados (tipo+seção+nome, +conteúdo, tipo+nome, tipo+conteúdo, tipo+seção+posição), congelamento de ambiguidades, pares manuais, impressões de conteúdo e de configuração |
 | `classes/local/comparison/differ.php` | Diferenças por par e da sala, cada uma com tipo (esperada/relevante/informativa), código e explicação; restrições remapeadas, arquivos (registro/conteúdo/disponibilidade), glossário → jogos |
@@ -219,6 +250,10 @@ mecanismo nativo `core_course_external::import_course`).
 | `index.php` | Página da auditoria no contexto do curso (`courseid` ou `id`): GET mostra o resultado da última auditoria guardada (`format=json` idem); POST `action=run` executa e registra; local de cada resultado é link para a página de correção quando existe; sem id, formulário de compatibilidade |
 | `classes/output/report.php`, `renderer.php`, `templates/report*.mustache` | Dados do relatório para o template (agrupamento por gravidade → categoria, listas de alertas, não verificados, erros, conformes, avisos) e renderização |
 | `classes/local/presentation/{catalog,finding}.php` (0.7.0, spec 006) | O que o relatório diz e oferece para cada verificação: variante por `regra + check` (lida da chave de ocorrência), responsável, ações para a seção certa do formulário (`showonly`), precedências e plugins exigidos; textos em `lang/` (`msg_*`), montados ao exibir com os nomes atuais, a política da execução e as permissões de quem vê. Não altera nenhum resultado |
+| `classes/local/presentation/causes.php` (0.8.0) | Causas comuns entre resultados por relações demonstráveis (R12); usado na contagem do topo e nos links entre itens |
+| `classes/local/details.php` (0.9.0) | Campos do contrato 1.1 (`evidence_level`, `params`, `subjects`) calculados no motor, fora das regras |
+| `templates/report_{items,group,activity}.mustache` | Tabela de itens (parcial completa, exigida pelo lint de templates), grupos por prioridade, visão por atividade |
+| `tests/presentation_{catalog,finding,summary}_test.php`, `tests/details_test.php`, `tests/behat/report_fix.feature` | Cobertura das mensagens, textos e ações, topo, causas e visões; contrato 1.1 do Curso B; ação de correção e volta ao relatório |
 | `tests/generator/lib.php` | Gerador de componente: cursos A (conforme) e B (inconsistente), usado pelo PHPUnit e por `cli/make_fixtures.php` |
 | `tests/characterization_test.php` + `tests/fixtures/expected_*.json` | Estados por regra dos cursos A/B congelados (proteção contra mudança de comportamento) |
 | `tests/engine_test.php` | Motor, contrato, política, isolamento de regra com exceção (regra injetada), conclusão desabilitada no site, locus de importação, saída texto do CLI |
@@ -244,7 +279,7 @@ mecanismo nativo `core_course_external::import_course`).
 | `tests/local/comparison/*_test.php`, `tests/helper/snapshot_builder.php` | Correspondência, diferenças e relação entre auditorias sobre retratos sintéticos (sem banco) |
 | `tests/comparator_test.php` | Cenários A–G com cursos reais e importação por backup/restore; cada saída validada contra o schema |
 | `tests/compare_access_test.php`, `tests/compare_readonly_test.php`, `tests/comparison_contract_test.php`, `tests/comparison_output_test.php` | Capacidade nas duas salas e busca restrita; não modificação das duas salas e ausência de dados pessoais; contrato; página e texto |
-| `tests/helper/schema_validator.php` | Validador mínimo de JSON Schema (contratos 1.0 e comparison 1.0) |
+| `tests/helper/schema_validator.php` | Validador mínimo de JSON Schema (contratos 1.0, 1.1 e comparison 1.0) |
 | `tests/behat/compare.feature` | Seleção pela administração, confirmação obrigatória, relatório (com axe), correspondência manual, link a partir da auditoria, professor editor sem acesso |
 | `classes/local/history/fingerprint.php` | Impressão digital da política (sem o relógio da execução) e, por regra, da fatia de política declarada e do código da regra (spec 005) |
 | `classes/local/history/{policy_store,run_store}.php` | Política aplicada por impressão digital; execuções, estados e imutabilidade dos estados finais |
@@ -257,7 +292,7 @@ mecanismo nativo `core_course_external::import_course`).
 | `db/services.php`, `classes/external/{request_audit,get_run,get_latest_audit}.php` | Funções e serviço externo da API (spec 004) |
 | `classes/local/api/{service,run_view}.php` | Regras de acesso, pedido com trava e limite por solicitante; projeção da execução (RunView) |
 | `API.md` | Guia de configuração e uso da API |
-| `tests/external/*_test.php`, `tests/local/api/*_test.php`, `tests/helper/api_testcase.php` | Três funções, matriz de acesso, padrões da instalação, contrato 1.0, pedido (reaproveitamento, limite, trava) e projeção |
+| `tests/external/*_test.php`, `tests/local/api/*_test.php`, `tests/helper/api_testcase.php` | Três funções, matriz de acesso, padrões da instalação, contrato 1.1, pedido (reaproveitamento, limite, trava) e projeção |
 | `cli/batch.php` | Lote pela linha de comando (`--run` executa as tarefas no próprio processo, para medição) |
 | `tests/occurrence_test.php`, `tests/policy_dependency_test.php` | Unicidade e estabilidade da chave (ordem, idioma); toda chave de política lida é declarada pela regra |
 | `tests/local/history/*_test.php`, `tests/task/*_test.php`, `tests/history_access_test.php` | Evolução (todas as classes), registro, painel, lote pela fila real (falha parcial, permissão revogada, duplicação, interrupção), retenção, acesso |
@@ -294,7 +329,7 @@ mudam).
 ## Verificação
 
 ```bash
-vendor/bin/phpunit --testsuite local_mooc_audit_testsuite      # 225 testes
+vendor/bin/phpunit --testsuite local_mooc_audit_testsuite      # 265 testes (0.9.0)
 php admin/tool/behat/cli/run.php --tags=@local_mooc_audit       # exige Selenium; ver moodle-env/README.md
 vendor/bin/phpcs --standard=moodle local/mooc_audit             # moodlehq/moodle-cs
 ```
@@ -306,7 +341,12 @@ vendor/bin/phpcs --standard=moodle local/mooc_audit             # moodlehq/moodl
   publicamente na versão 2016 (instalada apenas para validar a leitura de condições `days`).
 - O plugin não vê o pacote `.mbz`: corrupção de backup e arquivos ausentes *no pacote* só são detectáveis antes da
   restauração. Ver `docs/historico/RELATORIO-POC-PLUGIN-MOODLE.md`.
-- Textos de evidência das regras ainda são gerados em português no código (orientações e títulos já estão em `lang/`).
+- Textos de evidência das regras ainda são gerados em português no código; desde a 0.7.0 o relatório mostra os textos
+  de `lang/` e a evidência gravada só em "Detalhes técnicos".
+- Spec 006: correções de regra encontradas na auditoria de UX (U‑01 plugins exigidos no X‑INT‑03, U‑05 orientações
+  contraditórias de CL‑17 × CL‑09/CL‑19, U‑11 alvo oculto no X‑DEP‑02 × X‑CERT‑01, U‑13 CL‑18 "colaborativo") aguardam
+  decisão do Cefor (fase 4); enquanto isso o relatório prefere a ação que satisfaz as duas verificações. A meta de
+  altura da página (SC‑006) não foi atingida. Linha de base e avaliação com pessoas pendentes (FR‑029, FR‑030).
 - Módulo com nome vazio não aparece no `modinfo` do Moodle; X-STR-01 só detecta nomes formados por espaços ou marcação.
 - Histórico (spec 005): abrir a página não executa; o JSON de `index.php` devolve o último resultado guardado (antes
   da 0.5.0 recalculava a cada GET). A reauditoria da correção assistida é registrada desde a 0.5.1 (origem
