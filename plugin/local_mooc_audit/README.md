@@ -1,6 +1,6 @@
-# local_mooc_audit — auditoria técnica de cursos MOOC dentro do Moodle 4.5
+# local_mooc_audit — auditoria técnica de cursos MOOC dentro do Moodle (4.5 e 5.3)
 
-Plugin local (versão 0.5.2, entregas das specs 001, 002, 003 e 005 e etapas 1 e 2 da estabilização) que audita uma sala existente a partir do seu `courseid`, sem depender do MOOC Admin
+Plugin local (versão 0.5.3, entregas das specs 001, 002, 003 e 005, etapas 1 e 2 da estabilização e compatibilidade com o Moodle 5.3) que audita uma sala existente a partir do seu `courseid`, sem depender do MOOC Admin
 nem de arquivos `.mbz`. A **auditoria é somente leitura**; a **correção assistida** (spec 002) é um componente separado
 que só escreve após prévia, confirmação explícita e revalidação. Reaproveita o catálogo de regras e as decisões institucionais do projeto `checklist-mooc`.
 
@@ -57,6 +57,12 @@ scripts de dados de teste (`cli/make_*.php`) só rodam com host local **e** depu
 extração de texto separa parágrafos e quebras de linha, sem alterar nenhum estado das regras nos cursos A/B (A‑11); as
 tabelas do relatório, da prévia de correção e da comparação rolam dentro do próprio bloco em telas estreitas (B‑07).
 
+**Estado (0.5.3, compatibilidade com o Moodle 5.3 LTS):** testado no Moodle 5.3+ (Build 20261030, PHP 8.3,
+PostgreSQL 17, PHPUnit 11.5) além do 4.5.15; `$plugin->supported = [405, 503]`. Nenhuma mudança de regra, banco ou
+comportamento: as auditorias dos cursos A/B são idênticas às expectativas de caracterização nas duas versões. Os
+selos de estado passaram das classes `badge-*` do Bootstrap 4 (depreciadas no Moodle 5.x, removidas no 6.0) para
+`bg-* text-*`, que existem nas duas versões. Evidências em `plugin-results/0.5.3/`.
+
 ### Histórico, lote e acompanhamento (spec 005)
 
 - **Quem vê o quê:** o histórico de uma sala usa `local/mooc_audit:audit` (gerente e professor editor). O painel e as
@@ -85,10 +91,20 @@ tabelas do relatório, da prévia de correção e da comparação rolam dentro d
 
 ## Instalação
 
+Versões testadas: **Moodle 4.5** (4.5.15) e **Moodle 5.3 LTS** (5.3+), PHP 8.3, PostgreSQL 17.
+
 ```bash
+# Moodle 4.5
 cp -r plugin/local_mooc_audit <moodle>/local/mooc_audit
 php admin/cli/upgrade.php --non-interactive
+
+# Moodle 5.1 ou posterior (código web em public/; os scripts de CLI do núcleo continuam em admin/cli na raiz)
+cp -r plugin/local_mooc_audit <moodle>/public/local/mooc_audit
+php admin/cli/upgrade.php --non-interactive
 ```
+
+No 5.x os scripts de CLI do plugin ficam em `public/local/mooc_audit/cli/` (ex.:
+`php public/local/mooc_audit/cli/audit.php --courseid=3`); os exemplos de *Uso* abaixo usam o caminho do 4.5.
 
 Nenhuma alteração no núcleo. Capacidades próprias (arquétipos padrão na última coluna):
 
@@ -157,7 +173,7 @@ Scripts **apenas para ambientes de teste** (recusam rodar se o host não for loc
 gerador de questões do núcleo carrega classes do PHPUnit) e `cli/make_import.php` (cria sala vazia e importa com o
 mecanismo nativo `core_course_external::import_course`).
 
-## Estrutura (0.5.2)
+## Estrutura (0.5.3)
 
 | Arquivo | Papel |
 |---|---|
@@ -251,7 +267,7 @@ mudam).
 ## Verificação
 
 ```bash
-vendor/bin/phpunit --testsuite local_mooc_audit_testsuite      # 169 testes
+vendor/bin/phpunit --testsuite local_mooc_audit_testsuite      # 225 testes
 php admin/tool/behat/cli/run.php --tags=@local_mooc_audit       # exige Selenium; ver moodle-env/README.md
 vendor/bin/phpcs --standard=moodle local/mooc_audit             # moodlehq/moodle-cs
 ```
@@ -276,6 +292,9 @@ vendor/bin/phpcs --standard=moodle local/mooc_audit             # moodlehq/moodl
 - Detecção de conflito: entre a releitura do valor dentro da transação e a gravação, uma edição simultânea pela tela de
   edição não usa a mesma trava (janela de milissegundos); a releitura pela API e a reauditoria acusariam a divergência.
 - Sem desfazer automático; o valor anterior está na trilha para reversão manual.
+- Moodle 5.x: os templates ainda usam `sr-only`, `mr-*`/`ml-*` e `custom-select`, aceitos pela camada de
+  compatibilidade com o Bootstrap 4 (sem equivalente comum ao 4.5); migrar antes do Moodle 6.0. Os testes usam
+  metadados em doc-comment (`@covers`), depreciados no PHPUnit 11 do 5.x.
 - Comparação entre ofertas (spec 003, experimental): a origem é avaliada com a política vigente no ano da sua data de
   início (a política não tem versões por ano); a correspondência por conteúdo/posição tem confiança média;
   correspondências manuais não são gravadas; nenhuma diferença é atribuída à importação (pode haver edição posterior);

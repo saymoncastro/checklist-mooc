@@ -323,7 +323,11 @@ final class executor_test extends correction_testcase {
         $course = $this->ccourse();
         $q = $this->quiz($course, 'Q', 1, 50, 0, '<p>Tentativas permitidas: 2.</p>');
         $p = $this->plan($course, 'CL-13', $q->coursemodule);
-        course_delete_module($q->coursemodule);
+        if (method_exists(\core_courseformat\local\cmactions::class, 'delete')) {
+            \core_courseformat\formatactions::cm($course)->delete($q->coursemodule); // Moodle 5.2+.
+        } else {
+            course_delete_module($q->coursemodule);
+        }
         $r = (new executor())->execute($course->id, 'CL-13', $q->coursemodule, $p->fingerprint(), $this->policy());
         $this->assertSame(executor::GONE, $r['status']);
         $this->assertSame([], $this->trail());

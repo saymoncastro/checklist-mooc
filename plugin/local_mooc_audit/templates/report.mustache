@@ -38,7 +38,7 @@
             "sections": 4, "modules": 12, "modules_by_type": [{"type": "quiz", "count": 2}], "grade_items": 3, "files": 5, "files_missing": 0,
             "enrols": "manual, self", "blocks": "html, completionstatus"},
         "overall": {"code": "SEM_INCONFORMIDADES", "label": "No non-conformities", "cssclass": "alert-success"},
-        "counts_status": [{"label": "Non conformant", "count": 0, "cssclass": "badge-danger"}],
+        "counts_status": [{"label": "Non conformant", "count": 0, "cssclass": "bg-danger text-white"}],
         "counts_severity": [{"label": "Blocking", "count": 0}], "rules_total": 29,
         "nonconformities": {"count": 0, "has": false, "groups": []},
         "warnings": {"count": 0, "has": false, "groups": []},
@@ -151,7 +151,7 @@
     {{^hasconformant}}<p class="text-muted">{{#str}} none_in_section, local_mooc_audit {{/str}}</p>{{/hasconformant}}
     {{#hasconformant}}
     <ul class="local_mooc_audit-conformant list-unstyled">
-        {{#conformant}}<li><span class="badge badge-success">{{rule}}</span> {{title}} <small class="text-muted">({{category}})</small></li>{{/conformant}}
+        {{#conformant}}<li><span class="badge bg-success text-white">{{rule}}</span> {{title}} <small class="text-muted">({{category}})</small></li>{{/conformant}}
     </ul>
     {{/hasconformant}}
 

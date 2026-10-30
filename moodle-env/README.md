@@ -237,3 +237,44 @@ Site: http://localhost:8096 (admin / `Admin123!`, apenas local; A = 2, B = 3). B
 `docker exec -e MOODLE_DOCKER_BROWSER=chrome -w /var/www/html moocaudit-rv-web vendor/bin/behat --config /var/www/behatdata/behatrun/behat/behat.yml --tags=@local_mooc_audit`.
 Remover tudo: `docker rm -f moocaudit-rv-web moocaudit-rv-selenium && docker network disconnect moocaudit_rv moocaudit-db-1 &&
 docker network rm moocaudit_rv && docker exec moocaudit-db-1 dropdb -U moodle moodle_rv`.
+
+## Ambiente Moodle 5.3 LTS (compatibilidade, 53)
+
+Árvore própria `moodle-local/moodle53` (branch `MOODLE_503_STABLE`; testado no commit 236a9d70, 5.3+ Build 20261030),
+banco `moodle_53`, porta 8097, rede `moocaudit_53`. Desde o 5.1 o código web fica em `public/`: a raiz do Apache é
+`/var/www/html/public`, o plugin é montado em `public/local/mooc_audit` e o `vendor/` do Composer fica na raiz. Os
+plugins de terceiros são copiados da árvore 4.5 (mesmas versões da tabela acima).
+
+```bash
+cd moodle-local
+git clone --depth 1 --branch MOODLE_503_STABLE https://github.com/moodle/moodle.git moodle53
+for p in mod/simplecertificate mod/game mod/hvp blocks/completion_progress availability/condition/days; do cp -R moodle/$p moodle53/public/$p; done
+cp moodle-docker/config.docker-template.php moodle53/config.php
+docker exec moocaudit-db-1 createdb -U moodle moodle_53
+docker network create moocaudit_53
+docker network connect --alias db moocaudit_53 moocaudit-db-1
+docker run -d --name moocaudit-53-web --network moocaudit_53 -p 127.0.0.1:8097:80 \
+  -e MOODLE_DOCKER_DBTYPE=pgsql -e MOODLE_DOCKER_DBNAME=moodle_53 -e MOODLE_DOCKER_DBUSER=moodle -e 'MOODLE_DOCKER_DBPASS=m@0dl3ing' \
+  -e MOODLE_DOCKER_WEB_HOST=localhost -e MOODLE_DOCKER_WEB_PORT=127.0.0.1:8097 -e MOODLE_DOCKER_RUNNING=1 -e MOODLE_DOCKER_BROWSER=chrome \
+  -e APACHE_DOCUMENT_ROOT=/var/www/html/public \
+  -v "$PROJECT_DIR/moodle-local/moodle53:/var/www/html" -v "<worktree>/plugin/local_mooc_audit:/var/www/html/public/local/mooc_audit" \
+  -w /var/www/html moodlehq/moodle-php-apache:8.3
+docker exec moocaudit-53-web bash -c 'mkdir -p /var/www/moodledata /var/www/behatdata /var/www/behatfaildumps && chown www-data /var/www/moodledata /var/www/behatdata /var/www/behatfaildumps && echo "127.0.0.1 webserver" >> /etc/hosts'
+docker exec -w /var/www/html moocaudit-53-web php admin/cli/install_database.php --agree-license \
+  --fullname="Auditor MOOC (Moodle 5.3)" --shortname=m53 --adminpass='Admin123!' --adminemail=admin@example.com --lang=en
+docker exec -w /var/www/html moocaudit-53-web php public/local/mooc_audit/cli/make_fixtures.php   # A = 4, B = 5
+docker exec moocaudit-53-web chown -R www-data /var/www/moodledata
+docker exec -w /var/www/html moocaudit-53-web bash -c 'php -r "copy(\"https://getcomposer.org/download/latest-stable/composer.phar\", \"/usr/local/bin/composer\");" && chmod +x /usr/local/bin/composer && composer install --no-interaction'
+docker exec -w /var/www/html moocaudit-53-web php public/admin/tool/phpunit/cli/init.php
+docker exec -w /var/www/html moocaudit-53-web vendor/bin/phpunit --testsuite local_mooc_audit_testsuite
+IP=$(docker inspect moocaudit-53-web --format '{{(index .NetworkSettings.Networks "moocaudit_53").IPAddress}}')
+docker run -d --name moocaudit-53-selenium --network moocaudit_53 --network-alias selenium --add-host "webserver:$IP" \
+  --shm-size=2g selenium/standalone-chrome:4
+docker exec -e MOODLE_DOCKER_BROWSER=chrome -w /var/www/html moocaudit-53-web php public/admin/tool/behat/cli/init.php
+docker exec -e MOODLE_DOCKER_BROWSER=chrome -w /var/www/html moocaudit-53-web vendor/bin/behat --config /var/www/behatdata/behatrun/behat/behat.yml --tags=@local_mooc_audit
+```
+
+Site: http://localhost:8097 (admin / `Admin123!`, apenas local). No Behat do 5.x, classes depreciadas do Bootstrap 4
+recebem fundo vermelho-claro de alerta (só em sites Behat ou no modo de designer de tema), o que derruba o teste de
+contraste do axe. Remover tudo: `docker rm -f moocaudit-53-web moocaudit-53-selenium && docker network disconnect
+moocaudit_53 moocaudit-db-1 && docker network rm moocaudit_53 && docker exec moocaudit-db-1 dropdb -U moodle moodle_53`.

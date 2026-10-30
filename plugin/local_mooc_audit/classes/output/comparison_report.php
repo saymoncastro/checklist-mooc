@@ -38,8 +38,8 @@ use templatable;
  */
 class comparison_report implements renderable, templatable {
     /** @var string[] Badge class of each kind of difference. */
-    const KIND_CLASS = [differ::RELEVANT => 'badge-danger', differ::INFO => 'badge-info', differ::EXPECTED => 'badge-light',
-        'nenhuma' => 'badge-success'];
+    const KIND_CLASS = [differ::RELEVANT => 'bg-danger text-white', differ::INFO => 'bg-info text-white',
+        differ::EXPECTED => 'bg-light text-dark', 'nenhuma' => 'bg-success text-white'];
     /** @var string[] Alert class of each verdict. */
     const VERDICT_CLASS = ['REVISAR' => 'alert-danger', 'CONFERIR' => 'alert-warning',
         'SEM_DIFERENCAS_RELEVANTES' => 'alert-success'];
@@ -205,7 +205,7 @@ class comparison_report implements renderable, templatable {
                         : '—',
                     'targetlabel' => $i['status_target'] ? get_string(status::string_key($i['status_target']), 'local_mooc_audit')
                         : '—',
-                    'targetclass' => report::STATUS_CLASS[$i['status_target']] ?? 'badge-light',
+                    'targetclass' => report::STATUS_CLASS[$i['status_target']] ?? 'bg-light text-dark',
                     'haslink' => !empty($i['link']),
                 ]), $byclass[$c]),
             ];
@@ -286,7 +286,7 @@ class comparison_report implements renderable, templatable {
         $o = (object) $m;
         $o->strategylabel = get_string('cmp_strategy_' . $m['strategy'], 'local_mooc_audit');
         $o->confidencelabel = get_string('cmp_conf_' . $m['confidence'], 'local_mooc_audit');
-        $o->confidenceclass = $m['confidence'] === 'alta' ? 'badge-success' : 'badge-warning';
+        $o->confidenceclass = $m['confidence'] === 'alta' ? 'bg-success text-white' : 'bg-warning text-dark';
         $o->kindlabel = get_string('cmp_kind_' . $m['relevance'], 'local_mooc_audit');
         $o->kindclass = self::KIND_CLASS[$m['relevance']];
         $o->renamed = $m['source_name'] !== $m['target_name'];

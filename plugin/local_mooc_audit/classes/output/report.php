@@ -40,14 +40,14 @@ use templatable;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class report implements renderable, templatable {
-    /** @var string[] Bootstrap badge class of each state. */
+    /** @var string[] Badge classes of each state (bg-* + text-*: valid in Bootstrap 4 of Moodle 4.5 and 5 of Moodle 5.x). */
     const STATUS_CLASS = [
-        status::NAO_CONFORME => 'badge-danger',
-        status::ATENCAO => 'badge-warning',
-        status::ERRO => 'badge-dark',
-        status::NAO_VERIFICAVEL => 'badge-secondary',
-        status::NAO_APLICAVEL => 'badge-light',
-        status::CONFORME => 'badge-success',
+        status::NAO_CONFORME => 'bg-danger text-white',
+        status::ATENCAO => 'bg-warning text-dark',
+        status::ERRO => 'bg-dark text-white',
+        status::NAO_VERIFICAVEL => 'bg-secondary text-dark',
+        status::NAO_APLICAVEL => 'bg-light text-dark',
+        status::CONFORME => 'bg-success text-white',
     ];
 
     /** @var string[] Bootstrap alert class of each overall status. */
@@ -261,7 +261,7 @@ class report implements renderable, templatable {
             'category' => category::title($res['category']),
             'status' => $res['status'],
             'statuslabel' => get_string(status::string_key($res['status']), 'local_mooc_audit'),
-            'statusclass' => self::STATUS_CLASS[$res['status']] ?? 'badge-secondary',
+            'statusclass' => self::STATUS_CLASS[$res['status']] ?? 'bg-secondary text-dark',
             'severity' => $res['gravidade'],
             'severitylabel' => $res['gravidade'] ? get_string(
                 status::severity_string_key($res['gravidade']),
