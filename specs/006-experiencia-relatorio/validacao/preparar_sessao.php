@@ -87,19 +87,20 @@ if (!$user) {
     update_internal_user_password($user, $o['senha']);
 }
 foreach ([$b, $a] as $course) {
-    (new testing_data_generator())->enrol_user($user->id, $course->id, $o['perfil'] === 'professor' ? 'editingteacher' : 'manager');
+    $role = $o['perfil'] === 'professor' ? 'editingteacher' : 'manager';
+    (new testing_data_generator())->enrol_user($user->id, $course->id, $role);
 }
 
 // Auditoria registrada em cada sala (a página mostra o último resultado guardado; decisão 12.1).
 foreach ([$b, $a] as $course) {
-    [$run] = \local_mooc_audit\local\history\recorder::record_now((int) $course->id,
-        \local_mooc_audit\local\history\run_store::ORIGIN_CLI, (int) get_admin()->id);
+    $origin = \local_mooc_audit\local\history\run_store::ORIGIN_CLI;
+    [$run] = \local_mooc_audit\local\history\recorder::record_now((int) $course->id, $origin, (int) get_admin()->id);
     $summary = json_decode((string) $run->summary, true) ?: [];
-    cli_writeln(sprintf('%s → %s (%s, não conformes %d, atenção %d, não verificáveis %d)',
-        (new moodle_url('/local/mooc_audit/index.php', ['courseid' => $course->id]))->out(false),
-        $DB->get_field('course', 'fullname', ['id' => $course->id]), $run->overall,
-        $summary['por_status']['NAO_CONFORME'] ?? 0, $summary['por_status']['ATENCAO'] ?? 0,
-        $summary['por_status']['NAO_VERIFICAVEL'] ?? 0));
+    $counts = $summary['por_status'] ?? [];
+    $url = (new moodle_url('/local/mooc_audit/index.php', ['courseid' => $course->id]))->out(false);
+    $name = $DB->get_field('course', 'fullname', ['id' => $course->id]);
+    cli_writeln("$url → $name ($run->overall, não conformes " . ($counts['NAO_CONFORME'] ?? 0) . ', atenção '
+        . ($counts['ATENCAO'] ?? 0) . ', não verificáveis ' . ($counts['NAO_VERIFICAVEL'] ?? 0) . ')');
 }
 $quiz = $DB->get_record_sql("SELECT cm.id FROM {course_modules} cm JOIN {modules} m ON m.id = cm.module AND m.name = 'quiz'
     JOIN {quiz} q ON q.id = cm.instance WHERE cm.course = ? AND q.attempts = 1", [$b->id], IGNORE_MULTIPLE);
