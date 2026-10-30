@@ -17,7 +17,8 @@
 {{!
     @template local_mooc_audit/report_group
     One severity group of results (non conformities or warnings): categories, each with a table of items.
-    Rows are rendered by local_mooc_audit/report_item. Items presented by local\presentation\finding (specs/006) show the problem, why it matters, how to fix it, who can,
+    Rows are rendered by local_mooc_audit/report_items. Items presented by local\presentation\finding (specs/006) show
+    the problem, why it matters, how to fix it, who can,
     how to confirm, the actions and the technical details; the others (no message) show the stored text as before.
     Context variables required for this template:
     * severity, label, count
@@ -41,21 +42,6 @@
     <h4 class="h5">{{label}} <span class="badge rounded-pill bg-secondary text-dark">{{count}}</span></h4>
     {{#categories}}
     <h5 class="h6 text-muted">{{title}}</h5>
-    <div class="table-responsive">
-    <table class="table table-sm table-striped local_mooc_audit-items">
-        <thead>
-            <tr>
-                <th scope="col" class="w-25">{{#str}} label_problem, local_mooc_audit {{/str}}</th>
-                <th scope="col">{{#str}} label_status, local_mooc_audit {{/str}}</th>
-                <th scope="col">{{#str}} label_todo, local_mooc_audit {{/str}}</th>
-            </tr>
-        </thead>
-        <tbody>
-            {{#items}}
-            {{> local_mooc_audit/report_item }}
-            {{/items}}
-        </tbody>
-    </table>
-    </div>
+    {{> local_mooc_audit/report_items }}
     {{/categories}}
 </div>

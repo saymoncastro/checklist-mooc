@@ -17,7 +17,7 @@
 {{!
     @template local_mooc_audit/report_activity
     Problems and warnings grouped by activity (specs/006, FR-013): each activity once, in course order, then sections,
-    then the course settings. The rows are the same as in the view by priority (local_mooc_audit/report_item).
+    then the course settings. The rows are the same as in the view by priority (local_mooc_audit/report_items).
     Context variables required for this template:
     * activities[] - objects with name, url (optional, settings of the activity), worst, worstclass, count and items[]
     Example context (json):
@@ -39,22 +39,7 @@
             <span class="badge rounded-pill bg-secondary text-dark">{{count}}</span>
         </h4>
         {{#url}}<p class="mb-1 small"><a href="{{url}}">{{#str}} activity_settings, local_mooc_audit {{/str}}</a></p>{{/url}}
-        <div class="table-responsive">
-        <table class="table table-sm table-striped local_mooc_audit-items">
-            <thead>
-                <tr>
-                    <th scope="col" class="w-25">{{#str}} label_problem, local_mooc_audit {{/str}}</th>
-                    <th scope="col">{{#str}} label_status, local_mooc_audit {{/str}}</th>
-                        <th scope="col">{{#str}} label_todo, local_mooc_audit {{/str}}</th>
-                </tr>
-            </thead>
-            <tbody>
-                {{#items}}
-                {{> local_mooc_audit/report_item }}
-                {{/items}}
-            </tbody>
-        </table>
-        </div>
+        {{> local_mooc_audit/report_items }}
     </section>
     {{/activities}}
 </div>

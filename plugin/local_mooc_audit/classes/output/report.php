@@ -368,7 +368,8 @@ class report implements renderable, templatable {
         $p = $this->presenter ? $this->presenter->present($res) : (object) ['fallback' => true, 'check' => ''];
         $item->presented = !$p->fallback;
         if ($item->presented) {
-            foreach (['problem', 'why', 'fix', 'who', 'verify', 'before', 'actions', 'place', 'whoyou', 'verifyspecific'] as $field) {
+            $fields = ['problem', 'why', 'fix', 'who', 'verify', 'before', 'actions', 'place', 'whoyou', 'verifyspecific'];
+            foreach ($fields as $field) {
                 $item->$field = $p->$field;
             }
             $item->alternatives = array_map(fn($text) => (object) ['text' => $text], $p->alternatives);
