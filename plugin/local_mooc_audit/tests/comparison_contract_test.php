@@ -89,15 +89,15 @@ final class comparison_contract_test extends \advanced_testcase {
     }
 
     /**
-     * The individual audit contract is still 1.0 and has no comparison field.
+     * The individual audit contract (1.1 since specs/006, additive to 1.0) has no comparison field.
      */
     public function test_audit_contract_unchanged(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
         $course = $this->getDataGenerator()->create_course();
         $report = engine::audit($course->id);
-        $this->assertSame('1.0', $report['contract_version']);
-        $this->assertSame('1.0', engine::CONTRACT_VERSION);
+        $this->assertSame('1.1', $report['contract_version']);
+        $this->assertSame('1.1', engine::CONTRACT_VERSION);
         $this->assertArrayNotHasKey('contract', $report);
         $this->assertArrayNotHasKey('matches', $report);
     }

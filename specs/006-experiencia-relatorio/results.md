@@ -95,3 +95,31 @@ a decisão fica para depois da linha de base com usuários, que dirá se o texto
 
 **Ainda em aberto:** visão inicial "por prioridade" **[validar]** pela linha de base; fase 3 (contrato 1.1, prévia e
 resultado da correção em linguagem do Moodle); fase 4 (regras, decisão do Cefor).
+
+## Fase 3 — contrato 1.1 e correção em linguagem do Moodle
+
+**Versão:** Auditor 0.9.0 (2026103104). **Ramo:** `claude/spec-006-fase-3`. **Data:** 2026-10-30.
+
+**O que mudou:**
+
+- **Contrato 1.1** (`schema/report-v1.1.schema.json`, aditivo; o 1.0 continua publicado): cada resultado mantém
+  `check` e `subject` e ganha `evidence_level`; uma lista fechada de verificações ganha `params` (encontrado e exigido)
+  e `subjects` (atividades relacionadas). Tudo calculado por `classes/local/details.php` a partir do retrato e da
+  política: **nenhuma regra mudou**, a impressão digital do código das regras é a mesma, nenhuma execução anterior
+  passa a "desatualizada". A API continua na versão 1.0 e devolve o relatório gravado com seu `contract_version`.
+- **Encontrado × Exigido** em frase nas linhas (datas no formato do Moodle, tentativas, estado da autoinscrição, soma
+  das notas, condição de nota do certificado); X‑CERT‑01 lista e liga os itens que travam a cadeia do certificado.
+- **Correção assistida** (US4): problema em frase e atividade pelo nome na prévia; sem a letra da categoria;
+  permissões técnicas só para quem não pode executar; resultado com "Tentativas permitidas: 1 → 2", "não conforme →
+  conforme" e os problemas resolvidos em frase (descrição injetada no `verifier` pelo planejador e pelo executor).
+
+| Verificação | Resultado |
+|---|---|
+| PHPUnit completo (4.5.15, s2) | **265 testes, 7.877 asserções, todos verdes**; caracterização intacta; `details_test` novo; testes que fixavam o contrato 1.0, o texto de evidência na prévia e a ausência de `check` atualizados para o comportamento novo |
+| Behat `@local_mooc_audit` | **16 cenários, 262 passos, todos verdes** (o cenário da correção confere "Attempts allowed: 1 → 2") |
+| PHPCS `moodle` | limpo |
+| Navegador (4.5, pt_br) | 8 linhas com "Encontrado × Esperado"; prévia e resultado da correção do CL‑13 sem códigos |
+| Moodle 5.3 (inglês, sem plugins de terceiros) | contrato 1.1, 8 linhas com valores, datas por extenso |
+
+**Ainda em aberto:** fase 4 (regras, decisão do Cefor); linha de base e avaliação final com pessoas (FR‑029, FR‑030);
+SC‑006 (altura).

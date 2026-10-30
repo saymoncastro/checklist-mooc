@@ -35,7 +35,7 @@ class causes {
      * @return string
      */
     public static function key(array $r, int $index): string {
-        $occ = catalog::parse_occurrence($r['occurrence'] ?? null);
+        $occ = catalog::occurrence_of($r);
         $cmid = (int) ($r['cmid'] ?? 0);
         $rc = $r['rule'] . '|' . $occ['check'];
         if ($cmid && in_array($rc, ['CL-13|attempts', 'CL-13|intro_attempts'], true)) {

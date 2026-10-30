@@ -158,7 +158,12 @@ class executor {
         $this->runid = null;
         try {
             $after = $this->reaudit($courseid, $policyoverride);
-            $comparison = verifier::compare($p->baseline, $after['results'], $ruleid, $cmid);
+            $describe = \local_mooc_audit\local\presentation\finding::describer(
+                $courseid,
+                $after['results'],
+                \local_mooc_audit\policy::load($policyoverride)
+            );
+            $comparison = verifier::compare($p->baseline, $after['results'], $ruleid, $cmid, $describe);
             $reaudit = $comparison['outcome'];
             $details = ['resolved' => $comparison['resolved'], 'introduced' => $comparison['introduced'],
                 'runid' => $this->runid];

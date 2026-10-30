@@ -110,9 +110,38 @@ simulada resolve as duas); (b) conclusão da mesma atividade: CL‑09 `forum_com
 - [x] T039 Ajustar os Behat que conferem `h4#…`; rodar PHPUnit, Behat, PHPCS; conferir 320 px, 375 px e 1366 px no navegador e no 5.3
 - [x] T040 Versão 0.8.0, `CHANGES.md`, guia do usuário, captura, `results.md`
 
-## Fase 3 do plano — Contrato 1.1 (a detalhar depois da fase 2)
+## Fase 3 do plano — Contrato 1.1 e correção em linguagem do Moodle
 
-- [ ] T026 Detalhar as tarefas de FR‑026/FR‑043 (`check`, `subject`, `subjects`, `params`, `evidence_level`), US4 (prévia e resultado da correção em linguagem do Moodle) e a exposição na API
+- [x] T026 Detalhar as tarefas de FR‑026/FR‑043, US4 e a exposição na API (T041–T050)
+
+**Decisão de detalhe:** `params`, `subjects` e `evidence_level` são calculados pelo motor a partir do retrato e da
+política (`classes/local/details.php`), **sem alterar nenhuma regra**: a impressão digital do código das regras
+(`fingerprint::code`, que cobre as regras e o código compartilhado, não o `engine.php`) não muda, e nenhuma execução
+anterior passa a aparecer como desatualizada. Lista fechada de verificações com valores: CL‑06, CL‑07, CL‑08
+`self_enrol`, CL‑12 `total_sum`, CL‑13 `attempts`, CL‑14 `close_date`, CL‑23 `min_grade`; com entidades relacionadas
+(`subjects`): CL‑16 `requires_graded`, X‑CERT‑01 `chain`, X‑DEP‑02, X‑DEP‑04.
+
+### FR‑026 / FR‑043 — Contrato 1.1
+
+- [x] T041 `classes/local/details.php`: `params`, `subjects` e `evidence_level` (`proven`, `heuristic`, `name_match`, `static`) por verificação, a partir do retrato e da política
+- [x] T042 `classes/engine.php`: `CONTRACT_VERSION = '1.1'`; manter `check` e `subject` nos resultados (hoje apagados) e acrescentar os campos de `details`, sem mudar os existentes
+- [x] T043 `schema/report-v1.1.schema.json` (cópia aditiva do 1.0 com os campos opcionais; o 1.0 continua publicado); `tests/contract_test.php` valida A e B contra o 1.1 e confere os campos novos; execuções 1.0 continuam exibíveis
+- [x] T044 `classes/local/presentation/catalog.php` e `finding.php`: `check`/`subject` lidos do resultado quando existirem (1.1) e da chave de ocorrência nas execuções 1.0
+
+### US2 (complemento) — Encontrado × exigido em frase
+
+- [x] T045 `finding.php`: linha "Encontrado: … · Exigido: …" em linguagem do Moodle quando houver `params` (datas no formato do usuário, "ilimitadas" para 0 tentativas, estado da autoinscrição); X‑CERT‑01 liga para os itens das atividades da cadeia (`subjects`); execuções 1.0 sem a linha
+
+### US4 — Prévia e resultado da correção sem códigos (P2)
+
+- [x] T046 `classes/local/correction/planner.php` e `verifier.php`: local com o nome da atividade; "problema encontrado" e listas de resolvidos/introduzidos com o texto do problema (descrição injetável no `verifier`, usada pelo planejador e pelo executor); sem mudar a impressão digital da proposta
+- [x] T047 `classes/output/correction_proposal.php`, `correction_result.php`, `templates/correction*.mustache`: sem a letra da categoria; capacidades técnicas só para quem não pode executar (FR‑018/FR‑019); campo pelo rótulo do formulário ("Tentativas permitidas", "Encerramento do questionário"); estados antes → depois em palavras
+
+### Testes, API e polimento da fase 3
+
+- [x] T048 Testes: `tests/details_test.php` (valores e entidades do Curso B; nenhuma regra alterada: impressão digital igual à de `main`); `tests/local/correction/output_test.php` (sem `NAO_CONFORME`, `attempts:`, letra da categoria ou capacidades para quem pode executar)
+- [x] T049 `API.md` (contrato 1.1, campos opcionais), README do plugin; PHPUnit, Behat, PHPCS; conferência no 5.3
+- [x] T050 Versão 0.9.0, `CHANGES.md`, `results.md`
 
 ## Dependencies
 

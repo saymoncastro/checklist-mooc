@@ -206,11 +206,27 @@ class catalog {
     }
 
     /**
+     * Rule, entity, check and subject of a stored result: the explicit fields of contract 1.1 when present, otherwise
+     * the occurrence key (runs recorded with contract 1.0).
+     *
+     * @param array $result stored result
+     * @return array rule, entity, check, subject
+     */
+    public static function occurrence_of(array $result): array {
+        $occ = self::parse_occurrence($result['occurrence'] ?? null);
+        if (isset($result['check']) && $result['check'] !== '') {
+            $occ['check'] = (string) $result['check'];
+            $occ['subject'] = isset($result['subject']) && $result['subject'] !== '' ? (string) $result['subject'] : null;
+        }
+        return $occ;
+    }
+
+    /**
      * Message variant of a stored result, or null when the catalogue has no message for it (the stored text is shown).
      *
      * The discriminators are stored and stable fields (state, severity, locus, subject), never the evidence text.
      *
-     * @param array $result stored result (contract 1.0)
+     * @param array $result stored result (contract 1.0 or 1.1)
      * @param string $check
      * @param string|null $subject
      * @return string|null

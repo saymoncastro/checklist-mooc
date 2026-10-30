@@ -84,7 +84,7 @@ final class audit_course_test extends \advanced_testcase {
         $this->assertSame(2, batch_manager::progress($batch)[run_store::COMPLETE]);
         // The runs are the same as an audit of the page would record (same report contract).
         $report = json_decode(run_store::get((int) $runs[$b->id]->id)->report, true);
-        $this->assertSame('1.0', $report['contract_version']);
+        $this->assertSame(\local_mooc_audit\engine::CONTRACT_VERSION, $report['contract_version']);
     }
 
     /**

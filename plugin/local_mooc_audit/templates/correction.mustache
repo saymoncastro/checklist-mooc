@@ -52,7 +52,6 @@
     <h3>{{#str}} fix_heading, local_mooc_audit {{/str}}</h3>
     <div class="alert {{modeclass}}" role="status">
         <strong>{{modelabel}}</strong>
-        <span class="badge bg-secondary text-dark ml-2" title="{{#str}} fix_category, local_mooc_audit {{/str}}">{{categorylabel}}</span>
     </div>
     <dl class="row local_mooc_audit-proposal">
         <dt class="col-sm-3">{{#str}} fix_problem, local_mooc_audit {{/str}}</dt>
@@ -60,7 +59,7 @@
         <dt class="col-sm-3">{{#str}} fix_location, local_mooc_audit {{/str}}</dt>
         <dd class="col-sm-9">{{#editurl}}<a href="{{editurl}}">{{location}}</a>{{/editurl}}{{^editurl}}{{location}}{{/editurl}}</dd>
         <dt class="col-sm-3">{{#str}} fix_rule, local_mooc_audit {{/str}}</dt>
-        <dd class="col-sm-9"><strong>{{rule}}</strong> — {{ruletitle}}<br><small class="text-muted">{{rulesource}} · {{#str}} label_policy, local_mooc_audit {{/str}} {{policyversion}}</small></dd>
+        <dd class="col-sm-9">{{ruletitle}}<br><small class="text-muted">{{rule}} · {{rulesource}} · {{#str}} label_policy, local_mooc_audit {{/str}} {{policyversion}}</small></dd>
         <dt class="col-sm-3">{{#str}} fix_current, local_mooc_audit {{/str}}</dt>
         <dd class="col-sm-9" data-region="current">{{current}}</dd>
         <dt class="col-sm-3">{{#str}} fix_proposed, local_mooc_audit {{/str}}</dt>
@@ -88,7 +87,7 @@
             {{^hasrisks}}{{^hasblockers}}{{^hasdependencies}}{{#str}} fix_norisks, local_mooc_audit {{/str}}{{/hasdependencies}}{{/hasblockers}}{{/hasrisks}}
         </dd>
         <dt class="col-sm-3">{{#str}} fix_authorised, local_mooc_audit {{/str}}</dt>
-        <dd class="col-sm-9">{{roles}}<br><small class="text-muted">{{capabilities}}</small></dd>
+        <dd class="col-sm-9">{{roles}}{{^canexecute}}<br><small class="text-muted">{{#str}} fix_capabilities_needed, local_mooc_audit {{/str}} {{capabilities}}</small>{{/canexecute}}</dd>
     </dl>
     {{#executable}}<p class="small text-muted">{{#str}} fix_noundo, local_mooc_audit {{/str}}</p>{{/executable}}
     {{#showform}}

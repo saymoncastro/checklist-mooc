@@ -60,7 +60,7 @@ class report implements renderable, templatable {
         status::OVERALL_CLEAN => 'alert-success',
     ];
 
-    /** @var array The report produced by the engine (contract 1.0). */
+    /** @var array The report produced by the engine (contract 1.0 or 1.1). */
     protected array $report;
     /** @var moodle_url URL of the page that shows the report (used for re-run and JSON links). */
     protected moodle_url $pageurl;
@@ -368,7 +368,8 @@ class report implements renderable, templatable {
         $p = $this->presenter ? $this->presenter->present($res) : (object) ['fallback' => true, 'check' => ''];
         $item->presented = !$p->fallback;
         if ($item->presented) {
-            $fields = ['problem', 'why', 'fix', 'who', 'verify', 'before', 'actions', 'place', 'whoyou', 'verifyspecific'];
+            $fields = ['problem', 'why', 'fix', 'who', 'verify', 'before', 'actions', 'place', 'whoyou', 'verifyspecific',
+                'found', 'required'];
             foreach ($fields as $field) {
                 $item->$field = $p->$field;
             }
@@ -395,6 +396,33 @@ class report implements renderable, templatable {
         foreach ($results as $i => $res) {
             $this->items[$i] = $this->item($res);
             $this->items[$i]->anchor = 'local_mooc_audit-occ-' . $i;
+        }
+        // The certificate chain (X-CERT-01) points to the items of the activities that keep it from being released.
+        $byactivity = [];
+        foreach ($results as $i => $res) {
+            $occ = messages::occurrence_of($res);
+            $key = $res['rule'] . '|' . $occ['check'];
+            if (in_array($key, ['X-DEP-02|target_completion', 'X-DEP-01|missing_target'], true)) {
+                foreach ((array) ($res['subjects'] ?? []) as $cmid) {
+                    $byactivity[(int) $cmid][] = $i;
+                }
+            } else if ($key === 'X-STR-01|visibility' && !empty($res['cmid'])) {
+                $byactivity[(int) $res['cmid']][] = $i;
+            }
+        }
+        foreach ($results as $i => $res) {
+            if ($res['rule'] !== 'X-CERT-01' || empty($res['subjects'])) {
+                continue;
+            }
+            $related = [];
+            foreach ($res['subjects'] as $cmid) {
+                foreach ($byactivity[(int) $cmid] ?? [] as $j) {
+                    $related[$j] = (object) ['problem' => $this->items[$j]->problem ?? $this->items[$j]->title,
+                        'anchor' => $this->items[$j]->anchor];
+                }
+            }
+            $this->items[$i]->related = array_values($related);
+            $this->items[$i]->hasrelated = (bool) $related;
         }
         foreach (causes::groups($results) as $members) {
             if (count($members) < 2) {
@@ -424,7 +452,7 @@ class report implements renderable, templatable {
         $blocking = 0;
         foreach ($nc as $i) {
             $res = $results[$i];
-            $entity = messages::parse_occurrence($res['occurrence'] ?? null)['entity'];
+            $entity = messages::occurrence_of($res)['entity'];
             if (!empty($res['cmid'])) {
                 $activities[(int) $res['cmid']] = true;
             } else {
@@ -513,7 +541,7 @@ class report implements renderable, templatable {
         $buckets = [];
         foreach ($indexes as $i) {
             $res = $results[$i];
-            $entity = messages::parse_occurrence($res['occurrence'] ?? null)['entity'];
+            $entity = messages::occurrence_of($res)['entity'];
             if (!empty($res['cmid'])) {
                 $key = 'cm:' . (int) $res['cmid'];
             } else if (str_starts_with($entity, 'sec:') && isset($res['section'])) {
@@ -567,7 +595,7 @@ class report implements renderable, templatable {
         $out = [];
         $policy = $this->policy ?? \local_mooc_audit\policy::load();
         foreach ($this->report['results'] as $i => $res) {
-            if ($res['rule'] !== 'X-CERT-01' || messages::parse_occurrence($res['occurrence'] ?? null)['check'] !== 'chain') {
+            if ($res['rule'] !== 'X-CERT-01' || messages::occurrence_of($res)['check'] !== 'chain') {
                 continue;
             }
             $name = (string) $res['local'];

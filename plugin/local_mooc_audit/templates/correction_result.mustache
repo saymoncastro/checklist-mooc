@@ -42,7 +42,7 @@
     {{#hasproposal}}
     <dl class="row">
         <dt class="col-sm-3">{{#str}} fix_rule, local_mooc_audit {{/str}}</dt>
-        <dd class="col-sm-9"><strong>{{rule}}</strong> — {{ruletitle}}</dd>
+        <dd class="col-sm-9">{{ruletitle}} <small class="text-muted">({{rule}})</small></dd>
         <dt class="col-sm-3">{{#str}} fix_location, local_mooc_audit {{/str}}</dt>
         <dd class="col-sm-9">{{location}}</dd>
         {{#written}}
@@ -52,7 +52,7 @@
         {{#hascomparison}}
         <dt class="col-sm-3">{{#str}} fix_reaudit, local_mooc_audit {{/str}}</dt>
         <dd class="col-sm-9" data-region="reaudit">
-            {{rule}}: {{targetbefore}} → {{targetafter}}
+            {{targetbefore}} → <strong>{{targetafter}}</strong>
             {{#hasresolved}}<div class="small">{{#str}} fix_resolved_list, local_mooc_audit {{/str}}<ul class="mb-1">{{#resolved}}<li>{{.}}</li>{{/resolved}}</ul></div>{{/hasresolved}}
             {{#hasintroduced}}<div class="small text-danger">{{#str}} fix_introduced_list, local_mooc_audit {{/str}}<ul class="mb-1">{{#introduced}}<li>{{.}}</li>{{/introduced}}</ul></div>{{/hasintroduced}}
         </dd>

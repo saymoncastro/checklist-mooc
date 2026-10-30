@@ -213,7 +213,10 @@ class run_view {
                 ]), 'Evolution items (includeevolutionitems=1)', VALUE_OPTIONAL),
                 'items_unavailable' => $opt(PARAM_BOOL, 'The base run was removed: items cannot be listed'),
             ], 'Evolution against the previous valid run', VALUE_OPTIONAL),
-            'report' => $opt(PARAM_RAW, 'Stored report as JSON text (contract 1.0), complete and partial runs only'),
+            'report' => $opt(
+                PARAM_RAW,
+                'Stored report as JSON text (contract 1.0 or 1.1, see contract_version), complete and partial runs only'
+            ),
         ]);
     }
 }

@@ -3,6 +3,19 @@
 All releases so far are ALPHA and were tested in laboratory sites only. Detailed technical notes (in Portuguese) are in
 `docs/desenvolvimento/arquitetura-plugin.md` of the project repository.
 
+## 0.9.0 (2026103104) — 2026-10-30
+
+- Report contract 1.1, additive to 1.0 (`schema/report-v1.1.schema.json`): each result keeps `check` and `subject`
+  and gains `evidence_level` (proven, heuristic, name_match, static) and, for a closed list of checks, `params`
+  (values found and required) and `subjects` (related activities). They are computed by the engine from the course
+  snapshot and the policy: no rule changed, so earlier runs are not flagged as outdated. Runs recorded with 1.0 keep
+  opening; the API returns the stored report with its own `contract_version`.
+- Report rows say "Found … · Required …" in words (dates, attempts, self enrolment state, grade conditions) and the
+  certificate chain links to the items of the activities that block it.
+- Correction preview and result in Moodle language: the problem sentence and the activity name (no database
+  evidence or ids), no category letter, capability names only for whoever cannot apply the correction, the changed
+  setting by its form label ("Attempts allowed: 1 → 2") and the states before and after in words.
+
 ## 0.8.0 (2026103103) — 2026-10-30
 
 - The top of the report answers "how is the course and what do I do first": overall status, counts by nature

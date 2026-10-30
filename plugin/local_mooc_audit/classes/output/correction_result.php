@@ -18,6 +18,7 @@ namespace local_mooc_audit\output;
 
 use local_mooc_audit\local\correction\executor;
 use local_mooc_audit\local\correction\verifier;
+use local_mooc_audit\local\status;
 use moodle_url;
 use renderable;
 use renderer_base;
@@ -89,7 +90,7 @@ class correction_result implements renderable, templatable {
             $data->rule = $p->ruleid;
             $data->ruletitle = $p->ruletitle;
             $data->location = $p->location;
-            $data->field = $p->field;
+            $data->field = self::field_label((string) $p->field);
             $data->before = $p->currentdisplay;
             $data->after = $p->proposeddisplay;
             $data->written = $status === executor::APPLIED;
@@ -98,8 +99,12 @@ class correction_result implements renderable, templatable {
         }
         $c = $r['comparison'];
         if ($c) {
-            $data->targetbefore = implode(', ', $c['targetbefore']);
-            $data->targetafter = implode(', ', $c['targetafter']) ?: '-';
+            $words = fn(array $states) => implode(', ', array_map(fn($s) => \core_text::strtolower(
+                get_string(status::string_key($s), 'local_mooc_audit')
+            ), array_unique($states)));
+            $data->targetbefore = $words($c['targetbefore']);
+            $data->targetafter = $c['targetafter'] ? $words($c['targetafter'])
+                : get_string('fix_noproblem', 'local_mooc_audit');
             $data->resolved = array_values($c['resolved']);
             $data->introduced = array_values($c['introduced']);
             $data->hasresolved = (bool) $c['resolved'];
@@ -107,5 +112,16 @@ class correction_result implements renderable, templatable {
             $data->hascomparison = true;
         }
         return $data;
+    }
+
+    /**
+     * Label of a changed setting as the activity edit form shows it (specs/006, FR-018); the field name otherwise.
+     *
+     * @param string $field
+     * @return string
+     */
+    public static function field_label(string $field): string {
+        $labels = ['attempts' => ['attemptsallowed', 'quiz'], 'timeclose' => ['quizclose', 'quiz']];
+        return isset($labels[$field]) ? get_string(...$labels[$field]) : $field;
     }
 }

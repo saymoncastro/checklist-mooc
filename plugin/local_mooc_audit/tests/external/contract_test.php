@@ -52,13 +52,13 @@ final class contract_test extends \local_mooc_audit\tests\api_testcase {
             external_api::clean_returnvalue(get_latest_audit::execute_returns(), get_latest_audit::execute((int) $a->id)),
         ];
         $validator = new \local_mooc_audit\tests\schema_validator($CFG->dirroot
-            . '/local/mooc_audit/schema/report-v1.0.schema.json');
+            . '/local/mooc_audit/schema/report-v1.1.schema.json');
         foreach ($responses as $i => $out) {
             $this->assertSame(service::API_VERSION, $out['api_version'], "response $i");
             if (isset($out['run'])) {
-                $this->assertSame('1.0', $out['run']['contract_version']);
+                $this->assertSame(\local_mooc_audit\engine::CONTRACT_VERSION, $out['run']['contract_version']);
                 $report = json_decode($out['run']['report'], true);
-                $this->assertSame('1.0', $report['contract_version']);
+                $this->assertSame(\local_mooc_audit\engine::CONTRACT_VERSION, $report['contract_version']);
                 $this->assertSame([], $validator->errors($report));
             }
         }

@@ -73,7 +73,7 @@ final class get_latest_audit_test extends \local_mooc_audit\tests\api_testcase {
         $this->assertArrayNotHasKey('pending', $out);
         $report = json_decode($out['run']['report'], true);
         $this->assertSame(run_store::json(run_store::get((int) $run->id), 'report'), $report, 'same as index.php?format=json');
-        $validator = new \local_mooc_audit\tests\schema_validator(__DIR__ . '/../../schema/report-v1.0.schema.json');
+        $validator = new \local_mooc_audit\tests\schema_validator(__DIR__ . '/../../schema/report-v1.1.schema.json');
         $this->assertSame([], $validator->errors(json_decode($out['run']['report'], true)));
         $this->assertArrayNotHasKey('items', $out['run']['evolution']);
 

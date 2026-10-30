@@ -155,8 +155,11 @@ class planner {
         $p = new proposal($ruleid, $courseid, $cmid, $strategy->name());
         $p->ruletitle = $meta['title'];
         $p->rulesource = $meta['source'];
-        $p->location = \local_mooc_audit\local\helpers::label($module);
-        $p->problem = implode(' · ', array_map(fn($f) => $f['evidencia'], $findings));
+        // In Moodle language (specs/006, US4): the activity by its name and the problem sentence of each finding.
+        $describe = \local_mooc_audit\local\presentation\finding::describer($courseid, $results, $policy);
+        $p->location = (string) ($module['name'] ?? '') !== '' ? format_string($module['name'], true, ['escape' => false])
+            : \local_mooc_audit\local\helpers::label($module);
+        $p->problem = implode(' · ', array_map($describe, $findings));
         $p->policyversion = $policy['policy_version'];
         $p->baseline = $results;
         $p->capabilities = $strategy->capabilities();
@@ -166,7 +169,7 @@ class planner {
 
         if ($p->category === proposal::CATEGORY_EXECUTABLE && $p->field !== null && $p->proposed !== null) {
             $after = engine::run_rules($strategy->simulate($snapshot, $p), $policy);
-            $p->impact = verifier::compare($results, $after, $ruleid, $cmid);
+            $p->impact = verifier::compare($results, $after, $ruleid, $cmid, $describe);
             if (!$p->impact['targetresolved']) {
                 $p->blockers['notresolved'] = get_string(
                     'fix_blocker_notresolved',
