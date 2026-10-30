@@ -90,7 +90,7 @@
         <dt class="col-sm-3">{{#str}} fix_authorised, local_mooc_audit {{/str}}</dt>
         <dd class="col-sm-9">{{roles}}<br><small class="text-muted">{{capabilities}}</small></dd>
     </dl>
-    <p class="small text-muted">{{#str}} fix_noundo, local_mooc_audit {{/str}}</p>
+    {{#executable}}<p class="small text-muted">{{#str}} fix_noundo, local_mooc_audit {{/str}}</p>{{/executable}}
     {{#showform}}
     <form method="post" action="{{actionurl}}" class="local_mooc_audit-confirm">
         <input type="hidden" name="sesskey" value="{{sesskey}}">

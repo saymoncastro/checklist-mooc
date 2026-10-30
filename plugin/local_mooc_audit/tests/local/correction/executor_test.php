@@ -18,6 +18,7 @@ namespace local_mooc_audit\local\correction;
 
 use local_mooc_audit\correction_testcase;
 use local_mooc_audit\engine;
+use local_mooc_audit\local\history\run_store;
 use local_mooc_audit\local\status;
 
 defined('MOODLE_INTERNAL') || die();
@@ -126,6 +127,18 @@ final class executor_test extends correction_testcase {
         $this->assertSame(engine::VERSION, $row->engineversion);
         $this->assertGreaterThan(0, $row->timecreated);
         $this->assertEquals($r['fixid'], $row->id);
+
+        // The re-audit is recorded (A-01 of docs/revisao-geral): the report page shows the state after the correction.
+        $latest = run_store::latest_valid((int) $course->id);
+        $this->assertNotNull($latest);
+        $this->assertEquals($r['runid'], $latest->id);
+        $this->assertSame(run_store::ORIGIN_CORRECTION, $latest->origin);
+        $this->assertSame(run_store::COMPLETE, $latest->status);
+        $this->assertEquals(get_admin()->id, $latest->userid);
+        $cl13 = fn($res) => $res['rule'] === 'CL-13' && (int) ($res['cmid'] ?? 0) === (int) $q->coursemodule;
+        $recorded = array_filter(run_store::json($latest, 'report')['results'], $cl13);
+        $this->assertSame([status::CONFORME], array_values(array_column($recorded, 'status')));
+        $this->assertEquals($latest->id, json_decode($row->details, true)['runid']);
 
         $classes = array_map(fn($e) => get_class($e), $events);
         $this->assertContains(\core\event\course_module_updated::class, $classes);

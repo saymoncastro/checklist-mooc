@@ -62,7 +62,7 @@
         <div class="form-row">
             <div class="col-md-3 mb-2"><label for="lma-cat">{{#str}} col_category, local_mooc_audit {{/str}}</label>
                 <select id="lma-cat" name="categoryid" class="custom-select">{{#categories}}<option value="{{id}}" {{#selected}}selected{{/selected}}>{{name}}</option>{{/categories}}</select>
-                <div class="form-check"><input type="hidden" name="subcats" value="0"><input class="form-check-input" type="checkbox" id="lma-sub" name="subcats" value="1" {{#subcats}}checked{{/subcats}}>
+                <div class="form-check mt-2"><input type="hidden" name="subcats" value="0"><input class="form-check-input" type="checkbox" id="lma-sub" name="subcats" value="1" {{#subcats}}checked{{/subcats}}>
                     <label class="form-check-label" for="lma-sub">{{#str}} batch_subcategories, local_mooc_audit {{/str}}</label></div></div>
             <div class="col-md-3 mb-2"><label for="lma-q">{{#str}} dashboard_filter_q, local_mooc_audit {{/str}}</label>
                 <input id="lma-q" type="text" name="q" value="{{q}}" class="form-control"></div>
@@ -108,7 +108,7 @@
                     <td class="small">{{startdate}}</td>
                     <td><span class="badge {{situation.cssclass}}" data-situation>{{situation.label}}</span>
                         {{#pending}}<div class="small">{{#str}} situation_pending, local_mooc_audit {{/str}}</div>{{/pending}}
-                        {{#isstale}}<div class="small text-warning">{{#str}} situation_stale, local_mooc_audit {{/str}}: {{stale}}</div>{{/isstale}}</td>
+                        {{#isstale}}<div class="small mt-1"><span class="badge badge-warning">{{#str}} situation_stale, local_mooc_audit {{/str}}</span> {{stale}}</div>{{/isstale}}</td>
                     <td class="small">{{#severities}}{{#count}}<span class="text-nowrap mr-1">{{label}}: {{count}}</span> {{/count}}{{/severities}}</td>
                     <td>{{attention}}</td>
                     <td class="small">{{lastaudit}}</td>

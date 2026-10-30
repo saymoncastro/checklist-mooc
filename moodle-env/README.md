@@ -225,3 +225,15 @@ Site: http://localhost:8095 (admin / `Admin123!`, apenas local). Medição do lo
 em `specs/005-auditoria-lote-historico/results.md`. Remover tudo: `docker rm -f moocaudit-s5-web moocaudit-s5-selenium &&
 docker network disconnect moocaudit_s5 moocaudit-db-1 && docker network rm moocaudit_s5 && docker exec moocaudit-db-1 dropdb -U moodle moodle_s5`.
 
+
+## Ambiente da revisão geral e da estabilização (rv)
+
+Mesmo desenho das specs 002/003/005, com banco `moodle_rv`, porta 8096 e rede `moocaudit_rv`, montando o plugin do
+worktree da revisão geral (`docs/revisao-geral/`) e das etapas do plano de estabilização. Comandos idênticos aos da
+spec 005, trocando `s5` por `rv`, `moodle_s5` por `moodle_rv` e `8095` por `8096`. O PHPCS usa uma cópia de `/tmp/cs`
+de outro contêiner (`docker cp` para o scratchpad e de lá para `moocaudit-rv-web:/tmp/cs`).
+
+Site: http://localhost:8096 (admin / `Admin123!`, apenas local; A = 2, B = 3). Behat:
+`docker exec -e MOODLE_DOCKER_BROWSER=chrome -w /var/www/html moocaudit-rv-web vendor/bin/behat --config /var/www/behatdata/behatrun/behat/behat.yml --tags=@local_mooc_audit`.
+Remover tudo: `docker rm -f moocaudit-rv-web moocaudit-rv-selenium && docker network disconnect moocaudit_rv moocaudit-db-1 &&
+docker network rm moocaudit_rv && docker exec moocaudit-db-1 dropdb -U moodle moodle_rv`.

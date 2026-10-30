@@ -1,6 +1,6 @@
 # local_mooc_audit — auditoria técnica de cursos MOOC dentro do Moodle 4.5
 
-Plugin local (versão 0.5.0, entregas das specs 001, 002, 003 e 005) que audita uma sala existente a partir do seu `courseid`, sem depender do MOOC Admin
+Plugin local (versão 0.5.1, entregas das specs 001, 002, 003 e 005 e etapa 1 da estabilização) que audita uma sala existente a partir do seu `courseid`, sem depender do MOOC Admin
 nem de arquivos `.mbz`. A **auditoria é somente leitura**; a **correção assistida** (spec 002) é um componente separado
 que só escreve após prévia, confirmação explícita e revalidação. Reaproveita o catálogo de regras e as decisões institucionais do projeto `checklist-mooc`.
 
@@ -43,6 +43,14 @@ sala (com bloqueantes, requer correções, sem inconformidades detectadas, audit
 desatualização, filtros e evolução somada, sem "aprovado" nem percentuais. Retenção configurável (padrão 365 dias).
 Especificação, medições e respostas em `specs/005-auditoria-lote-historico/`.
 
+**Estado (0.5.1, etapa 1 do plano de estabilização — `docs/revisao-geral/C-PLANO-DE-ESTABILIZACAO.md`):** a
+reauditoria feita logo após uma correção assistida aplicada passa a ser **registrada no histórico** (origem
+*Reauditoria após correção assistida*), então *Voltar ao relatório* já mostra a sala corrigida (A‑01); uma atualização
+do plugin só marca auditorias como desatualizadas quando o **código das regras** mudou, pela impressão digital gravada
+em cada execução (A‑03); a proposta de encerramento (CL‑14) não apresenta mais como valor a definir um término de
+curso fora da política (CL‑07) (B‑10); o aviso "o valor anterior fica registrado" só aparece em correções executáveis
+(B‑11); o aviso de desatualização do painel tem contraste suficiente (B‑19).
+
 ### Histórico, lote e acompanhamento (spec 005)
 
 - **Quem vê o quê:** o histórico de uma sala usa `local/mooc_audit:audit` (gerente e professor editor). O painel e as
@@ -59,7 +67,8 @@ Especificação, medições e respostas em `specs/005-auditoria-lote-historico/`
   as falhas antigas ficam no histórico. Uma regra que lança exceção torna a execução *Parcial*.
 - **Desatualização:** a página e o painel mostram sempre "resultado da última auditoria" com a data e avisam quando a
   sala foi alterada depois dela (revisão do cache do curso ou configurações), quando passou o prazo (7 dias), quando a
-  política ou a versão do plugin mudaram. Nada disso afirma conformidade atual.
+  política mudou ou quando o código das regras mudou (impressão digital por regra; execuções antigas sem ela comparam a
+  versão do plugin). Nada disso afirma conformidade atual.
 - **Ciclo e limite:** um lote pode informar o ciclo (ano da reoferta) aplicado às auditorias; até 100 salas por lote
   (decisão 12.5, configurável).
 - **Retenção:** tarefa diária `\local_mooc_audit\task\cleanup_history` (03:17) remove execuções finais mais antigas
@@ -248,9 +257,9 @@ vendor/bin/phpcs --standard=moodle local/mooc_audit             # moodlehq/moodl
 - Textos de evidência das regras ainda são gerados em português no código (orientações e títulos já estão em `lang/`).
 - Módulo com nome vazio não aparece no `modinfo` do Moodle; X-STR-01 só detecta nomes formados por espaços ou marcação.
 - Histórico (spec 005): abrir a página não executa; o JSON de `index.php` devolve o último resultado guardado (antes
-  da 0.5.0 recalculava a cada GET). A reauditoria da correção assistida não é registrada (tem trilha própria): depois
-  de corrigir, a página avisa que a sala mudou e pede *Executar novamente*. Mudanças no coletor comum (`snapshot`) não entram na
-  impressão digital por regra: a evolução avisa quando as versões do plugin diferem. Gerente só de categoria não acessa
+  da 0.5.0 recalculava a cada GET). A reauditoria da correção assistida é registrada desde a 0.5.1 (origem
+  `correction`; a trilha da correção guarda o id da execução em `details.runid`). O código comum (`snapshot`, `helpers`, `rule/base`,
+  `status`) entra na impressão digital de cada regra. Gerente só de categoria não acessa
   o painel (capacidades no sistema, constituição VIII). A comparação entre ofertas continua com a chave de local da
   spec 003.
 - Correção assistida experimental: executável só para questionários (CL-13, CL-14); demais tipos e CL-17 são

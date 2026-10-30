@@ -177,4 +177,43 @@ final class dashboard_test extends \advanced_testcase {
         recorder::record_now((int) $a->id, run_store::ORIGIN_PAGE, (int) $USER->id);
         $this->assertNotContains('course_changed', $stale());
     }
+    /**
+     * A new plugin version outdates a result only when the code of the rules changed (A-03 of docs/revisao-geral).
+     */
+    public function test_plugin_update_without_rule_change_is_not_stale(): void {
+        global $DB, $USER;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        set_config('policyjson', json_encode(['reoffer_year' => self::YEAR]), 'local_mooc_audit');
+        [$a] = $this->getDataGenerator()->get_plugin_generator('local_mooc_audit')->create_course_a(self::YEAR);
+        [$run] = recorder::record_now((int) $a->id, run_store::ORIGIN_PAGE, (int) $USER->id);
+        $stale = fn() => dashboard::build((int) $USER->id, ['q' => $a->shortname])['rows'][0]->stale;
+        $this->assertNotContains('plugin_changed', $stale());
+
+        // Other version.php (schema, interface…), same rules: still current.
+        $DB->set_field(run_store::TABLE, 'pluginversion', '0.4.9 (2026010100)', ['id' => $run->id]);
+        $this->assertNotContains('plugin_changed', $stale());
+
+        // A rule whose code differs from the installed one: outdated, on the dashboard and on the report page.
+        $details = run_store::json($run, 'details');
+        $details['rules']['CL-13']['r'] = '000000000000';
+        $DB->set_field(run_store::TABLE, 'details', json_encode($details), ['id' => $run->id]);
+        $this->assertContains('plugin_changed', $stale());
+        // As index.php does: the stored run plus the fingerprint of its policy.
+        $record = run_store::get((int) $run->id);
+        $record->fingerprint = policy_store::get((int) $record->policyid)->fingerprint;
+        $reasons = dashboard::stale_reasons(
+            $record,
+            time(),
+            policy_store::current_fingerprint(),
+            run_store::plugin_version()
+        );
+        $this->assertContains('plugin_changed', $reasons);
+
+        // Run recorded without rule fingerprints: falls back to the plugin version.
+        $DB->set_field(run_store::TABLE, 'details', null, ['id' => $run->id]);
+        $this->assertContains('plugin_changed', $stale());
+        $DB->set_field(run_store::TABLE, 'pluginversion', run_store::plugin_version(), ['id' => $run->id]);
+        $this->assertNotContains('plugin_changed', $stale());
+    }
 }

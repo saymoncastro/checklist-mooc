@@ -1,0 +1,20 @@
+local_mooc_audit 0.5.1 (2026103002) — etapa 1 do plano de estabilização — 2026-10-30
+Ambiente: moocaudit-rv-web (Moodle 4.5.15, PHP 8.3, PostgreSQL 17), worktree auditor-mooc-audit-e93c8c
+
+== PHPUnit (--testsuite local_mooc_audit_testsuite)
+Time: 03:00.105, Memory: 129.00 MB
+
+OK (216 tests, 3440 assertions)
+
+== Behat (--tags=@local_mooc_audit, Chrome + axe)
+
+13 scenarios (13 passed)
+213 steps (213 passed)
+1m35.29s (88.32Mb)
+
+== PHPCS --standard=moodle (moodle-cs 3.7.0): 0 erros, 0 avisos
+
+== Verificação manual no navegador (site rv, porta 8096)
+- CL-13 corrigido no Curso B → Voltar ao relatório: 'Reauditoria após correção assistida', Resolvidas: 2, nenhuma linha CL-13 (A-01)
+- Proposta CL-14 do jogo com término fora da política: valor proposto remete ao CL-07; sem aviso de 'valor registrado' (B-10, B-11)
+- Painel com sala desatualizada: axe sem color-contrast nem target-size; resta heading-order (B-08, fora da etapa 1) (B-19)

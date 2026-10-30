@@ -83,6 +83,8 @@ final class output_test extends correction_testcase {
         ) {
             $this->assertStringContainsString(get_string($label, 'local_mooc_audit'), $html, $label);
         }
+        $noundo = s(get_string('fix_noundo', 'local_mooc_audit'));
+        $this->assertStringContainsString($noundo, $html);
 
         $p->canexecute = false;
         $html = $renderer->render(new correction_proposal($p, $url, $url));
@@ -94,6 +96,8 @@ final class output_test extends correction_testcase {
         $this->assertStringNotContainsString('method="post"', $html);
         $this->assertStringContainsString(get_string('fix_mode_guided', 'local_mooc_audit'), $html);
         $this->assertStringContainsString('modedit.php?update=' . $page->coursemodule, $html);
+        // Nothing is written nor recorded by a guided proposal: no "previous value is recorded" notice (B-11).
+        $this->assertStringNotContainsString($noundo, $html);
 
         $html = $renderer->render(new correction_proposal(null, $url, $url));
         $this->assertStringContainsString(get_string('fix_nothing', 'local_mooc_audit'), $html);
