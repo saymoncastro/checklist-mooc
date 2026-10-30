@@ -55,6 +55,7 @@
 <div class="local_mooc_audit-comparison">
     <div class="local_mooc_audit-header mb-3">
         <h3>{{#str}} comparemenu, local_mooc_audit {{/str}}</h3>
+        <div class="table-responsive">
         <table class="table table-sm table-bordered local_mooc_audit-sides">
             <caption class="sr-only">{{#str}} comparemenu, local_mooc_audit {{/str}}</caption>
             <thead>
@@ -73,6 +74,7 @@
                     <td><a href="{{source.auditurl}}">{{source.overalllabel}}</a></td><td><a href="{{target.auditurl}}">{{target.overalllabel}}</a></td></tr>
             </tbody>
         </table>
+        </div>
         <dl class="row mb-2">
             <dt class="col-sm-3">{{#str}} label_executed_at, local_mooc_audit {{/str}}</dt><dd class="col-sm-9">{{executed_at}} ({{total_s}} s)</dd>
             <dt class="col-sm-3">{{#str}} label_policy, local_mooc_audit {{/str}}</dt><dd class="col-sm-9">{{policy.version}} — {{policy.note}}</dd>
@@ -87,10 +89,12 @@
 
     <h4 id="local_mooc_audit-summary">{{#str}} cmp_section_summary, local_mooc_audit {{/str}}</h4>
     <div class="alert {{verdict.cssclass}} local_mooc_audit-verdict local_mooc_audit-verdict-{{verdict.code}}" role="status"><strong>{{verdict.label}}</strong></div>
+    <div class="table-responsive">
     <table class="table table-sm table-bordered w-auto local_mooc_audit-cmpcounts">
         <caption class="sr-only">{{#str}} cmp_section_summary, local_mooc_audit {{/str}}</caption>
         <tbody>{{#counts}}<tr><th scope="row">{{label}}</th><td>{{count}}</td></tr>{{/counts}}</tbody>
     </table>
+    </div>
     <p class="small text-muted">{{#str}} cmp_legend, local_mooc_audit {{/str}}</p>
 
     <h4 id="local_mooc_audit-pending">{{#str}} cmp_section_pending, local_mooc_audit {{/str}}</h4>

@@ -13,7 +13,7 @@ dentro do Moodle 4.5 e agora é conduzido por especificações (Spec-Driven Deve
 | `DECISOES-INSTITUCIONAIS-CHECKLIST.md` | As 10 ambiguidades do checklist como decisões institucionais, com as respostas registradas |
 | `RELATORIO-AUDITORIA-VIA-API-MOODLE.md` | Investigação complementar: auditar a sala restaurada via Web Services do Moodle 4.5 — inventário de funções, matriz de cobertura regra a regra, lacunas, verificações só possíveis na sala ativa, decisão arquitetural (motor único com adaptadores MBZ e API) |
 | `RELATORIO-POC-PLUGIN-MOODLE.md` | **Prova de conceito executada**: plugin `local_mooc_audit` em Moodle 4.5.15 local, cursos de teste A/B, importação nativa, comparação com o auditor MBZ e decisão arquitetural (plugin autônomo recomendado) |
-| `plugin/local_mooc_audit/` | Plugin local Moodle (29 regras, CLI, página, comparador, PHPUnit) — ver seu `README.md` |
+| `plugin/local_mooc_audit/` | Plugin local Moodle (0.5.2: 29 regras, relatório, correção assistida, comparação entre ofertas, histórico, lote e painel; PHPUnit e Behat) — ver seu `README.md` |
 | `plugin-results/` | Saídas das auditorias (cursos restaurados 55/670, cursos A/B, importações, comparações, PHPUnit, captura de tela) |
 | `moodle-env/` | Instruções e scripts reproduzíveis do ambiente Moodle local (moodle-docker, plugins de terceiros, restauração) |
 | `poc/moodle_api_client.py` | Cliente REST isolado e somente leitura (allowlist de funções) para a prova comparativa via Web Services, não executado |
@@ -28,6 +28,9 @@ dentro do Moodle 4.5 e agora é conduzido por especificações (Spec-Driven Deve
 | `docs/backlog.md` | Backlog priorizado das especificações 001–005 |
 | `docs/relatorio-adocao-sdd.md` | Relatório executivo da adoção do SDD: riscos, decisões, recomendações |
 | `specs/001-auditoria-tecnica-operacional/` | **Especificação 001** (MVP): spec, plano, pesquisa, modelo de dados, contratos (JSON 1.0, CLI, página), quickstart, tarefas (105) e análise de consistência |
+| `specs/002-correcao-assistida/`, `specs/003-comparacao-ofertas/`, `specs/005-auditoria-lote-historico/` | Especificações implementadas da correção assistida, da comparação entre ofertas e do histórico/lote/painel |
+| `specs/004-api-externa/` | Especificação da API externa (Web Services): **só documento, nada implementado** |
+| `docs/revisao-geral/` | Revisão geral independente (2026-10-29): conformidade Moodle, UX e carga cognitiva, plano de estabilização e parecer |
 
 Os backups `.mbz` e a planilha do checklist **não** estão versionados (ver `.gitignore`): contêm conteúdo
 institucional e arquivos grandes. Coloque-os na raiz do projeto para reproduzir a análise.
@@ -53,6 +56,12 @@ python3 -I poc/mbz_inspect.py caminho/do/backup.mbz --out resultado.json
   na administração. 75 testes PHPUnit, 2 cenários Behat com axe, PHPCS sem avisos; estados idênticos à PoC em A, B, 55
   e 670 (`plugin-results/0.2.0/`). Pendências institucionais: decisão 10 (nomes canônicos), permissão de proponentes,
   validação com bloco de site real.
+- **2026-10-29 (specs 002, 003 e 005):** correção assistida (0.3.0), comparação entre ofertas (0.4.0), histórico, lote
+  e painel (0.5.0); especificação 004 (API externa) aprovada como documento, sem implementação.
+- **2026-10-30 (revisão geral e estabilização):** revisão independente em `docs/revisao-geral/` (parecer: pronto para
+  homologação; nenhum P0). Etapas 1 e 2 do plano de estabilização (0.5.1 e 0.5.2): reauditoria pós-correção registrada,
+  desatualização só por mudança de regra, privacidade da trilha de salas removidas, guarda estrita dos scripts de
+  dados de teste, tabelas responsivas e ajustes de acessibilidade (`plugin-results/0.5.1/`, `plugin-results/0.5.2/`).
 
 ## Fluxo de desenvolvimento (Spec Kit)
 

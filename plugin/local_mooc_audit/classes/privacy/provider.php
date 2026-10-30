@@ -93,7 +93,10 @@ class provider implements
               WHERE ctx.contextlevel = :level AND r.userid = :userid',
             ['level' => CONTEXT_COURSE, 'userid' => $userid]
         );
-        if ($DB->record_exists('local_mooc_audit_batch', ['userid' => $userid]) || self::orphan_runs($userid)) {
+        if (
+            $DB->record_exists('local_mooc_audit_batch', ['userid' => $userid]) || self::orphan_runs($userid)
+                || self::orphan_fixes($userid)
+        ) {
             $contextlist->add_system_context();
         }
         return $contextlist;
@@ -110,6 +113,8 @@ class provider implements
             $userlist->add_from_sql('userid', 'SELECT userid FROM {local_mooc_audit_batch} WHERE userid > 0', []);
             $userlist->add_from_sql('userid', 'SELECT r.userid FROM {local_mooc_audit_run} r
                 LEFT JOIN {course} c ON c.id = r.courseid WHERE c.id IS NULL AND r.userid > 0', []);
+            $userlist->add_from_sql('userid', 'SELECT f.userid FROM {local_mooc_audit_fix} f
+                LEFT JOIN {course} c ON c.id = f.courseid WHERE c.id IS NULL AND f.userid > 0', []);
             return;
         }
         if ($context->contextlevel != CONTEXT_COURSE) {
@@ -163,6 +168,18 @@ class provider implements
                             'timecreated' => \core_privacy\local\request\transform::datetime($r->timecreated)],
                             array_values($orphans)
                         )]
+                    );
+                }
+                $fixes = self::orphan_fixes($userid);
+                if ($fixes) {
+                    writer::with_context($context)->export_data(
+                        [get_string('privacy:path', 'local_mooc_audit')],
+                        (object) ['corrections' => array_map(fn($r) => (object) [
+                            'courseid' => $r->courseid, 'cmid' => $r->cmid, 'ruleid' => $r->ruleid, 'field' => $r->field,
+                            'oldvalue' => $r->oldvalue, 'newvalue' => $r->newvalue, 'outcome' => $r->outcome,
+                            'reaudit' => $r->reaudit,
+                            'timecreated' => \core_privacy\local\request\transform::datetime($r->timecreated),
+                        ], array_values($fixes))]
                     );
                 }
                 continue;
@@ -223,6 +240,9 @@ class provider implements
             foreach (array_keys(self::orphan_runs()) as $id) {
                 $DB->set_field('local_mooc_audit_run', 'userid', 0, ['id' => $id]);
             }
+            foreach (array_keys(self::orphan_fixes()) as $id) {
+                $DB->set_field('local_mooc_audit_fix', 'userid', 0, ['id' => $id]);
+            }
         }
     }
 
@@ -242,6 +262,9 @@ class provider implements
                 $DB->set_field('local_mooc_audit_batch', 'userid', 0, ['userid' => $userid]);
                 foreach (array_keys(self::orphan_runs((int) $userid)) as $id) {
                     $DB->set_field('local_mooc_audit_run', 'userid', 0, ['id' => $id]);
+                }
+                foreach (array_keys(self::orphan_fixes((int) $userid)) as $id) {
+                    $DB->set_field('local_mooc_audit_fix', 'userid', 0, ['id' => $id]);
                 }
             }
         }
@@ -265,6 +288,9 @@ class provider implements
                 foreach (array_keys(self::orphan_runs((int) $userid)) as $id) {
                     $DB->set_field('local_mooc_audit_run', 'userid', 0, ['id' => $id]);
                 }
+                foreach (array_keys(self::orphan_fixes((int) $userid)) as $id) {
+                    $DB->set_field('local_mooc_audit_fix', 'userid', 0, ['id' => $id]);
+                }
             }
             return;
         }
@@ -283,12 +309,38 @@ class provider implements
      * @return \stdClass[] id => run (id, courseid, origin, status, timecreated)
      */
     protected static function orphan_runs(?int $userid = null): array {
+        return self::orphans('local_mooc_audit_run', 'r.id, r.courseid, r.origin, r.status, r.timecreated', $userid);
+    }
+
+    /**
+     * Assisted corrections of courses that no longer exist (handled in the system context, A-02 of docs/revisao-geral).
+     *
+     * @param int|null $userid only the corrections confirmed by this user (null = every identified user)
+     * @return \stdClass[] id => trail row
+     */
+    protected static function orphan_fixes(?int $userid = null): array {
+        return self::orphans(
+            'local_mooc_audit_fix',
+            'r.id, r.courseid, r.cmid, r.ruleid, r.field, r.oldvalue, r.newvalue, r.outcome, r.reaudit, r.timecreated',
+            $userid
+        );
+    }
+
+    /**
+     * Rows of a plugin table whose course no longer exists.
+     *
+     * @param string $table plugin table with courseid and userid
+     * @param string $fields fields of alias r
+     * @param int|null $userid only the rows of this user (null = every identified user)
+     * @return \stdClass[]
+     */
+    protected static function orphans(string $table, string $fields, ?int $userid): array {
         global $DB;
         return $DB->get_records_sql(
-            'SELECT r.id, r.courseid, r.origin, r.status, r.timecreated
-               FROM {local_mooc_audit_run} r
+            "SELECT $fields
+               FROM {" . $table . "} r
           LEFT JOIN {course} c ON c.id = r.courseid
-              WHERE c.id IS NULL AND ' . ($userid ? 'r.userid = :userid' : 'r.userid > 0'),
+              WHERE c.id IS NULL AND " . ($userid ? 'r.userid = :userid' : 'r.userid > 0'),
             ['userid' => (int) $userid]
         );
     }

@@ -24,7 +24,7 @@
  *
  * php local/mooc_audit/cli/make_fixtures.php --year=2027
  *
- * Refuses to run unless the site is a local/dev site ($CFG->wwwroot contains localhost or debugdeveloper is on).
+ * Refuses to run unless the site is local (host localhost) AND developer debugging is on (\local_mooc_audit\local\devsite).
  * Existing courses with the same shortnames are deleted first.
  *
  * @package    local_mooc_audit
@@ -53,8 +53,8 @@ if ($options['help']) {
     cli_writeln('Cria os cursos de teste A (referência) e B (inconsistente). Opção --year=AAAA (padrão: ano seguinte).');
     exit(0);
 }
-if (strpos($CFG->wwwroot, 'localhost') === false && empty($CFG->debugdeveloper)) {
-    cli_error('Recusado: este script só roda em ambiente local de desenvolvimento.');
+if (!\local_mooc_audit\local\devsite::allowed($CFG->wwwroot, !empty($CFG->debugdeveloper))) {
+    cli_error('Recusado: este script só roda em ambiente local de desenvolvimento (host localhost e debug de desenvolvedor).');
 }
 \core\session\manager::set_user(get_admin());
 $year = (int) ($options['year'] ?: (date('Y') + 1));

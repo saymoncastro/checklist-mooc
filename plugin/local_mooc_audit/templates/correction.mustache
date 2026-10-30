@@ -112,6 +112,7 @@
     {{/showform}}
     {{#hashistory}}
     <h4 class="mt-4">{{#str}} fix_history, local_mooc_audit {{/str}}</h4>
+    <div class="table-responsive">
     <table class="table table-sm">
         <thead><tr>
             <th scope="col">{{#str}} date {{/str}}</th>
@@ -123,6 +124,7 @@
         </tr></thead>
         <tbody>{{#history}}<tr><td>{{date}}</td><td>{{field}}</td><td>{{oldvalue}}</td><td>{{newvalue}}</td><td>{{outcome}}</td><td>{{reaudit}}</td></tr>{{/history}}</tbody>
     </table>
+    </div>
     {{/hashistory}}
 {{/hasproposal}}
 </div>
