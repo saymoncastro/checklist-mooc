@@ -98,10 +98,12 @@ Decisões tomadas a partir da auditoria `docs/auditoria-ux-correcao/README.md` (
 - Q: Os textos continuam sendo gravados no momento da auditoria? → A: não para a apresentação. A tela monta textos e
   links **ao exibir**, no idioma e no site de quem vê, a partir dos fatos gravados (regra, verificação, entidades,
   valores). O texto gravado é usado só quando os fatos não bastam (execuções antigas).
-- Q: O relatório pode indicar quantas "ações" existem? → A: só quando a relação entre ocorrências for demonstrável por
-  uma lista fechada e testada de relações (mesma correção simulada, mesma entidade e mesmo campo, mesma verificação de
-  presença, objeto de uma ocorrência igual à entidade de outra). Sem isso, conta ocorrências. Nunca por semelhança de
-  texto.
+- Q: O relatório pode indicar quantos problemas ou ações existem? → A: distinguem‑se **ocorrência** (resultado do
+  motor), **causa** (condição da sala que explica uma ou mais ocorrências) e **ação corretiva** (alteração feita por um
+  responsável; uma causa pode exigir várias ações e uma ação pode eliminar várias causas). O relatório conta ocorrências
+  sempre e causas só quando todas as relações da sala forem demonstráveis por uma lista fechada e testada (mesma correção
+  simulada, mesma entidade e mesmo campo, mesma verificação de presença, objeto de uma ocorrência igual à entidade de
+  outra); nunca por semelhança de texto. Ações não são totalizadas: aparecem como passos de cada causa.
 - Q: Links para o Moodle: âncora (`#id_...`) ou parâmetro? → A: o parâmetro nativo `showonly` de `modedit.php` e
   `editsection.php`, que o próprio núcleo usa; âncoras não expandem a seção (verificado no 5.3).
 - Q: O relatório sugere qual dependência remover num ciclo, ou qual alternativa escolher no X‑DEP‑02? → A: não.
@@ -265,8 +267,9 @@ Para cada problema que pode resolver, o professor encontra a ação em linguagem
 escolha é pedagógica, um link que abre exatamente a seção do formulário do Moodle, o aviso quando outra correção precisa
 vir antes, e como confirmar que resolveu.
 
-**Why this priority**: hoje 4 de 29 regras têm orientação suficiente, nenhuma diz como confirmar, e uma condição de
-acesso inválida impede salvar o formulário da atividade sem que o relatório avise (auditoria, caso A).
+**Why this priority**: hoje 4 de 29 regras têm orientação executável isoladamente e só 2 são consistentes com as
+demais regras; nenhuma diz como confirmar, e uma condição de acesso inválida impede salvar o formulário da atividade
+sem que o relatório avise (auditoria, caso A).
 
 **Independent Test**: na cópia do Curso B, seguir só o relatório para resolver o X‑DEP‑02 do "Questionário 1", depois o
 CL‑13 pela tela do Moodle, e confirmar com nova auditoria, sem consultar outra fonte.
@@ -346,9 +349,9 @@ que "Alcançabilidade do certificado" sem impedimento estático aparece em "Veri
   datas de inscrição e de encerramento; soma 100 antes da nota mínima do certificado; conclusão antes de exigi‑la): a
   ordem aparece na ocorrência dependente e no "Comece por aqui".
 - **Mesma causa em várias regras** (`certificate_presence` no CL‑11, CL‑23 e X‑CERT‑01; conclusão do fórum institucional
-  no CL‑09 e CL‑17; conclusão do rótulo no CL‑17 e CL‑19): uma ação, com as ocorrências citadas dentro dela.
+  no CL‑09 e CL‑17; conclusão do rótulo no CL‑17 e CL‑19): uma causa, com as ocorrências citadas dentro dela.
 - **Relação não demonstrável** (mesmo nome de arquivo em X‑CONT‑01 e X‑CONT‑04): não agrupar; no máximo "possivelmente
-  relacionadas", sem afetar a contagem de ações.
+  relacionadas", sem afetar a contagem de causas.
 - **Orientações contraditórias entre regras**: enquanto a fase 4 não corrigir a regra, a ação que satisfaz as duas
   verificações prevalece (desativar a conclusão no rótulo e no fórum institucional).
 - **Usuário sem permissão de edição** (visualizador com `local/mooc_audit:audit` apenas): vê o problema e quem pode
@@ -439,10 +442,12 @@ que "Alcançabilidade do certificado" sem impedimento estático aparece em "Veri
 
 **Validação com usuários**
 
-- **FR-029**: Antes do plano, MUST ser registrada uma linha de base da interface atual com o roteiro do Relatório B §8
-  (tarefas T1–T5 e métricas), com participantes reais; a especificação MUST ser revista se a linha de base contrariar
-  alguma das hipóteses.
-- **FR-030**: Antes da homologação, a nova interface MUST ser avaliada com o mesmo roteiro e os mesmos critérios, e os
+- **FR-029**: Antes do plano e antes de qualquer mudança perceptível ao usuário (inclusive a fase 1), MUST ser
+  registrada uma linha de base da interface atual com o roteiro de `validacao/roteiro-linha-de-base.md` (tarefas T1–T7
+  e métricas, derivado do Relatório B §8), com participantes reais, no ambiente de referência fixado nesse roteiro; a
+  especificação MUST ser revista se a linha de base contrariar alguma das hipóteses.
+- **FR-030**: Antes da homologação, a nova interface MUST ser avaliada com o mesmo roteiro, os mesmos critérios e o
+  mesmo ambiente de referência (mudando só a versão do Auditor), e os
   resultados MUST ser registrados com os da linha de base.
 
 **Capacidade de correção (revisão 2026-10-30)**
@@ -466,9 +471,10 @@ que "Alcançabilidade do certificado" sem impedimento estático aparece em "Veri
 - **FR-037**: O relatório MUST informar as precedências de uma lista fechada e testada (condição de acesso inválida na
   atividade antes de outras correções manuais nela; CL‑06/CL‑07 antes de CL‑08 e CL‑14; CL‑12 soma antes de conferir o
   CL‑23; conclusão da atividade antes de exigi‑la no CL‑16); MUST NOT inferir precedências fora dela.
-- **FR-038**: O relatório MUST agrupar em uma ação as ocorrências cuja relação é demonstrável por uma lista fechada e
-  testada de relações; MUST NOT agrupar por semelhança de texto; MUST mostrar o número de ações apenas quando todas as
-  relações da sala forem demonstráveis por essa lista, e o de ocorrências sempre.
+- **FR-038**: O relatório MUST agrupar em uma **causa** as ocorrências cuja relação é demonstrável por uma lista fechada
+  e testada de relações; MUST NOT agrupar por semelhança de texto; MUST mostrar o número de ocorrências sempre e o de
+  causas apenas quando todas as relações da sala forem demonstráveis por essa lista; MUST apresentar as ações corretivas
+  como passos ordenados de cada causa, com o responsável de cada passo, e MUST NOT totalizar ações.
 - **FR-039**: Quando um plugin exigido pela política (módulo do certificado, módulo de jogo, bloco de progresso) não
   estiver instalado no site, o relatório MUST avisar no topo, indicar o administrador como responsável e substituir a
   orientação das ocorrências decorrentes.
@@ -502,8 +508,12 @@ que "Alcançabilidade do certificado" sem impedimento estático aparece em "Veri
 - **Preferência de visão**: a visão escolhida, guardada apenas no navegador da pessoa.
 - **Mensagem por verificação**: problema, por que importa, como corrigir (com alternativas), quem, como confirmar, por
   regra e `check`, com parâmetros; em `lang/en` e `lang/pt_br`.
-- **Ação corretiva**: uma intervenção que resolve uma ou mais ocorrências por relação demonstrável; tem responsável,
-  destino (rota e seção), precedências e confirmação. Calculada ao exibir; não é persistida.
+- **Ocorrência**: resultado `NAO_CONFORME` ou `ATENCAO`, identificado pela chave `regra|entidade|check[|subject]`.
+- **Causa**: condição da configuração da sala que explica uma ou mais ocorrências, ligadas por relação demonstrável;
+  tem consequência, alternativas (quando a decisão é pedagógica) e confirmação. Calculada ao exibir; não é persistida.
+- **Ação corretiva**: passo de uma causa — alteração feita por um responsável numa tela do Moodle ou pela correção
+  assistida, com destino (rota e seção) e precedências. Uma causa pode ter várias ações; uma ação pode eliminar várias
+  causas.
 - **Relação e precedência declaradas**: lista fechada e testada que liga ocorrências (mesma causa) ou ordena ações.
 
 ## Success Criteria *(mandatory)*
@@ -541,17 +551,21 @@ sem participantes.
 - **SC-013**: Com o roteiro de usuários acrescido das tarefas T6 (liberar o Questionário 1 e confirmar) e T7 (o que
   impede ou prejudica o certificado), pelo menos 4 de 5 professores concluem T6 sem ajuda e apontam em T7 as duas
   causas (cadeia de liberação bloqueada; certificado sem nota mínima).
-- **SC-014**: Nos cursos de referência, a contagem de ações coincide com a calculada manualmente pelas relações
-  declaradas (no Curso B do site sem plugins: 29 ocorrências, 24 ações).
+- **SC-014**: Nos cursos de referência, a contagem de causas coincide com a calculada manualmente pelas relações
+  declaradas (na cópia do Curso B do site sem plugins: 29 ocorrências, 24 causas), e nenhuma tela totaliza ações.
 - **SC-015**: Para regras de mensagem alterada apenas (fases 1–3), 0 mudanças em ids, estados, gravidades e chaves de
   ocorrência; relatórios gravados pela versão 0.6.x continuam abrindo sem erro, com nomes e links recalculados.
 
 ## Fases de implementação (revisão 2026-10-30)
 
+0. **Linha de base com usuários** (FR‑029, roteiro T1–T7) no ambiente de referência do roteiro
+   (`validacao/roteiro-linha-de-base.md`: Auditor 0.6.1, Moodle 4.5, plugins de terceiros obrigatórios). **Nenhuma fase
+   perceptível ao usuário — inclusive a 1 — chega a um ambiente de sessão antes dela.** O trabalho interno que não muda
+   o que se vê (plano, testes, catálogo de mensagens ainda não ligado à tela) pode correr em paralelo.
 1. **Textos e links** (FR‑031 a FR‑037, FR‑039, FR‑042): mensagens por verificação, nomes, rotas nativas, precedências,
    responsável, plugin ausente. Não muda resultados.
 2. **Estrutura do relatório** (FR‑001 a FR‑023, FR‑038, FR‑040, FR‑041): resumo, "Comece por aqui", visões, verificações
-   manuais, detalhes recolhidos, celular. Precedida da linha de base com usuários (FR‑029, com T6 e T7).
+   manuais, detalhes recolhidos, celular.
 3. **Contrato 1.1** (FR‑026, FR‑043): campos opcionais; API passa a expô‑los.
 4. **Correções de regra** (FR‑044): uma por vez, com decisão e caracterização regravada.
 

@@ -40,7 +40,7 @@ corrigir sem quebrar outra coisa e confirmar o resultado.
 |---|---|
 | Código inspecionado | 29 regras (`classes/local/rule/*.php`), `engine.php`, `locator.php`, `helpers.php`, `output/report.php`, `templates/report*.mustache`, estratégias de correção, `lang/{en,pt_br}` |
 | Ambiente da captura | `moocaudit-dist53-web` (Moodle 5.3, porta 8101, instalado do ZIP 0.6.1, só inglês, **sem** `mod_simplecertificate`, `mod_game` e `block_completion_progress`). O Curso B desse site produz exatamente as **29 não conformidades** da captura |
-| Sala de teste | Cópia do Curso B por backup/restauração no mesmo site: curso 4, "Sala de teste UX". Script em [`evidencias/preparar_jornada_professor.php`](evidencias/preparar_jornada_professor.php) |
+| Sala de teste | Cópia do Curso B por backup/restauração no mesmo site: curso 4, "Sala de teste UX". Para reproduzir: [`evidencias/preparar_jornada_professor.php`](evidencias/preparar_jornada_professor.php), que duplica a sala de origem sem usuários e só altera a cópia (recusa rodar fora de laboratório e sem `--confirmar`) |
 | Perfil usado | Conta `prof.ux`, papel **Professor** (editingteacher) só nesse curso, sem papel no sistema; acesso pelo "Acessar como" do administrador. Capacidades conferidas por `has_capability` (seção 10) |
 | Comparação | Curso B do laboratório principal (Moodle 4.5, `pt_br`, **com** os plugins de terceiros): 24 não conformidades e 6 alertas. Salas reais 55 e 670 do laboratório para a recorrência dos padrões |
 | Medições | Altura da página e posição da primeira inconformidade (DOM), transbordamento de tabelas a 375 px, axe‑core do próprio Moodle (`/lib/behat/axe/axe.min.js`, WCAG 2.2 A/AA + boas práticas) |
@@ -54,17 +54,17 @@ O que **não** foi feito: teste com participantes; leitor de tela real; tema ins
 ## 2. Diagnóstico executivo (Entregável 1)
 
 **Em uma frase:** o motor encontra problemas reais e o relatório os descreve de forma tecnicamente correta, mas só em
-4 das 29 regras a orientação é suficiente para corrigir sem ajuda, em nenhuma o relatório diz como confirmar a
-correção, e em 6 regras a orientação está errada, contradiz outra regra ou não pode ser executada pela pessoa que a lê.
+4 das 29 regras a orientação pode ser executada sem ajuda, e só em 2 delas (CL‑08, CL‑13) ela também é consistente com
+as demais regras; em nenhuma o relatório diz como confirmar a correção, e em 6 regras a orientação está errada, contradiz outra regra ou não pode ser executada pela pessoa que a lê.
 
 | Dimensão | Avaliação | Evidência principal |
 |---|---|---|
 | **Clareza do diagnóstico** | **Parcial** | Títulos são critérios ("Glossário: proibido se colaborativo; vazio se fonte de jogos"); evidências com valores de banco (`status=1`, `completion=1`, `hiddensections=0`, `aggregateonlygraded=1`), JSON (`condições de nota=[]`, `{"completion":2}`) e ids (`ciclo: 36 → 37 → 36`, `cmids [43]`). No site em inglês, evidência em português e orientação em inglês na mesma linha |
 | **Compreensão das consequências** | **Insuficiente** | Só 6 regras mencionam alguma consequência, e só o X‑DEP‑02 ("nunca será satisfeita") de forma direta; nas demais é parcial (CL‑11, CL‑12 "excluir vazias", CL‑13 só na prévia, CL‑18, X‑INT‑03). "Bloqueante" é usado tanto para "o certificado nunca sai" (X‑DEP‑02) quanto para "o certificado sai sem nota mínima" (CL‑23 `min_grade`), que é o efeito oposto |
-| **Capacidade de orientar correções** | **Insuficiente** | 4 regras acionáveis, 19 parciais, 6 não acionáveis (seção 7). Orientações erradas por herança do texto padrão da regra (CL‑11, CL‑16, CL‑21), contraditórias entre regras (CL‑17 × CL‑09/CL‑19) ou destrutivas sem aviso (CL‑18 "remova o glossário") |
+| **Capacidade de orientar correções** | **Insuficiente** | 4 regras com orientação executável isoladamente, das quais 2 também consistentes com as demais; 19 parciais; 6 não acionáveis (seções 6 e 7). Orientações erradas por herança do texto padrão da regra (CL‑11, CL‑16, CL‑21), contraditórias entre regras (CL‑17 × CL‑09/CL‑19) ou destrutivas sem aviso (CL‑18 "remova o glossário") |
 | **Navegação até os ajustes** | **Parcial** | 16 telas distintas para 29 ocorrências; 2 sem link (X‑DEP‑04, X‑CERT‑01). Os links levam ao formulário inteiro, com as seções fechadas; nenhum usa o parâmetro nativo `showonly` que o próprio Moodle usa para abrir só "Restringir acesso" ou "Conclusão de atividade". A atividade que **precisa** ser alterada no X‑DEP‑02 não tem link |
 | **Facilidade de validação** | **Parcial** | A correção assistida (CL‑13, CL‑14 em questionários) reaudita e grava (A‑01 resolvido no 0.5.1): comprovado, "Voltar ao relatório" mostra 27 e "Resolvidos: 2". Para correções feitas na tela do Moodle, o relatório não diz como confirmar; o Moodle devolve a pessoa à página do curso, não ao relatório |
-| **Carga cognitiva** | **Alta** | Primeira inconformidade a 1.395 px (1,8 tela a 1024 × 768), página com 9.566 px; 34 linhas em 22 tabelas; 29 ocorrências apresentadas como 29 tarefas quando são 24 causas (seção 8); a ordem em que as correções precisam ser feitas não aparece, e uma delas **impede** outras (caso A) |
+| **Carga cognitiva** | **Alta** | Primeira inconformidade a 1.395 px (1,8 tela a 1024 × 768), página com 9.566 px; 34 linhas em 22 tabelas; 29 ocorrências apresentadas como 29 tarefas independentes quando vêm de 24 causas (seção 8); a ordem em que as correções precisam ser feitas não aparece, e uma delas **impede** outras (caso A) |
 | **Acessibilidade** | **Parcial** | Controles nativos, estados com texto. axe: `scrollable-region-focusable` (grave) a 1024 px e `heading-order`; a 375 px, 20 de 22 tabelas exigem rolagem horizontal interna |
 
 **O que já funciona e deve ser preservado:** a separação dos seis estados (não verificável ≠ falha); a correção
@@ -227,7 +227,7 @@ regravada e aprovação). Os achados B‑xx citados vêm do Relatório B e conti
 | **U‑06** | P1 | A | **Ids internos como referência principal** (B‑03 aberto): `cmid=`, `ciclo: 36 → 37`, `cmids [43]`, `item 7`, `Autoinscrição (id 9)`, `quiz:43=50` | todas as salas |
 | **U‑07** | P1 | C | **Idioma misto e congelado** (seção 3) | dist53: evidência PT + orientação EN |
 | **U‑08** | P1 | A | **Links genéricos e não reavaliados.** Sem `showonly`; X‑DEP‑02 sem link para o alvo; ciclo e X‑CERT‑01 sem link; seção → página de visualização (não `editsection.php`); inscrição → lista (não `editinstance.php`); questionário sem questões → `view.php` (não `edit.php`); capítulo de livro → formulário do livro. O link da prévia do CL‑17 usa `#id_activitycompletionheader`, que abre o formulário **sem** expandir a seção | medido no navegador |
-| **U‑09** | P1 | A | **Responsável não indicado.** A professora tem `moodle/course:changecategory`, mas **0 categorias** onde possa criar curso: o seletor de categoria (CL‑05) não lhe oferece "Inscrições Abertas". Importar da Sala Padrão exige acesso à sala de origem. Plugins exigem administrador | `has_capability` + `make_categories_list` |
+| **U‑09** | P1 | A | **Responsável não indicado.** A professora tem `moodle/course:changecategory` no curso, mas o seletor de categoria de um curso existente só lista as categorias em que ela tem essa capacidade **no contexto da categoria** (`course/edit_form.php:93-94`): **0**, além da atual. O CL‑05 não pode ser resolvido por ela. Importar da Sala Padrão exige acesso à sala de origem. Plugins exigem administrador | `make_categories_list('moodle/course:changecategory')` como a professora |
 | **U‑10** | P1 | A | **Consequência raramente explicada**: 6 de 29 regras mencionam alguma, só 1 de forma direta | seção 6, coluna C5 |
 | **U‑11** | P1 | A + R | **Severidade não comunica o impacto.** "Bloqueante" para CL‑23 `min_grade` (certificado mais fácil, não impedido) e para X‑DEP‑04 fora da cadeia do certificado; o mesmo fato (alvo oculto) é Atenção no X‑DEP‑02 e NC no X‑CERT‑01 | casos B, C, D |
 | **U‑12** | P1 | A + C | **Estático, heurístico e funcional não se distinguem.** X‑CERT‑01 conforme aparece como regra conforme; heurísticas de texto (CL‑13 enunciado, X‑AV‑01, CL‑20 nome genérico) e correspondência por nome (CL‑09, CL‑11, CL‑22, decisão 10 pendente) aparecem como fato | caso D |
@@ -293,6 +293,13 @@ orientação geral; "◐" em C6 significa que existe texto, mas falta objeto, va
 C10 confirmar 0 / 2 / 27 · C11 riscos 0 / 3 / 26. Os critérios de leitura (C1–C4) estão razoáveis; os de resolução
 (C5, C10, C11) são o ponto fraco.
 
+**Dois níveis de "acionável".** *Executável isoladamente* = C6 ●: a orientação, lida sozinha, diz o que alterar e onde
+(CL‑08, CL‑09, CL‑13, CL‑19). *Globalmente consistente* = executável isoladamente **e** sem contradição com a orientação
+de outra regra para a mesma configuração, nem bloqueio por outra inconformidade não sinalizado. Só CL‑08 e CL‑13 atingem
+o segundo nível: CL‑09 e CL‑19 mandam desativar a conclusão que o CL‑17 manda tornar automática (U‑05). O CL‑13 é
+consistente pela correção assistida; pela tela de edição, é bloqueado pelo X‑DEP‑02 na mesma atividade (U‑02), o que a
+fase 1 passa a sinalizar.
+
 ---
 
 ## 7. Matriz de capacidade de correção (Entregável 2)
@@ -334,12 +341,27 @@ Responsável: **Prof** = professor editor; **Equipe** = equipe da reoferta (aces
 
 ## 8. Ocorrência, causa e ação corretiva
 
-Os três conceitos são úteis e **já são calculáveis em parte** com o que o JSON grava, sem similaridade de texto.
+**Definições** (valem para este relatório e para a Spec 006):
+
+- **Ocorrência**: um resultado `NAO_CONFORME` ou `ATENCAO` do motor, identificado pela chave
+  `regra|entidade|check[|subject]`. Sua contagem é sempre exata.
+- **Causa** (ou problema): uma condição da configuração da sala que explica uma ou mais ocorrências. Duas ocorrências só
+  têm a mesma causa quando uma relação da lista fechada abaixo o demonstra; sem relação demonstrada, cada ocorrência é a
+  sua própria causa.
+- **Ação corretiva**: uma alteração feita por um responsável numa tela do Moodle (ou pela correção assistida) para
+  eliminar uma causa. **Causa e ação não são 1:1**: uma causa pode exigir várias ações, em ordem e de responsáveis
+  diferentes (certificado ausente: instalar o plugin → importar → refazer as restrições); uma ação pode eliminar mais de
+  uma causa (uma importação da Sala Padrão pode trazer o certificado e a declaração); e o número de ações pode depender
+  de uma decisão pedagógica (CL‑12: quais atividades mudam de nota máxima; X‑DEP‑02: qual alternativa).
+
+Por isso o relatório deve contar **ocorrências** (sempre) e **causas** (quando as relações forem demonstráveis), e
+apresentar as **ações** como passos dentro de cada causa, **sem totalizá‑las**. Ocorrências e causas já são calculáveis
+em parte com o que o JSON grava, sem similaridade de texto.
 
 | Relação | Critério técnico (demonstrável) | Exemplo real | Disponível hoje? |
 |---|---|---|---|
 | Mesma correção resolve várias ocorrências | A simulação do planejador (`planner`) já lista "deixariam de ocorrer" | CL‑13 tentativas + enunciado | Sim, para regras com estratégia |
-| Mesma configuração, mesma ação | mesma entidade (`cm:32`) e mesmo campo do Moodle (conclusão) | CL‑09 + CL‑17 no fórum; CL‑19 + CL‑17 no rótulo | Sim, com uma tabela "verificação → campo" na apresentação |
+| Mesma configuração, mesma causa | mesma entidade (`cm:32`) e mesmo campo do Moodle (conclusão) | CL‑09 + CL‑17 no fórum; CL‑19 + CL‑17 no rótulo | Sim, com uma tabela "verificação → campo" na apresentação |
 | Mesma causa ausente | mesmo `check` em regras diferentes | `certificate_presence` em CL‑11, CL‑23 e X‑CERT‑01 | Sim, pela chave de ocorrência |
 | Mesmo objeto como causa | `subject` de uma ocorrência = entidade de outra | X‑DEP‑02 `subject cm:41` = X‑STR‑01 `cm:41` (oculto) | Sim, pela chave de ocorrência |
 | Causa dentro de outra regra | X‑CERT‑01 lista elos só em texto ("Aprofundamento… sem conclusão") | X‑CERT‑01 × X‑DEP‑02 `cm:38` | **Não**: exige `subjects` estruturados no X‑CERT‑01 (contrato) |
@@ -347,10 +369,12 @@ Os três conceitos são úteis e **já são calculáveis em parte** com o que o 
 | Mesmo arquivo perdido | nome de arquivo igual em X‑CONT‑01 e X‑CONT‑04 | sala 670: "Manual de Acessibilidade…" em 1 recurso e 4 referências | **Não seguro** (coincidência de nome não prova a causa): apresentar como "possivelmente relacionadas" ou não agrupar |
 
 **Cálculo no Curso B do dist53 (29 não conformidades):** juntando apenas as relações demonstráveis das quatro primeiras
-linhas, ficam **24 causas**, em **16 telas** do Moodle. Dessas 24, ao menos 4 não podem ser resolvidas pela professora:
-instalar `mod_simplecertificate` (resolve 3 ocorrências e permite a quarta, a declaração), instalar
-`block_completion_progress`, mover a categoria, importar componentes da Sala Padrão. O número de ações **só** deve
-aparecer quando calculado por essas regras fechadas; quando houver relação não demonstrável, a tela conta ocorrências.
+linhas, ficam **24 causas**, em **16 telas** do Moodle. Dessas 24, ao menos 4 não podem ser resolvidas só pela
+professora: certificado ausente (3 ocorrências; ações do administrador, da equipe e da professora), declaração da
+licença (plugin e Sala Padrão), bloco de progresso (plugin) e categoria (equipe). O **número de ações não é calculável**
+com segurança nesta sala: só o certificado exige 3, e CL‑12, X‑DEP‑02 e X‑DEP‑04 dependem de decisões. O número de
+causas só deve aparecer quando todas as relações da sala forem demonstráveis por essas regras fechadas; do contrário, a
+tela conta só ocorrências.
 
 **Evolução necessária para agrupar com segurança:** gravar `check`, `subject` e uma lista `subjects` (entidades
 relacionadas, como os elos do X‑CERT‑01) como campos opcionais do contrato 1.1 — hoje são apagados depois de compor a
@@ -400,7 +424,7 @@ formulário, `moodleform::filter_shown_headers()` a ignora e o formulário abre 
 Conta `prof.ux`, papel Professor no curso 4. Capacidades verificadas: `local/mooc_audit:audit`, `preparecorrection`,
 `applycorrection`, `moodle/course:update`, `moodle/course:manageactivities`, `moodle/course:changecategory`,
 `enrol/self:config`, `moodle/grade:manage`, `moodle/backup:backuptargetimport`, `moodle/site:manageblocks` — **todas
-sim**; categorias em que pode criar curso: **0**. Respostas dadas pelo agente simulando o perfil, a partir **apenas** do
+sim**; categorias oferecidas pelo seletor de categoria do curso, além da atual: **0** (medido como a professora; o dist53 só tem uma categoria, e o resultado vale porque o papel dela existe só no contexto do curso). Respostas dadas pelo agente simulando o perfil, a partir **apenas** do
 que a tela mostra (sem ler o código).
 
 | Cenário | 1. Entende o problema? | 2. Explica a consequência? | 3. Encontra a configuração? | 4. Corrige? | 5. Reaudita? | 6. Sabe se resolveu? |
@@ -412,7 +436,7 @@ que a tela mostra (sem ler o código).
 | **CL‑23 + X‑CERT‑01** (certificação, dist53) | Parcial: "nenhum certificado" | Não | Link de importação | **Não**: o plugin não está instalado; a importação não traz o certificado; a professora não tem acesso à Sala Padrão | — | Não: duas linhas bloqueantes sem saída; nada indica que é com o administrador |
 | **CL‑17 rótulo** (média) | Parcial: "conclusão MANUAL" | Não | Sim | Risco de erro: seguir "troque para automática" mantém o CL‑19 e contraria a prévia | Sim | Parcial |
 | **CL‑20 seções ocultas** (baixa) | **Não**: `hiddensections=0` | Não | Parcial: "Configurações do curso › Formato", mas o rótulo citado não existe no 5.3 | Provável, por tentativa | Sim | Sim |
-| **CL‑05 categoria** (outro responsável) | Sim | Não | Sim (o campo existe) | **Não**: "Inscrições Abertas" não aparece no seletor; o relatório não diz quem move | — | — |
+| **CL‑05 categoria** (outro responsável) | Sim | Não | Sim (o campo existe) | **Não**: o seletor só oferece a categoria atual; o relatório não diz quem move | — | — |
 
 **Resultado:** dos 8 cenários, a professora completa sem ajuda 3 (CL‑13 assistida, CL‑20 por tentativa, X‑DEP‑02
 depois de procurar). Em 3 ela não consegue (ciclo, certificado, categoria) e nada no relatório diz a quem recorrer; em
@@ -443,8 +467,8 @@ de observação **INT‑ORDEM** para quem tentar corrigir as tentativas pela tel
 
 **Organização recomendada (sem painel decorativo):**
 
-1. **Resumo operacional** (uma caixa): situação; *"29 problemas em 9 atividades e nas configurações da sala; 24 ações;
-   4 dependem de outra pessoa; 1 pode ser corrigida aqui com confirmação"*; aviso de desatualizado/incompleto.
+1. **Resumo operacional** (uma caixa): situação; *"29 ocorrências em 9 atividades e nas configurações da sala, vindas de
+   24 problemas; 4 problemas dependem, ao menos em parte, de outra pessoa; 1 pode ser corrigido aqui com confirmação"*; aviso de desatualizado/incompleto.
 2. **Comece por aqui** (no máximo 3 itens): bloqueantes ordenados pela precedência (o X‑DEP‑02 vem antes do CL‑13 da
    mesma atividade).
 3. **Pendências de correção**, em duas visões do mesmo conteúdo: *por atividade* (para corrigir) e *por prioridade*
@@ -488,8 +512,8 @@ Auditoria técnica · Sala de teste UX                         [Executar novamen
 Resultado de 30/10/2026 19:31 · a sala foi alterada depois desta auditoria [existe]
 ┌──────────────────────────────────────────────────────────────────────────────────────┐
 │ Bloqueada: o certificado não pode ser emitido nesta sala.                [novo‑A]     │
-│ 29 problemas em 9 atividades e nas configurações da sala → 24 ações.     [novo‑A]     │
-│ 20 você pode fazer (1 com correção assistida) · 4 dependem de outra pessoa [novo‑A]    │
+│ 29 ocorrências em 9 atividades e nas configurações → 24 problemas.       [novo‑A]     │
+│ 20 você resolve (1 com correção assistida) · 4 dependem de outra pessoa   [novo‑A]     │
 └──────────────────────────────────────────────────────────────────────────────────────┘
 Comece por aqui                                                            [novo‑A]
  1. Questionário 1 exige "Aprofundamento", que não registra conclusão.  [Ver como corrigir]
@@ -590,8 +614,8 @@ a test user`) e, nas regras conformes, `X-INT-03 Plugins used by the course inst
   mais. Também resolvido: o enunciado agora confere com a configuração."
 - **[novo‑A]** Depois de qualquer link para o Moodle, a linha mostra "Depois de salvar, volte aqui e clique em
   Executar novamente"; onde a rota aceita (`course/edit.php`, `enrol/editinstance.php`), o `returnurl` traz de volta.
-- **[novo‑A]** Achados relacionados aparecem dentro da ação principal ("também resolve"), não como linhas soltas; a
-  contagem do topo usa ações apenas quando as relações forem demonstráveis (seção 8).
+- **[novo‑A]** Ocorrências da mesma causa aparecem dentro dela ("também resolve"), não como linhas soltas; o topo
+  mostra o número de causas apenas quando todas as relações forem demonstráveis, e nunca totaliza ações (seção 8).
 
 ---
 
@@ -610,7 +634,7 @@ a test user`) e, nas regras conformes, `X-INT-03 Plugins used by the course inst
    de existência e permissão.
 5. **Precedências e relações declaradas**: uma tabela pequena e testada ("condição inválida na entidade X precede
    qualquer correção manual em X"; "CL‑06/07 precede CL‑08/CL‑14"; "certificate_presence agrupa CL‑11/CL‑23/X‑CERT‑01").
-6. **Responsável calculado**: capacidade de quem vê para a tela de destino; categoria (`make_categories_list`); plugin
+6. **Responsável calculado**: capacidade de quem vê para a tela de destino; categoria (`make_categories_list('moodle/course:changecategory')`); plugin
    exigido pela política ausente (`core_plugin_manager` ao exibir).
 
 ### 14.2 Exige evolução aditiva do contrato (1.0 → 1.1, campos opcionais)
@@ -646,13 +670,16 @@ plano, em vez de criar uma spec nova. A revisão foi registrada em `specs/006-ex
 
 | Fase | Conteúdo | Muda resultados? | Testes | Risco de regressão |
 |---|---|---|---|---|
+| **0. Linha de base** | Sessões T1–T7 com professores e equipe técnica, interface atual, ambiente de referência | Não | Roteiro e planilhas de `validacao/` | Nenhum (não muda código) |
 | **1. Textos e links** (menor complexidade, maior impacto) | Mensagens por verificação (problema, por que importa, como corrigir, quem, como confirmar) para as 29 regras; nomes no lugar de ids; links nativos com `showonly`/`returnurl`, calculados ao exibir; avisos de precedência para a lista fechada; responsável e plugin ausente ao exibir; correção das orientações erradas (U‑04) | Não | Teste por regra e verificação: nenhuma string sem mensagem; snapshot de texto; caracterização A/B intacta; Behat da jornada X‑DEP‑02 | Baixo (só apresentação); cuidado com execuções antigas (FR‑027) |
 | **2. Estrutura do relatório** | Resumo operacional, "Comece por aqui", visões por atividade/prioridade/técnica, verificações manuais, detalhes recolhidos, celular | Não | Behat + axe; medição de altura; 320 px | Médio (template); a visão técnica preserva a tabela atual |
-| **3. Contrato 1.1** | `check`, `subject`, `subjects`, `params`, `evidence_level` opcionais; contagem de ações demonstráveis | Não (aditivo) | `contract_test` com 1.0 e 1.1; API (Spec 004) | Baixo; consumidores ignoram campos novos |
+| **3. Contrato 1.1** | `check`, `subject`, `subjects`, `params`, `evidence_level` opcionais; contagem de causas demonstráveis | Não (aditivo) | `contract_test` com 1.0 e 1.1; API (Spec 004) | Baixo; consumidores ignoram campos novos |
 | **4. Correções de regra** | Lista da seção 14.3, uma a uma, cada uma com decisão registrada | **Sim** | Caracterização regravada e revisada; teste por regra | Médio; exige aprovação do Cefor |
 
-Ordem de implementação: 1 → 2 → 3 → 4. A fase 1 sozinha atende ao critério de sucesso para 23 das 29 regras (seção 16,
-pergunta 3). A linha de base com pessoas (FR‑029) deve ocorrer **antes** da fase 2, com as tarefas T6 e T7 acrescentadas.
+Ordem: 0 → 1 → 2 → 3 → 4. Estima‑se que a fase 1 sozinha leve até 23 das 29 regras ao nível
+"globalmente consistente" (seção 16, pergunta 3); a estimativa é conferida na implementação, regra por regra. A linha de base com pessoas (FR‑029, com T6 e T7) deve ocorrer **antes de qualquer mudança perceptível**,
+inclusive a fase 1, no ambiente de referência fixado no roteiro (Auditor 0.6.1, Moodle 4.5, `mod_simplecertificate`,
+`mod_game` e `block_completion_progress`); a avaliação final repete o mesmo ambiente, mudando só o Auditor.
 
 ---
 
@@ -670,10 +697,12 @@ Moodle como "Escolher…"), CL‑23 quando o plugin falta (orientação impossí
 (bloco de progresso tratado como HTML) e CL‑18 (afirma "colaborativo" e manda remover).
 
 **3. Qual proporção das regras possui orientações efetivamente acionáveis?**
-**4 de 29 (14%)** — CL‑08, CL‑09, CL‑13 e CL‑19 — e mesmo duas delas (CL‑09, CL‑19) entram em contradição com o CL‑17.
-19 (66%) são parciais (há texto, falta objeto, valor, caminho ou responsável); 6 (21%) não são acionáveis. Com a fase 1
-(só textos e links), a estimativa é chegar a 23 acionáveis; as 6 restantes dependem de outra pessoa (CL‑05, CL‑22,
-CL‑23 sem plugin, X‑INT‑03) ou de mudança de regra (CL‑17, CL‑18).
+Em dois níveis (definidos na seção 6): **executável isoladamente, 4 de 29 (14%)** — CL‑08, CL‑09, CL‑13 e CL‑19;
+**globalmente consistente, 2 de 29 (7%)** — CL‑08 e CL‑13 —, porque CL‑09 e CL‑19 contradizem o CL‑17 para a mesma
+configuração. 19 (66%) são parciais (há texto, falta objeto, valor, caminho ou responsável); 6 (21%) não são
+acionáveis. Com a fase 1 (só textos e links), a estimativa é chegar a até 23 globalmente consistentes — CL‑09 e CL‑19
+passam a ser consistentes quando a apresentação as agrupa com o CL‑17 numa só causa ("desativar a conclusão") —; as 6
+restantes dependem de outra pessoa (CL‑05, CL‑22, CL‑23 sem plugin, X‑INT‑03) ou de mudança de regra (CL‑17, CL‑18).
 
 **4. Quantos problemas são de texto e apresentação versus limitações do motor?**
 Dos 22 achados desta auditoria: **15 só de apresentação e texto**, **3 de contrato aditivo** (o motor já calcula a
@@ -692,7 +721,7 @@ motor ou criar persistência nova.
 5. **"Quem pode corrigir"** calculado (capacidade, categorias, plugin ausente), com a seção "Depende de outra pessoa".
 
 **6. Qual seria a experiência mínima ideal para uma primeira versão pública?**
-Um resumo de uma caixa (situação, problemas → ações, quantas dependem de outra pessoa); "Comece por aqui" com até três
+Um resumo de uma caixa (situação, ocorrências → causas, quantas dependem de outra pessoa); "Comece por aqui" com até três
 bloqueantes na ordem certa; uma lista por atividade em que cada ação responde, em linguagem do Moodle e no idioma de
 quem lê, *o que encontramos, por que importa, como corrigir (com alternativas quando a decisão é pedagógica), quem
 pode, como confirmar*, com um link que abre exatamente a seção do formulário; uma seção "Verificações manuais" para o
@@ -706,7 +735,12 @@ primeira entrega.
 
 - **dist53** (`moocaudit-dist53-web`, porta 8101, site descartável): criado o curso 4 (cópia do Curso B) e a conta de
   teste `prof.ux` (senha aleatória; acesso pelo "Acessar como"). No curso 4 foram aplicadas, como professora: a correção
-  assistida do CL‑13 (tentativas 1 → 2) e a ativação da conclusão por visualização em "Aprofundamento". O Curso B
-  original (curso 3) não foi alterado. Foram gravadas 3 execuções no histórico do curso 4.
+  assistida do CL‑13 (tentativas 1 → 2) e a ativação da conclusão por visualização em "Aprofundamento". Foram gravadas
+  3 execuções no histórico do curso 4.
+- **Incidente na revisão do PR:** ao testar as recusas da primeira versão do script de preparação, uma chamada com
+  `--courseid=3` renomeou o Curso B original e inscreveu nele a `prof.ux` (a proteção "sala sem inscritos" não o
+  distinguia de uma cópia). Foi revertido logo em seguida (nome, nome curto, inscrição e papel); a auditoria do curso 3
+  voltou a ser idêntica à da captura. O script foi reescrito para nunca alterar uma sala existente; a cópia criada no
+  teste da nova versão (curso 5) foi apagada.
 - **Laboratório principal** (porta 8091): só auditorias por linha de comando sem `--record`; nada gravado.
 - Código do plugin: **nenhuma alteração**.
