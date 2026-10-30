@@ -56,6 +56,17 @@ class audit_course extends \core\task\adhoc_task {
     }
 
     /**
+     * What a queued run needs at execution time, by origin.
+     *
+     * @param string $origin
+     * @return string[] [system capability of the requester, string of the permission failure]
+     */
+    protected static function requirement(string $origin): array {
+        return $origin === run_store::ORIGIN_API ? ['local/mooc_audit:api', 'error_permission_api']
+            : ['local/mooc_audit:batchaudit', 'error_permission'];
+    }
+
+    /**
      * Whether the requester may still run this audit.
      *
      * @param int $userid
@@ -71,7 +82,7 @@ class audit_course extends \core\task\adhoc_task {
         if (!$user || $user->deleted || $user->suspended) {
             return false;
         }
-        $capability = $origin === run_store::ORIGIN_API ? 'local/mooc_audit:api' : 'local/mooc_audit:batchaudit';
+        [$capability] = self::requirement($origin);
         return has_capability($capability, \context_system::instance(), $user)
             && has_capability('local/mooc_audit:audit', \context_course::instance($courseid), $user);
     }
@@ -118,7 +129,7 @@ class audit_course extends \core\task\adhoc_task {
                 return;
             }
             if (!self::authorised((int) $run->userid, (int) $run->courseid, (string) $run->origin)) {
-                $string = $run->origin === run_store::ORIGIN_API ? 'error_permission_api' : 'error_permission';
+                [, $string] = self::requirement((string) $run->origin);
                 recorder::fail($runid, 'permission', get_string($string, 'local_mooc_audit'));
                 return;
             }

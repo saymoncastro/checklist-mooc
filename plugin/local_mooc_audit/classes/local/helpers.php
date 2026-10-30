@@ -17,13 +17,27 @@
 namespace local_mooc_audit\local;
 
 /**
- * Shared helpers of the rules (text normalisation, module selection, formatting).
+ * Shared helpers of the rules (text normalisation, module selection, formatting) and of the numeric settings.
  *
  * @package    local_mooc_audit
  * @copyright  2026 Cefor/Ifes
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class helpers {
+    /**
+     * A positive integer setting of the plugin: empty, zero or negative gives the default, above the maximum gives the
+     * maximum (batch_max_courses, api_max_pending).
+     *
+     * @param string $name setting of local_mooc_audit
+     * @param int $default
+     * @param int $max
+     * @return int
+     */
+    public static function bounded_setting(string $name, int $default, int $max): int {
+        $value = (int) get_config('local_mooc_audit', $name);
+        return $value > 0 ? min($max, $value) : $default;
+    }
+
     /** @var array Close-date columns per graded type (first non empty wins; specs/001 CL-14 and specs/002). */
     const CLOSE_FIELDS = [
         'quiz' => ['timeclose'],

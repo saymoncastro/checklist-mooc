@@ -16,7 +16,7 @@ Estados e transições inalterados (`queued → running → complete | partial |
 
 ### Regras de validação novas
 
-- Por sala, no máximo uma execução pendente **viva** criada pela API (reaproveitamento + trava `request_course_<id>`).
+- Por sala, no máximo uma execução pendente **viva** criada pela API (reaproveitamento + trava única da fila `queue`, compartilhada com os lotes — antes `request_course_<id>`).
 - Por solicitante, no máximo `api_max_pending` execuções `api` pendentes vivas (padrão 100).
 - Uma consulta nunca cria, altera ou remove linha de `_run`, `_policy`, `_batch` nem de `task_adhoc`.
 

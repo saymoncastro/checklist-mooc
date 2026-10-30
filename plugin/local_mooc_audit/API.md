@@ -91,7 +91,10 @@ curl -s "$WWWROOT/webservice/rest/server.php" -d wstoken="$TOKEN" -d moodlewsres
   próximo cron, como a conta que pediu. Na hora de executar, a tarefa confere de novo `local/mooc_audit:api` e
   `local/mooc_audit:audit`; se a conta perdeu a permissão, a execução termina `failed` com código `permission`.
 - `reused: true`: a sala já tinha uma execução pendente viva (de qualquer origem: página, lote ou API) e o id devolvido
-  é o dela. Pedidos repetidos não criam filas duplicadas.
+  é o dela. Pedidos repetidos não criam filas duplicadas. A execução reaproveitada continua sendo de quem a pediu
+  primeiro (por exemplo, o gerente de um lote) e é a permissão **dessa conta** que a tarefa confere. Se ela terminar
+  `failed` com código `permission`, peça de novo: como ela já está encerrada, o novo pedido cria uma execução da
+  própria conta de integração.
 - Limite: cada conta pode ter no máximo `api_max_pending` execuções pendentes pela API; acima disso, `queuefull`.
 
 ### 2.3 `local_mooc_audit_get_run` — acompanhar uma execução
@@ -142,7 +145,7 @@ Nenhuma resposta identifica quem pediu a auditoria.
 | `invalidcourseid` | sala inexistente ou curso do site |
 | `runnotfound` | execução inexistente ou fora do alcance da conta |
 | `queuefull` | limite de execuções pendentes pela API atingido para a conta |
-| `busy` | outro pedido da mesma sala em andamento; tente de novo em alguns segundos |
+| `busy` | outro pedido de auditoria ou a criação de um lote está pondo execuções na fila; tente de novo em alguns segundos |
 | `invalidparameter` | parâmetro ausente ou de tipo errado |
 
 ## 5. Versionamento

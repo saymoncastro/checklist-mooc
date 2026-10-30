@@ -35,9 +35,6 @@ class service {
     /** @var string Version of the API contract, returned in every response. */
     const API_VERSION = '1.0';
 
-    /** @var int Seconds a request waits for another request of the same course. */
-    const LOCK_WAIT = 5;
-
     /**
      * Check that the current user may use the API.
      *
@@ -114,33 +111,32 @@ class service {
      * @return int
      */
     public static function max_pending(): int {
-        $max = (int) get_config('local_mooc_audit', 'api_max_pending');
-        return $max > 0 ? min(2000, $max) : 100;
+        return \local_mooc_audit\local\helpers::bounded_setting('api_max_pending', 100, 2000);
     }
 
     /**
      * Request the audit of a course: reuse its alive pending run (any origin) or queue a new API run.
      *
-     * Requests of the same course are serialised by a lock, so that two simultaneous calls never queue two runs.
+     * Requests are serialised with the batches by the queue lock (recorder::queue_lock()), so that simultaneous calls
+     * never queue two runs of a course.
      *
      * @param int $courseid course already checked with course_for()
      * @param int $userid requester; the background task runs as this user and checks the permissions again
+     * @param int $wait seconds to wait for the queue lock
      * @return array ['runid', 'courseid', 'status', 'reused', 'timecreated']
      * @throws \moodle_exception busy, queuefull
      */
-    public static function request(int $courseid, int $userid): array {
-        $lock = \core\lock\lock_config::get_lock_factory('local_mooc_audit')
-            ->get_lock('request_course_' . $courseid, self::LOCK_WAIT);
-        if (!$lock) {
-            throw new \moodle_exception('busy', 'local_mooc_audit');
-        }
+    public static function request(int $courseid, int $userid, int $wait = recorder::QUEUE_LOCK_WAIT): array {
+        $lock = recorder::queue_lock($wait);
         try {
-            $pending = run_store::reusable_pending($courseid);
+            $tasked = run_store::tasked_runs();
+            $pending = run_store::reusable_pending($courseid, null, $tasked);
             if ($pending) {
                 $run = $pending;
                 $reused = true;
             } else {
-                if (run_store::count_alive_pending_by_origin($userid, run_store::ORIGIN_API) >= self::max_pending()) {
+                $mine = run_store::count_alive_pending_by_origin($userid, run_store::ORIGIN_API, null, $tasked);
+                if ($mine >= self::max_pending()) {
                     throw new \moodle_exception('queuefull', 'local_mooc_audit', '', self::max_pending());
                 }
                 $run = run_store::get(recorder::queue($courseid, $userid, 0, run_store::ORIGIN_API));

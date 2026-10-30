@@ -27,6 +27,11 @@ Cobertura nova (FR-031): `tests/external/{get_latest_audit,request_audit,get_run
 alteram a sala), `tests/output_test.php` (rótulo "API" no histórico) e `tests/privacy/provider_test.php` (execução
 `api` exportada e anonimizada).
 
+Depois da revisão de código (10 achados corrigidos: trava única da fila compartilhada com os lotes, leitura única da
+fila de tarefas por pedido, pendente sem releitura, `format=json` sem cálculo de desatualização, limite e regra por
+origem sem duplicação, teste de `busy` sem espera): **OK (243 testes, 3631 asserções)** no 4.5, Behat 13/13, PHPCS
+limpo.
+
 ## Atualização 0.5.3 → 0.6.0 no site s4
 
 `admin/cli/upgrade.php` criou a configuração `local_mooc_audit/api_max_pending`, a capacidade sem papel e o serviço

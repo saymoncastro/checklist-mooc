@@ -39,6 +39,11 @@ continuam como descritos. Divergências registradas e tratadas:
    lotes. `audit_course::authorised()` recusa a conta suspensa e o teste confere isso diretamente.
 10. As travas consultivas do PostgreSQL são reentrantes na mesma conexão: o teste de `busy` usa
     `db_record_lock_factory` para segurar a trava do pedido dentro do próprio teste.
+11. Revisão de código (2026-10-30): a trava por sala `request_course_<id>` não protegia contra um lote criado ao mesmo
+    tempo (o lote não a tomava e grava dentro de uma transação). Ficou uma trava única da fila
+    (`recorder::QUEUE_LOCK`, espera de 5 s) tomada pelo pedido da API e pela criação e reexecução de lotes, liberada
+    depois do commit. Pedidos da API passam um de cada vez, o que custa milissegundos; durante a criação de um lote
+    grande eles podem responder `busy`.
 
 ## R2 — Mecanismo: Web Services nativos do Moodle 4.5
 

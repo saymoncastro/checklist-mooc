@@ -97,12 +97,9 @@ if ($action === 'run') {
 }
 
 // Read-only from here: the last recorded audit (complete or partial) and, when newer, the last failed attempt.
-// The page does not show the pending run: no need to read the task queue.
-$latest = latest::for_course($course, null, false);
-$run = $latest['valid'];
-$report = $run ? run_store::json($run, 'report') : null;
-
 if ($format === 'json') {
+    $run = run_store::latest_valid((int) $course->id);
+    $report = $run ? run_store::json($run, 'report') : null;
     @header('Content-Type: application/json; charset=utf-8');
     if (!$report) {
         http_response_code(404);
@@ -115,6 +112,10 @@ if ($format === 'json') {
     exit;
 }
 
+// The page does not show the pending run: no need to read the task queue.
+$latest = latest::for_course($course, null, false);
+$run = $latest['valid'];
+$report = $run ? run_store::json($run, 'report') : null;
 $renderer = $PAGE->get_renderer('local_mooc_audit');
 $runurl = new moodle_url($url, ['action' => 'run']);
 echo $OUTPUT->header();

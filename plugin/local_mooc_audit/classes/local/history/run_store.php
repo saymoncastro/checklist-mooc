@@ -181,9 +181,10 @@ class run_store {
      *
      * @param int[] $courseids
      * @param int|null $now
+     * @param array|null $tasked runs that have a task (tasked_runs()), when the caller already read them
      * @return \stdClass[] courseid => oldest alive run of the course
      */
-    public static function alive_pending(array $courseids, ?int $now = null): array {
+    public static function alive_pending(array $courseids, ?int $now = null, ?array $tasked = null): array {
         global $DB;
         if (!$courseids) {
             return [];
@@ -195,12 +196,12 @@ class run_store {
             "courseid $cin AND status IN (:queued, :running)",
             $params,
             'id ASC',
-            'id, courseid, batchid, status, timecreated, timestarted'
+            'id, courseid, batchid, origin, status, timecreated, timestarted'
         );
         if (!$runs) {
             return [];
         }
-        $alive = self::alive($runs, $now);
+        $alive = self::alive($runs, $now, $tasked);
         $out = [];
         foreach ($alive as $run) {
             if (!isset($out[(int) $run->courseid])) {
@@ -211,13 +212,11 @@ class run_store {
     }
 
     /**
-     * The alive runs among queued or running ones (see alive_pending()).
+     * Runs that still have their background task in the queue.
      *
-     * @param \stdClass[] $runs runs with id, status and timestarted
-     * @param int|null $now
-     * @return \stdClass[] the alive runs, in the given order
+     * @return array run id => true
      */
-    protected static function alive(array $runs, ?int $now = null): array {
+    public static function tasked_runs(): array {
         global $DB;
         $tasked = [];
         $tasks = $DB->get_records(
@@ -232,6 +231,19 @@ class run_store {
                 $tasked[(int) $data->runid] = true;
             }
         }
+        return $tasked;
+    }
+
+    /**
+     * The alive runs among queued or running ones (see alive_pending()).
+     *
+     * @param \stdClass[] $runs runs with id, status and timestarted
+     * @param int|null $now
+     * @param array|null $tasked tasked_runs(), read here when null
+     * @return \stdClass[] the alive runs, in the given order
+     */
+    protected static function alive(array $runs, ?int $now = null, ?array $tasked = null): array {
+        $tasked = $tasked ?? self::tasked_runs();
         $limit = ($now ?? time()) - self::STALE_RUNNING;
         return array_filter($runs, fn($run) => $run->status === self::QUEUED ? isset($tasked[(int) $run->id])
             : (int) $run->timestarted > $limit);
@@ -243,9 +255,15 @@ class run_store {
      * @param int $userid
      * @param string $origin ORIGIN_*
      * @param int|null $now
+     * @param array|null $tasked tasked_runs(), when the caller already read them
      * @return int
      */
-    public static function count_alive_pending_by_origin(int $userid, string $origin, ?int $now = null): int {
+    public static function count_alive_pending_by_origin(
+        int $userid,
+        string $origin,
+        ?int $now = null,
+        ?array $tasked = null
+    ): int {
         global $DB;
         $runs = $DB->get_records_select(
             self::TABLE,
@@ -254,7 +272,7 @@ class run_store {
             'id ASC',
             'id, status, timestarted'
         );
-        return $runs ? count(self::alive($runs, $now)) : 0;
+        return $runs ? count(self::alive($runs, $now, $tasked)) : 0;
     }
 
     /**
@@ -262,10 +280,11 @@ class run_store {
      *
      * @param int $courseid
      * @param int|null $now
+     * @param array|null $tasked tasked_runs(), when the caller already read them
      * @return \stdClass|null
      */
-    public static function reusable_pending(int $courseid, ?int $now = null): ?\stdClass {
-        return self::alive_pending([$courseid], $now)[$courseid] ?? null;
+    public static function reusable_pending(int $courseid, ?int $now = null, ?array $tasked = null): ?\stdClass {
+        return self::alive_pending([$courseid], $now, $tasked)[$courseid] ?? null;
     }
 
     /**

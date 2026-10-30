@@ -24,7 +24,6 @@ use core_external\external_value;
 use local_mooc_audit\local\api\run_view;
 use local_mooc_audit\local\api\service;
 use local_mooc_audit\local\history\latest;
-use local_mooc_audit\local\history\run_store;
 
 /**
  * Result of the last recorded audit of a course (specs/004 US1), the same as the audit page shows: nothing is run nor
@@ -73,7 +72,7 @@ class get_latest_audit extends external_api {
                 'errors' => run_view::export($failure, false, false)['errors']];
         }
         if ($latest['pending']) {
-            $pending = run_store::get((int) $latest['pending']->id);
+            $pending = $latest['pending'];
             $out['pending'] = ['id' => (int) $pending->id, 'status' => $pending->status, 'origin' => $pending->origin,
                 'timecreated' => (int) $pending->timecreated];
         }
@@ -86,11 +85,11 @@ class get_latest_audit extends external_api {
      * @return external_single_structure
      */
     public static function execute_returns(): external_single_structure {
-        $errors = run_view::structure()->keys['errors'];
+        $run = run_view::structure();
         return new external_single_structure([
             'api_version' => new external_value(PARAM_TEXT, 'API version'),
             'found' => new external_value(PARAM_BOOL, 'The course has a recorded audit with a report'),
-            'run' => new external_single_structure(run_view::structure()->keys, 'Last recorded audit', VALUE_OPTIONAL),
+            'run' => new external_single_structure($run->keys, 'Last recorded audit', VALUE_OPTIONAL),
             'stale_reasons' => new external_multiple_structure(
                 new external_value(PARAM_ALPHAEXT, 'course_changed, age, policy_changed or plugin_changed'),
                 'Why the result may be outdated (never the current conformity)',
@@ -99,7 +98,7 @@ class get_latest_audit extends external_api {
             'last_failure' => new external_single_structure([
                 'id' => new external_value(PARAM_INT, 'Failed run'),
                 'timefinished' => new external_value(PARAM_INT, 'End time'),
-                'errors' => $errors,
+                'errors' => $run->keys['errors'],
             ], 'Failed run newer than the last recorded audit', VALUE_OPTIONAL),
             'pending' => new external_single_structure([
                 'id' => new external_value(PARAM_INT, 'Run id'),

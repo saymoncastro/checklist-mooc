@@ -80,7 +80,7 @@ final class service_test extends \local_mooc_audit\tests\api_testcase {
     }
 
     /**
-     * Another request of the same course holds the lock: busy, nothing created.
+     * Another request (API or batch) holds the queue lock: busy, nothing created.
      */
     public function test_busy(): void {
         global $CFG, $DB;
@@ -88,15 +88,16 @@ final class service_test extends \local_mooc_audit\tests\api_testcase {
         // Advisory locks of PostgreSQL are re-entrant within one connection: use row locks to hold one in the test.
         $CFG->lock_factory = '\\core\\lock\\db_record_lock_factory';
         $course = $this->getDataGenerator()->create_course();
-        $lock = \core\lock\lock_config::get_lock_factory('local_mooc_audit')->get_lock('request_course_' . $course->id, 0);
-        $this->assertNotFalse($lock);
+        $lock = recorder::queue_lock(0);
         $before = $DB->count_records(run_store::TABLE);
         try {
-            $this->assertSame('busy', $this->error_of(fn() => service::request((int) $course->id, 2)));
+            $this->assertSame('busy', $this->error_of(fn() => service::request((int) $course->id, 2, 0)));
         } finally {
             $lock->release();
         }
         $this->assertSame($before, $DB->count_records(run_store::TABLE));
-        $this->assertFalse(service::request((int) $course->id, 2)['reused']);
+        $first = service::request((int) $course->id, 2, 0);
+        $this->assertFalse($first['reused']);
+        $this->assertSame(run_store::ORIGIN_API, run_store::reusable_pending((int) $course->id)->origin);
     }
 }

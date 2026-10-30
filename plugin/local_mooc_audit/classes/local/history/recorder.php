@@ -37,6 +37,28 @@ class recorder {
     /** @var int Longest error message kept in a run. */
     const MAX_MESSAGE = 1000;
 
+    /** @var string Lock held by whatever queues runs (external API requests, batches), so that a course never gets two
+     * pending runs from simultaneous requests. Distinct from the course_<id> lock the task holds while auditing. */
+    const QUEUE_LOCK = 'queue';
+
+    /** @var int Seconds a request waits for the queue lock. */
+    const QUEUE_LOCK_WAIT = 5;
+
+    /**
+     * Take the queue lock; release it after the queued runs are committed.
+     *
+     * @param int $wait seconds to wait
+     * @return \core\lock\lock
+     * @throws \moodle_exception busy when another request holds it
+     */
+    public static function queue_lock(int $wait = self::QUEUE_LOCK_WAIT): \core\lock\lock {
+        $lock = \core\lock\lock_config::get_lock_factory('local_mooc_audit')->get_lock(self::QUEUE_LOCK, $wait);
+        if (!$lock) {
+            throw new \moodle_exception('busy', 'local_mooc_audit');
+        }
+        return $lock;
+    }
+
     /**
      * Audit a course now and record the run (audit page, CLI).
      *
