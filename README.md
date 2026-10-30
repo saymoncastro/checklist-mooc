@@ -26,7 +26,7 @@ Catálogo completo: [docs/guia-do-usuario.md](docs/guia-do-usuario.md).
 
 ## Situação
 
-- **Versão 0.6.1, maturidade ALPHA.** Estágio: *plugin instalável para homologação* — instalado a partir do ZIP em
+- **Versão 0.7.0, maturidade ALPHA.** Estágio: *plugin instalável para homologação* — instalado a partir do ZIP em
   Moodle 4.5 e 5.3 limpos, sem avisos com depuração de desenvolvedor, e usado de ponta a ponta por um perfil de professor
   editor ([relatório de prontidão](docs/prontidao-distribuicao/README.md)). Ainda não foi usado em produção nem
   homologado com usuários externos.
@@ -56,16 +56,18 @@ Instalação manual, atualização, desinstalação e permissões: [docs/instala
 ## Primeira auditoria
 
 Abra a sala, *Mais > Auditoria técnica*, clique em *Executar auditoria* e leia a *Situação geral* e as
-*Inconformidades* por gravidade. Cada linha traz o local (com link para a configuração a mudar), a evidência e a
-orientação. Corrija no Moodle e use *Executar novamente*. Passo a passo e interpretação dos estados:
+*Inconformidades* por gravidade. Cada linha diz o problema com o nome da atividade, por que importa, como corrigir,
+quem pode e como confirmar, com links que abrem a seção certa do formulário do Moodle. Corrija e use *Executar
+novamente*. Passo a passo e interpretação dos estados:
 [docs/guia-do-usuario.md](docs/guia-do-usuario.md).
 
-![Relatório da auditoria técnica no Moodle 4.5](docs/prontidao-distribuicao/capturas/10-relatorio-inconformidades.jpg)
+![Relatório da auditoria técnica no Moodle 4.5](docs/capturas/relatorio-o-que-fazer.jpg)
 
 ## Limitações conhecidas
 
 - Política e nomes canônicos de atividades específicos do Cefor/Ifes (decisão institucional 10 ainda pendente).
-- Textos de evidência das regras gerados em português mesmo com a interface em inglês.
+- A evidência técnica gravada (nos *Detalhes técnicos*) continua em português; o restante do relatório segue o idioma
+  de quem lê.
 - Correção pelo plugin só para questionários; demais problemas apontam a página do Moodle onde se corrige.
 - Não detecta problemas que só existem no arquivo de backup (`.mbz`) antes da restauração.
 

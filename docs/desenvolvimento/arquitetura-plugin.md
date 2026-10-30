@@ -194,7 +194,7 @@ Scripts **apenas para ambientes de teste** (recusam rodar se o host não for loc
 gerador de questões do núcleo carrega classes do PHPUnit) e `cli/make_import.php` (cria sala vazia e importa com o
 mecanismo nativo `core_course_external::import_course`).
 
-## Estrutura (0.6.0)
+## Estrutura (0.7.0)
 
 | Arquivo | Papel |
 |---|---|
@@ -218,6 +218,7 @@ mecanismo nativo `core_course_external::import_course`).
 | `lib.php` | Callback `local_mooc_audit_extend_navigation_course()`: entrada "Auditoria técnica" no menu do curso para quem tem a capacidade |
 | `index.php` | Página da auditoria no contexto do curso (`courseid` ou `id`): GET mostra o resultado da última auditoria guardada (`format=json` idem); POST `action=run` executa e registra; local de cada resultado é link para a página de correção quando existe; sem id, formulário de compatibilidade |
 | `classes/output/report.php`, `renderer.php`, `templates/report*.mustache` | Dados do relatório para o template (agrupamento por gravidade → categoria, listas de alertas, não verificados, erros, conformes, avisos) e renderização |
+| `classes/local/presentation/{catalog,finding}.php` (0.7.0, spec 006) | O que o relatório diz e oferece para cada verificação: variante por `regra + check` (lida da chave de ocorrência), responsável, ações para a seção certa do formulário (`showonly`), precedências e plugins exigidos; textos em `lang/` (`msg_*`), montados ao exibir com os nomes atuais, a política da execução e as permissões de quem vê. Não altera nenhum resultado |
 | `tests/generator/lib.php` | Gerador de componente: cursos A (conforme) e B (inconsistente), usado pelo PHPUnit e por `cli/make_fixtures.php` |
 | `tests/characterization_test.php` + `tests/fixtures/expected_*.json` | Estados por regra dos cursos A/B congelados (proteção contra mudança de comportamento) |
 | `tests/engine_test.php` | Motor, contrato, política, isolamento de regra com exceção (regra injetada), conclusão desabilitada no site, locus de importação, saída texto do CLI |

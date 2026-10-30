@@ -14,8 +14,8 @@ ainda: os resultados abaixo são preenchidos pela equipe do Cefor depois das ses
 
 ## Fase 0 — o que fazer, em ordem
 
-A fase 0 da Spec 006 é esta linha de base. Nenhuma mudança perceptível da interface pode chegar ao site de sessão antes
-dela.
+A fase 0 da Spec 006 é esta linha de base. Ela corre em paralelo à implementação: o site de sessão está congelado no
+ZIP 0.6.1 e nenhuma mudança das fases 1–3 chega a ele. É exigida antes da homologação.
 
 | # | Quem | O quê | Evidência a registrar |
 |---|---|---|---|

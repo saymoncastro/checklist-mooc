@@ -677,9 +677,9 @@ plano, em vez de criar uma spec nova. A revisão foi registrada em `specs/006-ex
 | **4. Correções de regra** | Lista da seção 14.3, uma a uma, cada uma com decisão registrada | **Sim** | Caracterização regravada e revisada; teste por regra | Médio; exige aprovação do Cefor |
 
 Ordem: 0 → 1 → 2 → 3 → 4. Estima‑se que a fase 1 sozinha leve até 23 das 29 regras ao nível
-"globalmente consistente" (seção 16, pergunta 3); a estimativa é conferida na implementação, regra por regra. A linha de base com pessoas (FR‑029, com T6 e T7) deve ocorrer **antes de qualquer mudança perceptível**,
-inclusive a fase 1, no ambiente de referência fixado no roteiro (Auditor 0.6.1, Moodle 4.5, `mod_simplecertificate`,
-`mod_game` e `block_completion_progress`); a avaliação final repete o mesmo ambiente, mudando só o Auditor.
+"globalmente consistente" (seção 16, pergunta 3); a estimativa é conferida na implementação, regra por regra. A linha de base com pessoas (FR‑029, com T6 e T7) é medida no site de sessão congelado em 0.6.1 e corre em
+paralelo à implementação; é exigida antes da homologação (decisão de 2026-10-30, Spec 006). A avaliação final repete o
+mesmo ambiente, mudando só o Auditor.
 
 ---
 

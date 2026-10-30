@@ -27,7 +27,7 @@
     * counts_status[] - objects with label, count, cssclass; counts_severity[] - objects with label, count; rules_total
     * nonconformities, warnings - objects with count, has and groups[] (label, count, categories[] with title and items[])
     * unverifiable - object with has, hasnv, nv[], hasna, na[]; errors[], haserrors; conformant[], hasconformant
-    * notices - object with has, policy[], collection[]
+    * notices - object with has, policy[], collection[]; missingplugins (optional text: plugins the policy depends on that the site lacks)
 
     Example context (json):
     {
@@ -68,6 +68,7 @@
         </div>
     </div>
 
+    {{#missingplugins}}<div class="alert alert-warning local_mooc_audit-missingplugins" role="status">{{missingplugins}}</div>{{/missingplugins}}
     <h4>{{#str}} label_inventory, local_mooc_audit {{/str}}</h4>
     <div class="table-responsive">
     <table class="table table-sm table-bordered w-auto local_mooc_audit-inventory">
@@ -123,7 +124,7 @@
         <div class="table-responsive">
         <table class="table table-sm table-striped">
             <thead><tr><th scope="col">{{#str}} label_rule, local_mooc_audit {{/str}}</th><th scope="col">{{#str}} label_local, local_mooc_audit {{/str}}</th><th scope="col">{{#str}} label_reason, local_mooc_audit {{/str}}</th></tr></thead>
-            <tbody>{{#unverifiable.nv}}<tr><td><strong>{{rule}}</strong> {{title}}</td><td>{{#haslink}}<a href="{{link}}" title="{{linktitle}}">{{local}}</a>{{/haslink}}{{^haslink}}{{local}}{{/haslink}}</td><td>{{evidencia}}</td></tr>{{/unverifiable.nv}}</tbody>
+            <tbody>{{#unverifiable.nv}}<tr><td>{{#presented}}<strong>{{problem}}</strong><br><small class="text-muted">{{rule}} · {{title}}</small>{{/presented}}{{^presented}}<strong>{{rule}}</strong> {{title}}{{/presented}}</td><td>{{#haslink}}<a href="{{link}}" title="{{linktitle}}">{{local}}</a>{{/haslink}}{{^haslink}}{{local}}{{/haslink}}</td><td>{{#presented}}{{why}} {{fix}}{{#hasactions}}<ul class="list-unstyled mb-0">{{#actions}}<li><a href="{{url}}">{{label}}</a></li>{{/actions}}</ul>{{/hasactions}}<details class="small"><summary>{{#str}} label_technical, local_mooc_audit {{/str}}</summary>{{evidencia}}</details>{{/presented}}{{^presented}}{{evidencia}}{{/presented}}</td></tr>{{/unverifiable.nv}}</tbody>
         </table>
         </div>
     {{/unverifiable.hasnv}}

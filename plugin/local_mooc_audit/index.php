@@ -138,6 +138,16 @@ if (!$run) {
     $withcorrections = has_capability('local/mooc_audit:preparecorrection', $context);
     $compareurl = has_capability('local/mooc_audit:compare', $context)
         ? new moodle_url('/local/mooc_audit/compare.php', ['target' => $course->id]) : null;
-    echo $renderer->render(new \local_mooc_audit\output\report($report, $url, $withcorrections, $compareurl));
+    // Texts are built at display time with the policy the run applied (specs/006, research R2).
+    $stored = $run->policyid ? \local_mooc_audit\local\history\policy_store::get((int) $run->policyid) : null;
+    $runpolicy = $stored ? json_decode((string) $stored->policy, true) : null;
+    echo $renderer->render(new \local_mooc_audit\output\report(
+        $report,
+        $url,
+        $withcorrections,
+        $compareurl,
+        null,
+        is_array($runpolicy) ? $runpolicy : null
+    ));
 }
 echo $OUTPUT->footer();

@@ -108,6 +108,9 @@ Decisões tomadas a partir da auditoria `docs/auditoria-ux-correcao/README.md` (
   `editsection.php`, que o próprio núcleo usa; âncoras não expandem a seção (verificado no 5.3).
 - Q: O relatório sugere qual dependência remover num ciclo, ou qual alternativa escolher no X‑DEP‑02? → A: não.
   Apresenta as alternativas com a pergunta pedagógica explícita e o link de cada uma.
+- Q: A implementação espera a linha de base com usuários? → A: não. O site de sessão está congelado no ZIP 0.6.1, então
+  a linha de base pode ser medida em paralelo; ela é exigida antes da homologação (FR‑029, FR‑030). Decisão do
+  responsável pelo projeto em 2026-10-30.
 - Q: Correções de regra encontradas na auditoria (U‑01, U‑05, U‑11, U‑13) entram nesta spec? → A: entram como fase 4,
   separada, com decisão registrada caso a caso; são a única exceção ao FR‑025. **[validar]** aprovação do Cefor.
 
@@ -442,10 +445,11 @@ que "Alcançabilidade do certificado" sem impedimento estático aparece em "Veri
 
 **Validação com usuários**
 
-- **FR-029**: Antes do plano e antes de qualquer mudança perceptível ao usuário (inclusive a fase 1), MUST ser
-  registrada uma linha de base da interface atual com o roteiro de `validacao/roteiro-linha-de-base.md` (tarefas T1–T7
-  e métricas, derivado do Relatório B §8), com participantes reais, no ambiente de referência fixado nesse roteiro; a
-  especificação MUST ser revista se a linha de base contrariar alguma das hipóteses.
+- **FR-029**: Antes da homologação, MUST ser registrada uma linha de base da interface 0.6.1 com o roteiro de
+  `validacao/roteiro-linha-de-base.md` (tarefas T1–T7 e métricas, derivado do Relatório B §8), com participantes reais,
+  no site de sessão congelado nesse roteiro (ZIP de `main` 0c1035f, somente leitura). A implementação pode avançar em
+  paralelo, porque nenhuma mudança chega a esse site; a especificação MUST ser revista se a linha de base contrariar
+  alguma das hipóteses já implementadas.
 - **FR-030**: Antes da homologação, a nova interface MUST ser avaliada com o mesmo roteiro, os mesmos critérios e o
   mesmo ambiente de referência (mudando só a versão do Auditor), e os
   resultados MUST ser registrados com os da linha de base.
@@ -558,10 +562,11 @@ sem participantes.
 
 ## Fases de implementação (revisão 2026-10-30)
 
-0. **Linha de base com usuários** (FR‑029, roteiro T1–T7) no ambiente de referência do roteiro
-   (`validacao/roteiro-linha-de-base.md`: Auditor 0.6.1, Moodle 4.5, plugins de terceiros obrigatórios). **Nenhuma fase
-   perceptível ao usuário — inclusive a 1 — chega a um ambiente de sessão antes dela.** O trabalho interno que não muda
-   o que se vê (plano, testes, catálogo de mensagens ainda não ligado à tela) pode correr em paralelo.
+0. **Linha de base com usuários** (FR‑029, roteiro T1–T7) no site de sessão congelado em 0.6.1
+   (`validacao/roteiro-linha-de-base.md`). Corre **em paralelo** às fases 1–3: o site monta o ZIP de `main` 0c1035f
+   somente leitura, e nenhuma mudança das fases chega a ele. É exigida antes da homologação (FR‑030), não antes da
+   implementação. *Decisão de 2026-10-30, a pedido do responsável pelo projeto: o diagnóstico já demonstra que a
+   interface atual não atende; esperar as sessões para começar só atrasaria a entrega.*
 1. **Textos e links** (FR‑031 a FR‑037, FR‑039, FR‑042): mensagens por verificação, nomes, rotas nativas, precedências,
    responsável, plugin ausente. Não muda resultados.
 2. **Estrutura do relatório** (FR‑001 a FR‑023, FR‑038, FR‑040, FR‑041): resumo, "Comece por aqui", visões, verificações

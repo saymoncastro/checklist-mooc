@@ -148,7 +148,8 @@ $reporthtml = $report ? $renderer->render(new \local_mooc_audit\output\report(
     $runurl,
     false,
     null,
-    new moodle_url($runurl, ['format' => 'json'])
+    new moodle_url($runurl, ['format' => 'json']),
+    $policy && is_array($runpolicy = json_decode((string) $policy->policy, true)) ? $runpolicy : null
 )) : '';
 
 echo $OUTPUT->header();
