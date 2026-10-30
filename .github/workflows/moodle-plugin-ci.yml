@@ -1,4 +1,6 @@
 # Continuous integration of the local_mooc_audit plugin (plugin/local_mooc_audit) with moodlehq/moodle-plugin-ci.
+# The checks run on the installable ZIP built by tools/package-plugin.sh (the same package an administrator installs),
+# which is kept as a workflow artifact.
 # Same platform as the laboratory (moodle-env/README.md): Moodle 4.5, PHP 8.3, PostgreSQL. The third-party plugins
 # used by the test fixtures (certificate, game, completion progress block) are installed from their public repositories.
 name: Moodle Plugin CI
@@ -7,10 +9,12 @@ on:
   push:
     paths:
       - 'plugin/local_mooc_audit/**'
+      - 'tools/package-plugin.sh'
       - '.github/workflows/moodle-plugin-ci.yml'
   pull_request:
     paths:
       - 'plugin/local_mooc_audit/**'
+      - 'tools/package-plugin.sh'
       - '.github/workflows/moodle-plugin-ci.yml'
 
 jobs:
@@ -41,6 +45,20 @@ jobs:
         with:
           path: repo
 
+      - name: Build the installable ZIP
+        run: |
+          cd repo
+          tools/package-plugin.sh HEAD ../dist
+          cd ..
+          mkdir pkg && unzip -q dist/local_mooc_audit-*.zip -d pkg
+
+      - name: Keep the ZIP as an artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: local_mooc_audit-zip
+          path: dist/
+          if-no-files-found: error
+
       - name: Setup PHP ${{ matrix.php }}
         uses: shivammathur/setup-php@v2
         with:
@@ -64,7 +82,7 @@ jobs:
           # its master branch only has a README.
           moodle-plugin-ci add-plugin --branch MOODLE_20_STABLE bdaloukas/moodle-mod_game
           moodle-plugin-ci add-plugin --branch master deraadt/moodle-block_completion_progress
-          moodle-plugin-ci install --plugin ./repo/plugin/local_mooc_audit --db-host=127.0.0.1
+          moodle-plugin-ci install --plugin ./pkg/mooc_audit --db-host=127.0.0.1
         env:
           DB: ${{ matrix.database }}
           MOODLE_BRANCH: ${{ matrix.moodle-branch }}

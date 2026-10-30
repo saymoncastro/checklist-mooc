@@ -77,7 +77,7 @@ final class recorder_test extends \advanced_testcase {
         $this->assertNull($run->evolution);
         $this->assertNotEmpty($run->timestarted);
         $this->assertNotEmpty($run->timefinished);
-        $this->assertStringStartsWith('0.5.0 (', $run->pluginversion);
+        $this->assertStringStartsWith(\local_mooc_audit\engine::VERSION . ' (', $run->pluginversion);
         $stored = run_store::json($run, 'report');
         $this->assertSame($report['results'], $stored['results']);
         $this->assertArrayNotHasKey('snapshot', $stored);

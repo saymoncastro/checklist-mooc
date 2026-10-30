@@ -1,79 +1,99 @@
-# checklist-mooc — Auditor MOOC: auditoria técnica de cursos MOOC no Moodle (4.5 e 5.3)
+# Auditor MOOC — plugin Moodle `local_mooc_audit`
 
-Projeto do **Auditor MOOC**: plugin local Moodle (`local_mooc_audit`) que audita salas de cursos MOOC do Cefor/Ifes,
-identifica inconformidades técnicas e gera relatório com orientações de correção, para apoiar o processo anual de
-reoferta. Começou como investigação de viabilidade sobre backups `.mbz`, evoluiu para uma prova de conceito executável
-dentro do Moodle 4.5 e agora é conduzido por especificações (Spec-Driven Development).
+Plugin local do Moodle que **audita salas de cursos antes de uma nova oferta**: verifica 29 regras (datas, inscrição,
+conclusão e restrições de acesso, livro de notas, questionários, certificado, recursos institucionais, arquivos e
+imagens perdidos, conteúdo vazio ou oculto) e mostra um relatório com o local de cada problema, a evidência e o que
+corrigir. Foi criado para a reoferta anual dos cursos MOOC do Cefor/Ifes, em que cada sala é reimportada e precisa ser
+conferida de novo.
 
-## Conteúdo
+*English: the distributable plugin and its documentation for administrators are in
+[plugin/local_mooc_audit/README.md](plugin/local_mooc_audit/README.md).*
 
-| Caminho | Descrição |
+## O que o plugin faz
+
+| Funcionalidade | Onde fica no Moodle | Quem usa (papéis padrão) |
+|---|---|---|
+| **Auditoria técnica** de uma sala: executar, ler o último resultado, exportar JSON | Curso > Mais > *Auditoria técnica* | gerente, professor editor |
+| **Correção assistida** de tentativas (CL-13) e encerramento (CL-14) de questionários, com prévia, simulação e trilha | link *Ver proposta de correção* no relatório | gerente, professor editor |
+| **Histórico** e evolução entre auditorias (problemas novos, persistentes, resolvidos) | link *Histórico de auditorias* | gerente, professor editor |
+| **Comparação entre ofertas** (oferta anterior × nova oferta) | Administração do site > Cursos > *Comparar ofertas* | gerente |
+| **Painel de acompanhamento** e **auditoria em lote** em segundo plano | Administração do site > Cursos > *Acompanhamento das auditorias* | gerente |
+| **Linha de comando** (auditoria, lote, comparação) | `local/mooc_audit/cli/` | administrador do servidor |
+| **API por Web Services** (pedir auditoria, acompanhar, ler resultado); serviço vem desabilitado | Administração do site > Servidor > Serviços web | conta de integração |
+
+A auditoria é **somente leitura**. Só a correção assistida escreve, e apenas depois de prévia e confirmação explícita.
+Catálogo completo: [docs/guia-do-usuario.md](docs/guia-do-usuario.md).
+
+## Situação
+
+- **Versão 0.6.1, maturidade ALPHA.** Estágio: *plugin instalável para homologação* — instalado a partir do ZIP em
+  Moodle 4.5 e 5.3 limpos, sem avisos com depuração de desenvolvedor, e usado de ponta a ponta por um perfil de professor
+  editor ([relatório de prontidão](docs/prontidao-distribuicao/README.md)). Ainda não foi usado em produção nem
+  homologado com usuários externos.
+- **Política institucional embutida:** os padrões (datas 01/01–31/12, categoria "Inscrições Abertas", fórum "Espaço de
+  interação", certificado `mod_simplecertificate`, bloco Progresso de Conclusão) são os do Cefor/Ifes. Em outro site,
+  ajuste a política na administração do plugin antes de confiar nos resultados.
+
+| | Testado | Observação |
+|---|---|---|
+| Moodle | 4.5 (4.5.15) e 5.3 (5.3+, build 20261030) | outras versões não testadas |
+| PHP / banco | PHP 8.3, PostgreSQL 17 | MySQL/MariaDB ainda não testados |
+| Plugins adicionais | nenhum obrigatório | lê `mod_simplecertificate`, `mod_game`, `mod_hvp` e `block_completion_progress` quando existem |
+| Cron | necessário para lotes e pedidos pela API | a auditoria pela página roda na hora |
+
+## Instalação rápida
+
+1. **Obtenha o pacote** `local_mooc_audit-<versão>-<build>.zip`: ainda não há release publicada; gere-o com
+   `tools/package-plugin.sh` (a partir de um commit, sem arquivos de desenvolvimento) ou baixe o artefato
+   *local_mooc_audit-zip* da execução mais recente da CI. **Não** use o *Download ZIP* do GitHub: ele traz o projeto
+   inteiro e o Moodle não o reconhece como plugin.
+2. *Administração do site > Plugins > Instalar plugins* → enviar o ZIP → *Instalar plugin do arquivo ZIP* →
+   *Continuar* → *Atualizar banco de dados do Moodle agora*.
+3. Revise a política em *Administração do site > Plugins > Plugins locais > Auditoria MOOC*.
+
+Instalação manual, atualização, desinstalação e permissões: [docs/instalacao.md](docs/instalacao.md).
+
+## Primeira auditoria
+
+Abra a sala, *Mais > Auditoria técnica*, clique em *Executar auditoria* e leia a *Situação geral* e as
+*Inconformidades* por gravidade. Cada linha traz o local (com link para a configuração a mudar), a evidência e a
+orientação. Corrija no Moodle e use *Executar novamente*. Passo a passo e interpretação dos estados:
+[docs/guia-do-usuario.md](docs/guia-do-usuario.md).
+
+![Relatório da auditoria técnica no Moodle 4.5](docs/prontidao-distribuicao/capturas/10-relatorio-inconformidades.jpg)
+
+## Limitações conhecidas
+
+- Política e nomes canônicos de atividades específicos do Cefor/Ifes (decisão institucional 10 ainda pendente).
+- Textos de evidência das regras gerados em português mesmo com a interface em inglês.
+- Correção pelo plugin só para questionários; demais problemas apontam a página do Moodle onde se corrige.
+- Não detecta problemas que só existem no arquivo de backup (`.mbz`) antes da restauração.
+
+## Documentação
+
+| Para | Documento |
 |---|---|
-| `RELATORIO-INVESTIGACAO-AUDITORIA-MOOC.md` | Relatório completo: engenharia reversa do formato MBZ, matriz dos 29 itens do checklist, catálogo de regras adicionais, achados nos backups reais, comparação arquitetural, MVP, arquitetura e roadmap |
-| `DECISOES-INSTITUCIONAIS-CHECKLIST.md` | As 10 ambiguidades do checklist como decisões institucionais, com as respostas registradas |
-| `RELATORIO-AUDITORIA-VIA-API-MOODLE.md` | Investigação complementar: auditar a sala restaurada via Web Services do Moodle 4.5 — inventário de funções, matriz de cobertura regra a regra, lacunas, verificações só possíveis na sala ativa, decisão arquitetural (motor único com adaptadores MBZ e API) |
-| `RELATORIO-POC-PLUGIN-MOODLE.md` | **Prova de conceito executada**: plugin `local_mooc_audit` em Moodle 4.5.15 local, cursos de teste A/B, importação nativa, comparação com o auditor MBZ e decisão arquitetural (plugin autônomo recomendado) |
-| `plugin/local_mooc_audit/` | Plugin local Moodle (0.5.3, Moodle 4.5 e 5.3: 29 regras, relatório, correção assistida, comparação entre ofertas, histórico, lote e painel; PHPUnit e Behat) — ver seu `README.md` |
-| `plugin-results/` | Saídas das auditorias (cursos restaurados 55/670, cursos A/B, importações, comparações, PHPUnit, captura de tela) |
-| `moodle-env/` | Instruções e scripts reproduzíveis do ambiente Moodle local (moodle-docker, plugins de terceiros, restauração) |
-| `poc/moodle_api_client.py` | Cliente REST isolado e somente leitura (allowlist de funções) para a prova comparativa via Web Services, não executado |
-| `poc/plano-prova-comparativa-api.md` | Plano da prova MBZ × API em homologação (14 regras, capacidades, critérios) |
-| `poc/mbz_inspect.py` | Protótipo somente-leitura (Python, só biblioteca padrão) que extrai o `.mbz` com segurança, normaliza os XML e executa 51 regras |
-| `poc/resultados/` | Saídas do protótipo (texto e JSON) para os três backups examinados |
-| `poc/README.md` | Uso e limitações do protótipo |
-| `.specify/memory/constitution.md` | **Constituição do projeto** (Spec-Driven Development com GitHub Spec Kit): 10 princípios, restrições, portões de qualidade |
-| `docs/baseline-poc.md` | Baseline técnico e funcional da PoC: capacidades com estado objetivo, cobertura de testes real, divergências documentação × código |
-| `docs/catalogo-regras.md` | Catálogo consolidado de regras (CL-*, X-*, ENV-*) com status de implementação, testes, risco de falso positivo e prioridade |
-| `docs/visao-produto.md` | Visão de produto do Auditor MOOC: usuários, 8 capacidades, experiência mínima, decisões pendentes |
-| `docs/backlog.md` | Backlog priorizado das especificações 001–005 |
-| `docs/relatorio-adocao-sdd.md` | Relatório executivo da adoção do SDD: riscos, decisões, recomendações |
-| `specs/001-auditoria-tecnica-operacional/` | **Especificação 001** (MVP): spec, plano, pesquisa, modelo de dados, contratos (JSON 1.0, CLI, página), quickstart, tarefas (105) e análise de consistência |
-| `specs/002-correcao-assistida/`, `specs/003-comparacao-ofertas/`, `specs/005-auditoria-lote-historico/` | Especificações implementadas da correção assistida, da comparação entre ofertas e do histórico/lote/painel |
-| `specs/004-api-externa/` | Especificação implementada da API externa (Web Services, plugin 0.6.0; guia em `plugin/local_mooc_audit/API.md`) |
-| `docs/revisao-geral/` | Revisão geral independente (2026-10-29): conformidade Moodle, UX e carga cognitiva, plano de estabilização e parecer |
+| Administrador Moodle | [docs/instalacao.md](docs/instalacao.md) · [plugin/local_mooc_audit/README.md](plugin/local_mooc_audit/README.md) (inglês) · [API.md](plugin/local_mooc_audit/API.md) |
+| Quem prepara a reoferta | [docs/guia-do-usuario.md](docs/guia-do-usuario.md) · [docs/catalogo-regras.md](docs/catalogo-regras.md) · [DECISOES-INSTITUCIONAIS-CHECKLIST.md](DECISOES-INSTITUCIONAIS-CHECKLIST.md) |
+| Desenvolvedor / avaliador | [docs/desenvolvimento/README.md](docs/desenvolvimento/README.md) · [arquitetura do plugin](docs/desenvolvimento/arquitetura-plugin.md) · [CHANGES.md](plugin/local_mooc_audit/CHANGES.md) |
+| Prontidão para distribuição | [docs/prontidao-distribuicao/README.md](docs/prontidao-distribuicao/README.md) |
+| Processo (SDD) | [constituição](.specify/memory/constitution.md) · [specs/](specs/) · [docs/backlog.md](docs/backlog.md) |
+| Histórico de engenharia | [docs/historico/](docs/historico/) · [docs/revisao-geral/](docs/revisao-geral/) · [plugin-results/](plugin-results/) · [poc/](poc/) |
 
-Os backups `.mbz` e a planilha do checklist **não** estão versionados (ver `.gitignore`): contêm conteúdo
-institucional e arquivos grandes. Coloque-os na raiz do projeto para reproduzir a análise.
+## Organização do repositório
 
-## Reproduzir
-
-```bash
-python3 -I poc/mbz_inspect.py caminho/do/backup.mbz --out resultado.json
+```
+plugin/local_mooc_audit/   código do plugin (é o que vai para o ZIP, como mooc_audit/)
+tools/package-plugin.sh    gera e confere o ZIP instalável
+docs/                      instalação, guia do usuário, desenvolvimento, prontidão, revisões e histórico
+specs/, .specify/          especificações e constituição do Spec-Driven Development (GitHub Spec Kit)
+moodle-env/                receitas dos ambientes Moodle de laboratório (Docker)
+plugin-results/, poc/      evidências por versão e protótipo Python que originou as regras
+DECISOES-INSTITUCIONAIS-CHECKLIST.md   decisões institucionais que definem a política padrão
 ```
 
-## Estado
+Os backups `.mbz` e a planilha do checklist têm conteúdo institucional e **não** são versionados.
 
-- **2026-10-28 (manhã):** investigação de viabilidade concluída; recomendação inicial de motor PHP/Laravel no MOOC
-  Admin (`RELATORIO-INVESTIGACAO-AUDITORIA-MOOC.md`) e investigação via Web Services
-  (`RELATORIO-AUDITORIA-VIA-API-MOODLE.md`). **Superadas** pela prova de conceito.
-- **2026-10-28 (PoC):** plugin autônomo `local_mooc_audit` executado em Moodle 4.5.15 local; **decisão arquitetural
-  vigente: plugin local Moodle com motor interno**, independente do MOOC Admin e de `.mbz`
-  (`RELATORIO-POC-PLUGIN-MOODLE.md`). O protótipo Python permanece como oráculo das regras.
-- **2026-10-28 (SDD):** adoção do GitHub Spec Kit; constituição v1.0.0; baseline, catálogo, visão de produto, backlog;
-  especificação 001 com plano, tarefas e análise (`docs/relatorio-adocao-sdd.md`).
-- **2026-10-29 (spec 001 implementada):** plugin 0.2.0 com as 29 regras em classes próprias e teste por regra, página
-  do relatório no menu do curso com links de correção e reexecução, contrato JSON 1.0 com schema, política ajustável
-  na administração. 75 testes PHPUnit, 2 cenários Behat com axe, PHPCS sem avisos; estados idênticos à PoC em A, B, 55
-  e 670 (`plugin-results/0.2.0/`). Pendências institucionais: decisão 10 (nomes canônicos), permissão de proponentes,
-  validação com bloco de site real.
-- **2026-10-29 (specs 002, 003 e 005):** correção assistida (0.3.0), comparação entre ofertas (0.4.0), histórico, lote
-  e painel (0.5.0); especificação 004 (API externa) aprovada como documento, sem implementação.
-- **2026-10-30 (revisão geral e estabilização):** revisão independente em `docs/revisao-geral/` (parecer: pronto para
-  homologação; nenhum P0). Etapas 1 e 2 do plano de estabilização (0.5.1 e 0.5.2): reauditoria pós-correção registrada,
-  desatualização só por mudança de regra, privacidade da trilha de salas removidas, guarda estrita dos scripts de
-  dados de teste, tabelas responsivas e ajustes de acessibilidade (`plugin-results/0.5.1/`, `plugin-results/0.5.2/`).
-- **2026-10-30 (Moodle 5.3):** plugin 0.5.3 testado no Moodle 5.3 LTS (PHPUnit, Behat com axe, auditorias A/B
-  idênticas às do 4.5); selos migrados para classes válidas nos Bootstraps 4 e 5 (`plugin-results/0.5.3/`).
-- **2026-10-30 (spec 004 implementada):** plugin 0.6.0 com a API externa: três funções de Web Services
-  (pedir auditoria, consultar execução, última auditoria), capacidade `local/mooc_audit:api` sem papel padrão, serviço
-  desabilitado e restrito; guia `plugin/local_mooc_audit/API.md` (`specs/004-api-externa/results.md`).
+## Licença
 
-## Fluxo de desenvolvimento (Spec Kit)
-
-Toda funcionalidade segue `/speckit-specify` → `/speckit-clarify` → `/speckit-plan` → `/speckit-tasks` →
-`/speckit-analyze` → implementação, sob a constituição em `.specify/memory/constitution.md`. Especificações vivem em
-`specs/NNN-nome/`. Testes PHPUnit do plugin rodam no ambiente de `moodle-env/`:
-
-```bash
-docker exec -i -w /var/www/html moocaudit-webserver-1 vendor/bin/phpunit local/mooc_audit/tests
-```
+GNU GPL v3 ou posterior ([LICENSE](LICENSE)). Copyright 2026 Cefor/Ifes.

@@ -17,3 +17,6 @@ __pycache__/
 
 # Ambiente Moodle local (código do Moodle + moodle-docker); não versionar
 moodle-local/
+
+# Pacotes gerados por tools/package-plugin.sh
+dist/
