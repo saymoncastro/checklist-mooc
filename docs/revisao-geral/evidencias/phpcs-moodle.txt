@@ -1,0 +1,1 @@
+PHPCS --standard=moodle: nenhum erro e nenhum aviso (relatório vazio = limpo). moodle-cs v3.7.0, 2026-10-29.

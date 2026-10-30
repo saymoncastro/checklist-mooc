@@ -1,0 +1,4 @@
+Página dashboard.php no navegador (site rv, admin, 10.002 cursos, 31.319 execuções; rodapé de desempenho do Moodle, perfdebug)
+- sem filtro (50 linhas exibidas de 10.002): 0,877 s no servidor; RAM 73,0 MB, pico 80,9 MB; 104 leituras de banco (0,24 s em consultas); HTML 25 kB
+- categoria "Escala 01" sem subcategorias (1.000 salas): 0,230 s; RAM 15,2 MB, pico 16,2 MB
+Data: 2026-10-30. Plugin 0.5.2 (ramo claude/estabilizacao-etapa-2), Moodle 4.5.15, PHP 8.3, PostgreSQL 17, contêiner local (Apple Silicon).

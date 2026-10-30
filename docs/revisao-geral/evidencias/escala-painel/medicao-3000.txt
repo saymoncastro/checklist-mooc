@@ -1,0 +1,29 @@
+Moodle 4.5.15 (Build: 20261005) · PHP 8.3.35 · cursos 3002 · execuções 9460 (válidas 9376)
+
+usuário               cenário                     linhas  build(s) render(s) leituras  pico MB  perm.(s)  runs(s)
+admin                  todas as salas                 3002     0.144     0.043       65     26.2     0.002    0.017  (1ª)
+admin                  todas as salas                 3002     0.125     0.007       11     21.5     0.007    0.017
+admin                  todas as salas                 3002     0.126     0.007       11     21.5     0.002    0.017
+admin                  uma subcategoria (~300)         300     0.019     0.010       54      2.2     0.002    0.018  (1ª)
+admin                  uma subcategoria (~300)         300     0.019     0.007       12      2.2     0.002    0.018
+admin                  uma subcategoria (~300)         300     0.019     0.007       12      2.2     0.002    0.018
+admin                  situação: com bloqueantes    1288     0.121     0.007       11     21.5     0.002    0.018  (1ª)
+admin                  situação: com bloqueantes    1288     0.123     0.007       11     21.5     0.002    0.019
+admin                  situação: com bloqueantes    1288     0.122     0.007       11     21.5     0.002    0.019
+admin                  busca por nome                  111     0.018     0.010       57      1.7     0.002    0.018  (1ª)
+admin                  busca por nome                  111     0.013     0.006       11      1.7     0.002    0.019
+admin                  busca por nome                  111     0.013     0.006       11      1.7     0.002    0.018
+gerente (não admin)   todas as salas                 3002     0.144     0.008       21     21.6     0.002    0.018  (1ª)
+gerente (não admin)   todas as salas                 3002     0.132     0.007       12     21.5     0.002    0.017
+gerente (não admin)   todas as salas                 3002     0.132     0.007       12     21.5     0.002    0.018
+gerente (não admin)   uma subcategoria (~300)         300     0.020     0.009       13      2.2     0.003    0.018  (1ª)
+gerente (não admin)   uma subcategoria (~300)         300     0.019     0.007       13      2.2     0.003    0.019
+gerente (não admin)   uma subcategoria (~300)         300     0.020     0.007       13      2.2     0.003    0.019
+gerente (não admin)   situação: com bloqueantes    1288     0.125     0.007       12     21.5     0.003    0.018  (1ª)
+gerente (não admin)   situação: com bloqueantes    1288     0.125     0.007       12     21.5     0.003    0.019
+gerente (não admin)   situação: com bloqueantes    1288     0.127     0.007       12     21.5     0.003    0.019
+gerente (não admin)   busca por nome                  111     0.013     0.006       12      1.7     0.003    0.019  (1ª)
+gerente (não admin)   busca por nome                  111     0.013     0.006       12      1.7     0.003    0.019
+gerente (não admin)   busca por nome                  111     0.013     0.006       12      1.7     0.003    0.019
+
+m_local_mooc_audit_run: 86.7 MB

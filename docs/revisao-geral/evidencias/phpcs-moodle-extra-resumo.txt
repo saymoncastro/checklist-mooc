@@ -1,0 +1,12 @@
+
+PHP CODE SNIFFER VIOLATION SOURCE SUMMARY
+----------------------------------------------------------------------
+STANDARD  CATEGORY            SNIFF                              COUNT
+----------------------------------------------------------------------
+PSR12     Properties          Constant visibility not found      414
+----------------------------------------------------------------------
+A TOTAL OF 414 SNIFF VIOLATIONS WERE FOUND IN 1 SOURCE
+----------------------------------------------------------------------
+
+Time: 2.17 secs; Memory: 26MB
+

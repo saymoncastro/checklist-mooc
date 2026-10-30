@@ -1,0 +1,19 @@
+functions=332  cc>10=60  cc>20=10  len>80=6
+cc= 41 len=  77 classes/local/history/evolution.php::compare:226
+cc= 37 len=  81 classes/local/comparison/audit_relation.php::relate:153
+cc= 36 len=  66 classes/local/history/dashboard.php::build:219
+cc= 33 len= 216 classes/snapshot.php::build:76
+cc= 28 len=  82 classes/local/comparison/differ.php::module_pair:169
+cc= 25 len=  59 classes/local/comparison/differ.php::course:629
+cc= 24 len=  51 classes/comparator.php::summary:323
+cc= 21 len=  59 classes/engine.php::run_rules:122
+cc= 21 len=  69 classes/snapshot.php::load_module_record:302
+cc= 21 len=  51 classes/local/rule/xcert01.php::evaluate:60
+cc= 20 len=  70 classes/output/batch_page.php::export_for_template:68
+cc= 20 len=  65 classes/local/correction/planner.php::plan:126
+cc= 19 len=  77 classes/comparator.php::render_text:410
+cc= 18 len=  33 classes/local/locator.php::url_for:62
+cc= 18 len=  47 classes/local/rule/cl17.php::evaluate:57
+cc= 18 len=  75 classes/local/history/recorder.php::execute:99
+cc= 18 len=  63 classes/local/comparison/differ.php::enrols:745
+cc= 17 len=  51 classes/local/rule/cl08.php::evaluate:57
