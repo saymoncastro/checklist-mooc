@@ -1,0 +1,22 @@
+local_mooc_audit 0.5.2 (2026103003) — etapa 2 do plano de estabilização — 2026-10-30
+Ambiente: moocaudit-rv-web (Moodle 4.5.15, PHP 8.3, PostgreSQL 17)
+
+== PHPUnit (--testsuite local_mooc_audit_testsuite)
+Time: 02:24.183, Memory: 127.00 MB
+
+OK (225 tests, 3457 assertions)
+
+== Behat (--tags=@local_mooc_audit, Chrome + axe)
+
+13 scenarios (13 passed)
+213 steps (213 passed)
+1m33.28s (88.42Mb)
+
+== PHPCS --standard=moodle (moodle-cs 3.7.0): 0 erros, 0 avisos
+
+== Caracterização (cursos A/B): estados idênticos após A-11 (characterization_test OK)
+
+== Verificação no navegador (site rv, 375 px)
+- Relatório do Curso B: 21/21 tabelas em .table-responsive; largura do documento = largura da tela (antes: 653 px em 375 px) (B-07)
+- Comparação A × B: 15/15 tabelas responsivas; texto 'Curso A — referência Carga horária' com espaço entre parágrafos (A-11)
+- Captura: celular-tabela-rolavel.jpg (a tabela rola dentro do bloco; linhas empilhadas ficam para a spec de UX)

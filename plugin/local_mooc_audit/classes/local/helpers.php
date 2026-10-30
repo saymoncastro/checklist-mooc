@@ -94,13 +94,16 @@ class helpers {
     }
 
     /**
-     * Strip HTML to plain text.
+     * Strip HTML to plain text. Line breaks and the end of block elements become spaces, so that "<p>A</p><p>B</p>" reads
+     * "A B" and not "AB" (A-11 of docs/revisao-geral); inline elements keep their words together.
      *
      * @param string|null $s
      * @return string
      */
     public static function text(?string $s): string {
-        return trim(preg_replace('/\s+/u', ' ', html_entity_decode(strip_tags((string) $s), ENT_QUOTES | ENT_HTML5, 'UTF-8')));
+        $breaks = '~<br\b[^>]*>|</(?:p|div|li|h[1-6]|tr|td|th|blockquote|pre|section|article|header|footer)\s*>~i';
+        $s = preg_replace($breaks, '$0 ', (string) $s);
+        return trim(preg_replace('/\s+/u', ' ', html_entity_decode(strip_tags($s), ENT_QUOTES | ENT_HTML5, 'UTF-8')));
     }
 
     /**

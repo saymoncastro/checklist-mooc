@@ -42,8 +42,8 @@ if ($options['help'] || !$options['source']) {
     cli_writeln('Uso: --source=COURSEID [--year=AAAA] [--no-adjust]');
     exit(0);
 }
-if (strpos($CFG->wwwroot, 'localhost') === false && empty($CFG->debugdeveloper)) {
-    cli_error('Recusado: este script só roda em ambiente local de desenvolvimento.');
+if (!\local_mooc_audit\local\devsite::allowed($CFG->wwwroot, !empty($CFG->debugdeveloper))) {
+    cli_error('Recusado: este script só roda em ambiente local de desenvolvimento (host localhost e debug de desenvolvedor).');
 }
 \core\session\manager::set_user(get_admin());
 $source = get_course((int) $options['source']);

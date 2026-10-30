@@ -1,6 +1,6 @@
 # local_mooc_audit — auditoria técnica de cursos MOOC dentro do Moodle 4.5
 
-Plugin local (versão 0.5.1, entregas das specs 001, 002, 003 e 005 e etapa 1 da estabilização) que audita uma sala existente a partir do seu `courseid`, sem depender do MOOC Admin
+Plugin local (versão 0.5.2, entregas das specs 001, 002, 003 e 005 e etapas 1 e 2 da estabilização) que audita uma sala existente a partir do seu `courseid`, sem depender do MOOC Admin
 nem de arquivos `.mbz`. A **auditoria é somente leitura**; a **correção assistida** (spec 002) é um componente separado
 que só escreve após prévia, confirmação explícita e revalidação. Reaproveita o catálogo de regras e as decisões institucionais do projeto `checklist-mooc`.
 
@@ -50,6 +50,12 @@ do plugin só marca auditorias como desatualizadas quando o **código das regras
 em cada execução (A‑03); a proposta de encerramento (CL‑14) não apresenta mais como valor a definir um término de
 curso fora da política (CL‑07) (B‑10); o aviso "o valor anterior fica registrado" só aparece em correções executáveis
 (B‑11); o aviso de desatualização do painel tem contraste suficiente (B‑19).
+
+**Estado (0.5.2, etapa 2 do plano de estabilização):** correções confirmadas em salas depois removidas entram na
+exportação e na anonimização da Privacy API pelo contexto de sistema, como já acontecia com as execuções (A‑02); os
+scripts de dados de teste (`cli/make_*.php`) só rodam com host local **e** depuração de desenvolvedor (A‑04); a
+extração de texto separa parágrafos e quebras de linha, sem alterar nenhum estado das regras nos cursos A/B (A‑11); as
+tabelas do relatório, da prévia de correção e da comparação rolam dentro do próprio bloco em telas estreitas (B‑07).
 
 ### Histórico, lote e acompanhamento (spec 005)
 
@@ -144,12 +150,14 @@ administração lista as chaves aceitas com tipo e valor padrão e mostra o JSON
 `policy::defaults()`; JSON inválido é recusado ao salvar. O relatório mostra a versão da política aplicada (sufixo
 `+admin` quando há personalização). O ano da reoferta, quando não informado, é o ano seguinte ao da execução.
 
-Scripts **apenas para ambientes de teste** (recusam rodar fora de `localhost`): `cli/make_fixtures.php`
+Scripts **apenas para ambientes de teste** (recusam rodar se o host não for local — `localhost`, `*.localhost`,
+`127.0.0.1`, `[::1]` — **ou** se a depuração de desenvolvedor estiver desligada; `classes/local/devsite.php`):
+`cli/make_fixtures.php`
 (cria os cursos A — referência — e B — inconsistente; exige o autoloader do Composer do site de desenvolvimento, porque o
 gerador de questões do núcleo carrega classes do PHPUnit) e `cli/make_import.php` (cria sala vazia e importa com o
 mecanismo nativo `core_course_external::import_course`).
 
-## Estrutura (0.5.0)
+## Estrutura (0.5.2)
 
 | Arquivo | Papel |
 |---|---|
@@ -158,6 +166,7 @@ mecanismo nativo `core_course_external::import_course`).
 | `classes/local/rule/rule_interface.php`, `base.php` | Contrato de uma regra (`id()`, `meta()`, `evaluate()`) e construtor de findings |
 | `classes/local/rule/*.php` | Uma classe por regra: 18 `CL-*` (checklist) + 11 `X-*` (adicionais), com categoria, tipo, gravidade, chaves de política, locus e fonte |
 | `classes/local/catalog.php` | Lista explícita e ordenada das 29 regras |
+| `classes/local/devsite.php` | Guarda dos scripts de dados de teste (host local e depuração de desenvolvedor) |
 | `classes/local/{status,category,helpers,locator}.php` | Estados/gravidades, 8 categorias, helpers compartilhados, mapeamento finding → URL de correção (loci: configurações/página do módulo, configurações do curso, inscrição, livro de notas, blocos, seção, importação, nenhum) |
 | `classes/engine.php` | Execução isolada das regras, situação geral, contrato JSON 1.0 (`to_json()` é a única codificação, usada pela página e pelo CLI), renderização texto |
 | `schema/report-v1.0.schema.json` | JSON Schema do contrato 1.0 (a spec aponta para este arquivo por link simbólico: fonte única); validado por `tests/contract_test.php` |
@@ -189,10 +198,10 @@ mecanismo nativo `core_course_external::import_course`).
 | `classes/local/correction/executor.php` | Única classe que escreve em dados de curso: revalidação, trava, transação, releitura, reauditoria, trilha |
 | `classes/local/correction/{verifier,facts,trail,conflict_exception}.php` | Comparação antes × depois (pura); consultas somente leitura de dados de estudantes; trilha + evento; conflito na escrita |
 | `classes/event/correction_applied.php`, `db/install.xml`, `db/upgrade.php` | Evento de log e tabela `local_mooc_audit_fix` |
-| `classes/privacy/provider.php` | Declara/exporta o `userid` da trilha; exclusão anonimiza (`userid = 0`) |
+| `classes/privacy/provider.php` | Declara/exporta o `userid` da trilha, das execuções e dos lotes; exclusão anonimiza (`userid = 0`); linhas de salas removidas ficam no contexto de sistema |
 | `correction.php`, `classes/output/correction_{proposal,result}.php`, `templates/correction*.mustache` | Página de prévia/confirmação e resultado |
 | `tests/local/correction/*_test.php`, `tests/helper/correction_testcase.php`, `tests/fixtures/correction/` | Planejador, executor (sucesso, conflitos, permissões, estudantes, falha com rollback, releitura, reauditoria, trava), verificador, proposta, saída |
-| `tests/privacy/provider_test.php` | Metadados, exportação e anonimização |
+| `tests/privacy/provider_test.php` | Metadados, exportação e anonimização, inclusive de execuções e correções de salas removidas |
 | `tests/behat/correction.feature` | Ver proposta, confirmar (com axe), cancelar, professor editor aplica, professor não editor vê mas não aplica |
 | `tests/local/comparison/*_test.php`, `tests/helper/snapshot_builder.php` | Correspondência, diferenças e relação entre auditorias sobre retratos sintéticos (sem banco) |
 | `tests/comparator_test.php` | Cenários A–G com cursos reais e importação por backup/restore; cada saída validada contra o schema |

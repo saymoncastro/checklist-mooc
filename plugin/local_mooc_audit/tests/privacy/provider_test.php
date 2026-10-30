@@ -161,4 +161,42 @@ final class provider_test extends \core_privacy\tests\provider_testcase {
         $this->assertSame(0, $DB->count_records('local_mooc_audit_run', ['userid' => $user->id]));
         $this->assertSame(1, $DB->count_records('local_mooc_audit_run'));
     }
+    /**
+     * Assisted corrections of a removed course have no course context either: they are exported and anonymised in the
+     * system context (A-02 of docs/revisao-geral).
+     */
+    public function test_corrections_of_removed_courses(): void {
+        global $DB;
+        $this->resetAfterTest();
+        set_config('categorybinenable', 0, 'tool_recyclebin');
+        $course = $this->getDataGenerator()->create_course();
+        [$user, $other] = [$this->getDataGenerator()->create_user(), $this->getDataGenerator()->create_user()];
+        foreach ([$user, $other] as $u) {
+            $DB->insert_record('local_mooc_audit_fix', (object) ['courseid' => $course->id, 'cmid' => 99, 'ruleid' => 'CL-13',
+                'strategy' => 'quiz_attempts', 'field' => 'attempts', 'oldvalue' => '1', 'newvalue' => '2', 'outcome' => 'applied',
+                'reaudit' => 'resolved', 'policyversion' => 'p', 'engineversion' => 'e', 'userid' => $u->id,
+                'timecreated' => time()]);
+        }
+        delete_course($course, false);
+        $system = \context_system::instance();
+
+        $this->assertEquals([$system->id], provider::get_contexts_for_userid($user->id)->get_contextids());
+        $users = new userlist($system, 'local_mooc_audit');
+        provider::get_users_in_context($users);
+        $this->assertEqualsCanonicalizing([$user->id, $other->id], $users->get_userids());
+
+        provider::export_user_data(new approved_contextlist($user, 'local_mooc_audit', [$system->id]));
+        $data = writer::with_context($system)->get_data([get_string('privacy:path', 'local_mooc_audit')]);
+        $this->assertCount(1, $data->corrections);
+        $this->assertEquals($course->id, $data->corrections[0]->courseid);
+        $this->assertSame('2', $data->corrections[0]->newvalue);
+
+        provider::delete_data_for_user(new approved_contextlist($user, 'local_mooc_audit', [$system->id]));
+        $this->assertSame(0, $DB->count_records('local_mooc_audit_fix', ['userid' => $user->id]));
+        $this->assertSame(1, $DB->count_records('local_mooc_audit_fix', ['userid' => $other->id]));
+        $this->assertSame(2, $DB->count_records('local_mooc_audit_fix'), 'anonymised, not deleted');
+
+        provider::delete_data_for_all_users_in_context($system);
+        $this->assertSame(0, $DB->count_records_select('local_mooc_audit_fix', 'userid > 0'));
+    }
 }
