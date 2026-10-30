@@ -20,9 +20,10 @@ use local_mooc_audit\local\history\recorder;
 use local_mooc_audit\local\history\run_store;
 
 /**
- * Background audit of one course of a batch (specs/005 research R6, R7).
+ * Background audit of one course, requested by a batch (specs/005 research R6, R7) or the external API (specs/004).
  *
- * Runs as the requester and checks again, at execution time, that the requester may still audit the course in batch.
+ * Runs as the requester and checks again, at execution time, that the requester may still audit the course in batch
+ * (batchaudit) or through the API (api), according to the origin of the run.
  * A per-course lock keeps two background audits of the same course apart; a run already final is skipped (duplicated
  * delivery); a run found "running" with its lock free belonged to a dead process and is resumed, up to MAX_ATTEMPTS.
  * Failures inside the audit end the run as failed without rescheduling the task.
@@ -55,13 +56,25 @@ class audit_course extends \core\task\adhoc_task {
     }
 
     /**
+     * What a queued run needs at execution time, by origin.
+     *
+     * @param string $origin
+     * @return string[] [system capability of the requester, string of the permission failure]
+     */
+    protected static function requirement(string $origin): array {
+        return $origin === run_store::ORIGIN_API ? ['local/mooc_audit:api', 'error_permission_api']
+            : ['local/mooc_audit:batchaudit', 'error_permission'];
+    }
+
+    /**
      * Whether the requester may still run this audit.
      *
      * @param int $userid
      * @param int $courseid
+     * @param string $origin run origin: batch runs need batchaudit, API runs need api (system)
      * @return bool
      */
-    public static function authorised(int $userid, int $courseid): bool {
+    public static function authorised(int $userid, int $courseid, string $origin = run_store::ORIGIN_BATCH): bool {
         if ($userid <= 0) {
             return false;
         }
@@ -69,7 +82,8 @@ class audit_course extends \core\task\adhoc_task {
         if (!$user || $user->deleted || $user->suspended) {
             return false;
         }
-        return has_capability('local/mooc_audit:batchaudit', \context_system::instance(), $user)
+        [$capability] = self::requirement($origin);
+        return has_capability($capability, \context_system::instance(), $user)
             && has_capability('local/mooc_audit:audit', \context_course::instance($courseid), $user);
     }
 
@@ -114,8 +128,9 @@ class audit_course extends \core\task\adhoc_task {
                 recorder::fail($runid, 'course_missing', get_string('invalidcourseid', 'error'));
                 return;
             }
-            if (!self::authorised((int) $run->userid, (int) $run->courseid)) {
-                recorder::fail($runid, 'permission', get_string('error_permission', 'local_mooc_audit'));
+            if (!self::authorised((int) $run->userid, (int) $run->courseid, (string) $run->origin)) {
+                [, $string] = self::requirement((string) $run->origin);
+                recorder::fail($runid, 'permission', get_string($string, 'local_mooc_audit'));
                 return;
             }
             if (!run_store::start($runid)) {

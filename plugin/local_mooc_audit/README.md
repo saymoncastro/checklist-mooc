@@ -1,6 +1,6 @@
 # local_mooc_audit — auditoria técnica de cursos MOOC dentro do Moodle (4.5 e 5.3)
 
-Plugin local (versão 0.5.3, entregas das specs 001, 002, 003 e 005, etapas 1 e 2 da estabilização e compatibilidade com o Moodle 5.3) que audita uma sala existente a partir do seu `courseid`, sem depender do MOOC Admin
+Plugin local (versão 0.6.0, entregas das specs 001, 002, 003, 004 e 005, etapas 1 e 2 da estabilização e compatibilidade com o Moodle 5.3) que audita uma sala existente a partir do seu `courseid`, sem depender do MOOC Admin
 nem de arquivos `.mbz`. A **auditoria é somente leitura**; a **correção assistida** (spec 002) é um componente separado
 que só escreve após prévia, confirmação explícita e revalidação. Reaproveita o catálogo de regras e as decisões institucionais do projeto `checklist-mooc`.
 
@@ -62,6 +62,23 @@ PostgreSQL 17, PHPUnit 11.5) além do 4.5.15; `$plugin->supported = [405, 503]`.
 comportamento: as auditorias dos cursos A/B são idênticas às expectativas de caracterização nas duas versões. Os
 selos de estado passaram das classes `badge-*` do Bootstrap 4 (depreciadas no Moodle 5.x, removidas no 6.0) para
 `bg-* text-*`, que existem nas duas versões. Evidências em `plugin-results/0.5.3/`.
+
+**Estado (0.6.0, spec 004 — API externa, experimental):** três funções de Web Services nativos para outro sistema
+pedir a auditoria de uma sala, acompanhar a execução e ler o resultado da última auditoria guardada. Detalhes na seção
+"API externa" abaixo e no guia [API.md](API.md).
+
+### API externa (0.6.0, spec 004)
+
+- **Funções** (serviço "Auditor MOOC", `local_mooc_audit`): `local_mooc_audit_request_audit` (põe a auditoria na fila;
+  nunca executa na chamada), `local_mooc_audit_get_run` (estado, resumo, evolução e relatório guardado de uma
+  execução) e `local_mooc_audit_get_latest_audit` (mesmo resultado que a página *Auditoria técnica* mostra, com os
+  motivos de desatualização). Nenhuma corrige nada.
+- **Acesso**: capacidade nova `local/mooc_audit:api` (sistema, **sem papel padrão**) somada a `local/mooc_audit:audit` em
+  cada sala; o serviço vem desabilitado e restrito a usuários autorizados. A tarefa em segundo plano confere de novo as
+  duas capacidades na hora de executar. Execuções pedidas pela API aparecem no histórico com a origem "API".
+- **Configuração**: `local_mooc_audit/api_max_pending` (padrão 100, 1–2000) — execuções pendentes pela API por conta.
+- **Limitações**: sem pedido em lote, ciclo explícito, notificações nem limite de taxa; a fila é compartilhada com os
+  lotes, sem prioridade. Especificação em `specs/004-api-externa/`.
 
 ### Histórico, lote e acompanhamento (spec 005)
 
@@ -173,7 +190,7 @@ Scripts **apenas para ambientes de teste** (recusam rodar se o host não for loc
 gerador de questões do núcleo carrega classes do PHPUnit) e `cli/make_import.php` (cria sala vazia e importa com o
 mecanismo nativo `core_course_external::import_course`).
 
-## Estrutura (0.5.3)
+## Estrutura (0.6.0)
 
 | Arquivo | Papel |
 |---|---|
@@ -231,6 +248,11 @@ mecanismo nativo `core_course_external::import_course`).
 | `classes/local/history/{batch_manager,dashboard,access}.php` | Lotes (seleção, recusas, duplicação, andamento derivado, reexecução); dados do painel; regras de acesso do histórico |
 | `classes/task/{audit_course,cleanup_history}.php`, `db/tasks.php` | Tarefa ad hoc por sala; retenção diária |
 | `history.php`, `dashboard.php`, `batch.php`, `classes/form/batch_form.php`, `classes/output/{run_summary,history_page,run_page,dashboard_page,batch_page,history_helper}.php`, `templates/{run_summary,history,run,dashboard,batch}.mustache` | Histórico e evolução, painel, lotes |
+| `classes/local/history/latest.php` | Última auditoria guardada de uma sala, motivos de desatualização, falha mais recente e pendente (página e API) |
+| `db/services.php`, `classes/external/{request_audit,get_run,get_latest_audit}.php` | Funções e serviço externo da API (spec 004) |
+| `classes/local/api/{service,run_view}.php` | Regras de acesso, pedido com trava e limite por solicitante; projeção da execução (RunView) |
+| `API.md` | Guia de configuração e uso da API |
+| `tests/external/*_test.php`, `tests/local/api/*_test.php`, `tests/helper/api_testcase.php` | Três funções, matriz de acesso, padrões da instalação, contrato 1.0, pedido (reaproveitamento, limite, trava) e projeção |
 | `cli/batch.php` | Lote pela linha de comando (`--run` executa as tarefas no próprio processo, para medição) |
 | `tests/occurrence_test.php`, `tests/policy_dependency_test.php` | Unicidade e estabilidade da chave (ordem, idioma); toda chave de política lida é declarada pela regra |
 | `tests/local/history/*_test.php`, `tests/task/*_test.php`, `tests/history_access_test.php` | Evolução (todas as classes), registro, painel, lote pela fila real (falha parcial, permissão revogada, duplicação, interrupção), retenção, acesso |

@@ -304,6 +304,58 @@ class evolution {
     }
 
     /**
+     * Base of the evolution of a run: the requested run, or by default the previous one, when it is a valid run of the
+     * same course that finished before this run started (runs are ordered by time, not by id).
+     *
+     * @param \stdClass $run
+     * @param int $baseid requested base (0 = the previous run recorded with the run)
+     * @return \stdClass|null null when the run has no report or the base is missing or not acceptable
+     */
+    public static function base_for(\stdClass $run, int $baseid = 0): ?\stdClass {
+        if (!in_array($run->status, run_store::valid_states(), true)) {
+            return null;
+        }
+        $id = $baseid ?: (int) $run->previousrunid;
+        $candidate = $id ? run_store::get($id) : null;
+        $started = (int) ($run->timestarted ?: $run->timecreated);
+        if (
+            $candidate && (int) $candidate->courseid === (int) $run->courseid && (int) $candidate->id !== (int) $run->id
+                && (int) $candidate->timefinished <= $started && in_array($candidate->status, run_store::valid_states(), true)
+        ) {
+            return $candidate;
+        }
+        return null;
+    }
+
+    /**
+     * Compare two stored runs (see compare()).
+     *
+     * @param \stdClass $base older run
+     * @param \stdClass $run newer run
+     * @return array
+     */
+    public static function between(\stdClass $base, \stdClass $run): array {
+        return self::compare(
+            ['report' => run_store::json($base, 'report') ?? [], 'details' => run_store::json($base, 'details') ?? [],
+                'pluginversion' => $base->pluginversion],
+            ['report' => run_store::json($run, 'report') ?? [], 'details' => run_store::json($run, 'details') ?? [],
+                'pluginversion' => $run->pluginversion]
+        );
+    }
+
+    /**
+     * Evolution of a stored run against its base (history page, external API).
+     *
+     * @param \stdClass $run
+     * @param int $baseid requested base (0 = the previous run)
+     * @return array|null compare() result, or null without an acceptable base
+     */
+    public static function for_run(\stdClass $run, int $baseid = 0): ?array {
+        $base = self::base_for($run, $baseid);
+        return $base ? self::between($base, $run) : null;
+    }
+
+    /**
      * One evolution item.
      *
      * @param string $class

@@ -1,0 +1,19 @@
+## sala MEDE151 (id 4, 152 módulos)
+local_mooc_audit_request_audit -d courseid=4 | bytes 102 | s 0.723 | status queued | report 0 | items 0 
+1
+local_mooc_audit_request_audit -d courseid=4 | bytes 102 | s 0.712 | status queued | report 0 | items 0 
+1
+local_mooc_audit_get_run -d runid=4 | bytes 49360 | s 0.624 | status complete | report 40805 | items 0 
+local_mooc_audit_get_run -d runid=4 -d includereport=0 | bytes 839 | s 0.698 | status complete | report 0 | items 0 
+local_mooc_audit_get_run -d runid=4 -d includereport=0 -d includeevolutionitems=1 | bytes 23872 | s 0.657 | status complete | report 0 | items 42 
+local_mooc_audit_get_latest_audit -d courseid=4 | bytes 49392 | s 0.695 | status complete | report 40805 | items 0 
+local_mooc_audit_get_latest_audit -d courseid=4 -d includereport=0 | bytes 871 | s 0.641 | status complete | report 0 | items 0 
+local_mooc_audit_get_run -d runid=4 | bytes 49360 | s 0.698 | status complete | report 40805 | items 0 
+local_mooc_audit_get_run -d runid=4 -d includereport=0 | bytes 839 | s 0.675 | status complete | report 0 | items 0 
+local_mooc_audit_get_run -d runid=4 -d includereport=0 -d includeevolutionitems=1 | bytes 23872 | s 0.897 | status complete | report 0 | items 42 
+local_mooc_audit_get_latest_audit -d courseid=4 | bytes 49392 | s 0.791 | status complete | report 40805 | items 0 
+local_mooc_audit_get_latest_audit -d courseid=4 -d includereport=0 | bytes 871 | s 0.711 | status complete | report 0 | items 0 
+## linha de base do ambiente (token inválido, nenhum código do plugin)
+local_mooc_audit_get_run -d runid=1 -d wstoken=bad | bytes 136 | s 0.647 | status None | report 0 | items 0 invalidtoken
+run 3 origin api status complete audit_s 0.127
+run 4 origin api status complete audit_s 0.148

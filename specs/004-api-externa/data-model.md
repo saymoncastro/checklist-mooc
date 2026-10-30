@@ -5,9 +5,9 @@
 
 ## Execução (`local_mooc_audit_run`) — alterações
 
-| Item | Antes (0.5.0) | Depois (0.6.0) |
+| Item | Antes (0.5.3) | Depois (0.6.0) |
 |---|---|---|
-| `origin` | `page`, `batch`, `cli` | + **`api`** (pedida por Web Service; `batchid = 0`) |
+| `origin` | `page`, `batch`, `cli`, `correction` (0.5.1) | + **`api`** (pedida por Web Service; `batchid = 0`) |
 | Quem cria na fila | `batch_manager::create`/`retry_failed` via `recorder::queue` | + `local\api\service::request` via `recorder::queue(..., ORIGIN_API)` |
 | Reconferência na tarefa | conta ativa + `batchaudit` (sistema) + `audit` (curso) | origem `api`: conta ativa + **`api`** (sistema) + `audit` (curso); `batch` inalterada |
 
@@ -16,7 +16,7 @@ Estados e transições inalterados (`queued → running → complete | partial |
 
 ### Regras de validação novas
 
-- Por sala, no máximo uma execução pendente **viva** criada pela API (reaproveitamento + trava `request_course_<id>`).
+- Por sala, no máximo uma execução pendente **viva** criada pela API (reaproveitamento + trava única da fila `queue`, compartilhada com os lotes — antes `request_course_<id>`).
 - Por solicitante, no máximo `api_max_pending` execuções `api` pendentes vivas (padrão 100).
 - Uma consulta nunca cria, altera ou remove linha de `_run`, `_policy`, `_batch` nem de `task_adhoc`.
 

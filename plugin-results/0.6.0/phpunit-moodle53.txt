@@ -1,0 +1,4 @@
+Moodle 5.3+ (Build: 20261030)
+PHPUnit 11.5.56 by Sebastian Bergmann and contributors.
+OK, but there were issues!
+Tests: 243, Assertions: 3631, PHPUnit Deprecations: 74.

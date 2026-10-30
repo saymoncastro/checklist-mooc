@@ -23,7 +23,8 @@ use local_mooc_audit\policy;
 use local_mooc_audit\task\audit_course;
 
 /**
- * Recorded audits: the single path that runs the engine and stores the result (audit page, CLI and background tasks).
+ * Recorded audits: the single path that runs the engine and stores the result (audit page, CLI, background tasks of
+ * batches and of the external API).
  *
  * The audit itself stays read-only towards the course; the only writes are the run row and, once per distinct content,
  * the applied policy. Failures outside the rules end the run as "failed" with the reason instead of losing it.
@@ -35,6 +36,28 @@ use local_mooc_audit\task\audit_course;
 class recorder {
     /** @var int Longest error message kept in a run. */
     const MAX_MESSAGE = 1000;
+
+    /** @var string Lock held by whatever queues runs (external API requests, batches), so that a course never gets two
+     * pending runs from simultaneous requests. Distinct from the course_<id> lock the task holds while auditing. */
+    const QUEUE_LOCK = 'queue';
+
+    /** @var int Seconds a request waits for the queue lock. */
+    const QUEUE_LOCK_WAIT = 5;
+
+    /**
+     * Take the queue lock; release it after the queued runs are committed.
+     *
+     * @param int $wait seconds to wait
+     * @return \core\lock\lock
+     * @throws \moodle_exception busy when another request holds it
+     */
+    public static function queue_lock(int $wait = self::QUEUE_LOCK_WAIT): \core\lock\lock {
+        $lock = \core\lock\lock_config::get_lock_factory('local_mooc_audit')->get_lock(self::QUEUE_LOCK, $wait);
+        if (!$lock) {
+            throw new \moodle_exception('busy', 'local_mooc_audit');
+        }
+        return $lock;
+    }
 
     /**
      * Audit a course now and record the run (audit page, CLI).
@@ -62,11 +85,12 @@ class recorder {
      *
      * @param int $courseid
      * @param int $userid requester; the task runs as this user and checks the permissions again
-     * @param int $batchid
+     * @param int $batchid 0 outside a batch
+     * @param string $origin run_store::ORIGIN_BATCH or ORIGIN_API
      * @return int run id
      */
-    public static function queue(int $courseid, int $userid, int $batchid): int {
-        $runid = run_store::create($courseid, run_store::ORIGIN_BATCH, $userid, $batchid);
+    public static function queue(int $courseid, int $userid, int $batchid, string $origin = run_store::ORIGIN_BATCH): int {
+        $runid = run_store::create($courseid, $origin, $userid, $batchid);
         $task = new audit_course();
         $task->set_custom_data(['runid' => $runid]);
         $task->set_userid($userid);

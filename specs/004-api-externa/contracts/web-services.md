@@ -18,7 +18,7 @@ ou da execução abaixo. Em caso de erro o núcleo responde `{"exception": "..."
 |---|---|---|
 | `id` | int | |
 | `courseid` | int | |
-| `origin` | string | `page`, `batch`, `cli`, `api` |
+| `origin` | string | `page`, `batch`, `cli`, `correction`, `api` |
 | `status` | string | `queued`, `running`, `complete`, `partial`, `failed` |
 | `overall` | string\|null | `BLOQUEADA`, `REQUER_CORRECOES`, `SEM_INCONFORMIDADES`; null se sem relatório |
 | `timecreated`, `timestarted`, `timefinished` | int | Unix; 0 = ainda não ocorreu |
@@ -53,7 +53,8 @@ Pede a auditoria de uma sala. Nunca executa a auditoria na chamada.
 ```
 
 - `reused: true` quando a sala já tinha execução pendente viva (de qualquer origem); `status` é o dela (`queued` ou
-  `running`).
+  `running`). A execução reaproveitada continua do solicitante original, cujas permissões a tarefa confere; se ela
+  falhar com `permission`, um novo pedido cria uma execução `api` da conta.
 - Efeito quando `reused: false`: uma linha em `local_mooc_audit_run` (`origin = api`, `status = queued`, `batchid =
   0`) e uma tarefa ad hoc `\local_mooc_audit\task\audit_course`.
 
@@ -104,7 +105,7 @@ Resultado da última auditoria guardada de uma sala, sem executar nada (regra do
 | `invalidcourseid` | sala inexistente ou curso do site | núcleo (`error`) |
 | `runnotfound` | execução inexistente ou fora do escopo | plugin |
 | `queuefull` | limite de execuções `api` pendentes do solicitante atingido | plugin |
-| `busy` | outra solicitação da mesma sala em andamento; tente de novo em alguns segundos | plugin |
+| `busy` | outro pedido ou a criação de um lote segura a trava da fila; tente de novo em alguns segundos | plugin |
 | `invalidparameter` | parâmetro ausente ou de tipo errado | núcleo |
 
 ## Versionamento

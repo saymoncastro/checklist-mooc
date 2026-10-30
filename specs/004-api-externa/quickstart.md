@@ -1,8 +1,9 @@
 # Quickstart: validar a Spec 004 (API externa)
 
-Ambiente isolado novo: `moocaudit-s4-web` (http://localhost:8096, admin / `Admin123!`), mesma receita do ambiente s5
+Ambiente isolado novo: `moocaudit-s4-web` (http://localhost:8098, admin / `Admin123!`), mesma receita do ambiente s5
 em `moodle-env/README.md` (rede `moocaudit_s4`, banco próprio, `make_fixtures.php`: A = 2 sem inconformidades,
-B = 3 com bloqueantes). A receita entra no README na fase de implementação (tarefa T002).
+B = 3 com bloqueantes). Receita em `moodle-env/README.md`, seção "Ambiente da spec 004" (a porta 8096 ficou com o
+ambiente `rv` da revisão geral).
 
 ## 1. Automatizado
 

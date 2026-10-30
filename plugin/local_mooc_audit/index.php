@@ -76,8 +76,7 @@ $PAGE->set_pagelayout('incourse');
 $PAGE->set_title(get_string('pagetitle', 'local_mooc_audit', format_string($course->fullname)));
 $PAGE->set_heading(format_string($course->fullname));
 
-use local_mooc_audit\local\history\dashboard;
-use local_mooc_audit\local\history\policy_store;
+use local_mooc_audit\local\history\latest;
 use local_mooc_audit\local\history\recorder;
 use local_mooc_audit\local\history\run_store;
 
@@ -98,11 +97,9 @@ if ($action === 'run') {
 }
 
 // Read-only from here: the last recorded audit (complete or partial) and, when newer, the last failed attempt.
-$run = run_store::latest_valid((int) $course->id);
-$report = $run ? run_store::json($run, 'report') : null;
-$lastfinal = run_store::latest_per_course(run_store::final_states(), [(int) $course->id], 'r.*')[(int) $course->id] ?? null;
-
 if ($format === 'json') {
+    $run = run_store::latest_valid((int) $course->id);
+    $report = $run ? run_store::json($run, 'report') : null;
     @header('Content-Type: application/json; charset=utf-8');
     if (!$report) {
         http_response_code(404);
@@ -115,6 +112,10 @@ if ($format === 'json') {
     exit;
 }
 
+// The page does not show the pending run: no need to read the task queue.
+$latest = latest::for_course($course, null, false);
+$run = $latest['valid'];
+$report = $run ? run_store::json($run, 'report') : null;
 $renderer = $PAGE->get_renderer('local_mooc_audit');
 $runurl = new moodle_url($url, ['action' => 'run']);
 echo $OUTPUT->header();
@@ -128,14 +129,11 @@ if (!$run) {
         ['type' => single_button::BUTTON_PRIMARY]
     );
 } else {
-    $valid = $run;
-    $valid->fingerprint = $run->policyid ? (policy_store::get((int) $run->policyid)->fingerprint ?? null) : null;
-    $stale = dashboard::stale_reasons($valid, time(), policy_store::current_fingerprint(), run_store::plugin_version(), $course);
     echo $renderer->render(new \local_mooc_audit\output\run_summary(
         $run,
         run_store::count_for_course((int) $course->id),
-        $stale,
-        $lastfinal && (int) $lastfinal->id !== (int) $run->id ? $lastfinal : null
+        $latest['stale'],
+        $latest['lastfailure']
     ));
     $withcorrections = has_capability('local/mooc_audit:preparecorrection', $context);
     $compareurl = has_capability('local/mooc_audit:compare', $context)

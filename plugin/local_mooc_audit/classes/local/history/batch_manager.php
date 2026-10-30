@@ -56,8 +56,7 @@ class batch_manager {
      * @return int
      */
     public static function max_courses(): int {
-        $max = (int) get_config('local_mooc_audit', 'batch_max_courses');
-        return $max > 0 ? min(2000, $max) : 100;
+        return \local_mooc_audit\local\helpers::bounded_setting('batch_max_courses', 100, 2000);
     }
 
     /**
@@ -185,27 +184,34 @@ class batch_manager {
                 'mode' => get_string('batch_mode_' . $r['criteria']['mode'], 'local_mooc_audit'),
                 'date' => userdate(time(), get_string('strftimedatetimeshort', 'langconfig')),
             ]);
-        $transaction = $DB->start_delegated_transaction();
-        $batchid = (int) $DB->insert_record(self::TABLE, (object) [
-            'userid' => $userid,
-            'name' => $name,
-            'criteria' => json_encode($r['criteria']),
-            'skipped' => null,
-            'timecreated' => time(),
-        ]);
-        $skipped = $r['skipped'];
-        $queued = 0;
-        foreach (array_keys($r['accepted']) as $courseid) {
-            $pending = run_store::reusable_pending($courseid);
-            if ($pending) {
-                $skipped[] = ['courseid' => $courseid, 'reason' => self::SKIP_DUPLICATE, 'runid' => (int) $pending->id];
-                continue;
+        // Same lock as the external API requests: the check for a pending run and the queueing are one step.
+        $lock = recorder::queue_lock();
+        try {
+            $transaction = $DB->start_delegated_transaction();
+            $batchid = (int) $DB->insert_record(self::TABLE, (object) [
+                'userid' => $userid,
+                'name' => $name,
+                'criteria' => json_encode($r['criteria']),
+                'skipped' => null,
+                'timecreated' => time(),
+            ]);
+            $skipped = $r['skipped'];
+            $queued = 0;
+            $pendings = run_store::alive_pending(array_keys($r['accepted']));
+            foreach (array_keys($r['accepted']) as $courseid) {
+                $pending = $pendings[$courseid] ?? null;
+                if ($pending) {
+                    $skipped[] = ['courseid' => $courseid, 'reason' => self::SKIP_DUPLICATE, 'runid' => (int) $pending->id];
+                    continue;
+                }
+                recorder::queue($courseid, $userid, $batchid);
+                $queued++;
             }
-            recorder::queue($courseid, $userid, $batchid);
-            $queued++;
+            $DB->set_field(self::TABLE, 'skipped', $skipped ? json_encode($skipped) : null, ['id' => $batchid]);
+            $transaction->allow_commit();
+        } finally {
+            $lock->release();
         }
-        $DB->set_field(self::TABLE, 'skipped', $skipped ? json_encode($skipped) : null, ['id' => $batchid]);
-        $transaction->allow_commit();
         return ['batchid' => $batchid, 'queued' => $queued, 'reused' => count($skipped) - count($r['skipped']),
             'skipped' => $skipped, 'error' => null];
     }
@@ -277,7 +283,24 @@ class batch_manager {
      */
     public static function retry_failed(\stdClass $batch, int $userid): int {
         require_capability('local/mooc_audit:batchaudit', \context_system::instance(), $userid);
+        $lock = recorder::queue_lock();
+        try {
+            return self::queue_failed($batch, $userid);
+        } finally {
+            $lock->release();
+        }
+    }
+
+    /**
+     * Queue the failed courses of a batch again (retry_failed(), under the queue lock).
+     *
+     * @param \stdClass $batch
+     * @param int $userid
+     * @return int number of runs queued
+     */
+    protected static function queue_failed(\stdClass $batch, int $userid): int {
         $n = 0;
+        $tasked = run_store::tasked_runs();
         foreach (self::runs($batch) as $courseid => $run) {
             // Failed runs of this batch, and failed runs of other requests this batch had reused.
             if ($run->status !== run_store::FAILED) {
@@ -286,7 +309,7 @@ class batch_manager {
             if (
                 !\core\context\course::instance($courseid, IGNORE_MISSING)
                     || !has_capability('local/mooc_audit:audit', \context_course::instance($courseid), $userid)
-                    || run_store::reusable_pending($courseid)
+                    || run_store::reusable_pending($courseid, null, $tasked)
             ) {
                 continue;
             }

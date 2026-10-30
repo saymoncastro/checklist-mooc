@@ -216,4 +216,28 @@ final class output_test extends \advanced_testcase {
         $this->assertStringContainsString('runid=7', $data->jsonurl);
         $this->assertStringNotContainsString('index.php', $data->jsonurl);
     }
+
+    /**
+     * A run requested through the external API is labelled "API" in the history (specs/004 FR-028).
+     */
+    public function test_history_origin_api(): void {
+        global $PAGE;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $course = $this->getDataGenerator()->create_course();
+        $id = \local_mooc_audit\local\history\recorder::queue((int) $course->id, 2, 0, 'api');
+        $PAGE->set_url('/local/mooc_audit/history.php');
+        $PAGE->set_context(\context_course::instance($course->id));
+        $runs = \local_mooc_audit\local\history\run_store::for_course((int) $course->id);
+        $this->assertSame($id, (int) $runs[0]->id);
+        $html = $PAGE->get_renderer('local_mooc_audit')->render(new \local_mooc_audit\output\history_page(
+            (int) $course->id,
+            $runs,
+            [],
+            '',
+            null
+        ));
+        $this->assertStringContainsString(get_string('history_origin_api', 'local_mooc_audit'), $html);
+        $this->assertStringNotContainsString('[[', $html);
+    }
 }

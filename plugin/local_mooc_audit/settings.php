@@ -95,6 +95,18 @@ if ($hassiteconfig) {
             PARAM_INT
         ));
     }
+    $settings->add(new admin_setting_heading(
+        'local_mooc_audit/apiheading',
+        get_string('setting_api_heading', 'local_mooc_audit'),
+        get_string('setting_api_heading_desc', 'local_mooc_audit')
+    ));
+    $settings->add(new admin_setting_configtext(
+        'local_mooc_audit/api_max_pending',
+        get_string('setting_api_max_pending', 'local_mooc_audit'),
+        get_string('setting_api_max_pending_desc', 'local_mooc_audit'),
+        100,
+        PARAM_INT
+    ));
     $settings->add(new admin_setting_heading('local_mooc_audit/tools', '', html_writer::link(
         new moodle_url('/local/mooc_audit/index.php'),
         get_string('runaudit', 'local_mooc_audit')

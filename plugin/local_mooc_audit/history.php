@@ -90,30 +90,19 @@ if (!$runid) {
 
 $run = \local_mooc_audit\local\history\access::run_of_course($runid, $courseid);
 $valid = in_array($run->status, run_store::valid_states(), true);
-$base = null;
-if ($valid) {
-    $candidate = $baseid ? run_store::get($baseid) : ($run->previousrunid ? run_store::get((int) $run->previousrunid) : null);
-    // The base must have finished before this run started (runs are ordered by time, not by id).
-    $started = (int) ($run->timestarted ?: $run->timecreated);
-    if (
-        $candidate && (int) $candidate->courseid === $courseid && (int) $candidate->id !== (int) $run->id
-            && (int) $candidate->timefinished <= $started && in_array($candidate->status, run_store::valid_states(), true)
-    ) {
-        $base = $candidate;
-    }
-}
+$base = evolution::base_for($run, $baseid);
 $report = run_store::json($run, 'report');
 $cmp = null;
 $corrections = [];
 if ($base) {
-    $cmp = evolution::compare(
-        ['report' => run_store::json($base, 'report') ?? [], 'details' => run_store::json($base, 'details') ?? [],
-            'pluginversion' => $base->pluginversion],
-        ['report' => $report ?? [], 'details' => run_store::json($run, 'details') ?? [], 'pluginversion' => $run->pluginversion]
-    );
+    $cmp = evolution::between($base, $run);
     // The specs/002 trail (values and who corrected) is shown to whoever may see correction proposals.
     if (has_capability('local/mooc_audit:preparecorrection', $context)) {
-        $corrections = evolution::corrections_between($courseid, (int) $base->timefinished, $started);
+        $corrections = evolution::corrections_between(
+            $courseid,
+            (int) $base->timefinished,
+            (int) ($run->timestarted ?: $run->timecreated)
+        );
     }
 }
 $policy = $run->policyid ? policy_store::get((int) $run->policyid) : null;
