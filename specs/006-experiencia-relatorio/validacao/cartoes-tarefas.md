@@ -46,3 +46,19 @@ Abra a sala **"Curso A — com alertas"**.
 
 A auditoria diz que **não conseguiu verificar** um item da "Lição complementar". O que isso significa para a sala? O
 que você faria?
+
+---
+
+**Tarefa 6**
+
+Os estudantes não conseguem abrir o **"Questionário 1"**, mesmo depois de fazer as leituras.
+
+Usando a auditoria, descubra o motivo, **resolva** e **confirme que ficou resolvido**.
+
+---
+
+**Tarefa 7**
+
+Diga **o que impede ou prejudica a emissão do certificado** nesta sala.
+
+*Depois da resposta, o moderador pergunta: "Quem resolveria cada uma dessas coisas?"*

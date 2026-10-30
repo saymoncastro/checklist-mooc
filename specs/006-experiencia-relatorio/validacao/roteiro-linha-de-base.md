@@ -100,7 +100,7 @@ Confirme o consentimento e inicie a gravação. Pergunte, e anote na folha do mo
 - Se a pessoa ficar em silêncio mais de 20 s, diga só "o que você está pensando agora?".
 - **Ajuda:** só se a pessoa pedir ou ficar parada 2 minutos. Use **somente** a dica padronizada do cartão. Cada dica
   conta 1 em `ajudas`.
-- **Limite:** 5 min por tarefa (T4: 8 min). Esgotado o tempo, registre `conclusao = N` e passe para a próxima.
+- **Limite:** 5 min por tarefa (T4 e T6: 8 min). Esgotado o tempo, registre `conclusao = N` e passe para a próxima.
 - Depois de cada tarefa, faça a pergunta SEQ (seção 4) e anote.
 
 ### Tarefas
@@ -113,8 +113,15 @@ Confirme o consentimento e inicie a gravação. Pergunte, e anote na folha do mo
 | **T3** Localizar a configuração da autoinscrição | Curso B | Relatório aberto | Chega à tela de edição do método "Autoinscrição" | Chega à lista de métodos de inscrição, mas não abre a autoinscrição | "O relatório tem links para as configurações." |
 | **T4** Corrigir as tentativas e confirmar | Curso B | Relatório aberto | Aplica a correção do CL‑13 **e** afirma, olhando o relatório, que o problema foi resolvido | Aplica, mas não consegue confirmar, ou corrige pela tela de edição sem confirmar | "Procure uma forma de corrigir pela própria ferramenta." |
 | **T5** Interpretar o "não verificável" | Curso A — com alertas | Relatório aberto | Entende que a ferramenta **não conseguiu verificar** (não é falha) e que é preciso **conferir à mão** a data de encerramento da lição | Entende que não é falha, mas não sabe o que fazer | "Leia a seção de itens não verificados." |
+| **T6** Liberar o Questionário 1 e confirmar | Curso B | Relatório aberto | Resolve a condição que exige "Aprofundamento" (ativa a conclusão em "Aprofundamento" **ou** remove a condição do questionário) **e** confirma pela nova auditoria. Anote qual alternativa escolheu e por quê | Encontra a condição mas não consegue alterá‑la ("Escolher…"), ou altera sem confirmar | "O relatório diz qual atividade a condição exige." |
+| **T7** O que impede o certificado | Curso B | Relatório aberto | Aponta as duas causas: a cadeia de liberação passa por atividade sem conclusão ou oculta, **e** o certificado não exige a nota mínima. Pergunta seguinte, registrada literalmente: "Quem resolveria cada uma?" | Aponta uma das causas | Sem dica |
 
 Na T5, o moderador pode indicar a sala: "Agora abra a sala 'Curso A — com alertas'."
+
+T6 e T7 foram acrescentadas pela auditoria de capacidade de correção (`docs/auditoria-ux-correcao/README.md`, casos A,
+C e D). Se a sessão já tiver aplicado a T4, a T6 continua válida: a condição do Questionário 1 não muda com a T4. Na
+interface atual, quem tentar corrigir as tentativas pela tela de edição (T4) antes da T6 não conseguirá salvar: registre
+o código **INT‑ORDEM**.
 
 ### Encerramento (5 min)
 
@@ -141,6 +148,8 @@ Agradeça e encerre a gravação.
 | INT‑TECNICO | Não entende uma evidência por causa de termo ou valor técnico; anote qual em `observacoes` |
 | INT‑NV | Trata "não verificável" como falha da sala |
 | INT‑ALERTA | Não sabe se um alerta exige ação |
+| INT‑ORDEM | Tenta uma correção que o Moodle recusa por causa de outra inconformidade (ex.: tentativas do Questionário 1 antes da condição) |
+| INT‑RESP | Não sabe a quem recorrer para um problema que não pode resolver |
 | ROL‑INVENT | Lê o inventário ou se detém nele procurando o problema |
 | FRAG‑ATIV | Não percebe que o mesmo problema ou atividade aparece em outro ponto do relatório |
 | BOTAO‑DUP | Hesita entre os dois botões "Ver proposta" do CL‑13 |
@@ -149,7 +158,7 @@ Agradeça e encerre a gravação.
 
 ## 5. Registro
 
-- `registro-tarefas.csv`: **uma linha por participante e tarefa** (T1, T1b, T2, T3, T4, T5).
+- `registro-tarefas.csv`: **uma linha por participante e tarefa** (T1, T1b, T2, T3, T4, T5, T6, T7).
   - `interface`: `atual` (linha de base) ou `nova` (FR‑030).
   - `tempo_s`: segundos inteiros.
   - `conclusao`: `S`, `P` ou `N`.
@@ -183,6 +192,8 @@ Verifique também as hipóteses da spec. Se a linha de base contrariar alguma de
 | B‑03 (linguagem) | INT‑TECNICO e termos citados nas perguntas abertas |
 | B‑04 (contagens) | INT‑CONTAGEM |
 | B‑05 (alertas) | INT‑ALERTA |
+| U‑02/U‑03 (ordem e formulário, auditoria de correção) | INT‑ORDEM, T6 |
+| U‑09 (responsável) | INT‑RESP, pergunta da T7 |
 | B‑06 (botões) | BOTAO‑DUP |
 | B‑12/B‑13 (correção) | CODIGO‑CORR |
 | **Visão inicial ([validar])** | Se professores procuram os problemas pela atividade (relatam ou fazem isso na T2/T3), considere a visão "por atividade" como inicial para esse perfil |

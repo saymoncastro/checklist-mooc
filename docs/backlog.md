@@ -19,6 +19,11 @@ quando houver um consumidor pronto (MOOC Admin).
 Depois da revisão geral de 2026-10-29 (`docs/revisao-geral/C-PLANO-DE-ESTABILIZACAO.md`), a 006 (experiência do
 usuário) entra antes da 004: a API passaria a expor um contrato que a 006 estende.
 
+Em 2026-10-30 a 004 foi implementada (contrato 1.0) e a 006, ainda em rascunho, foi ampliada pela auditoria de
+capacidade de correção (`docs/auditoria-ux-correcao/README.md`): mensagens por verificação, links nativos com
+`showonly`, precedências entre correções, responsável e verificações manuais, em quatro fases (textos e links →
+estrutura → contrato 1.1 → correções de regra).
+
 ---
 
 ## 001 — Auditoria técnica operacional (especificada em `specs/001-auditoria-tecnica-operacional/`)

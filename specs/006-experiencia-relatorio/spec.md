@@ -5,7 +5,9 @@
 **Created**: 2026-10-30
 
 **Status**: Draft — especificação para revisão; nada implementado. Itens **[validar]** dependem de confirmação
-institucional ou do resultado dos testes com usuários antes do plano.
+institucional ou do resultado dos testes com usuários antes do plano. **Revisão 2026-10-30**: ampliada com a auditoria de
+capacidade de correção (`docs/auditoria-ux-correcao/README.md`): US7, US8, FR‑031 a FR‑044, SC‑011 a SC‑015 e as fases
+de implementação.
 
 **Base**: revisão geral de 2026-10-29 (`docs/revisao-geral/`, PR #7) e etapas 1 e 2 do plano de estabilização (plugin
 0.5.2, PRs #8 e #9). Primeiro incremento de experiência do usuário do plano
@@ -86,6 +88,26 @@ premissas registradas.
 - Q: E o celular? → A: a 320 px de largura nenhuma informação exige rolagem horizontal da página; as linhas de
   ocorrência se reorganizam em blocos empilhados (rótulo e valor). A rolagem dentro de uma tabela, solução provisória
   da etapa 2, deixa de ser necessária no relatório.
+
+### Session 2026-10-30 (revisão: capacidade de correção)
+
+Decisões tomadas a partir da auditoria `docs/auditoria-ux-correcao/README.md` (achados U‑01 a U‑22, casos A–D).
+
+- Q: Criar uma spec nova para "como corrigir"? → A: não. É o mesmo fluxo (relatório individual → correção →
+  confirmação); a 006 é ampliada e separada em fases (ver *Fases*), para não fragmentar.
+- Q: Os textos continuam sendo gravados no momento da auditoria? → A: não para a apresentação. A tela monta textos e
+  links **ao exibir**, no idioma e no site de quem vê, a partir dos fatos gravados (regra, verificação, entidades,
+  valores). O texto gravado é usado só quando os fatos não bastam (execuções antigas).
+- Q: O relatório pode indicar quantas "ações" existem? → A: só quando a relação entre ocorrências for demonstrável por
+  uma lista fechada e testada de relações (mesma correção simulada, mesma entidade e mesmo campo, mesma verificação de
+  presença, objeto de uma ocorrência igual à entidade de outra). Sem isso, conta ocorrências. Nunca por semelhança de
+  texto.
+- Q: Links para o Moodle: âncora (`#id_...`) ou parâmetro? → A: o parâmetro nativo `showonly` de `modedit.php` e
+  `editsection.php`, que o próprio núcleo usa; âncoras não expandem a seção (verificado no 5.3).
+- Q: O relatório sugere qual dependência remover num ciclo, ou qual alternativa escolher no X‑DEP‑02? → A: não.
+  Apresenta as alternativas com a pergunta pedagógica explícita e o link de cada uma.
+- Q: Correções de regra encontradas na auditoria (U‑01, U‑05, U‑11, U‑13) entram nesta spec? → A: entram como fase 4,
+  separada, com decisão registrada caso a caso; são a única exceção ao FR‑025. **[validar]** aprovação do Cefor.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -237,6 +259,65 @@ ocorrência dos cursos de referência não mudam e que a impressão digital do c
 
 ---
 
+### User Story 7 - Corrigir na tela certa, na ordem certa, e confirmar (Priority: P1)
+
+Para cada problema que pode resolver, o professor encontra a ação em linguagem do Moodle, as alternativas quando a
+escolha é pedagógica, um link que abre exatamente a seção do formulário do Moodle, o aviso quando outra correção precisa
+vir antes, e como confirmar que resolveu.
+
+**Why this priority**: hoje 4 de 29 regras têm orientação suficiente, nenhuma diz como confirmar, e uma condição de
+acesso inválida impede salvar o formulário da atividade sem que o relatório avise (auditoria, caso A).
+
+**Independent Test**: na cópia do Curso B, seguir só o relatório para resolver o X‑DEP‑02 do "Questionário 1", depois o
+CL‑13 pela tela do Moodle, e confirmar com nova auditoria, sem consultar outra fonte.
+
+**Acceptance Scenarios**:
+
+1. **Given** um X‑DEP‑02 (alvo sem conclusão), **When** o professor lê a ocorrência, **Then** vê os nomes das duas
+   atividades, a consequência em cadeia (questionário → Avaliação do curso → certificado, quando for o caso), as duas
+   alternativas (ativar a conclusão no alvo; remover a condição) com a pergunta que decide entre elas, um link para cada
+   uma que abre só a seção pertinente, e como a condição aparece no formulário ("Escolher…").
+2. **Given** uma atividade com condição de acesso inválida e outras ocorrências, **When** o relatório é exibido,
+   **Then** a ocorrência da condição aparece primeiro e as demais dizem que o formulário não será salvo antes dela.
+3. **Given** um ciclo (X‑DEP‑04), **When** o professor o lê, **Then** vê a relação em texto com os nomes, se o ciclo está
+   na cadeia do certificado, e uma opção por aresta, sem recomendação de qual remover.
+4. **Given** qualquer ocorrência com ação, **When** exibida, **Then** diz como confirmar (o que deve mudar depois de
+   "Executar novamente") e, nas rotas que aceitam, o link de edição volta ao relatório depois de salvar.
+5. **Given** uma atividade apagada depois da auditoria, **When** o relatório antigo é exibido, **Then** a ocorrência diz
+   que a atividade foi removida e não oferece link.
+
+---
+
+### User Story 8 - Saber quando a correção é de outra pessoa e o que o plugin não comprova (Priority: P1)
+
+O professor distingue o que pode fazer do que depende do administrador (plugins) ou da equipe da reoferta (categoria,
+Sala Padrão), e distingue o que foi comprovado do que exige verificação manual (emissão do certificado, conferências de
+texto, nomes canônicos).
+
+**Why this priority**: no site da captura, 4 ocorrências bloqueantes mandavam importar um certificado cujo plugin não
+está instalado; a regra de plugins aparecia como conforme; o professor não tem categoria onde mover o curso
+(auditoria, casos C e D, U‑01, U‑09).
+
+**Independent Test**: no site sem `mod_simplecertificate`, abrir o relatório da cópia do Curso B como professor e
+conferir que o topo diz que o certificado depende do administrador, que as ocorrências de mesma causa aparecem juntas, e
+que "Alcançabilidade do certificado" sem impedimento estático aparece em "Verificações manuais", não como comprovada.
+
+**Acceptance Scenarios**:
+
+1. **Given** um plugin exigido pela política ausente do site, **When** o relatório é exibido, **Then** um aviso no topo
+   nomeia o plugin e o responsável (administrador), e as ocorrências que dele decorrem dizem isso em vez de mandar
+   importar.
+2. **Given** uma ação cuja tela o usuário não pode usar (permissão ou categoria), **When** exibida, **Then** não há link
+   de ação; o texto diz quem pode fazer.
+3. **Given** uma importação da Sala Padrão como ação, **When** exibida, **Then** diz que exige acesso à Sala Padrão e que
+   as restrições do certificado precisam ser refeitas depois de importar.
+4. **Given** o X‑CERT‑01 sem impedimento estático, **When** exibido, **Then** fica em "Verificações manuais" com o
+   procedimento de teste com estudante de teste (aprovado e reprovado).
+5. **Given** uma regra heurística ou por nome, **When** exibida, **Then** o texto diz que é uma conferência ("o enunciado
+   parece declarar…", "não encontramos fórum com nome parecido com…").
+
+---
+
 ### Edge Cases
 
 - **Sala sem inconformidades e sem alertas**: o topo diz isso em uma frase; as seções vazias não ocupam espaço.
@@ -261,6 +342,18 @@ ocorrência dos cursos de referência não mudam e que a impressão digital do c
   topo; sem auditoria registrada, o topo convida a executar.
 - **Navegador sem armazenamento local** (modo privado): a visão inicial é a padrão; nada quebra.
 - **Impressão**: o relatório impresso inclui os detalhes técnicos abertos.
+- **Correção que precisa de outra antes** (condição de acesso inválida na mesma atividade; datas do curso antes das
+  datas de inscrição e de encerramento; soma 100 antes da nota mínima do certificado; conclusão antes de exigi‑la): a
+  ordem aparece na ocorrência dependente e no "Comece por aqui".
+- **Mesma causa em várias regras** (`certificate_presence` no CL‑11, CL‑23 e X‑CERT‑01; conclusão do fórum institucional
+  no CL‑09 e CL‑17; conclusão do rótulo no CL‑17 e CL‑19): uma ação, com as ocorrências citadas dentro dela.
+- **Relação não demonstrável** (mesmo nome de arquivo em X‑CONT‑01 e X‑CONT‑04): não agrupar; no máximo "possivelmente
+  relacionadas", sem afetar a contagem de ações.
+- **Orientações contraditórias entre regras**: enquanto a fase 4 não corrigir a regra, a ação que satisfaz as duas
+  verificações prevalece (desativar a conclusão no rótulo e no fórum institucional).
+- **Usuário sem permissão de edição** (visualizador com `local/mooc_audit:audit` apenas): vê o problema e quem pode
+  corrigir; nenhum link de edição.
+- **Site com outro endereço ou outro idioma que o da execução**: links e textos refletem o site e o idioma atuais.
 
 ## Requirements *(mandatory)*
 
@@ -352,6 +445,48 @@ ocorrência dos cursos de referência não mudam e que a impressão digital do c
 - **FR-030**: Antes da homologação, a nova interface MUST ser avaliada com o mesmo roteiro e os mesmos critérios, e os
   resultados MUST ser registrados com os da linha de base.
 
+**Capacidade de correção (revisão 2026-10-30)**
+
+- **FR-031**: Cada ocorrência com problema MUST apresentar, além do FR‑006: *por que importa* (consequência verificável
+  para estudante, certificação ou oferta, derivada da verificação), *como corrigir* (passos executáveis, com alternativas
+  e a decisão necessária quando a escolha é pedagógica), *quem pode corrigir* e *como confirmar*. Quando os dados não
+  sustentarem uma orientação específica, MUST dizer a limitação e o responsável.
+- **FR-032**: As mensagens MUST ser definidas por **regra e verificação** (código `check`), não apenas por regra; MUST
+  NOT existir orientação genérica aplicada a uma verificação diferente da que ela descreve.
+- **FR-033**: Textos e links MUST ser montados ao exibir, no idioma e no site de quem vê, a partir dos fatos gravados;
+  o texto gravado MUST ser usado só como reserva (FR‑027).
+- **FR-034**: Atividades relacionadas (alvo de condição, nós de ciclo, elos da cadeia do certificado, atividades
+  faltantes) MUST aparecer pelo nome atual, com link quando a pessoa puder editá‑las; atividades removidas depois da
+  auditoria MUST ser indicadas como tal, sem link.
+- **FR-035**: Os links de ação MUST usar rotas nativas do Moodle e abrir a seção pertinente quando a rota permitir
+  (`modedit.php`/`editsection.php` com `showonly`; `enrol/editinstance.php`; `mod/quiz/edit.php`); nas rotas que aceitam
+  `returnurl`, MUST voltar ao relatório.
+- **FR-036**: Um link de ação MUST NOT ser exibido quando a atividade não existe mais ou quem vê não tem a capacidade
+  exigida pela tela de destino; o texto MUST dizer quem pode fazer.
+- **FR-037**: O relatório MUST informar as precedências de uma lista fechada e testada (condição de acesso inválida na
+  atividade antes de outras correções manuais nela; CL‑06/CL‑07 antes de CL‑08 e CL‑14; CL‑12 soma antes de conferir o
+  CL‑23; conclusão da atividade antes de exigi‑la no CL‑16); MUST NOT inferir precedências fora dela.
+- **FR-038**: O relatório MUST agrupar em uma ação as ocorrências cuja relação é demonstrável por uma lista fechada e
+  testada de relações; MUST NOT agrupar por semelhança de texto; MUST mostrar o número de ações apenas quando todas as
+  relações da sala forem demonstráveis por essa lista, e o de ocorrências sempre.
+- **FR-039**: Quando um plugin exigido pela política (módulo do certificado, módulo de jogo, bloco de progresso) não
+  estiver instalado no site, o relatório MUST avisar no topo, indicar o administrador como responsável e substituir a
+  orientação das ocorrências decorrentes.
+- **FR-040**: O relatório MUST separar em "Verificações manuais" o que não é comprovado pela auditoria: alcançabilidade
+  do certificado sem impedimento estático (com o procedimento de teste funcional), conferências de texto e
+  correspondências por nome.
+- **FR-041**: Para cada ocorrência, o relatório MUST acrescentar ao rótulo de gravidade uma frase de impacto
+  (certificação, acesso de estudantes, inscrição, política institucional, conferir), sem mudar a gravidade.
+- **FR-042**: Rótulos de campos e opções do Moodle citados nas mensagens MUST vir das strings do próprio núcleo (por
+  exemplo `attemptsallowed` de `quiz`, `hiddensectionsinvisible`, `activitycompletion` de `completion`).
+- **FR-043**: O contrato JSON 1.1 MUST acrescentar, como campos opcionais, `check`, `subject`, `subjects` (entidades
+  relacionadas), `params` (valores estruturados) e `evidence_level` (`proven`, `heuristic`, `static`, `name_match`);
+  execuções 1.0 MUST continuar exibíveis, com `check` e `subject` lidos da chave de ocorrência.
+- **FR-044**: As correções de regra U‑01 (plugins exigidos no X‑INT‑03), U‑05 (CL‑17 em rótulos e fóruns
+  institucionais), U‑11 (alvo oculto igual no X‑DEP‑02 e no X‑CERT‑01) e U‑13 (CL‑18 sem afirmar colaboração não
+  verificada) MAY alterar resultados, como única exceção ao FR‑025, cada uma com decisão registrada e caracterização
+  regravada e revisada. **[validar]**
+
 ### Key Entities *(include if feature involves data)*
 
 - **Ocorrência apresentável**: o que a tela mostra de um resultado de regra — problema (frase), local (atividade ou
@@ -365,6 +500,11 @@ ocorrência dos cursos de referência não mudam e que a impressão digital do c
 - **Grupo por atividade**: uma atividade (ou "Configurações da sala") com suas ocorrências, a gravidade mais alta, o
   link de configuração e as ações de correção distintas.
 - **Preferência de visão**: a visão escolhida, guardada apenas no navegador da pessoa.
+- **Mensagem por verificação**: problema, por que importa, como corrigir (com alternativas), quem, como confirmar, por
+  regra e `check`, com parâmetros; em `lang/en` e `lang/pt_br`.
+- **Ação corretiva**: uma intervenção que resolve uma ou mais ocorrências por relação demonstrável; tem responsável,
+  destino (rota e seção), precedências e confirmação. Calculada ao exibir; não é persistida.
+- **Relação e precedência declaradas**: lista fechada e testada que liga ocorrências (mesma causa) ou ordena ações.
 
 ## Success Criteria *(mandatory)*
 
@@ -392,6 +532,31 @@ sem participantes.
   Cursos A e B, na prévia e no resultado da correção.
 - **SC-010**: 0 mudanças em ids, estados, gravidades e chaves de ocorrência nos cursos de referência A e B e na sala
   sintética de 151 módulos; relatórios guardados pela versão 0.5.x continuam abrindo sem erro.
+
+- **SC-011**: Nos cenários de teste, 100% das verificações das 29 regras que produzem problema ou alerta têm mensagem
+  própria com "por que importa", "como corrigir", "quem" e "como confirmar"; 0 ocorrências recebem orientação de outra
+  verificação.
+- **SC-012**: No Curso B (4.5, com plugins) e na sua cópia no site sem plugins (5.3), 100% dos links de ação abrem a
+  tela e a seção previstas, e 0 links são exibidos para quem não tem a capacidade da tela de destino.
+- **SC-013**: Com o roteiro de usuários acrescido das tarefas T6 (liberar o Questionário 1 e confirmar) e T7 (o que
+  impede ou prejudica o certificado), pelo menos 4 de 5 professores concluem T6 sem ajuda e apontam em T7 as duas
+  causas (cadeia de liberação bloqueada; certificado sem nota mínima).
+- **SC-014**: Nos cursos de referência, a contagem de ações coincide com a calculada manualmente pelas relações
+  declaradas (no Curso B do site sem plugins: 29 ocorrências, 24 ações).
+- **SC-015**: Para regras de mensagem alterada apenas (fases 1–3), 0 mudanças em ids, estados, gravidades e chaves de
+  ocorrência; relatórios gravados pela versão 0.6.x continuam abrindo sem erro, com nomes e links recalculados.
+
+## Fases de implementação (revisão 2026-10-30)
+
+1. **Textos e links** (FR‑031 a FR‑037, FR‑039, FR‑042): mensagens por verificação, nomes, rotas nativas, precedências,
+   responsável, plugin ausente. Não muda resultados.
+2. **Estrutura do relatório** (FR‑001 a FR‑023, FR‑038, FR‑040, FR‑041): resumo, "Comece por aqui", visões, verificações
+   manuais, detalhes recolhidos, celular. Precedida da linha de base com usuários (FR‑029, com T6 e T7).
+3. **Contrato 1.1** (FR‑026, FR‑043): campos opcionais; API passa a expô‑los.
+4. **Correções de regra** (FR‑044): uma por vez, com decisão e caracterização regravada.
+
+Testes por fase: caracterização A/B e sala sintética intactas nas fases 1–3; teste por regra e verificação para as
+mensagens; Behat das jornadas X‑DEP‑02 e certificado; axe no relatório e na prévia; `contract_test` 1.0 e 1.1.
 
 ## Assumptions
 
