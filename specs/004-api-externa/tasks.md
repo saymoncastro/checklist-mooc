@@ -191,7 +191,7 @@ mostra `complete`, `origin = api`.
   (`userid = 0`) sem remoção; metadados citam a origem.
 - [x] T037 [P] `docs/backlog.md` (repositório): 004 especificada/entregue; `docs/visao-produto.md` linha 8 (API) com
   o estado.
-- [ ] T038 (aguarda o responsável) Após aprovação de D1–D3: decisão 13 em `DECISOES-INSTITUCIONAIS-CHECKLIST.md` (repositório) — capacidade da
+- [x] T038 (D1–D3 aprovadas em 2026-10-30) Após aprovação de D1–D3: decisão 13 em `DECISOES-INSTITUCIONAIS-CHECKLIST.md` (repositório) — capacidade da
   API, serviço desabilitado/restrito, limite da fila.
 - [x] T039 `php -l` em todos os arquivos alterados; PHPCS `moodle` sem erros; PHPUnit completo verde; resultado e
   número de testes em `specs/004-api-externa/results.md`.

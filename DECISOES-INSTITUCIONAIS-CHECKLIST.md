@@ -111,6 +111,22 @@ não tenham uma permissão escolhida pelo administrador.
 
 ---
 
+## 13. API externa (Auditor MOOC, spec 004) — **DECIDIDO em 2026-10-30 (recomendação aprovada pelo responsável do projeto)**
+
+1. **Capacidade própria**: usar a API exige `local/mooc_audit:api` no contexto de sistema, **sem papel padrão**: só o
+   administrador decide qual conta de integração a recebe. A conta precisa também de `local/mooc_audit:audit` em cada
+   sala que lê ou audita (no sistema ou só numa categoria), com o mesmo acesso da página de auditoria.
+2. **Serviço sob controle do administrador**: o serviço externo "Auditor MOOC" é instalado **desabilitado** e restrito
+   a usuários autorizados, exigindo `local/mooc_audit:api`; a atualização do plugin reaplica a restrição.
+3. **Limite da fila**: no máximo **100 auditorias pendentes pedidas pela API por conta** (configurável, 1–2000) até
+   medir na homologação; a fila é compartilhada com os lotes, sem prioridade.
+Contexto (escopo da spec, não objeto desta aprovação): a API **nunca corrige** a sala — pede auditorias e lê
+resultados guardados; a correção assistida continua só pela interface do Moodle (decisão 11). Ciclo explícito por
+pedido, pedidos em lote, referência do cliente, notificações e limite de taxa ficaram fora da versão 1.0 (D4 da
+spec), para reavaliar com o MOOC Admin como consumidor.
+
+---
+
 ## Informações adicionais necessárias
 
 1. Novo backup íntegro do curso 668 "Como criar um MOOC?" (o arquivo atual está corrompido).

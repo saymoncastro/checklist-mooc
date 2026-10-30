@@ -4,8 +4,8 @@
 
 **Created**: 2026-10-30
 
-**Status**: Draft — especificação para validação; nada implementado. Itens **[validar]** dependem de confirmação do
-responsável do projeto antes da implementação.
+**Status**: Implementada (plugin 0.6.0, 2026-10-30). Os itens marcados **[validar]** (D1–D3: capacidade, serviço,
+limite da fila) foram aprovados pelo responsável do projeto em 2026-10-30 e registrados como decisão 13.
 
 **Base**: `main` em 5fe93b3 (Spec 005 mesclada pelo PR #5; plugin 0.5.0, versão 2026103001). Especificada sobre a
 branch da Spec 005 em d211191; o que entrou depois no PR #5 (bc96235) só altera a CI. Esta especificação depende do

@@ -236,7 +236,7 @@ desatualização, versionamento e notas de migração. Link no `README.md` do pl
 
 **Racional**: FR-030, SC-007; constituição X (verificável por quem não participou).
 
-## Decisões pendentes (para o responsável)
+## Decisões (aprovadas pelo responsável em 2026-10-30; registradas como decisão 13)
 
 | # | Decisão | Recomendação | Onde |
 |---|---|---|---|

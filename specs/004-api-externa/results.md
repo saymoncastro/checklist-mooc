@@ -71,9 +71,8 @@ relatório ≤ 2 s) atendidos com folga; medir de novo na homologação instituc
 
 ## Pendências
 
-- **T038 / D5**: registrar a decisão 13 em `DECISOES-INSTITUCIONAIS-CHECKLIST.md` depois que o responsável aprovar
-  D1–D3 (capacidade própria sem arquétipo, serviço desabilitado e restrito, limite de 100 pendentes por conta). A
-  implementação segue as recomendações; mudar qualquer uma é simples (capacidade, `db/services.php`, configuração).
+- ~~T038 / D5~~: D1–D3 aprovadas pelo responsável em 2026-10-30 e registradas como decisão 13 em
+  `DECISOES-INSTITUCIONAIS-CHECKLIST.md`; a implementação já as seguia, sem mudança de código.
 - **T041 / SC-007**: o roteiro manual do `quickstart.md` §2 por uma pessoa que não participou (configuração pela
   interface só com o `API.md`, cronometrada) ainda não foi feito; as chamadas acima cobrem o comportamento.
 - Metadados de teste em doc-comment (`@covers`): migrar para atributos antes do PHPUnit 12 (pendência herdada da 0.5.3).
