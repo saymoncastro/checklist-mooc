@@ -108,7 +108,7 @@
     <h4 id="local_mooc_audit-missing">{{#str}} cmp_section_missing, local_mooc_audit {{/str}}</h4>
     {{^hasmissing}}<p class="text-muted">{{#str}} cmp_none_in_section, local_mooc_audit {{/str}}</p>{{/hasmissing}}
     {{#hasmissing}}
-    <ul class="local_mooc_audit-missing">{{#missing}}<li><span class="badge badge-danger">{{modname}}</span> {{name}} <small class="text-muted">({{#str}} label_section, local_mooc_audit {{/str}} {{section}}, id {{cmid}})</small></li>{{/missing}}</ul>
+    <ul class="local_mooc_audit-missing">{{#missing}}<li><span class="badge bg-danger text-white">{{modname}}</span> {{name}} <small class="text-muted">({{#str}} label_section, local_mooc_audit {{/str}} {{section}}, id {{cmid}})</small></li>{{/missing}}</ul>
     {{/hasmissing}}
 
     <h4 id="local_mooc_audit-ambiguous">{{#str}} cmp_section_ambiguous, local_mooc_audit {{/str}}</h4>
@@ -120,7 +120,7 @@
         {{#ambiguities}}
         <div class="card mb-2 local_mooc_audit-ambiguity local_mooc_audit-ambiguity-{{reason}}">
             <div class="card-body">
-                <h5 class="card-title"><span class="badge badge-warning">{{modname}}</span> {{name}}</h5>
+                <h5 class="card-title"><span class="badge bg-warning text-dark">{{modname}}</span> {{name}}</h5>
                 <p class="mb-1">{{reasonlabel}}</p>
                 <p class="mb-1 small text-muted">{{settings}}</p>
                 <p class="mb-1 small">{{#str}} cmp_candidates, local_mooc_audit {{/str}}:
@@ -174,7 +174,7 @@
     {{#haspreserved}}
     <details class="local_mooc_audit-preserved" open>
         <summary>{{#str}} cmp_section_preserved, local_mooc_audit {{/str}}</summary>
-        <ul class="list-unstyled">{{#preserved}}<li><span class="badge badge-success">{{modname}}</span> {{target_name}} <small class="text-muted">({{#str}} label_section, local_mooc_audit {{/str}} {{target_section}}; {{strategylabel}}; <span class="badge {{confidenceclass}}">{{confidencelabel}}</span>)</small></li>{{/preserved}}</ul>
+        <ul class="list-unstyled">{{#preserved}}<li><span class="badge bg-success text-white">{{modname}}</span> {{target_name}} <small class="text-muted">({{#str}} label_section, local_mooc_audit {{/str}} {{target_section}}; {{strategylabel}}; <span class="badge {{confidenceclass}}">{{confidencelabel}}</span>)</small></li>{{/preserved}}</ul>
     </details>
     {{/haspreserved}}
 

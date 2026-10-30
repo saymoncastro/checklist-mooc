@@ -1,4 +1,4 @@
-# checklist-mooc — Auditor MOOC: auditoria técnica de cursos MOOC no Moodle 4.5
+# checklist-mooc — Auditor MOOC: auditoria técnica de cursos MOOC no Moodle (4.5 e 5.3)
 
 Projeto do **Auditor MOOC**: plugin local Moodle (`local_mooc_audit`) que audita salas de cursos MOOC do Cefor/Ifes,
 identifica inconformidades técnicas e gera relatório com orientações de correção, para apoiar o processo anual de
@@ -13,7 +13,7 @@ dentro do Moodle 4.5 e agora é conduzido por especificações (Spec-Driven Deve
 | `DECISOES-INSTITUCIONAIS-CHECKLIST.md` | As 10 ambiguidades do checklist como decisões institucionais, com as respostas registradas |
 | `RELATORIO-AUDITORIA-VIA-API-MOODLE.md` | Investigação complementar: auditar a sala restaurada via Web Services do Moodle 4.5 — inventário de funções, matriz de cobertura regra a regra, lacunas, verificações só possíveis na sala ativa, decisão arquitetural (motor único com adaptadores MBZ e API) |
 | `RELATORIO-POC-PLUGIN-MOODLE.md` | **Prova de conceito executada**: plugin `local_mooc_audit` em Moodle 4.5.15 local, cursos de teste A/B, importação nativa, comparação com o auditor MBZ e decisão arquitetural (plugin autônomo recomendado) |
-| `plugin/local_mooc_audit/` | Plugin local Moodle (0.5.2: 29 regras, relatório, correção assistida, comparação entre ofertas, histórico, lote e painel; PHPUnit e Behat) — ver seu `README.md` |
+| `plugin/local_mooc_audit/` | Plugin local Moodle (0.5.3, Moodle 4.5 e 5.3: 29 regras, relatório, correção assistida, comparação entre ofertas, histórico, lote e painel; PHPUnit e Behat) — ver seu `README.md` |
 | `plugin-results/` | Saídas das auditorias (cursos restaurados 55/670, cursos A/B, importações, comparações, PHPUnit, captura de tela) |
 | `moodle-env/` | Instruções e scripts reproduzíveis do ambiente Moodle local (moodle-docker, plugins de terceiros, restauração) |
 | `poc/moodle_api_client.py` | Cliente REST isolado e somente leitura (allowlist de funções) para a prova comparativa via Web Services, não executado |
@@ -62,6 +62,8 @@ python3 -I poc/mbz_inspect.py caminho/do/backup.mbz --out resultado.json
   homologação; nenhum P0). Etapas 1 e 2 do plano de estabilização (0.5.1 e 0.5.2): reauditoria pós-correção registrada,
   desatualização só por mudança de regra, privacidade da trilha de salas removidas, guarda estrita dos scripts de
   dados de teste, tabelas responsivas e ajustes de acessibilidade (`plugin-results/0.5.1/`, `plugin-results/0.5.2/`).
+- **2026-10-30 (Moodle 5.3):** plugin 0.5.3 testado no Moodle 5.3 LTS (PHPUnit, Behat com axe, auditorias A/B
+  idênticas às do 4.5); selos migrados para classes válidas nos Bootstraps 4 e 5 (`plugin-results/0.5.3/`).
 
 ## Fluxo de desenvolvimento (Spec Kit)
 

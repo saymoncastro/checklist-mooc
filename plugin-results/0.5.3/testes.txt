@@ -1,0 +1,44 @@
+local_mooc_audit 0.5.3 (2026103004) — compatibilidade com o Moodle 5.3 LTS — 2026-10-30
+
+Ambientes
+- Moodle 5.3+ (Build 20261030, MOODLE_503_STABLE 236a9d70), PHP 8.3.35, PostgreSQL 17.11, PHPUnit 11.5.56:
+  moocaudit-53-web (porta 8097, banco moodle_53; receita em moodle-env/README.md). Plugins de terceiros da árvore 4.5
+  (simplecertificate 2024051100, game 2026100800, hvp 2026090101, completion_progress 2026101200, availability_days
+  2016060100) instalaram sem erro.
+- Moodle 4.5.15 (Build 20261005), PHP 8.3.35, PostgreSQL 17.11, PHPUnit 9.6: moocaudit-s5-web (porta 8095).
+
+== Instalação no 5.3 (plugin 0.5.2, antes de qualquer ajuste)
+install_database.php instalou o plugin (2026103003) e as tabelas run/policy/batch/fix sem erro. Com
+$plugin->supported = [405, 405] o Moodle 5.3 só sinaliza "versão não suportada explicitamente" na tela de plugins
+(plugin_manager::check_explicitly_supported); não bloqueia a instalação.
+
+== Primeira rodada no 5.3 (plugin 0.5.2)
+PHPUnit: OK, mas com avisos (225 testes, 3457 asserções, 65 depreciações do PHPUnit, 1 notice)
+  - 65 depreciações: metadados em doc-comment (@covers etc.), aceitos no PHPUnit 11 e removidos no 12.
+  - 1 notice: tests/local/correction/executor_test.php usa course_delete_module(), depreciada desde o 5.2 (MDL-86856).
+Behat: 13 cenários, 9 aprovados, 4 reprovados (passo "the page should meet accessibility standards", color-contrast).
+  Causa: classes badge-* do Bootstrap 4 estão depreciadas no Moodle 5.x (theme/boost/scss/moodle/bs4-compat.scss,
+  remoção prevista no 6.0); em sites Behat o mixin deprecated-styles pinta o fundo de #fceeed, deixando o texto branco
+  com contraste 1,12. Num site comum os selos continuam com as cores normais.
+Auditorias CLI (--json) dos cursos A (id 4) e B (id 5) gerados por make_fixtures.php: 48 e 58 resultados, estados e
+  gravidades idênticos a tests/fixtures/expected_A.json e expected_B.json.
+
+== Ajustes (0.5.3)
+- Selos: badge-{danger,success,info,dark} → bg-* text-white; badge-{warning,secondary,light} → bg-* text-dark;
+  badge-pill → rounded-pill (classes que existem no Bootstrap 4 do 4.5 e no 5 do 5.x). Templates e classes de saída.
+- executor_test: usa formatactions::cm()->delete() quando existe (5.2+), senão course_delete_module().
+- version.php: supported [405, 503], versão 2026103004, release 0.5.3. Sem mudança de banco, regras ou comportamento.
+
+== Segunda rodada (0.5.3)
+Moodle 5.3:  PHPUnit OK (225 testes, 3457 asserções; 65 depreciações de metadados do PHPUnit, nenhuma notice)
+             Behat 13 cenários (13 aprovados), 213 passos (213 aprovados)
+Moodle 4.5:  PHPUnit OK (225 testes, 3457 asserções)
+             Behat 13 cenários (13 aprovados), 213 passos (213 aprovados)
+PHPCS --standard=moodle (moodle-cs 3.7.0): 0 erros, 0 avisos
+Navegador (5.3, http://localhost:8097): relatório do Curso B executado pela página; selos e contagens legíveis.
+
+== Pendências conhecidas para versões futuras (não impedem o 5.3)
+- Classes do Bootstrap 4 ainda usadas e aceitas pelo 5.3 só por compatibilidade: sr-only, mr-*/ml-*, custom-select.
+  Não há classe equivalente comum ao 4.5; migrar para visually-hidden, me-*/ms-*, form-select ao abandonar o 4.5
+  (obrigatório antes do Moodle 6.0).
+- Metadados de teste em doc-comment: migrar para atributos (#[CoversClass] etc.) antes do PHPUnit 12.

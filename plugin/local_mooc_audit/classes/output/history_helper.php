@@ -31,32 +31,32 @@ use stdClass;
 class history_helper {
     /** @var string[] Badge class of each run status. */
     const RUN_CLASS = [
-        run_store::QUEUED => 'badge-secondary',
-        run_store::RUNNING => 'badge-info',
-        run_store::COMPLETE => 'badge-success',
-        run_store::PARTIAL => 'badge-warning',
-        run_store::FAILED => 'badge-danger',
+        run_store::QUEUED => 'bg-secondary text-dark',
+        run_store::RUNNING => 'bg-info text-white',
+        run_store::COMPLETE => 'bg-success text-white',
+        run_store::PARTIAL => 'bg-warning text-dark',
+        run_store::FAILED => 'bg-danger text-white',
     ];
 
     /** @var string[] Badge class of each situation (none_detected is deliberately not "success": it is no approval). */
     const SITUATION_CLASS = [
-        'blocking' => 'badge-danger',
-        'needs_fix' => 'badge-warning',
-        'incomplete' => 'badge-dark',
-        'not_audited' => 'badge-secondary',
-        'none_detected' => 'badge-info',
+        'blocking' => 'bg-danger text-white',
+        'needs_fix' => 'bg-warning text-dark',
+        'incomplete' => 'bg-dark text-white',
+        'not_audited' => 'bg-secondary text-dark',
+        'none_detected' => 'bg-info text-white',
     ];
 
     /** @var string[] Badge class of each evolution class. */
     const EVOLUTION_CLASS = [
-        evolution::NEW => 'badge-danger',
-        evolution::CHANGED => 'badge-warning',
-        evolution::PERSISTENT => 'badge-warning',
-        evolution::REPLACED => 'badge-warning',
-        evolution::UNVERIFIABLE => 'badge-secondary',
-        evolution::NOT_COMPARABLE => 'badge-secondary',
-        evolution::REMOVED => 'badge-light',
-        evolution::RESOLVED => 'badge-success',
+        evolution::NEW => 'bg-danger text-white',
+        evolution::CHANGED => 'bg-warning text-dark',
+        evolution::PERSISTENT => 'bg-warning text-dark',
+        evolution::REPLACED => 'bg-warning text-dark',
+        evolution::UNVERIFIABLE => 'bg-secondary text-dark',
+        evolution::NOT_COMPARABLE => 'bg-secondary text-dark',
+        evolution::REMOVED => 'bg-light text-dark',
+        evolution::RESOLVED => 'bg-success text-white',
     ];
 
     /** @var array Cache of requester names. */
@@ -70,7 +70,7 @@ class history_helper {
      */
     public static function run_status(string $status): stdClass {
         return (object) ['code' => $status, 'label' => get_string('runstatus_' . $status, 'local_mooc_audit'),
-            'cssclass' => self::RUN_CLASS[$status] ?? 'badge-secondary'];
+            'cssclass' => self::RUN_CLASS[$status] ?? 'bg-secondary text-dark'];
     }
 
     /**
@@ -81,7 +81,7 @@ class history_helper {
      */
     public static function situation(string $situation): stdClass {
         return (object) ['code' => $situation, 'label' => get_string('situation_' . $situation, 'local_mooc_audit'),
-            'cssclass' => self::SITUATION_CLASS[$situation] ?? 'badge-secondary'];
+            'cssclass' => self::SITUATION_CLASS[$situation] ?? 'bg-secondary text-dark'];
     }
 
     /**

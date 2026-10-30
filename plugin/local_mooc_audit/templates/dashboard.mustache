@@ -35,7 +35,7 @@
         "situations": [{"code": "", "label": "Any", "selected": true}], "severities": [{"code": "", "label": "Any", "selected": true}],
         "from": "", "to": "", "hasrows": true,
         "rows": [{"id": 2, "fullname": "Course A", "shortname": "A", "category": "Open", "startdate": "01/01/27",
-            "situation": {"label": "Not audited", "cssclass": "badge-secondary"}, "pending": false, "isstale": false, "stale": "",
+            "situation": {"label": "Not audited", "cssclass": "bg-secondary text-dark"}, "pending": false, "isstale": false, "stale": "",
             "severities": [], "attention": 0, "lastaudit": "", "evolution": [], "reporturl": "#", "historyurl": "#", "runurl": null}],
         "paging": "", "canbatch": true, "batchurl": "#", "sesskey": "x", "hasbatches": false, "batches": [],
         "hasremoved": false, "removed": []
@@ -108,7 +108,7 @@
                     <td class="small">{{startdate}}</td>
                     <td><span class="badge {{situation.cssclass}}" data-situation>{{situation.label}}</span>
                         {{#pending}}<div class="small">{{#str}} situation_pending, local_mooc_audit {{/str}}</div>{{/pending}}
-                        {{#isstale}}<div class="small mt-1"><span class="badge badge-warning">{{#str}} situation_stale, local_mooc_audit {{/str}}</span> {{stale}}</div>{{/isstale}}</td>
+                        {{#isstale}}<div class="small mt-1"><span class="badge bg-warning text-dark">{{#str}} situation_stale, local_mooc_audit {{/str}}</span> {{stale}}</div>{{/isstale}}</td>
                     <td class="small">{{#severities}}{{#count}}<span class="text-nowrap mr-1">{{label}}: {{count}}</span> {{/count}}{{/severities}}</td>
                     <td>{{attention}}</td>
                     <td class="small">{{lastaudit}}</td>
