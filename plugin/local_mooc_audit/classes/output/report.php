@@ -82,6 +82,8 @@ class report implements renderable, templatable {
      * @param bool $withcorrections offer the correction proposal action on eligible results (specs/002)
      * @param moodle_url|null $compareurl link to the comparison with the previous offer (specs/003)
      * @param moodle_url|null $storedjsonurl JSON of the stored run when the report comes from the history (specs/005)
+     * @param array|null $policy policy applied by the run, for the texts built at display time (specs/006); null: the
+     *     policy in force
      */
     public function __construct(
         array $report,
