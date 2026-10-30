@@ -54,6 +54,17 @@ $p = strtoupper(trim((string) $o['participante']));
 if (!preg_match('/^P\d{2}$/', $p) || !in_array($o['perfil'], ['professor', 'tecnica'], true) || $o['senha'] === '') {
     cli_error("Uso: --participante=P01 --perfil=professor|tecnica --senha='...' [--ano=AAAA]");
 }
+// O gerador omite em silêncio certificado, jogo e bloco de progresso quando o plugin falta, o que muda o gabarito do
+// roteiro (T1, T7): o ambiente de referência exige os três.
+$missing = [];
+foreach (['mod_simplecertificate', 'mod_game', 'block_completion_progress'] as $component) {
+    if (!core_plugin_manager::instance()->get_plugin_info($component)) {
+        $missing[] = $component;
+    }
+}
+if ($missing) {
+    cli_error('Recusado: fora do ambiente de referência do roteiro; faltam os plugins ' . implode(', ', $missing) . '.');
+}
 $year = (int) $o['ano'] ?: (int) date('Y') + 1;
 \core\session\manager::set_user(get_admin());
 

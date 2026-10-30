@@ -77,6 +77,7 @@ orientação. Corrija no Moodle e use *Executar novamente*. Passo a passo e inte
 | Quem prepara a reoferta | [docs/guia-do-usuario.md](docs/guia-do-usuario.md) · [docs/catalogo-regras.md](docs/catalogo-regras.md) · [DECISOES-INSTITUCIONAIS-CHECKLIST.md](DECISOES-INSTITUCIONAIS-CHECKLIST.md) |
 | Desenvolvedor / avaliador | [docs/desenvolvimento/README.md](docs/desenvolvimento/README.md) · [arquitetura do plugin](docs/desenvolvimento/arquitetura-plugin.md) · [CHANGES.md](plugin/local_mooc_audit/CHANGES.md) |
 | Prontidão para distribuição | [docs/prontidao-distribuicao/README.md](docs/prontidao-distribuicao/README.md) |
+| Usabilidade e capacidade de correção do relatório | [docs/auditoria-ux-correcao/README.md](docs/auditoria-ux-correcao/README.md) |
 | Processo (SDD) | [constituição](.specify/memory/constitution.md) · [specs/](specs/) · [docs/backlog.md](docs/backlog.md) |
 | Histórico de engenharia | [docs/historico/](docs/historico/) · [docs/revisao-geral/](docs/revisao-geral/) · [plugin-results/](plugin-results/) · [poc/](poc/) |
 

@@ -1,8 +1,12 @@
-# Resultados da linha de base (interface atual, plugin 0.5.2)
+# Resultados da linha de base (interface atual, Auditor 0.6.1)
 
 > **A preencher depois das sessões.** Nenhum dado foi coletado até 2026-10-30. Não inclua nomes; use os códigos P01…P08.
 
 **Sessões:** _n_ professores editores, _n_ da equipe técnica · **Período:** _datas_ · **Moderação:** _papel, sem nome_
+
+**Ambiente** (ficha do roteiro, seção "Ambiente de referência"): Auditor _versão_ · Moodle _build_ ·
+`mod_simplecertificate` _versão_ · `mod_game` _versão_ · `block_completion_progress` _versão_ · contagem do Curso B
+impressa pelo script: _situação, não conformes, alertas_
 
 ## Critérios de sucesso (comparação com a nova interface em FR‑030)
 
@@ -13,6 +17,8 @@
 | SC‑003 — participantes com INT‑CONTAGEM | _n_ | 0 |
 | SC‑004 — participantes com T4 concluída sem ajuda | _x de n_ | todos |
 | SC‑005 — mediana de SEQ por tarefa (T1, T2, T3, T4) | _· · · ·_ | ≥ 6, sem piora |
+| SC‑013 — professores com T6 concluída sem ajuda | _x de 5_ | ≥ 4 de 5 |
+| SC‑013 — professores que apontam as duas causas na T7 | _x de 5_ | ≥ 4 de 5 |
 
 UMUX‑Lite (mediana de U1 e U2): _·_
 

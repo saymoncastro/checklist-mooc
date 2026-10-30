@@ -4,9 +4,28 @@
 correção assistida, antes de qualquer mudança da spec 006. A mesma sessão, com o mesmo roteiro, será repetida com a nova
 interface (FR‑030), e os resultados serão comparados nos critérios SC‑001 a SC‑005.
 
-**Versão avaliada:** plugin 0.5.2 (etapas 1 e 2 do plano de estabilização), a versão que vai para a homologação. Isso
-inclui a reauditoria gravada depois da correção (A‑01), então a tarefa T4 mede a interface, não esse defeito já
-corrigido.
+**Ambiente de referência** (o mesmo na linha de base e na avaliação final, FR‑030; só a versão do Auditor muda):
+
+| Item | Valor fixado |
+|---|---|
+| Auditor MOOC | **0.6.1** (`main` 0c1035f) na linha de base. Inclui a reauditoria gravada depois da correção (A‑01): a T4 mede a interface, não esse defeito já corrigido |
+| Moodle | 4.5.x, tema Boost, PHP 8.3, PostgreSQL; idioma `pt_br` no site e nas contas dos participantes. Registre o build exato |
+| Plugins de terceiros | **Obrigatórios:** `mod_simplecertificate`, `mod_game`, `block_completion_progress`. O gerador das salas omite em silêncio o que faltar (certificado, jogo, bloco), o que muda o gabarito; por isso `preparar_sessao.php` recusa rodar sem eles. Registre as versões |
+| Salas | Sempre geradas por `preparar_sessao.php` (gerador do plugin), uma dupla por participante, na categoria de referência. **Nunca** cópias de salas restauradas |
+| Ano da reoferta | O ano seguinte ao da sessão (padrão do script) |
+
+**Por que o número de não conformidades do Curso B varia entre documentos:** 25 nesta sala gerada com os plugins
+(gabarito abaixo); 24 no Curso B restaurado do laboratório principal (o glossário ganhou entradas depois da criação: dado,
+não código); 29 na cópia restaurada num site **sem** os três plugins (`docs/auditoria-ux-correcao/README.md`). As
+sessões usam apenas a sala gerada com os plugins.
+
+**Equivalência com 0.5.2:** entre 0.5.2 (7abe493) e 0.6.1 (0c1035f), regras, retrato, política e gerador não mudaram;
+no relatório e na prévia de correção mudaram só as classes dos selos de estado e o texto da versão do motor (`git diff
+7abe493 0c1035f`). Uma sessão feita em 0.5.2 continua comparável; registre a versão em `versao_plugin`.
+
+**Ficha do ambiente (antes da sessão piloto):** anote o build do Moodle, as versões dos plugins e a linha impressa por
+`preparar_sessao.php` para o Curso B. Se a contagem diferir do gabarito (Bloqueada; 25 não conformidades, 5 bloqueantes;
+5 alertas), **pare** e atualize o gabarito antes de qualquer sessão.
 
 **Não é avaliação de pessoas.** Os resultados descrevem a ferramenta; nenhum dado identifica participantes.
 
@@ -31,8 +50,9 @@ corrigido.
 
 ## 2. Preparação (antes de cada sessão)
 
-1. **Laboratório.** Use um site Moodle **local** de laboratório (por exemplo, o `moocaudit-rv-web` da receita em
-   `moodle-env/README.md`) com o plugin 0.5.2. **Nunca** a produção.
+1. **Laboratório.** Use um site Moodle **local** de laboratório no ambiente de referência acima (por exemplo, o
+   `moocaudit-rv-web` da receita em `moodle-env/README.md`, que estava em 0.5.2 em 2026-10-30 e deve ser atualizado para
+   0.6.1, ou outro site com a mesma receita). **Nunca** a produção.
 2. **Salas novas para o participante:**
    ```bash
    docker cp specs/006-experiencia-relatorio/validacao/preparar_sessao.php moocaudit-rv-web:/tmp/
@@ -100,7 +120,7 @@ Confirme o consentimento e inicie a gravação. Pergunte, e anote na folha do mo
 - Se a pessoa ficar em silêncio mais de 20 s, diga só "o que você está pensando agora?".
 - **Ajuda:** só se a pessoa pedir ou ficar parada 2 minutos. Use **somente** a dica padronizada do cartão. Cada dica
   conta 1 em `ajudas`.
-- **Limite:** 5 min por tarefa (T4: 8 min). Esgotado o tempo, registre `conclusao = N` e passe para a próxima.
+- **Limite:** 5 min por tarefa (T4 e T6: 8 min). Esgotado o tempo, registre `conclusao = N` e passe para a próxima.
 - Depois de cada tarefa, faça a pergunta SEQ (seção 4) e anote.
 
 ### Tarefas
@@ -113,8 +133,17 @@ Confirme o consentimento e inicie a gravação. Pergunte, e anote na folha do mo
 | **T3** Localizar a configuração da autoinscrição | Curso B | Relatório aberto | Chega à tela de edição do método "Autoinscrição" | Chega à lista de métodos de inscrição, mas não abre a autoinscrição | "O relatório tem links para as configurações." |
 | **T4** Corrigir as tentativas e confirmar | Curso B | Relatório aberto | Aplica a correção do CL‑13 **e** afirma, olhando o relatório, que o problema foi resolvido | Aplica, mas não consegue confirmar, ou corrige pela tela de edição sem confirmar | "Procure uma forma de corrigir pela própria ferramenta." |
 | **T5** Interpretar o "não verificável" | Curso A — com alertas | Relatório aberto | Entende que a ferramenta **não conseguiu verificar** (não é falha) e que é preciso **conferir à mão** a data de encerramento da lição | Entende que não é falha, mas não sabe o que fazer | "Leia a seção de itens não verificados." |
+| **T6** Liberar o Questionário 1 e confirmar | Curso B | Relatório aberto | Resolve a condição que exige "Aprofundamento" (ativa a conclusão em "Aprofundamento" **ou** remove a condição do questionário) **e** confirma pela nova auditoria. Anote qual alternativa escolheu e por quê | Encontra a condição mas não consegue alterá‑la ("Escolher…"), ou altera sem confirmar | "O relatório diz qual atividade a condição exige." |
+| **T7** O que impede o certificado | Curso B (ambiente de referência, **com** o Simple Certificate) | Relatório aberto | Aponta as duas causas: a cadeia de liberação passa por atividade sem conclusão ("Aprofundamento") ou oculta ("Leitura obrigatória"), **e** o certificado não exige a nota mínima de 60. Pergunta seguinte, registrada literalmente: "Quem resolveria cada uma?" (esperado: o próprio professor editor, nas duas) | Aponta uma das causas | Sem dica |
 
 Na T5, o moderador pode indicar a sala: "Agora abra a sala 'Curso A — com alertas'."
+
+T6 e T7 foram acrescentadas pela auditoria de capacidade de correção (`docs/auditoria-ux-correcao/README.md`, casos A,
+C e D). O gabarito da T7 só vale com o Simple Certificate instalado: sem o plugin a sala não tem certificado e
+as causas são outras (plugin ausente, a cargo do administrador). Esse cenário não entra nas sessões; é verificado sem
+participantes (Spec 006, US8). Se a sessão já tiver aplicado a T4, a T6 continua válida: a condição do Questionário 1 não muda com a T4. Na
+interface atual, quem tentar corrigir as tentativas pela tela de edição (T4) antes da T6 não conseguirá salvar: registre
+o código **INT‑ORDEM**.
 
 ### Encerramento (5 min)
 
@@ -141,6 +170,8 @@ Agradeça e encerre a gravação.
 | INT‑TECNICO | Não entende uma evidência por causa de termo ou valor técnico; anote qual em `observacoes` |
 | INT‑NV | Trata "não verificável" como falha da sala |
 | INT‑ALERTA | Não sabe se um alerta exige ação |
+| INT‑ORDEM | Tenta uma correção que o Moodle recusa por causa de outra inconformidade (ex.: tentativas do Questionário 1 antes da condição) |
+| INT‑RESP | Não sabe a quem recorrer para um problema que não pode resolver |
 | ROL‑INVENT | Lê o inventário ou se detém nele procurando o problema |
 | FRAG‑ATIV | Não percebe que o mesmo problema ou atividade aparece em outro ponto do relatório |
 | BOTAO‑DUP | Hesita entre os dois botões "Ver proposta" do CL‑13 |
@@ -149,7 +180,7 @@ Agradeça e encerre a gravação.
 
 ## 5. Registro
 
-- `registro-tarefas.csv`: **uma linha por participante e tarefa** (T1, T1b, T2, T3, T4, T5).
+- `registro-tarefas.csv`: **uma linha por participante e tarefa** (T1, T1b, T2, T3, T4, T5, T6, T7).
   - `interface`: `atual` (linha de base) ou `nova` (FR‑030).
   - `tempo_s`: segundos inteiros.
   - `conclusao`: `S`, `P` ou `N`.
@@ -183,6 +214,8 @@ Verifique também as hipóteses da spec. Se a linha de base contrariar alguma de
 | B‑03 (linguagem) | INT‑TECNICO e termos citados nas perguntas abertas |
 | B‑04 (contagens) | INT‑CONTAGEM |
 | B‑05 (alertas) | INT‑ALERTA |
+| U‑02/U‑03 (ordem e formulário, auditoria de correção) | INT‑ORDEM, T6 |
+| U‑09 (responsável) | INT‑RESP, pergunta da T7 |
 | B‑06 (botões) | BOTAO‑DUP |
 | B‑12/B‑13 (correção) | CODIGO‑CORR |
 | **Visão inicial ([validar])** | Se professores procuram os problemas pela atividade (relatam ou fazem isso na T2/T3), considere a visão "por atividade" como inicial para esse perfil |

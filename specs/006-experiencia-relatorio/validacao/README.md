@@ -22,3 +22,8 @@ ainda: os resultados abaixo são preenchidos pela equipe do Cefor depois das ses
 - Permissões conferidas: professor audita e corrige; perfil técnico (gerente da sala) também compara.
 - A primeira versão do script movia as salas para uma categoria própria. Isso acrescentava uma não conformidade do CL‑05
   e mudava o cenário, então as salas ficam na categoria de referência.
+
+**Revisão de 2026-10-30 (auditoria de capacidade de correção):** o roteiro passou a fixar um ambiente de referência
+(Auditor 0.6.1, Moodle 4.5, `mod_simplecertificate`, `mod_game` e `block_completion_progress`), com ficha do ambiente
+antes da sessão piloto; `preparar_sessao.php` recusa rodar sem esses plugins, porque o gerador os omite em silêncio e o
+gabarito mudaria; foram acrescentadas as tarefas T6 e T7 e os códigos INT‑ORDEM e INT‑RESP.
