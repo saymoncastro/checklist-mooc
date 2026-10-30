@@ -189,16 +189,30 @@ leitura e execução.
   `--i-know-this-is-dev`.
 - **Esforço:** P · **Decisão institucional:** sim, sobre o processo de empacotamento e deploy.
 
-### A‑05 — P2 — O painel carrega todas as salas antes de filtrar e paginar
+### A‑05 — P3 (medido em 2026-10-30; era P2) — O painel carrega todas as salas antes de filtrar e paginar
 
-- **Dimensão:** desempenho · **Confiança:** média · **Situação:** hipótese (medido só com 104 salas)
+- **Dimensão:** desempenho · **Confiança:** alta · **Situação:** medido; o risco não se confirmou até 10.000 salas
 - **Local:** `dashboard::scope()` (lê todos os cursos do filtro, depois cruza com `get_user_capability_course`);
   `dashboard::build()` decodifica o resumo JSON de cada sala e filtra em PHP; a paginação de 50 é aplicada só na saída.
 - **Evidência:** `results.md` da spec 005 registra 72 ms para 104 salas e "revisitar acima de ~1.000 salas". O número
   de cursos do Moodle institucional não foi informado.
-- **Recomendação:** antes da homologação, medir com 2.000–5.000 cursos (o gerador de lote já existe). Se o tempo
-  passar de cerca de 2 s, filtrar por categoria por padrão e mover a filtragem por situação para SQL.
-- **Esforço:** medição P; otimização M · **Decisão institucional:** informar o tamanho real do site.
+- **Medição (2026-10-30, laboratório rv, plugin 0.5.2):** salas leves com histórico clonado de execuções reais (1 a 6
+  por sala; 10% nunca auditadas; ~3% com falha na última), 10 subcategorias, administrador e gerente sem papel de
+  administrador. Scripts e saídas em `evidencias/escala-painel/`.
+
+  | Salas / execuções | Montagem dos dados, todas as salas | Pico de memória | Página HTTP completa | Com filtro de uma subcategoria |
+  |---|---|---|---|---|
+  | 104 / 205 (spec 005) | 0,017 s | — | — | — |
+  | 3.002 / 9.460 | 0,13 s (admin e gerente) | 21,5 MB | — | 300 salas: 0,02 s, 2,2 MB |
+  | 10.002 / 31.319 | 0,49–0,56 s (0,88 s na 1ª chamada) | 72 MB | 0,88 s no servidor, pico 81 MB | 1.000 salas: 0,07 s; página 0,23 s, 16 MB |
+
+  O custo cresce de forma linear: cerca de 50 µs e 7 KB por sala. A renderização fica em cerca de 0,01 s, porque mostra
+  só 50 linhas. As permissões custam menos de 0,04 s, mesmo para o gerente sem papel de administrador.
+- **Conclusão:** não é preciso otimizar antes da homologação. Ainda falta informar o número real de cursos da
+  produção. Pela extrapolação linear, só acima de cerca de 15.000 salas o pico de memória da página sem filtro se
+  aproximaria de 128 MB. Se o site for desse porte, abrir o painel já filtrado pela categoria da reoferta, uma mudança
+  pequena.
+- **Esforço:** nenhum agora · **Decisão institucional:** informar o tamanho real do site.
 
 ### A‑06 — P2 — Janela de suporte do Moodle 4.5 e cobertura de plataforma
 

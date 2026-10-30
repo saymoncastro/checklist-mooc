@@ -37,7 +37,7 @@ antes da **instalação em produção**.
 | A‑04 | Scripts de fixtures no pacote de produção com guarda "OU" | Operação | P | Sim: empacotamento/deploy |
 | B‑10 | Proposta orientada usa referência não conforme (CL‑14 × CL‑07) | Produto | P | Não |
 | B‑07 (mínimo) | Tabelas sem `.table-responsive`; refluxo a 320 px (WCAG 1.4.10) | Acessibilidade | P | Não |
-| A‑05 | Medir o painel com o volume real de cursos (2–5 mil) | Desempenho | P (medição) | Sim: informar o volume |
+| A‑05 | ~~Medir o painel com 2–5 mil cursos~~ **Medido em 2026-10-30:** 0,13 s com 3.000 salas e 0,88 s (página) com 10.000; sem otimização necessária; falta só confirmar o volume real | Desempenho | — | Sim: informar o volume |
 | A‑06 | Testar no PHP e no banco da produção (CI + laboratório) | Compatibilidade | P–M | Sim: plataforma de produção |
 | — | Ensaio de instalação em cópia anonimizada do Moodle institucional (permissões e histórico reais) | Operação | M | Sim: autorização de cópia |
 

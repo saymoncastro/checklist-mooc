@@ -28,7 +28,8 @@ laboratório · **Natureza:** auditoria independente, sem alterações no plugin
    Nenhum P0. Não foram encontrados SQL injection, XSS, CSRF ou acesso indevido entre salas. Riscos novos:
    - **A‑02:** trilha de correções de salas apagadas fica fora da Privacy API e sem retenção.
    - **A‑04:** scripts que criam cursos de teste vão no pacote de produção, com uma guarda permissiva.
-   - **A‑05:** o painel carrega todas as salas antes de filtrar; não foi medido no volume institucional.
+   - **A‑05:** o painel carrega todas as salas antes de filtrar. *Medido em 2026-10-30:* 0,13 s com 3.000 salas e
+     0,88 s por página com 10.000 (P3, sem otimização necessária); falta confirmar o volume real da produção.
 
 4. **A arquitetura está sustentável ou excessivamente complexa?**
    Sustentável. A complexidade está concentrada em quatro funções testadas: evolução, relação entre auditorias, painel
