@@ -50,20 +50,29 @@ no relatório e na prévia de correção mudaram só as classes dos selos de est
 
 ## 2. Preparação (antes de cada sessão)
 
-1. **Laboratório.** Use um site Moodle **local** de laboratório no ambiente de referência acima (por exemplo, o
-   `moocaudit-rv-web` da receita em `moodle-env/README.md`, que estava em 0.5.2 em 2026-10-30 e deve ser atualizado para
-   0.6.1, ou outro site com a mesma receita). **Nunca** a produção.
-2. **Salas novas para o participante:**
+1. **Laboratório.** Use o site de sessão `moocaudit-f0-web` (http://localhost:8102; receita "Ambiente da linha de base
+   com usuários" em `moodle-env/README.md`), que segue o ambiente de referência acima e esconde a depuração nas
+   páginas. **Nunca** a produção. O site só responde no computador que o hospeda (`localhost`): a sessão acontece
+   nesse computador, presencialmente ou por compartilhamento de tela com controle remoto **[validar]**.
+2. **Salas novas para o participante** (um técnico com acesso ao Docker desse computador):
    ```bash
-   docker cp specs/006-experiencia-relatorio/validacao/preparar_sessao.php moocaudit-rv-web:/tmp/
-   docker exec -w /var/www/html moocaudit-rv-web php /tmp/preparar_sessao.php --participante=P01 --perfil=professor --senha='<senha escolhida>'
+   docker cp specs/006-experiencia-relatorio/validacao/preparar_sessao.php moocaudit-f0-web:/tmp/
+   docker exec -w /var/www/html moocaudit-f0-web php /tmp/preparar_sessao.php --participante=P01 --perfil=professor --senha='<senha escolhida>'
    ```
-   O script imprime as duas URLs e o `cmid` do "Questionário 1". Anote na **folha do moderador**, nunca na planilha.
-   Cada sessão recebe salas novas, porque a tarefa T4 altera o Curso B.
-3. **Navegador:** janela anônima, 1366 × 768 ou maior, zoom 100%. Deixe o participante entrar com o usuário `lb_p01`
-   e a senha. Comece na **página inicial do Moodle**, não no relatório.
-4. **Gravação:** tela e áudio (com consentimento). Cronômetro ou registro de tempo da gravação.
-5. **Material:** cartões de tarefa (`cartoes-tarefas.md`) impressos ou numa segunda tela; planilhas
+   O script imprime as duas URLs, a contagem de cada sala e o `cmid` do "Questionário 1". Confira que o Curso B saiu
+   **Bloqueada, 25 não conformes, 5 alertas** e a sala com alertas **2 não conformes, 3 alertas, 1 não verificável**;
+   se não, pare (ficha do ambiente). Anote na **folha do moderador**, nunca na planilha. Cada sessão recebe salas novas,
+   porque T4 e T6 alteram o Curso B. O script não altera salas existentes.
+3. **Aquecer o site** (5 min antes): entre com a conta do participante, abra o relatório do Curso B e a tela de edição
+   do "Questionário 1" e volte ao Painel. No primeiro acesso o editor de "Restringir acesso" leva alguns segundos para
+   aparecer; quem salva antes disso não vê a validação da condição, e a observação da T6/INT‑ORDEM se perde.
+   Saia da conta depois.
+4. **Navegador:** janela anônima, 1366 × 768 ou maior, zoom 100%. Deixe o participante entrar com o usuário `lb_p01`
+   e a senha. Comece no **Painel** (a página que abre depois de entrar), não no relatório. **Não** use a "Página
+   inicial" do site: ela lista as salas de todos os participantes com o mesmo nome, e a primeira pode ser de outra
+   pessoa.
+5. **Gravação:** tela e áudio (com consentimento). Cronômetro ou registro de tempo da gravação.
+6. **Material:** cartões de tarefa (`cartoes-tarefas.md`) impressos ou numa segunda tela; planilhas
    `registro-tarefas.csv` e `registro-questionario.csv`.
 
 ### O que as salas contêm (gabarito do moderador)
@@ -127,7 +136,7 @@ Confirme o consentimento e inicie a gravação. Pergunte, e anote na folha do mo
 
 | # | Sala | Início | Sucesso (S) | Parcial (P) | Dica padronizada |
 |---|---|---|---|---|---|
-| **T1** Primeiro bloqueante | Curso B | Página inicial do Moodle | Aponta **qualquer um** dos 5 bloqueantes e a atividade | Aponta um problema não bloqueante como "o primeiro a resolver" | "A ferramenta fica no menu da sala." |
+| **T1** Primeiro bloqueante | Curso B | Painel (depois de entrar) | Aponta **qualquer um** dos 5 bloqueantes e a atividade | Aponta um problema não bloqueante como "o primeiro a resolver" | "A ferramenta fica no menu da sala." |
 | **T1b** Situação geral (pergunta) | Curso B | Fim da T1 | Descreve a sala como impedida ou bloqueada, com problemas sérios | — | Sem dica. Registre a resposta literal. Se a pessoa disser "quase tudo certo" ou "28 de 29", marque o código **INT‑CONTAGEM** |
 | **T2** Explicar um problema do Questionário 1 | Curso B | Relatório aberto | Escolhe um dos problemas do Questionário 1 e explica corretamente, com as próprias palavras, **o que está errado** e **o que fazer** (ex.: "permite 1 tentativa, precisa de pelo menos 2; mudar em Tentativas permitidas"). Anote qual problema escolheu e se percebeu que há outros | Explica o que está errado, mas não o que fazer, ou o contrário | "Procure pelo nome da atividade." |
 | **T3** Localizar a configuração da autoinscrição | Curso B | Relatório aberto | Chega à tela de edição do método "Autoinscrição" | Chega à lista de métodos de inscrição, mas não abre a autoinscrição | "O relatório tem links para as configurações." |

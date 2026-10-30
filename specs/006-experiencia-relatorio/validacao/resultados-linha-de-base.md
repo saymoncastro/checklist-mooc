@@ -8,6 +8,10 @@
 `mod_simplecertificate` _versão_ · `mod_game` _versão_ · `block_completion_progress` _versão_ · contagem do Curso B
 impressa pelo script: _situação, não conformes, alertas_
 
+> Conferido no piloto técnico de 2026-10-30 (`moocaudit-f0-web`): Auditor 0.6.1 · Moodle 4.5.15 (Build: 20261005) ·
+> `mod_simplecertificate` 4.0.01 · `mod_game` 2026-10-08 · `block_completion_progress` 2026101200 · Curso B: Bloqueada,
+> 25 não conformes, 5 alertas. O técnico confirma estes valores no dia do piloto com pessoas; se mudarem, registre aqui.
+
 ## Critérios de sucesso (comparação com a nova interface em FR‑030)
 
 | Critério | Linha de base | Meta da spec 006 |
