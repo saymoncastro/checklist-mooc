@@ -32,17 +32,28 @@ Nada do plugin aparece para professores não editores nem para estudantes.
 
 2. Na primeira vez, a página avisa que a sala ainda não foi auditada. Clique em **Executar auditoria** (*Run audit*).
    A execução leva menos de um segundo numa sala comum e fica registrada no histórico.
-3. O topo mostra **quando** e **por quem** a auditoria foi feita, a comparação com a anterior e os links do histórico.
-   Abaixo: ano da reoferta, versão da política, *Inventário* da sala e **Situação geral**.
+3. O topo mostra **quando** e **por quem** a auditoria foi feita e a comparação com a anterior. Logo abaixo:
+   - **Situação geral** e os números da sala: problemas, bloqueantes, causas distintas (problemas que se resolvem com a
+     mesma correção contam uma vez), atividades e configurações envolvidas, pontos para conferir;
+   - **Comece por aqui**: até três problemas, primeiro os de que outras correções dependem, cada um com o link da ação;
+   - **Mostrar os problemas**: *Por prioridade* (por gravidade e categoria) ou *Por atividade* (cada atividade uma vez,
+     na ordem do curso, com todos os seus problemas e alertas). A escolha fica lembrada neste navegador.
 
-   ![Topo do relatório](prontidao-distribuicao/capturas/09-relatorio-topo.jpg)
+   Ano da reoferta, política, versão do Auditor, inventário e contagens por estado ficam em *Detalhes técnicos da
+   auditoria*, no fim da página.
+
+   ![Topo do relatório](capturas/relatorio-topo.jpg)
 
 4. Leia as **Inconformidades**, agrupadas por gravidade e por categoria. Cada linha tem:
-   - **Problema**: uma frase com o nome da atividade; o código e o título da regra ficam logo abaixo, em letra menor;
-   - **Local**: a atividade, a seção ou a tela do curso;
+   - **Problema**: uma frase com o nome da atividade, o local (atividade, seção ou tela do curso) e, em letra menor, o
+     código e o título da regra; *conferência de texto* ou *busca por nome* quando o resultado não é um fato comprovado;
+   - **Estado**: estado, gravidade e o impacto prático (afeta o certificado, impede o acesso, afeta a oferta, contraria a
+     política, conferir);
    - **O que fazer**: *Por que importa*, *Como corrigir* (com as alternativas quando a escolha é pedagógica), links que
      abrem **a seção certa** do formulário do Moodle (por exemplo, só "Restringir acesso" ou só "Condições de
-     conclusão"), *Quem pode* e *Como confirmar*. Quando uma correção precisa vir antes de outra, a linha avisa;
+     conclusão"); *Quem pode* quando depende de outra pessoa; *Como confirmar* quando é diferente do padrão ("volte e
+     clique em Executar novamente"). Quando uma correção precisa vir antes de outra, a linha avisa; quando dois itens
+     têm a mesma causa, um aponta para o outro;
    - **Detalhes técnicos** (recolhidos): a evidência gravada, o encontrado e o esperado, a chave da ocorrência.
 
    Os links só aparecem para quem pode usar a tela; quando o problema depende de outra pessoa (administrador do site,

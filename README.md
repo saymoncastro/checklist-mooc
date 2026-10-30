@@ -26,7 +26,7 @@ Catálogo completo: [docs/guia-do-usuario.md](docs/guia-do-usuario.md).
 
 ## Situação
 
-- **Versão 0.7.0, maturidade ALPHA.** Estágio: *plugin instalável para homologação* — instalado a partir do ZIP em
+- **Versão 0.8.0, maturidade ALPHA.** Estágio: *plugin instalável para homologação* — instalado a partir do ZIP em
   Moodle 4.5 e 5.3 limpos, sem avisos com depuração de desenvolvedor, e usado de ponta a ponta por um perfil de professor
   editor ([relatório de prontidão](docs/prontidao-distribuicao/README.md)). Ainda não foi usado em produção nem
   homologado com usuários externos.
@@ -55,13 +55,13 @@ Instalação manual, atualização, desinstalação e permissões: [docs/instala
 
 ## Primeira auditoria
 
-Abra a sala, *Mais > Auditoria técnica*, clique em *Executar auditoria* e leia a *Situação geral* e as
-*Inconformidades* por gravidade. Cada linha diz o problema com o nome da atividade, por que importa, como corrigir,
-quem pode e como confirmar, com links que abrem a seção certa do formulário do Moodle. Corrija e use *Executar
-novamente*. Passo a passo e interpretação dos estados:
+Abra a sala, *Mais > Auditoria técnica*, clique em *Executar auditoria* e leia a *Situação geral* e o
+*Comece por aqui*, com os primeiros problemas a resolver; veja os demais *por prioridade* ou *por atividade*. Cada
+linha diz o problema com o nome da atividade, por que importa e como corrigir, com links que abrem a seção certa do
+formulário do Moodle. Corrija e use *Executar novamente*. Passo a passo e interpretação dos estados:
 [docs/guia-do-usuario.md](docs/guia-do-usuario.md).
 
-![Relatório da auditoria técnica no Moodle 4.5](docs/capturas/relatorio-o-que-fazer.jpg)
+![Relatório da auditoria técnica no Moodle 4.5](docs/capturas/relatorio-topo.jpg)
 
 ## Limitações conhecidas
 

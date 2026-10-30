@@ -67,9 +67,48 @@ ação por atividade.
 - [x] T023 Versão 0.7.0 em `version.php` e `engine::VERSION`, `CHANGES.md` e nova captura do relatório no `README.md` da raiz e em `docs/guia-do-usuario.md`
 - [x] T024 Registrar resultados e evidências da fase 1 em `specs/006-experiencia-relatorio/results.md`
 
-## Fase 2 do plano — Estrutura do relatório (a detalhar depois da fase 1)
+## Fase 2 do plano — Estrutura do relatório
 
-- [ ] T025 Detalhar as tarefas de US1 (topo e "Comece por aqui"), US3 (visões e causas agrupadas, FR‑038), US5 (celular) e FR‑040/FR‑041 a partir dos resultados da fase 1
+- [x] T025 Detalhar as tarefas de US1 (topo e "Comece por aqui"), US3 (visões e causas agrupadas, FR‑038), US5 (celular) e FR‑040/FR‑041 a partir dos resultados da fase 1 (T027–T040)
+
+**Decisões de detalhe:** a visão escolhida fica num cookie do navegador (`local_mooc_audit_view`, FR‑014/FR‑028; sem
+JavaScript); visão inicial "por prioridade" (**[validar]** pela linha de base); causas pela lista fechada de relações
+R12 (abaixo), contadas sempre que houver problemas, porque ocorrências sem relação demonstrada contam cada uma como sua
+própria causa (definição de causa da spec); impacto por regra (FR‑041) sem mudar gravidades.
+
+**Relações R12 (mesma causa):** (a) CL‑13 `attempts` e `intro_attempts` na mesma atividade (a mesma correção
+simulada resolve as duas); (b) conclusão da mesma atividade: CL‑09 `forum_completion`, CL‑17 `completion`, CL‑19
+`completion`; (c) `certificate_presence` no CL‑11, CL‑23 e X‑CERT‑01; (d) atividade oculta: X‑DEP‑02
+`target_completion` em atenção com `subject cm:X` e X‑STR‑01 `visibility` da atividade X.
+
+### US1 — Situação e primeira ação no topo (P1)
+
+- [x] T027 [US1] `classes/local/presentation/summary.php`: contagens por natureza (problemas, bloqueantes, pontos para conferir), atividades e configurações envolvidas, causas (R12), correções assistidas disponíveis e "Comece por aqui" (até 3 problemas: gravidade, depois os sem nota de precedência)
+- [x] T028 [US1] Topo do relatório em `templates/report.mustache`: situação, frase de contagem (FR‑002), "Comece por aqui" com link para a linha e para a primeira ação; mensagem própria para sala sem problemas, sem "aprovada" (FR‑005); avisos de desatualizado/incompleto continuam acima (FR‑004)
+- [x] T029 [US1] Metadados (motor, contrato, política, ano, tempo), inventário e contagens por estado num `<details>` "Detalhes técnicos da auditoria" no fim (FR‑003)
+
+### US3 — Corrigir por atividade (P2)
+
+- [x] T030 [US3] `classes/local/presentation/causes.php`: chave de causa por ocorrência (R12), principal e "também resolve"; usada pelo resumo e pelas duas visões
+- [x] T031 [US3] Visão "por atividade" em `classes/output/report.php` e `templates/report_activity.mustache`: cada atividade uma vez (ordem do curso), gravidade mais alta, link de configuração, problemas e alertas; seções; "Configurações da sala" para o resto (FR‑013); mesmas ocorrências e estados da visão por prioridade (FR‑015)
+- [x] T032 [US3] Linha comum às duas visões em `templates/report_item.mustache` (parcial), com âncora por ocorrência e a nota "mesma causa de…"/"também resolve…"
+- [x] T033 [US3] Troca de visão por link (`view=priority|activity`) em `index.php` e `history.php`, lembrada no cookie; valor do cookie validado (FR‑012, FR‑014)
+
+### FR‑040 / FR‑041 — Verificações manuais e impacto
+
+- [x] T034 Seção "Verificações manuais" em `templates/report.mustache`: alcançabilidade do certificado sem impedimento estático (X‑CERT‑01 `chain` conforme) com o procedimento de teste; itens não verificáveis; selo "conferência de texto"/"busca por nome" nas verificações heurísticas (CL‑13 `intro_attempts`, X‑AV‑01, CL‑20 `generic_name`; CL‑09, CL‑11, CL‑16, CL‑22 de presença)
+- [x] T035 Frase de impacto ao lado da gravidade (certificação, acesso de estudantes, oferta e inscrição, política institucional, conferir) em `classes/local/presentation/catalog.php` e no template
+
+### US5 — Celular e acessibilidade (P3)
+
+- [x] T036 [US5] `styles.css`: a menos de 768 px, linhas viram blocos com rótulo e valor (`data-label`); sem rolagem horizontal a 320 px (FR‑021)
+- [x] T037 [US5] Hierarquia de títulos sem saltos (h2 → h3 → h4) no relatório e no resumo da execução (FR‑022); estados também em texto
+
+### Testes e polimento da fase 2
+
+- [x] T038 [P] Testes: `tests/presentation_summary_test.php` (contagens e causas do Curso B; sala sem problemas; "Comece por aqui"); visão por atividade com o Questionário 1 uma vez e as mesmas ocorrências da visão por prioridade (`tests/output_test.php`); Behat: troca de visão lembrada, títulos e axe
+- [x] T039 Ajustar os Behat que conferem `h4#…`; rodar PHPUnit, Behat, PHPCS; conferir 320 px, 375 px e 1366 px no navegador e no 5.3
+- [x] T040 Versão 0.8.0, `CHANGES.md`, guia do usuário, captura, `results.md`
 
 ## Fase 3 do plano — Contrato 1.1 (a detalhar depois da fase 2)
 

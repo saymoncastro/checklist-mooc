@@ -1,0 +1,60 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_mooc_audit/report_activity
+    Problems and warnings grouped by activity (specs/006, FR-013): each activity once, in course order, then sections,
+    then the course settings. The rows are the same as in the view by priority (local_mooc_audit/report_item).
+    Context variables required for this template:
+    * activities[] - objects with name, url (optional, settings of the activity), worst, worstclass, count and items[]
+    Example context (json):
+    {
+        "activities": [{"name": "Quiz 1", "url": "#", "worst": "Non conformant · High", "worstclass": "bg-danger text-white",
+            "count": 1, "items": [{"rule": "CL-13", "title": "Quizzes with at least two attempts", "statuslabel": "Non conformant",
+            "statusclass": "bg-danger text-white", "severitylabel": "High", "anchor": "local_mooc_audit-occ-1",
+            "presented": true, "problem": "The quiz Quiz 1 allows fewer attempts than required.", "place": "Quiz 1",
+            "why": "The policy gives learners at least 2 attempts.", "fix": "Change Attempts allowed.", "who": "You can do this.",
+            "verify": "Run the audit again.", "evidencia": "attempts=1", "check": "attempts", "occurrence": "CL-13|cm:1|attempts"}]}]
+    }
+}}
+<div class="local_mooc_audit-activities">
+    {{#activities}}
+    <section class="local_mooc_audit-activity mb-3">
+        <h4 class="h5 d-flex flex-wrap align-items-center">
+            <span class="mr-2 me-2">{{name}}</span>
+            <span class="badge {{worstclass}} mr-2 me-2">{{worst}}</span>
+            <span class="badge rounded-pill bg-secondary text-dark">{{count}}</span>
+        </h4>
+        {{#url}}<p class="mb-1 small"><a href="{{url}}">{{#str}} activity_settings, local_mooc_audit {{/str}}</a></p>{{/url}}
+        <div class="table-responsive">
+        <table class="table table-sm table-striped local_mooc_audit-items">
+            <thead>
+                <tr>
+                    <th scope="col" class="w-25">{{#str}} label_problem, local_mooc_audit {{/str}}</th>
+                    <th scope="col">{{#str}} label_status, local_mooc_audit {{/str}}</th>
+                        <th scope="col">{{#str}} label_todo, local_mooc_audit {{/str}}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#items}}
+                {{> local_mooc_audit/report_item }}
+                {{/items}}
+            </tbody>
+        </table>
+        </div>
+    </section>
+    {{/activities}}
+</div>

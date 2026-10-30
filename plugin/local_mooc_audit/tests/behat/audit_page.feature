@@ -36,11 +36,11 @@ Feature: Technical audit of a course
     And I should see "Result of the last audit, run on" in the "[data-region='result-of']" "css_element"
     And "Overall status" "heading" should exist
     And I should see "Blocked" in the ".local_mooc_audit-overall" "css_element"
-    And "h4#local_mooc_audit-nonconformities" "css_element" should exist
-    And "h4#local_mooc_audit-warnings" "css_element" should exist
-    And "h4#local_mooc_audit-unverifiable" "css_element" should exist
-    And "h4#local_mooc_audit-conformant" "css_element" should exist
-    And "h4#local_mooc_audit-notices" "css_element" should exist
+    And "h3#local_mooc_audit-nonconformities" "css_element" should exist
+    And "h3#local_mooc_audit-warnings" "css_element" should exist
+    And "h3#local_mooc_audit-unverifiable" "css_element" should exist
+    And "h3#local_mooc_audit-conformant" "css_element" should exist
+    And "h3#local_mooc_audit-notices" "css_element" should exist
     # Locations with a destination are links whose text names the resource (FR-023).
     And I should see "Questionário 1" in the "a[title='Open: Module settings']" "css_element"
     And "JSON" "link" should exist

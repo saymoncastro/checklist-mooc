@@ -132,7 +132,8 @@ class finding {
         for ($i = 1; $sm->string_exists($key . '_alt' . $i, 'local_mooc_audit'); $i++) {
             $out->alternatives[] = get_string($key . '_alt' . $i, 'local_mooc_audit', $a);
         }
-        $out->verify = $sm->string_exists($key . '_verify', 'local_mooc_audit')
+        $out->verifyspecific = $sm->string_exists($key . '_verify', 'local_mooc_audit');
+        $out->verify = $out->verifyspecific
             ? get_string($key . '_verify', 'local_mooc_audit', $a) : get_string('msg_verify_default', 'local_mooc_audit');
         foreach ($actions as $type) {
             foreach ($this->actions($type, $r, $occ, $cm) as $action) {
@@ -147,8 +148,8 @@ class finding {
         ) {
             $who = catalog::WHO_TEACHER;
         }
-        $out->who = $who === catalog::WHO_TEACHER && $out->actions ? get_string('who_you', 'local_mooc_audit')
-            : get_string('who_' . $who, 'local_mooc_audit');
+        $out->whoyou = $who === catalog::WHO_TEACHER && $out->actions;
+        $out->who = $out->whoyou ? get_string('who_you', 'local_mooc_audit') : get_string('who_' . $who, 'local_mooc_audit');
         $out->before = $this->before($r, $occ['check'], $a);
         // Without the plugin there is no screen to go to: the problem belongs to the course as a whole.
         $out->place = $variant === 'noplugin' ? get_string('place_course', 'local_mooc_audit') : $this->place($r, $cm, $a);

@@ -1,6 +1,8 @@
-# Resultados — Spec 006, fase 1 (textos e links)
+# Resultados — Spec 006
 
-**Versão:** Auditor 0.7.0 (2026103102). **Ramo:** `claude/spec-006-implementacao`. **Data:** 2026-10-30.
+## Fase 1 — textos e links
+
+**Versão:** Auditor 0.7.0 (2026103102). **Ramo:** `claude/spec-006-implementacao` (PR #17, mesclado). **Data:** 2026-10-30.
 
 ## O que mudou para quem usa
 
@@ -61,3 +63,35 @@ aparece para quem pode preparar correções; passaram a dizer "se esta linha ofe
 - Fase 4 (decisão do Cefor): X‑INT‑03 com plugins exigidos, CL‑17 em rótulos e fórum institucional, CL‑18 sem afirmar
   colaboração, alvo oculto igual no X‑DEP‑02 e no X‑CERT‑01.
 - Linha de base com pessoas no site congelado em 0.6.1 e avaliação final com a nova interface (FR‑029, FR‑030).
+
+## Fase 2 — estrutura do relatório
+
+**Versão:** Auditor 0.8.0 (2026103103). **Ramo:** `claude/spec-006-fase-2`. **Data:** 2026-10-30.
+
+**O que mudou:** topo com a situação, os números da sala (problemas, bloqueantes, causas distintas, atividades e
+configurações envolvidas, pontos para conferir, propostas de correção) e "Comece por aqui" (até três problemas; primeiro
+os de que outras correções dependem); troca entre as visões "por prioridade" e "por atividade", lembrada em cookie do
+navegador; ocorrências da mesma causa ligadas entre si (relações R12); impacto prático ao lado da gravidade; selo
+"conferência de texto"/"busca por nome"; seção "Verificações manuais" com o procedimento de teste do certificado;
+metadados, inventário e contagens por estado em "Detalhes técnicos da auditoria", recolhido, no fim; "Local" dentro da
+coluna do problema; "Quem pode" e "Como confirmar" só quando dizem algo próprio; linhas empilhadas abaixo de 768 px;
+títulos h2 → h3 → h4 → h5 sem saltos.
+
+| Verificação | Resultado |
+|---|---|
+| PHPUnit completo (4.5.15, s2) | **261 testes, 7.674 asserções, todos verdes**; caracterização intacta; `presentation_summary_test` novo (contagens e causas do Curso B, "Comece por aqui" com a dependência primeiro, as duas visões com as mesmas ocorrências, Questionário 1 uma vez, sala sem problemas) |
+| Behat `@local_mooc_audit` | **16 cenários, 262 passos, todos verdes**; cenário novo: troca para "por atividade", visão lembrada ao voltar, retorno a "por prioridade", axe |
+| PHPCS `moodle` | limpo |
+| FR‑001 (1366 × 900, Curso B) | situação, números e "Comece por aqui" terminam a 829 px: **sem rolagem** |
+| FR‑015 | visões com as mesmas 30 ocorrências (25 não conformes, 5 alertas) |
+| FR‑021 (375 px) | 0 linhas de problema com rolagem horizontal; só a tabela de contagens, dentro dos detalhes técnicos recolhidos, rola |
+| FR‑022/FR‑023 (axe, 4.5 e 5.3) | sem violações do plugin; restam `landmark-unique` (navegação principal do Moodle) e, no 5.3, `color-contrast`/`region` do índice do curso do Moodle |
+| SC‑014 | Curso B gerado: 25 problemas → 22 causas; cópia do Curso B no 5.3 sem plugins: 26 → 22 |
+
+**Não atendido:** SC‑006 (página do Curso B com até um terço da altura antiga). A 1366 px a página tem cerca de
+9.800 px, contra cerca de 7.800 px antes: cada linha agora explica o problema, a consequência e a correção, o que a
+spec também exige (FR‑031). Para reduzir, a próxima opção é recolher "Por que importa" e as alternativas por padrão;
+a decisão fica para depois da linha de base com usuários, que dirá se o texto visível ajuda ou atrapalha.
+
+**Ainda em aberto:** visão inicial "por prioridade" **[validar]** pela linha de base; fase 3 (contrato 1.1, prévia e
+resultado da correção em linguagem do Moodle); fase 4 (regras, decisão do Cefor).

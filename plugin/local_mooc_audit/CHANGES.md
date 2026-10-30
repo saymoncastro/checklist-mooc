@@ -3,6 +3,23 @@
 All releases so far are ALPHA and were tested in laboratory sites only. Detailed technical notes (in Portuguese) are in
 `docs/desenvolvimento/arquitetura-plugin.md` of the project repository.
 
+## 0.8.0 (2026103103) — 2026-10-30
+
+- The top of the report answers "how is the course and what do I do first": overall status, counts by nature
+  (problems, blocking, distinct causes, activities and course settings involved, points to check, correction
+  proposals) and "Start here" with up to three problems, the ones other fixes depend on first.
+- Two views of the same results: by priority (as before) and by activity (each activity once, in course order, then
+  sections and course settings); the choice is remembered in a browser cookie.
+- Results that share a cause (same assisted correction, same completion setting, missing certificate, hidden activity)
+  point to each other; the count of distinct causes uses only these demonstrable relations.
+- Each problem shows its practical impact (certificate, access, offer, policy), and text checks or searches by name are
+  marked as such. A "Manual checks" section explains how to prove that the certificate is actually issued.
+- Engine version, contract, policy, timing, inventory and counts by state moved to a collapsed "Technical details of
+  the audit" section at the end. Location merged into the problem column; who can fix and how to confirm appear only
+  when they say something specific.
+- Stacked rows below 768 px wide (no horizontal scrolling of a problem), headings without skipped levels, action links
+  of at least 24 px. No change in rules, states, severities, occurrence keys or the JSON contract.
+
 ## 0.7.0 (2026103102) — 2026-10-30
 
 - Report rows explain each problem in plain Moodle language, in the viewer's language: the problem with activity

@@ -28,7 +28,7 @@ Feature: Fix a problem from the technical audit report
     When I press "Run audit"
     Then I should see "will never be released" in the "tr[data-rule='X-DEP-02'][data-check='target_completion']" "css_element"
     And I should see "Aprofundamento" in the "tr[data-rule='X-DEP-02'][data-check='target_completion']" "css_element"
-    And I should see "You can do this." in the "tr[data-rule='X-DEP-02'][data-check='target_completion']" "css_element"
+    And "Completion conditions: Aprofundamento" "link" should exist
     And the page should meet accessibility standards
     When I click on "Completion conditions: Aprofundamento" "link" in the "tr[data-rule='X-DEP-02'][data-check='target_completion']" "css_element"
     Then I should see "Completion conditions"
@@ -46,3 +46,19 @@ Feature: Fix a problem from the technical audit report
     When I press "Run audit"
     Then I should see "An editing teacher of the course." in the "tr[data-rule='X-DEP-02'][data-check='target_completion']" "css_element"
     And "Completion conditions: Aprofundamento" "link" should not exist
+
+  @javascript @accessibility
+  Scenario: The teacher switches to the view by activity and the choice is remembered
+    Given I log in as "teacher1"
+    And I am on the technical audit page of "MOOC_B"
+    And I press "Run audit"
+    Then I should see "Start here"
+    And I should see "Technical details of the audit"
+    When I click on "By activity" "link" in the ".local_mooc_audit-views" "css_element"
+    Then I should see "Problems and warnings by activity"
+    And I should see "Questionário 1" in the ".local_mooc_audit-activity" "css_element"
+    And the page should meet accessibility standards
+    When I am on the technical audit page of "MOOC_B"
+    Then I should see "Problems and warnings by activity"
+    When I click on "By priority" "link" in the ".local_mooc_audit-views" "css_element"
+    Then "h3#local_mooc_audit-nonconformities" "css_element" should exist
