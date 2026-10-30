@@ -65,6 +65,14 @@ final class engine_test extends \advanced_testcase {
     }
 
     /**
+     * The engine version shown in reports, the history and the API follows the release declared in version.php.
+     */
+    public function test_engine_version_matches_release(): void {
+        $plugin = \core_plugin_manager::instance()->get_plugin_info('local_mooc_audit');
+        $this->assertSame($plugin->release, engine::VERSION);
+    }
+
+    /**
      * A rule throwing an exception produces an ERRO result and does not abort the audit.
      */
     public function test_policy_override_and_isolation(): void {

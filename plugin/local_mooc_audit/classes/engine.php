@@ -30,8 +30,8 @@ use local_mooc_audit\local\status;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class engine {
-    /** @var string Engine version recorded in every report. */
-    const VERSION = '0.5.0';
+    /** @var string Engine version recorded in every report; equal to $plugin->release (checked by engine_test). */
+    const VERSION = '0.6.1';
     /** @var string Version of the JSON report contract (bumped only on incompatible changes). */
     const CONTRACT_VERSION = '1.0';
 
