@@ -3,6 +3,20 @@
 All releases so far are ALPHA and were tested in laboratory sites only. Detailed technical notes (in Portuguese) are in
 `docs/desenvolvimento/arquitetura-plugin.md` of the project repository.
 
+## 0.7.0 (2026103102) — 2026-10-30
+
+- Report rows explain each problem in plain Moodle language, in the viewer's language: the problem with activity
+  names (no internal ids), why it matters, how to fix it (with the alternatives when the choice is a teaching
+  decision), who can do it and how to confirm it. The stored evidence stays under "Technical details".
+- Each row links to the exact section of the Moodle form (`showonly`: restrict access, completion conditions, grade,
+  timing), to both activities of a dependency and to every activity of a cycle; links appear only when the activity
+  still exists and the viewer may use the screen. Course settings and self enrolment come back to the report.
+- The report says when a fix must come first (an invalid access condition blocks saving the activity form; course
+  dates before enrolment and closing dates; the grade total before the certificate minimum) and warns when a plugin
+  the policy depends on (certificate, game, completion progress block) is missing from the site.
+- Texts are built when the page is shown, from the facts of the stored run and its policy. No change in rules,
+  states, severities, occurrence keys or the JSON contract (1.0).
+
 ## 0.6.1 (2026103101) — 2026-10-30
 
 - First release distributed as an installable ZIP, built with `tools/package-plugin.sh`; the package no longer contains

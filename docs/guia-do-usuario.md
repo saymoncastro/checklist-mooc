@@ -38,12 +38,18 @@ Nada do plugin aparece para professores não editores nem para estudantes.
    ![Topo do relatório](prontidao-distribuicao/capturas/09-relatorio-topo.jpg)
 
 4. Leia as **Inconformidades**, agrupadas por gravidade e por categoria. Cada linha tem:
-   - **Regra**: identificador e título (lista completa no fim deste guia);
-   - **Local**: atividade, seção ou configuração — é um link para a página do Moodle onde se corrige, quando existe;
-   - **Evidência**: o que foi encontrado e, quando cabe, o *Esperado*;
-   - **Orientação**: o que fazer.
+   - **Problema**: uma frase com o nome da atividade; o código e o título da regra ficam logo abaixo, em letra menor;
+   - **Local**: a atividade, a seção ou a tela do curso;
+   - **O que fazer**: *Por que importa*, *Como corrigir* (com as alternativas quando a escolha é pedagógica), links que
+     abrem **a seção certa** do formulário do Moodle (por exemplo, só "Restringir acesso" ou só "Condições de
+     conclusão"), *Quem pode* e *Como confirmar*. Quando uma correção precisa vir antes de outra, a linha avisa;
+   - **Detalhes técnicos** (recolhidos): a evidência gravada, o encontrado e o esperado, a chave da ocorrência.
 
-   ![Inconformidades do curso B](prontidao-distribuicao/capturas/10-relatorio-inconformidades.jpg)
+   Os links só aparecem para quem pode usar a tela; quando o problema depende de outra pessoa (administrador do site,
+   equipe da reoferta), a linha diz quem. Se faltar no site um plugin de que a política depende, um aviso no topo
+   avisa.
+
+   ![Inconformidades com o que fazer](capturas/relatorio-o-que-fazer.jpg)
 
 5. Corrija no Moodle e clique em **Executar novamente** (*Run again*). A nova execução diz o que foi resolvido, o que
    persiste e o que é novo.

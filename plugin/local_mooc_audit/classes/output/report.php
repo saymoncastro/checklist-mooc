@@ -19,6 +19,7 @@ namespace local_mooc_audit\output;
 use local_mooc_audit\local\category;
 use local_mooc_audit\local\correction\planner;
 use local_mooc_audit\local\locator;
+use local_mooc_audit\local\presentation\finding;
 use local_mooc_audit\local\status;
 use moodle_url;
 use renderable;
@@ -68,6 +69,10 @@ class report implements renderable, templatable {
     /** @var moodle_url|null JSON of a stored run (specs/005): the report is a record, so it offers neither re-run nor a
      * live JSON link, which would execute and record a new audit. */
     protected ?moodle_url $storedjsonurl;
+    /** @var array|null policy applied by the run (null: the policy in force) */
+    protected ?array $policy;
+    /** @var finding|null presentation of the results (specs/006); null when the course structure is unavailable */
+    protected ?finding $presenter = null;
 
     /**
      * Constructor.
@@ -77,19 +82,23 @@ class report implements renderable, templatable {
      * @param bool $withcorrections offer the correction proposal action on eligible results (specs/002)
      * @param moodle_url|null $compareurl link to the comparison with the previous offer (specs/003)
      * @param moodle_url|null $storedjsonurl JSON of the stored run when the report comes from the history (specs/005)
+     * @param array|null $policy policy applied by the run, for the texts built at display time (specs/006); null: the
+     *     policy in force
      */
     public function __construct(
         array $report,
         moodle_url $pageurl,
         bool $withcorrections = false,
         ?moodle_url $compareurl = null,
-        ?moodle_url $storedjsonurl = null
+        ?moodle_url $storedjsonurl = null,
+        ?array $policy = null
     ) {
         $this->report = $report;
         $this->pageurl = $pageurl;
         $this->withcorrections = $withcorrections;
         $this->compareurl = $compareurl;
         $this->storedjsonurl = $storedjsonurl;
+        $this->policy = $policy;
     }
 
     /**
@@ -105,6 +114,17 @@ class report implements renderable, templatable {
             $bystatus[$res['status']][] = $res;
         }
 
+        try {
+            $this->presenter = new finding(
+                (int) $r['course']['id'],
+                $r['results'],
+                $this->policy ?? \local_mooc_audit\policy::load(),
+                $this->pageurl
+            );
+        } catch (\moodle_exception $e) {
+            // Course no longer available (deleted after the run): the stored texts are shown.
+            $this->presenter = null;
+        }
         $data = new stdClass();
         $data->course = (object) $r['course'];
         // Mustache escapes {{ }} values: format without escaping here to avoid "&amp;amp;".
@@ -145,6 +165,8 @@ class report implements renderable, templatable {
         $notices = array_map(fn($w) => is_string($w) ? $w : json_encode($w, JSON_UNESCAPED_UNICODE), $r['warnings'] ?? []);
         $data->notices = (object) ['policy' => array_values($r['policy_warnings'] ?? []), 'collection' => array_values($notices)];
         $data->notices->has = (bool) ($data->notices->policy || $data->notices->collection);
+        $missing = $this->presenter ? $this->presenter->missing_plugins() : [];
+        $data->missingplugins = $missing ? get_string('missingplugins', 'local_mooc_audit', implode(', ', $missing)) : null;
         return $data;
     }
 
@@ -255,7 +277,7 @@ class report implements renderable, templatable {
      * @return stdClass
      */
     protected function item(array $res): stdClass {
-        return (object) [
+        $item = (object) [
             'rule' => $res['rule'],
             'title' => $res['titulo'],
             'category' => category::title($res['category']),
@@ -284,6 +306,20 @@ class report implements renderable, templatable {
                 ['courseid' => $this->report['course']['id'], 'rule' => $res['rule'], 'cmid' => $res['cmid']]
             ))->out(false) : null,
         ];
+        $p = $this->presenter ? $this->presenter->present($res) : (object) ['fallback' => true, 'check' => ''];
+        $item->presented = !$p->fallback;
+        if ($item->presented) {
+            foreach (['problem', 'why', 'fix', 'who', 'verify', 'before', 'actions', 'place'] as $field) {
+                $item->$field = $p->$field;
+            }
+            $item->alternatives = array_map(fn($text) => (object) ['text' => $text], $p->alternatives);
+            $item->hasalternatives = (bool) $p->alternatives;
+            $item->hasactions = (bool) $p->actions;
+        }
+        $item->check = $p->check;
+        $item->occurrence = $res['occurrence'] ?? '';
+        $item->hasorientacao = $res['orientacao'] !== null && $res['orientacao'] !== '';
+        return $item;
     }
 
     /**
