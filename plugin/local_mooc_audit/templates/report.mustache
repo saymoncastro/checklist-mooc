@@ -22,6 +22,9 @@
     Context variables required for this template:
     * course - object with id, shortname, fullname
     * executed_at, reoffer_year, policy_version, engine, total_s, jsonurl, rerunurl, rerunbutton (HTML), compareurl (optional)
+    * summary - object with clean, cleantext, facts[] (label, value); startwith[] (problem, anchor, severitylabel, impact,
+      action {label, url}), hasstartwith; views[] (label, url, current); activityview, activities[] (report_activity);
+      manual[] (title, text), hasmanual
     * inventory - object with startdate, enddate, category, visible, sections, modules, modules_by_type[], grade_items, files, files_missing, enrols, blocks
     * overall - object with code, label, cssclass
     * counts_status[] - objects with label, count, cssclass; counts_severity[] - objects with label, count; rules_total
@@ -50,17 +53,7 @@
 }}
 <div class="local_mooc_audit-report">
     <div class="local_mooc_audit-header mb-3">
-        <h3>{{#str}} auditmenu, local_mooc_audit {{/str}}: {{course.fullname}} <small class="text-muted">[{{course.shortname}}] (id {{course.id}})</small></h3>
-        <dl class="row mb-2">
-            <dt class="col-sm-3">{{#str}} label_executed_at, local_mooc_audit {{/str}}</dt>
-            <dd class="col-sm-9">{{executed_at}} ({{total_s}} s)</dd>
-            <dt class="col-sm-3">{{#str}} label_reoffer_year, local_mooc_audit {{/str}}</dt>
-            <dd class="col-sm-9">{{reoffer_year}}</dd>
-            <dt class="col-sm-3">{{#str}} label_policy, local_mooc_audit {{/str}}</dt>
-            <dd class="col-sm-9">{{policy_version}}</dd>
-            <dt class="col-sm-3">{{#str}} label_engine, local_mooc_audit {{/str}}</dt>
-            <dd class="col-sm-9">{{engine}} ({{#str}} label_contract, local_mooc_audit {{/str}} {{contract_version}})</dd>
-        </dl>
+        <h2 class="h3">{{#str}} auditmenu, local_mooc_audit {{/str}}: {{course.fullname}} <small class="text-muted">[{{course.shortname}}]</small></h2>
         <div class="d-flex align-items-center local_mooc_audit-actions">
             {{{rerunbutton}}}
             <a href="{{jsonurl}}" class="ml-3 local_mooc_audit-json">{{#str}} jsonlink, local_mooc_audit {{/str}}</a>
@@ -69,7 +62,121 @@
     </div>
 
     {{#missingplugins}}<div class="alert alert-warning local_mooc_audit-missingplugins" role="status">{{missingplugins}}</div>{{/missingplugins}}
-    <h4>{{#str}} label_inventory, local_mooc_audit {{/str}}</h4>
+
+    <h3>{{#str}} label_overall, local_mooc_audit {{/str}}</h3>
+    <div class="alert {{overall.cssclass}} local_mooc_audit-overall local_mooc_audit-overall-{{overall.code}}" role="status">
+        <strong>{{overall.label}}</strong>
+    </div>
+    {{#summary.clean}}<p class="local_mooc_audit-clean">{{summary.cleantext}}</p>{{/summary.clean}}
+    {{^summary.clean}}
+    <ul class="list-inline local_mooc_audit-summary">
+        {{#summary.facts}}<li class="list-inline-item mr-3 me-3"><span class="text-muted">{{label}}:</span> <strong>{{value}}</strong></li>{{/summary.facts}}
+    </ul>
+    {{/summary.clean}}
+
+    {{#hasstartwith}}
+    <h3 id="local_mooc_audit-startwith">{{#str}} startwith, local_mooc_audit {{/str}}</h3>
+    <ol class="local_mooc_audit-startwith">
+        {{#startwith}}
+        <li class="mb-1"><a href="#{{anchor}}">{{problem}}</a> <small class="text-muted">{{severitylabel}}{{#impact}} · {{impact}}{{/impact}}</small>{{#action}}<br><a class="small" href="{{url}}">{{label}}</a>{{/action}}</li>
+        {{/startwith}}
+    </ol>
+    {{/hasstartwith}}
+
+    <p class="local_mooc_audit-views mb-2">
+        <span class="mr-2 me-2">{{#str}} view_label, local_mooc_audit {{/str}}:</span>
+        {{#views}}{{#current}}<strong class="mr-3 me-3" aria-current="page">{{label}}</strong>{{/current}}{{^current}}<a class="mr-3 me-3" href="{{url}}">{{label}}</a>{{/current}}{{/views}}
+    </p>
+    <p class="small text-muted local_mooc_audit-verifyhint">{{#str}} msg_verify_default, local_mooc_audit {{/str}}</p>
+
+    {{#activityview}}
+    <h3 id="local_mooc_audit-byactivity">{{#str}} activity_heading, local_mooc_audit {{/str}}</h3>
+    {{^activities}}<p class="text-muted">{{#str}} none_in_section, local_mooc_audit {{/str}}</p>{{/activities}}
+    {{> local_mooc_audit/report_activity }}
+    {{/activityview}}
+    {{^activityview}}
+    <h3 id="local_mooc_audit-nonconformities">{{#str}} section_nonconformities, local_mooc_audit {{/str}} ({{nonconformities.count}})</h3>
+    {{^nonconformities.has}}<p class="text-muted">{{#str}} none_in_section, local_mooc_audit {{/str}}</p>{{/nonconformities.has}}
+    {{#nonconformities.groups}}
+        {{> local_mooc_audit/report_group }}
+    {{/nonconformities.groups}}
+
+    <h3 id="local_mooc_audit-warnings">{{#str}} section_warnings, local_mooc_audit {{/str}} ({{warnings.count}})</h3>
+    {{^warnings.has}}<p class="text-muted">{{#str}} none_in_section, local_mooc_audit {{/str}}</p>{{/warnings.has}}
+    {{#warnings.groups}}
+        {{> local_mooc_audit/report_group }}
+    {{/warnings.groups}}
+    {{/activityview}}
+
+    {{#hasmanual}}
+    <h3 id="local_mooc_audit-manual">{{#str}} manual_heading, local_mooc_audit {{/str}}</h3>
+    <p class="text-muted small">{{#str}} manual_intro, local_mooc_audit {{/str}}</p>
+    <ul class="local_mooc_audit-manual">
+        {{#manual}}<li class="mb-1"><strong>{{title}}</strong><br>{{text}}</li>{{/manual}}
+    </ul>
+    {{/hasmanual}}
+
+    <h3 id="local_mooc_audit-unverifiable">{{#str}} section_unverifiable, local_mooc_audit {{/str}}</h3>
+    {{^unverifiable.has}}<p class="text-muted">{{#str}} none_in_section, local_mooc_audit {{/str}}</p>{{/unverifiable.has}}
+    {{#unverifiable.hasnv}}
+        <h4 class="h5">{{#str}} section_unverifiable_nv, local_mooc_audit {{/str}}</h4>
+        <div class="table-responsive">
+        <table class="table table-sm table-striped">
+            <thead><tr><th scope="col">{{#str}} label_rule, local_mooc_audit {{/str}}</th><th scope="col">{{#str}} label_local, local_mooc_audit {{/str}}</th><th scope="col">{{#str}} label_reason, local_mooc_audit {{/str}}</th></tr></thead>
+            <tbody>{{#unverifiable.nv}}<tr><td>{{#presented}}<strong>{{problem}}</strong><br><small class="text-muted">{{rule}} · {{title}}</small>{{/presented}}{{^presented}}<strong>{{rule}}</strong> {{title}}{{/presented}}</td><td>{{#haslink}}<a href="{{link}}" title="{{linktitle}}">{{local}}</a>{{/haslink}}{{^haslink}}{{local}}{{/haslink}}</td><td>{{#presented}}{{why}} {{fix}}{{#hasactions}}<ul class="list-unstyled mb-0">{{#actions}}<li><a href="{{url}}">{{label}}</a></li>{{/actions}}</ul>{{/hasactions}}<details class="small"><summary>{{#str}} label_technical, local_mooc_audit {{/str}}</summary>{{evidencia}}</details>{{/presented}}{{^presented}}{{evidencia}}{{/presented}}</td></tr>{{/unverifiable.nv}}</tbody>
+        </table>
+        </div>
+    {{/unverifiable.hasnv}}
+    {{#unverifiable.hasna}}
+        <h4 class="h5">{{#str}} section_unverifiable_na, local_mooc_audit {{/str}}</h4>
+        <div class="table-responsive">
+        <table class="table table-sm table-striped">
+            <thead><tr><th scope="col">{{#str}} label_rule, local_mooc_audit {{/str}}</th><th scope="col">{{#str}} label_local, local_mooc_audit {{/str}}</th><th scope="col">{{#str}} label_reason, local_mooc_audit {{/str}}</th></tr></thead>
+            <tbody>{{#unverifiable.na}}<tr><td><strong>{{rule}}</strong> {{title}}</td><td>{{#haslink}}<a href="{{link}}" title="{{linktitle}}">{{local}}</a>{{/haslink}}{{^haslink}}{{local}}{{/haslink}}</td><td>{{evidencia}}</td></tr>{{/unverifiable.na}}</tbody>
+        </table>
+        </div>
+    {{/unverifiable.hasna}}
+
+    {{#haserrors}}
+    <h3 id="local_mooc_audit-errors">{{#str}} section_errors, local_mooc_audit {{/str}}</h3>
+    <div class="table-responsive">
+    <table class="table table-sm table-striped">
+        <thead><tr><th scope="col">{{#str}} label_rule, local_mooc_audit {{/str}}</th><th scope="col">{{#str}} label_message, local_mooc_audit {{/str}}</th></tr></thead>
+        <tbody>{{#errors}}<tr><td><strong>{{rule}}</strong> {{title}}</td><td>{{evidencia}}</td></tr>{{/errors}}</tbody>
+    </table>
+    </div>
+    {{/haserrors}}
+
+    <h3 id="local_mooc_audit-conformant">{{#str}} section_conformant, local_mooc_audit {{/str}}</h3>
+    {{^hasconformant}}<p class="text-muted">{{#str}} none_in_section, local_mooc_audit {{/str}}</p>{{/hasconformant}}
+    {{#hasconformant}}
+    <ul class="local_mooc_audit-conformant list-unstyled">
+        {{#conformant}}<li><span class="badge bg-success text-white">{{rule}}</span> {{title}} <small class="text-muted">({{category}})</small></li>{{/conformant}}
+    </ul>
+    {{/hasconformant}}
+
+    <h3 id="local_mooc_audit-notices">{{#str}} section_notices, local_mooc_audit {{/str}}</h3>
+    {{^notices.has}}<p class="text-muted">{{#str}} none_in_section, local_mooc_audit {{/str}}</p>{{/notices.has}}
+    {{#notices.has}}
+    <ul class="local_mooc_audit-notices">
+        {{#notices.policy}}<li class="local_mooc_audit-notice-policy">{{#str}} label_policy, local_mooc_audit {{/str}}: {{.}}</li>{{/notices.policy}}
+        {{#notices.collection}}<li class="local_mooc_audit-notice-collection">{{#str}} label_collection, local_mooc_audit {{/str}}: {{.}}</li>{{/notices.collection}}
+    </ul>
+    {{/notices.has}}
+
+    <details class="mt-4 local_mooc_audit-techdetails">
+        <summary>{{#str}} techdetails, local_mooc_audit {{/str}}</summary>
+    <dl class="row mb-2">
+        <dt class="col-sm-3">{{#str}} label_executed_at, local_mooc_audit {{/str}}</dt>
+        <dd class="col-sm-9">{{executed_at}} ({{total_s}} s)</dd>
+        <dt class="col-sm-3">{{#str}} label_reoffer_year, local_mooc_audit {{/str}}</dt>
+        <dd class="col-sm-9">{{reoffer_year}}</dd>
+        <dt class="col-sm-3">{{#str}} label_policy, local_mooc_audit {{/str}}</dt>
+        <dd class="col-sm-9">{{policy_version}}</dd>
+        <dt class="col-sm-3">{{#str}} label_engine, local_mooc_audit {{/str}}</dt>
+        <dd class="col-sm-9">{{engine}} ({{#str}} label_contract, local_mooc_audit {{/str}} {{contract_version}})</dd>
+    </dl>
+    <h4 class="h6">{{#str}} label_inventory, local_mooc_audit {{/str}}</h4>
     <div class="table-responsive">
     <table class="table table-sm table-bordered w-auto local_mooc_audit-inventory">
         <tbody>
@@ -86,10 +193,6 @@
     </table>
     </div>
 
-    <h4>{{#str}} label_overall, local_mooc_audit {{/str}}</h4>
-    <div class="alert {{overall.cssclass}} local_mooc_audit-overall local_mooc_audit-overall-{{overall.code}}" role="status">
-        <strong>{{overall.label}}</strong>
-    </div>
     <div class="table-responsive">
     <table class="table table-sm table-bordered w-auto local_mooc_audit-counts">
         <caption class="sr-only">{{#str}} label_bystatus, local_mooc_audit {{/str}}</caption>
@@ -104,64 +207,5 @@
         <tbody><tr>{{#counts_severity}}<td>{{count}}</td>{{/counts_severity}}</tr></tbody>
     </table>
     </div>
-
-    <h4 id="local_mooc_audit-nonconformities">{{#str}} section_nonconformities, local_mooc_audit {{/str}} ({{nonconformities.count}})</h4>
-    {{^nonconformities.has}}<p class="text-muted">{{#str}} none_in_section, local_mooc_audit {{/str}}</p>{{/nonconformities.has}}
-    {{#nonconformities.groups}}
-        {{> local_mooc_audit/report_group }}
-    {{/nonconformities.groups}}
-
-    <h4 id="local_mooc_audit-warnings">{{#str}} section_warnings, local_mooc_audit {{/str}} ({{warnings.count}})</h4>
-    {{^warnings.has}}<p class="text-muted">{{#str}} none_in_section, local_mooc_audit {{/str}}</p>{{/warnings.has}}
-    {{#warnings.groups}}
-        {{> local_mooc_audit/report_group }}
-    {{/warnings.groups}}
-
-    <h4 id="local_mooc_audit-unverifiable">{{#str}} section_unverifiable, local_mooc_audit {{/str}}</h4>
-    {{^unverifiable.has}}<p class="text-muted">{{#str}} none_in_section, local_mooc_audit {{/str}}</p>{{/unverifiable.has}}
-    {{#unverifiable.hasnv}}
-        <h5>{{#str}} section_unverifiable_nv, local_mooc_audit {{/str}}</h5>
-        <div class="table-responsive">
-        <table class="table table-sm table-striped">
-            <thead><tr><th scope="col">{{#str}} label_rule, local_mooc_audit {{/str}}</th><th scope="col">{{#str}} label_local, local_mooc_audit {{/str}}</th><th scope="col">{{#str}} label_reason, local_mooc_audit {{/str}}</th></tr></thead>
-            <tbody>{{#unverifiable.nv}}<tr><td>{{#presented}}<strong>{{problem}}</strong><br><small class="text-muted">{{rule}} · {{title}}</small>{{/presented}}{{^presented}}<strong>{{rule}}</strong> {{title}}{{/presented}}</td><td>{{#haslink}}<a href="{{link}}" title="{{linktitle}}">{{local}}</a>{{/haslink}}{{^haslink}}{{local}}{{/haslink}}</td><td>{{#presented}}{{why}} {{fix}}{{#hasactions}}<ul class="list-unstyled mb-0">{{#actions}}<li><a href="{{url}}">{{label}}</a></li>{{/actions}}</ul>{{/hasactions}}<details class="small"><summary>{{#str}} label_technical, local_mooc_audit {{/str}}</summary>{{evidencia}}</details>{{/presented}}{{^presented}}{{evidencia}}{{/presented}}</td></tr>{{/unverifiable.nv}}</tbody>
-        </table>
-        </div>
-    {{/unverifiable.hasnv}}
-    {{#unverifiable.hasna}}
-        <h5>{{#str}} section_unverifiable_na, local_mooc_audit {{/str}}</h5>
-        <div class="table-responsive">
-        <table class="table table-sm table-striped">
-            <thead><tr><th scope="col">{{#str}} label_rule, local_mooc_audit {{/str}}</th><th scope="col">{{#str}} label_local, local_mooc_audit {{/str}}</th><th scope="col">{{#str}} label_reason, local_mooc_audit {{/str}}</th></tr></thead>
-            <tbody>{{#unverifiable.na}}<tr><td><strong>{{rule}}</strong> {{title}}</td><td>{{#haslink}}<a href="{{link}}" title="{{linktitle}}">{{local}}</a>{{/haslink}}{{^haslink}}{{local}}{{/haslink}}</td><td>{{evidencia}}</td></tr>{{/unverifiable.na}}</tbody>
-        </table>
-        </div>
-    {{/unverifiable.hasna}}
-
-    {{#haserrors}}
-    <h4 id="local_mooc_audit-errors">{{#str}} section_errors, local_mooc_audit {{/str}}</h4>
-    <div class="table-responsive">
-    <table class="table table-sm table-striped">
-        <thead><tr><th scope="col">{{#str}} label_rule, local_mooc_audit {{/str}}</th><th scope="col">{{#str}} label_message, local_mooc_audit {{/str}}</th></tr></thead>
-        <tbody>{{#errors}}<tr><td><strong>{{rule}}</strong> {{title}}</td><td>{{evidencia}}</td></tr>{{/errors}}</tbody>
-    </table>
-    </div>
-    {{/haserrors}}
-
-    <h4 id="local_mooc_audit-conformant">{{#str}} section_conformant, local_mooc_audit {{/str}}</h4>
-    {{^hasconformant}}<p class="text-muted">{{#str}} none_in_section, local_mooc_audit {{/str}}</p>{{/hasconformant}}
-    {{#hasconformant}}
-    <ul class="local_mooc_audit-conformant list-unstyled">
-        {{#conformant}}<li><span class="badge bg-success text-white">{{rule}}</span> {{title}} <small class="text-muted">({{category}})</small></li>{{/conformant}}
-    </ul>
-    {{/hasconformant}}
-
-    <h4 id="local_mooc_audit-notices">{{#str}} section_notices, local_mooc_audit {{/str}}</h4>
-    {{^notices.has}}<p class="text-muted">{{#str}} none_in_section, local_mooc_audit {{/str}}</p>{{/notices.has}}
-    {{#notices.has}}
-    <ul class="local_mooc_audit-notices">
-        {{#notices.policy}}<li class="local_mooc_audit-notice-policy">{{#str}} label_policy, local_mooc_audit {{/str}}: {{.}}</li>{{/notices.policy}}
-        {{#notices.collection}}<li class="local_mooc_audit-notice-collection">{{#str}} label_collection, local_mooc_audit {{/str}}: {{.}}</li>{{/notices.collection}}
-    </ul>
-    {{/notices.has}}
+    </details>
 </div>

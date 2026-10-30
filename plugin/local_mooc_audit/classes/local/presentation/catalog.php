@@ -150,6 +150,48 @@ class catalog {
         ],
     ];
 
+    /** @var array Practical impact of a problem of each rule (FR-041); warnings are always "check". Severity is unchanged. */
+    const IMPACT = [
+        'CL-04' => 'policy', 'CL-05' => 'offer', 'CL-06' => 'offer', 'CL-07' => 'offer', 'CL-08' => 'offer',
+        'CL-09' => 'policy', 'CL-11' => 'certification', 'CL-12' => 'certification', 'CL-13' => 'policy',
+        'CL-14' => 'policy', 'CL-16' => 'certification', 'CL-17' => 'policy', 'CL-18' => 'policy', 'CL-19' => 'policy',
+        'CL-20' => 'policy', 'CL-21' => 'policy', 'CL-22' => 'policy', 'CL-23' => 'certification',
+        'X-AV-01' => 'policy', 'X-CERT-01' => 'certification', 'X-CONT-01' => 'access', 'X-CONT-04' => 'access',
+        'X-DEP-01' => 'access', 'X-DEP-02' => 'access', 'X-DEP-03' => 'access', 'X-DEP-04' => 'access',
+        'X-INT-02' => 'access', 'X-INT-03' => 'access', 'X-STR-01' => 'access',
+    ];
+
+    /** @var array Checks that are not proven facts (FR-040): a reading of the description text or a search by name. */
+    const EVIDENCE = [
+        'CL-13|intro_attempts' => 'text', 'X-AV-01|intro_grade' => 'text', 'CL-20|generic_name' => 'text',
+        'CL-22|licence_label' => 'text', 'CL-09|forum_presence' => 'name', 'CL-11|profile_presence' => 'name',
+        'CL-16|evaluation_presence' => 'name', 'CL-22|licence_feedback' => 'name', 'CL-22|licence_certificate' => 'name',
+    ];
+
+    /**
+     * Impact code of a result (FR-041), or null for states that are not problems nor warnings.
+     *
+     * @param array $result stored result
+     * @return string|null certification, access, offer, policy or check
+     */
+    public static function impact(array $result): ?string {
+        if ($result['status'] === status::ATENCAO) {
+            return 'check';
+        }
+        return $result['status'] === status::NAO_CONFORME ? (self::IMPACT[$result['rule']] ?? 'policy') : null;
+    }
+
+    /**
+     * Kind of evidence of a check when it is not a proven fact.
+     *
+     * @param string $rule
+     * @param string $check
+     * @return string|null text or name
+     */
+    public static function evidence(string $rule, string $check): ?string {
+        return self::EVIDENCE[$rule . '|' . $check] ?? null;
+    }
+
     /**
      * Split an occurrence key rule|entity|check[|subject][#n] (engine::occurrence) into its parts.
      *

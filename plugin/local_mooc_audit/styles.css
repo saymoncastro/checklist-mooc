@@ -1,0 +1,54 @@
+/* Actions of a report row: targets of at least 24 px (WCAG 2.5.8). */
+.local_mooc_audit-fixactions li {
+    margin-bottom: 0.25rem;
+}
+
+.local_mooc_audit-fixactions a,
+.local_mooc_audit-views a {
+    display: inline-block;
+    min-height: 24px;
+    padding: 2px 0;
+}
+
+/* Report of local_mooc_audit (specs/006, FR-021): on narrow screens each problem becomes a stacked block of label and
+   value, so no row needs horizontal scrolling. */
+@media (max-width: 767.98px) {
+    .local_mooc_audit-items thead {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+    }
+
+    .local_mooc_audit-items,
+    .local_mooc_audit-items tbody,
+    .local_mooc_audit-items tr,
+    .local_mooc_audit-items td {
+        display: block;
+        width: 100%;
+    }
+
+    .local_mooc_audit-items tr {
+        border-bottom: 1px solid var(--bs-border-color, #dee2e6);
+        padding: 0.5rem 0;
+    }
+
+    .local_mooc_audit-items td {
+        border: 0;
+        padding: 0.25rem 0;
+        overflow-wrap: anywhere;
+    }
+
+    .local_mooc_audit-items td[data-label]::before {
+        content: attr(data-label);
+        display: block;
+        font-weight: bold;
+        font-size: 0.8rem;
+    }
+
+    .local_mooc_audit-report .table-responsive {
+        overflow-x: visible;
+    }
+}

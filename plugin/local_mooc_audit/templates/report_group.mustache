@@ -17,7 +17,8 @@
 {{!
     @template local_mooc_audit/report_group
     One severity group of results (non conformities or warnings): categories, each with a table of items.
-    Items presented by local\presentation\finding (specs/006) show the problem, why it matters, how to fix it, who can,
+    Rows are rendered by local_mooc_audit/report_items. Items presented by local\presentation\finding (specs/006) show
+    the problem, why it matters, how to fix it, who can,
     how to confirm, the actions and the technical details; the others (no message) show the stored text as before.
     Context variables required for this template:
     * severity, label, count
@@ -38,61 +39,9 @@
     }
 }}
 <div class="local_mooc_audit-group local_mooc_audit-severity-{{severity}}">
-    <h5>{{label}} <span class="badge rounded-pill bg-secondary text-dark">{{count}}</span></h5>
+    <h4 class="h5">{{label}} <span class="badge rounded-pill bg-secondary text-dark">{{count}}</span></h4>
     {{#categories}}
-    <h6 class="text-muted">{{title}}</h6>
-    <div class="table-responsive">
-    <table class="table table-sm table-striped local_mooc_audit-items">
-        <thead>
-            <tr>
-                <th scope="col">{{#str}} label_problem, local_mooc_audit {{/str}}</th>
-                <th scope="col">{{#str}} label_status, local_mooc_audit {{/str}}</th>
-                <th scope="col">{{#str}} label_local, local_mooc_audit {{/str}}</th>
-                <th scope="col">{{#str}} label_todo, local_mooc_audit {{/str}}</th>
-            </tr>
-        </thead>
-        <tbody>
-            {{#items}}
-            <tr class="local_mooc_audit-item" data-rule="{{rule}}" data-check="{{check}}">
-                <td>
-                    {{#presented}}<strong class="local_mooc_audit-problem">{{problem}}</strong><br><small class="text-muted">{{rule}} · {{title}}</small>{{/presented}}
-                    {{^presented}}<strong>{{rule}}</strong><br><small>{{title}}</small>{{/presented}}
-                </td>
-                <td><span class="badge {{statusclass}}">{{statuslabel}}</span><br><small>{{severitylabel}}</small></td>
-                <td>{{#haslink}}<a href="{{link}}" title="{{linktitle}}">{{#presented}}{{place}}{{/presented}}{{^presented}}{{local}}{{/presented}}</a>{{/haslink}}{{^haslink}}{{#presented}}{{place}}{{/presented}}{{^presented}}{{local}}{{/presented}}{{/haslink}}</td>
-                <td class="local_mooc_audit-todo">
-                    {{#presented}}
-                    <p class="mb-1"><strong>{{#str}} label_why, local_mooc_audit {{/str}}:</strong> {{why}}</p>
-                    {{#before}}<p class="mb-1 text-danger local_mooc_audit-before"><strong>{{before}}</strong></p>{{/before}}
-                    <p class="mb-1"><strong>{{#str}} label_fix, local_mooc_audit {{/str}}:</strong> {{fix}}</p>
-                    {{#hasalternatives}}<ul class="mb-1">{{#alternatives}}<li>{{text}}</li>{{/alternatives}}</ul>{{/hasalternatives}}
-                    {{#hasactions}}<ul class="list-unstyled mb-1 local_mooc_audit-fixactions">{{#actions}}<li><a href="{{url}}">{{label}}</a></li>{{/actions}}</ul>{{/hasactions}}
-                    <p class="mb-1 small"><strong>{{#str}} label_who, local_mooc_audit {{/str}}:</strong> {{who}}</p>
-                    <p class="mb-1 small"><strong>{{#str}} label_verify, local_mooc_audit {{/str}}:</strong> {{verify}}</p>
-                    {{#correctionurl}}<a class="btn btn-sm btn-outline-primary mt-1" href="{{correctionurl}}">{{#str}} fix_seeproposal, local_mooc_audit {{/str}}</a>{{/correctionurl}}
-                    <details class="mt-1 small local_mooc_audit-technical">
-                        <summary>{{#str}} label_technical, local_mooc_audit {{/str}}</summary>
-                        <dl class="mb-0">
-                            <dt>{{#str}} label_rule, local_mooc_audit {{/str}}</dt><dd>{{rule}} — {{title}} · {{#str}} label_check, local_mooc_audit {{/str}}: {{check}}</dd>
-                            <dt>{{#str}} label_evidence, local_mooc_audit {{/str}}</dt><dd>{{evidencia}}</dd>
-                            {{#hasfound}}<dt>{{#str}} label_found, local_mooc_audit {{/str}}</dt><dd>{{encontrado}}</dd>{{/hasfound}}
-                            {{#hasexpected}}<dt>{{#str}} label_expected, local_mooc_audit {{/str}}</dt><dd>{{esperado}}</dd>{{/hasexpected}}
-                            {{#hasorientacao}}<dt>{{#str}} label_recorded_guidance, local_mooc_audit {{/str}}</dt><dd>{{orientacao}}</dd>{{/hasorientacao}}
-                            <dt>{{#str}} label_occurrence, local_mooc_audit {{/str}}</dt><dd><code>{{occurrence}}</code></dd>
-                        </dl>
-                    </details>
-                    {{/presented}}
-                    {{^presented}}
-                    <p class="mb-1">{{evidencia}}</p>
-                    {{#hasdetails}}<dl class="mb-1 small">{{#hasfound}}<dt>{{#str}} label_found, local_mooc_audit {{/str}}</dt><dd>{{encontrado}}</dd>{{/hasfound}}{{#hasexpected}}<dt>{{#str}} label_expected, local_mooc_audit {{/str}}</dt><dd>{{esperado}}</dd>{{/hasexpected}}</dl>{{/hasdetails}}
-                    {{#hasorientacao}}<p class="mb-1">{{orientacao}}</p>{{/hasorientacao}}
-                    {{#correctionurl}}<a class="btn btn-sm btn-outline-primary mt-1" href="{{correctionurl}}">{{#str}} fix_seeproposal, local_mooc_audit {{/str}}</a>{{/correctionurl}}
-                    {{/presented}}
-                </td>
-            </tr>
-            {{/items}}
-        </tbody>
-    </table>
-    </div>
+    <h5 class="h6 text-muted">{{title}}</h5>
+    {{> local_mooc_audit/report_items }}
     {{/categories}}
 </div>

@@ -118,6 +118,8 @@ $run = $latest['valid'];
 $report = $run ? run_store::json($run, 'report') : null;
 $renderer = $PAGE->get_renderer('local_mooc_audit');
 $runurl = new moodle_url($url, ['action' => 'run']);
+// The chosen view may set its cookie: before any output.
+$view = \local_mooc_audit\output\report::remembered_view();
 echo $OUTPUT->header();
 if (!$run) {
     echo $OUTPUT->heading(get_string('auditmenu', 'local_mooc_audit'));
@@ -141,13 +143,13 @@ if (!$run) {
     // Texts are built at display time with the policy the run applied (specs/006, research R2).
     $stored = $run->policyid ? \local_mooc_audit\local\history\policy_store::get((int) $run->policyid) : null;
     $runpolicy = $stored ? json_decode((string) $stored->policy, true) : null;
-    echo $renderer->render(new \local_mooc_audit\output\report(
+    echo $renderer->render((new \local_mooc_audit\output\report(
         $report,
         $url,
         $withcorrections,
         $compareurl,
         null,
         is_array($runpolicy) ? $runpolicy : null
-    ));
+    ))->set_view($view));
 }
 echo $OUTPUT->footer();
