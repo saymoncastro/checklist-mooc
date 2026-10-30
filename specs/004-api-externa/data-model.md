@@ -5,9 +5,9 @@
 
 ## Execução (`local_mooc_audit_run`) — alterações
 
-| Item | Antes (0.5.0) | Depois (0.6.0) |
+| Item | Antes (0.5.3) | Depois (0.6.0) |
 |---|---|---|
-| `origin` | `page`, `batch`, `cli` | + **`api`** (pedida por Web Service; `batchid = 0`) |
+| `origin` | `page`, `batch`, `cli`, `correction` (0.5.1) | + **`api`** (pedida por Web Service; `batchid = 0`) |
 | Quem cria na fila | `batch_manager::create`/`retry_failed` via `recorder::queue` | + `local\api\service::request` via `recorder::queue(..., ORIGIN_API)` |
 | Reconferência na tarefa | conta ativa + `batchaudit` (sistema) + `audit` (curso) | origem `api`: conta ativa + **`api`** (sistema) + `audit` (curso); `batch` inalterada |
 

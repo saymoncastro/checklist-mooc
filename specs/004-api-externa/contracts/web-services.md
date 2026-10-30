@@ -18,7 +18,7 @@ ou da execução abaixo. Em caso de erro o núcleo responde `{"exception": "..."
 |---|---|---|
 | `id` | int | |
 | `courseid` | int | |
-| `origin` | string | `page`, `batch`, `cli`, `api` |
+| `origin` | string | `page`, `batch`, `cli`, `correction`, `api` |
 | `status` | string | `queued`, `running`, `complete`, `partial`, `failed` |
 | `overall` | string\|null | `BLOQUEADA`, `REQUER_CORRECOES`, `SEM_INCONFORMIDADES`; null se sem relatório |
 | `timecreated`, `timestarted`, `timefinished` | int | Unix; 0 = ainda não ocorreu |

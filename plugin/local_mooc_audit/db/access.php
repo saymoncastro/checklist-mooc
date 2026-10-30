@@ -22,6 +22,8 @@
  * (write); applying also requires moodle/course:manageactivities in the activity context. Auditing and both correction
  * capabilities are granted by default to managers and editing teachers (decision 11 of 2026-10-29, specs/002). The
  * history of a course is read with local/mooc_audit:audit; the dashboard and the batches (specs/005) are for managers.
+ * The external API (specs/004) needs local/mooc_audit:api, granted to no role by default: the administrator gives it
+ * to an integration account, which still needs local/mooc_audit:audit in each course it reads or audits.
  *
  * @package    local_mooc_audit
  * @copyright  2026 Cefor/Ifes
@@ -82,5 +84,11 @@ $capabilities = [
         'archetypes' => [
             'manager' => CAP_ALLOW,
         ],
+    ],
+    // Use the external API (specs/004): request audits and read stored results through Web Services. Creates runs and
+    // tasks; never changes a course. No archetype: only the administrator decides which account integrates.
+    'local/mooc_audit:api' => [
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
     ],
 ];

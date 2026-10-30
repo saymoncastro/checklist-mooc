@@ -54,7 +54,7 @@ histórico (persistência mínima somente se a especificação a justificar).
 - Correção do defeito conhecido (`problematic` sempre verdadeiro) e testes do comparador.
 - Fora: comparação de conteúdo textual palavra a palavra; comparação com `.mbz`.
 
-## 004 — API e integração externa (proposta de escopo)
+## 004 — API e integração externa (especificada em `specs/004-api-externa/`; incremento experimental 0.6.0 entregue para revisão)
 
 - Web Services próprios, somente leitura: solicitar auditoria de um curso e consultar o último resultado (ou um
   resultado por id, se houver histórico).

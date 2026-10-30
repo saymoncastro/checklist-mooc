@@ -29,7 +29,7 @@ dentro do Moodle 4.5 e agora é conduzido por especificações (Spec-Driven Deve
 | `docs/relatorio-adocao-sdd.md` | Relatório executivo da adoção do SDD: riscos, decisões, recomendações |
 | `specs/001-auditoria-tecnica-operacional/` | **Especificação 001** (MVP): spec, plano, pesquisa, modelo de dados, contratos (JSON 1.0, CLI, página), quickstart, tarefas (105) e análise de consistência |
 | `specs/002-correcao-assistida/`, `specs/003-comparacao-ofertas/`, `specs/005-auditoria-lote-historico/` | Especificações implementadas da correção assistida, da comparação entre ofertas e do histórico/lote/painel |
-| `specs/004-api-externa/` | Especificação da API externa (Web Services): **só documento, nada implementado** |
+| `specs/004-api-externa/` | Especificação implementada da API externa (Web Services, plugin 0.6.0; guia em `plugin/local_mooc_audit/API.md`) |
 | `docs/revisao-geral/` | Revisão geral independente (2026-10-29): conformidade Moodle, UX e carga cognitiva, plano de estabilização e parecer |
 
 Os backups `.mbz` e a planilha do checklist **não** estão versionados (ver `.gitignore`): contêm conteúdo
@@ -64,6 +64,9 @@ python3 -I poc/mbz_inspect.py caminho/do/backup.mbz --out resultado.json
   dados de teste, tabelas responsivas e ajustes de acessibilidade (`plugin-results/0.5.1/`, `plugin-results/0.5.2/`).
 - **2026-10-30 (Moodle 5.3):** plugin 0.5.3 testado no Moodle 5.3 LTS (PHPUnit, Behat com axe, auditorias A/B
   idênticas às do 4.5); selos migrados para classes válidas nos Bootstraps 4 e 5 (`plugin-results/0.5.3/`).
+- **2026-10-30 (spec 004 implementada):** plugin 0.6.0 com a API externa: três funções de Web Services
+  (pedir auditoria, consultar execução, última auditoria), capacidade `local/mooc_audit:api` sem papel padrão, serviço
+  desabilitado e restrito; guia `plugin/local_mooc_audit/API.md` (`specs/004-api-externa/results.md`).
 
 ## Fluxo de desenvolvimento (Spec Kit)
 

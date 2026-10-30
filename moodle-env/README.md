@@ -226,6 +226,19 @@ em `specs/005-auditoria-lote-historico/results.md`. Remover tudo: `docker rm -f 
 docker network disconnect moocaudit_s5 moocaudit-db-1 && docker network rm moocaudit_s5 && docker exec moocaudit-db-1 dropdb -U moodle moodle_s5`.
 
 
+## Ambiente da spec 004 (API externa)
+
+Mesmo desenho das specs 002/003/005, com banco `moodle_s4`, porta **8098** (a 8096 é do ambiente `rv`) e rede
+`moocaudit_s4`, montando o plugin do worktree da spec 004. Comandos idênticos aos da spec 005, trocando `s5` por `s4`,
+`moodle_s5` por `moodle_s4` e `8095` por `8098` (Selenium dispensável: a spec não tem cenário Behat novo). Para os testes
+pela REST, um script de laboratório (`plugin-results/0.6.0/s4_api_setup.php`, `docker cp` e `php /tmp/s4_api_setup.php`) habilita Web Services e REST, cria a conta `integracao` com o papel do `API.md`,
+habilita o serviço "Auditor MOOC", autoriza a conta e grava um token em `/var/www/moodledata/s4token` (só dentro do
+contêiner); as chamadas e medições estão em `specs/004-api-externa/results.md`.
+
+Site: http://localhost:8098 (admin / `Admin123!`, apenas local; A = 2, B = 3). Remover tudo: `docker rm -f
+moocaudit-s4-web && docker network disconnect moocaudit_s4 moocaudit-db-1 && docker network rm moocaudit_s4 &&
+docker exec moocaudit-db-1 dropdb -U moodle moodle_s4`.
+
 ## Ambiente da revisão geral e da estabilização (rv)
 
 Mesmo desenho das specs 002/003/005, com banco `moodle_rv`, porta 8096 e rede `moocaudit_rv`, montando o plugin do

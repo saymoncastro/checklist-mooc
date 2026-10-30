@@ -105,6 +105,8 @@ final class provider_test extends \core_privacy\tests\provider_testcase {
         $run = fn(int $userid) => \local_mooc_audit\local\history\run_store::create((int) $c1->id, 'page', $userid);
         $run($u1->id);
         $run($u2->id);
+        // A run requested through the external API (specs/004) is exported and anonymised like the others.
+        \local_mooc_audit\local\history\run_store::create((int) $c1->id, 'api', $u1->id);
         $DB->insert_record('local_mooc_audit_batch', (object) ['userid' => $u1->id, 'name' => 'Lote', 'criteria' => '{}',
             'timecreated' => time()]);
         $ctx = \context_course::instance($c1->id);
@@ -122,19 +124,19 @@ final class provider_test extends \core_privacy\tests\provider_testcase {
 
         provider::export_user_data(new approved_contextlist($u1, 'local_mooc_audit', [$ctx->id, $system->id]));
         $runs = writer::with_context($ctx)->get_data([get_string('privacy:path_runs', 'local_mooc_audit')]);
-        $this->assertCount(1, $runs->runs);
-        $this->assertSame('page', $runs->runs[0]->origin);
+        $this->assertCount(2, $runs->runs);
+        $this->assertEqualsCanonicalizing(['page', 'api'], array_column($runs->runs, 'origin'));
         $batches = writer::with_context($system)->get_data([get_string('privacy:path_batches', 'local_mooc_audit')]);
         $this->assertSame('Lote', $batches->batches[0]->name);
 
         provider::delete_data_for_user(new approved_contextlist($u1, 'local_mooc_audit', [$ctx->id, $system->id]));
         $this->assertSame(0, $DB->count_records('local_mooc_audit_run', ['userid' => $u1->id]));
         $this->assertSame(0, $DB->count_records('local_mooc_audit_batch', ['userid' => $u1->id]));
-        $this->assertSame(2, $DB->count_records('local_mooc_audit_run'), 'history kept, anonymised');
+        $this->assertSame(3, $DB->count_records('local_mooc_audit_run'), 'history kept, anonymised');
         $this->assertSame(1, $DB->count_records('local_mooc_audit_batch'));
 
         provider::delete_data_for_users(new approved_userlist($ctx, 'local_mooc_audit', [$u2->id]));
-        $this->assertSame(2, $DB->count_records('local_mooc_audit_run', ['userid' => 0]));
+        $this->assertSame(3, $DB->count_records('local_mooc_audit_run', ['userid' => 0]));
     }
 
     /**

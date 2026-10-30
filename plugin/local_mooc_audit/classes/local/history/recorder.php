@@ -23,7 +23,8 @@ use local_mooc_audit\policy;
 use local_mooc_audit\task\audit_course;
 
 /**
- * Recorded audits: the single path that runs the engine and stores the result (audit page, CLI and background tasks).
+ * Recorded audits: the single path that runs the engine and stores the result (audit page, CLI, background tasks of
+ * batches and of the external API).
  *
  * The audit itself stays read-only towards the course; the only writes are the run row and, once per distinct content,
  * the applied policy. Failures outside the rules end the run as "failed" with the reason instead of losing it.
@@ -62,11 +63,12 @@ class recorder {
      *
      * @param int $courseid
      * @param int $userid requester; the task runs as this user and checks the permissions again
-     * @param int $batchid
+     * @param int $batchid 0 outside a batch
+     * @param string $origin run_store::ORIGIN_BATCH or ORIGIN_API
      * @return int run id
      */
-    public static function queue(int $courseid, int $userid, int $batchid): int {
-        $runid = run_store::create($courseid, run_store::ORIGIN_BATCH, $userid, $batchid);
+    public static function queue(int $courseid, int $userid, int $batchid, string $origin = run_store::ORIGIN_BATCH): int {
+        $runid = run_store::create($courseid, $origin, $userid, $batchid);
         $task = new audit_course();
         $task->set_custom_data(['runid' => $runid]);
         $task->set_userid($userid);

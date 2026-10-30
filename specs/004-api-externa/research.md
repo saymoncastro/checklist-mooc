@@ -17,6 +17,29 @@ desatualização, evolução) já existe e tem testes. Duplicá-la na API criari
 **Alternativas**: esperar o merge do PR #5 para começar (atrasaria a especificação sem ganho; a tarefa T001 confere de
 novo a base antes de implementar).
 
+**Conferência na implementação (T001, 2026-10-30, `main` em de682b2, plugin 0.5.3)**: os pontos reaproveitados
+continuam como descritos. Divergências registradas e tratadas:
+
+1. A base passou a 0.5.3 (`2026103004`, `supported = [405, 503]`); a 0.6.0 usa `2026103100`. As classes
+   `core_external\*` usadas existem no 4.5 e no 5.3.
+2. Origem nova `correction` (reauditoria após correção assistida, estabilização etapa 1): o campo `origin` da RunView
+   passa a citar `correction` no contrato (mudança aditiva, já prevista na regra de versionamento).
+3. `plugin_changed` agora compara a impressão digital do código das regras (A‑03 da revisão geral);
+   `latest::for_course()` chama o mesmo `dashboard::stale_reasons()` com a execução completa (com `details`), sem
+   regra própria.
+4. `engine::VERSION` ficou em `'0.5.0'` desde a 0.5.1 (só muda com o motor); T003 altera só `version.php`.
+5. A porta 8096 é do ambiente `rv` da revisão geral: o ambiente s4 usa a 8098.
+6. As configurações do plugin usam o prefixo `setting_`: strings `setting_api_max_pending`/`_desc` e o cabeçalho
+   `setting_api_heading`/`_desc` (o nome da configuração continua `local_mooc_audit/api_max_pending`).
+7. Mensagem própria para a falha de permissão de execuções `api` (`error_permission_api`); a de lote fala em "lote".
+8. A extração de `history.php` virou três métodos de `evolution`: `base_for()` (escolha da base), `between()` (compara
+   duas execuções guardadas) e `for_run()` (as duas coisas); a página precisa da base para a trilha de correções.
+9. Conta suspensa: a API de tarefas do Moodle não inicia tarefas de usuário suspenso (a tarefa falha e é reagendada)
+   e a execução fica na fila até a limpeza diária a encerrar como `stale` — comportamento que já existia para os
+   lotes. `audit_course::authorised()` recusa a conta suspensa e o teste confere isso diretamente.
+10. As travas consultivas do PostgreSQL são reentrantes na mesma conexão: o teste de `busy` usa
+    `db_record_lock_factory` para segurar a trava do pedido dentro do próprio teste.
+
 ## R2 — Mecanismo: Web Services nativos do Moodle 4.5
 
 **Decisão**: três classes em `classes/external/` estendendo `\core_external\external_api`, com

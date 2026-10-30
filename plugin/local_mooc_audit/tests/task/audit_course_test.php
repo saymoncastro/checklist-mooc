@@ -299,4 +299,44 @@ final class audit_course_test extends \advanced_testcase {
         )[$b->id]->id)->reofferyear);
         $this->assertSame(100, batch_manager::max_courses(), 'decision 12.5');
     }
+
+    /**
+     * Runs requested through the external API (specs/004) are checked with the API capability, batch runs still with
+     * batchaudit: a revoked capability or a suspended account fails the run without auditing the course.
+     */
+    public function test_permissions_by_origin(): void {
+        global $DB;
+        [$a] = $this->setup_courses();
+        $system = \context_system::instance();
+        $user = $this->getDataGenerator()->create_user();
+        $role = create_role('API', 'apitest', '');
+        foreach (['local/mooc_audit:api', 'local/mooc_audit:audit', 'moodle/course:view'] as $cap) {
+            assign_capability($cap, CAP_ALLOW, $role, $system->id);
+        }
+        role_assign($role, $user->id, $system->id);
+        $queue = fn(string $origin) => \local_mooc_audit\local\history\recorder::queue((int) $a->id, (int) $user->id, 0, $origin);
+
+        $ok = $queue(run_store::ORIGIN_API);
+        $batch = $queue(run_store::ORIGIN_BATCH);
+        $this->run_queue();
+        $this->assertSame(run_store::COMPLETE, run_store::get($ok)->status, 'api + audit');
+        $this->assertSame('permission', json_decode(run_store::get($batch)->errors, true)[0]['code'], 'api is not batchaudit');
+
+        $revoked = $queue(run_store::ORIGIN_API);
+        unassign_capability('local/mooc_audit:api', $role, $system->id);
+        accesslib_clear_all_caches_for_unit_testing();
+        $this->run_queue();
+        $run = run_store::get($revoked);
+        $this->assertSame(run_store::FAILED, $run->status);
+        $this->assertSame('permission', json_decode($run->errors, true)[0]['code']);
+        $this->assertSame(get_string('error_permission_api', 'local_mooc_audit'), json_decode($run->errors, true)[0]['message']);
+        $this->assertNull($run->report, 'the course was not audited');
+
+        assign_capability('local/mooc_audit:api', CAP_ALLOW, $role, $system->id);
+        accesslib_clear_all_caches_for_unit_testing();
+        $this->assertTrue(audit_course::authorised((int) $user->id, (int) $a->id, run_store::ORIGIN_API));
+        // A suspended account is refused (the task API itself does not start tasks of suspended users).
+        $DB->set_field('user', 'suspended', 1, ['id' => $user->id]);
+        $this->assertFalse(audit_course::authorised((int) $user->id, (int) $a->id, run_store::ORIGIN_API));
+    }
 }

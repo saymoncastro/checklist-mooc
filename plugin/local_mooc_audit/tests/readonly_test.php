@@ -142,4 +142,39 @@ final class readonly_test extends \advanced_testcase {
         $this->assertSame($events, $DB->count_records('event'));
         $this->assertSame(0, $DB->count_records('local_mooc_audit_fix'));
     }
+
+    /**
+     * An audit requested through the external API (specs/004) and run by the queue does not modify the course either
+     * (principle III).
+     */
+    public function test_api_request_does_not_modify_the_course(): void {
+        global $DB;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        [$b] = $this->getDataGenerator()->get_plugin_generator('local_mooc_audit')->create_course_b(2027);
+        set_config('policyjson', json_encode(['reoffer_year' => 2027]), 'local_mooc_audit');
+        \context_helper::build_all_paths(true);
+        foreach (get_fast_modinfo($b)->get_cms() as $cm) {
+            \context_module::instance($cm->id);
+        }
+        $role = create_role('API', 'apiro', '');
+        assign_capability('local/mooc_audit:api', CAP_ALLOW, $role, \context_system::instance()->id);
+        $user = $this->getDataGenerator()->create_user();
+        role_assign($role, $user->id, \context_system::instance()->id);
+        $this->getDataGenerator()->enrol_user($user->id, $b->id, 'editingteacher');
+        $before = tests\course_tables::hashes($b->id);
+        $course = $DB->get_record('course', ['id' => $b->id]);
+
+        $this->waitForSecond();
+        $this->setUser($user);
+        $out = external\request_audit::execute((int) $b->id);
+        ob_start();
+        $this->runAdhocTasks(\local_mooc_audit\task\audit_course::class);
+        ob_end_clean();
+
+        $this->assertSame('complete', $DB->get_field('local_mooc_audit_run', 'status', ['id' => $out['runid']]));
+        $this->assertSame($before, tests\course_tables::hashes($b->id));
+        $this->assertSame($course->timemodified, $DB->get_field('course', 'timemodified', ['id' => $b->id]));
+        $this->assertSame($course->cacherev, $DB->get_field('course', 'cacherev', ['id' => $b->id]));
+    }
 }

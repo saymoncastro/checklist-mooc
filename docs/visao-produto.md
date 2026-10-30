@@ -54,7 +54,7 @@ institucional, responsáveis); comparação, lote e API em contexto de sistema.
 | 5 | Comparação entre ofertas (origem × destino) | **003** | experimental (CLI) |
 | 6 | Histórico de auditorias | **005** (persistência mínima pode entrar em 001 se justificada) | inexistente |
 | 7 | Auditoria em lote e acompanhamento | **005** | inexistente |
-| 8 | API para integração externa (MOOC Admin e outros) | **004** | inexistente |
+| 8 | API para integração externa (MOOC Admin e outros) | **004** | experimental (0.6.0): pedir auditoria, consultar execução e última auditoria por Web Services |
 
 ## 6. Experiência mínima a entregar (MVP, spec 001)
 
