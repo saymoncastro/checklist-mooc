@@ -10,10 +10,14 @@ para orientar prioridade e dependências, **não** especificações completas.
 | 2 | **002** | Correção assistida | 001 (relatório com localização estável) | alto: fecha o ciclo diagnóstico → correção | alto: escrita em salas; autorização, conflito, registro |
 | 3 | **003** | Comparação entre ofertas | 001 (snapshot estável, matching por atributos) | médio: explica problemas herdados × introduzidos | médio: ambiguidade de correspondência |
 | 4 | **005** | Auditoria em lote, histórico e acompanhamento | 001; persistência (se 001 não a incluir) | alto para gestores | médio: tarefas, volume, consultas |
-| 5 | **004** | API e integração externa | 001 (contrato JSON versionado); 005 se expuser histórico | médio: habilita MOOC Admin como consumidor | médio: autenticação, versionamento |
+| 5 | **006** | Experiência do relatório individual e da correção assistida (especificada em `specs/006-experiencia-relatorio/`) | 001, 002; etapas 1 e 2 do plano de estabilização; linha de base com usuários | alto: reduz a dependência da equipe técnica para interpretar o relatório | médio: textos das 29 regras, contrato 1.1 compatível |
+| 6 | **004** | API e integração externa | 001 (contrato JSON versionado); 005 se expuser histórico; 006 (contrato 1.1) | médio: habilita MOOC Admin como consumidor | médio: autenticação, versionamento |
 
 A ordem recomendada troca 004 e 005: o histórico e o lote servem diretamente à equipe do Cefor; a API só agrega valor
 quando houver um consumidor pronto (MOOC Admin).
+
+Depois da revisão geral de 2026-10-29 (`docs/revisao-geral/C-PLANO-DE-ESTABILIZACAO.md`), a 006 (experiência do
+usuário) entra antes da 004: a API passaria a expor um contrato que a 006 estende.
 
 ---
 
