@@ -74,6 +74,17 @@ Quase todo o tempo é o custo fixo de uma requisição neste ambiente (Docker/Co
 própria auditoria da sala de 152 módulos levou 0,13–0,15 s na tarefa. SC-001 (pedido ≤ 1 s) e SC-002 (consultas com
 relatório ≤ 2 s) atendidos com folga; medir de novo na homologação institucional.
 
+## Merge e atualização do laboratório (2026-10-30)
+
+- PR #12 mesclado em `main` com merge commit (`45626c8`), CI verde no último commit (9ba7c59).
+- Laboratório principal (`moocaudit-webserver-1`, porta 8091): backup prévio do banco
+  (`moodle-local/backups/moodle-lab-antes-0.6.0-20261030.dump`, 1064 tabelas), cópia principal avançada de `ac6973f`
+  para `45626c8` (só fast-forward), upgrade de 0.5.2 (2026103003) para 0.6.0 (2026103100) sem erros. O upgrade criou a
+  configuração `api_max_pending`, a capacidade `local/mooc_audit:api` (nenhum papel a tem) e o serviço "Auditor MOOC"
+  **desabilitado**, restrito a usuários autorizados, com `requiredcapability` e as 3 funções.
+- Auditorias dos cursos 2, 3, 8 e 9 idênticas antes e depois, regra a regra (pela CLI, sem `--record`); histórico do
+  laboratório continua vazio. A API não foi habilitada no laboratório.
+
 ## Pendências
 
 - ~~T038 / D5~~: D1–D3 aprovadas pelo responsável em 2026-10-30 e registradas como decisão 13 em
