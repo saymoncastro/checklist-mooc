@@ -61,7 +61,7 @@ relatórios; versão do Bootstrap do 4.5 (o código usa classes Bootstrap 4, com
 | `specs/003/tasks.md` T039 "Abrir PR" | Pendente | PR #4 mesclado | Tarefa não marcada |
 | Capacidades com `riskbitmask` | Constituição VIII: "MUST declarar `riskbitmask`" | Só `applycorrection` declara (`RISK_CONFIG`) | Conflito constituição × código (A‑07) |
 | "Nenhuma string de interface fixa no código" | Constituição, restrições técnicas | Evidências, títulos e orientações das 29 regras estão em português dentro das classes | Divergência (A‑09) |
-| Correção "seguida de nova auditoria" | Constituição IV; spec 002 | Reauditoria feita, mas **não gravada**; a página do relatório mostra o resultado anterior | Integração 002 × 005 quebrada (A‑01) |
+| Correção "seguida de nova auditoria" | Constituição IV; spec 002; README (limitação declarada) | Reauditoria feita, mas **não gravada**; a página do relatório mostra o resultado anterior com aviso de sala alterada | Limitação documentada, com efeito de UX (A‑01) |
 | Bancos suportados | Constituição: PostgreSQL e MySQL/MariaDB | CI e laboratório só com PostgreSQL | Não verificado em MySQL/MariaDB (A‑06) |
 
 **Funcionalidades experimentais ou dependentes de decisão institucional**: regras ligadas à decisão 10 (nomes
@@ -124,9 +124,10 @@ leitura e execução.
 
 ## 6. Achados priorizados
 
-### A‑01 — P1 — A reauditoria após a correção não é gravada: o relatório continua mostrando a inconformidade corrigida
+### A‑01 — P2 (revisado; era P1) — A reauditoria após a correção não é gravada: o relatório continua mostrando a inconformidade corrigida
 
-- **Dimensão:** técnica / produto · **Confiança:** alta · **Situação:** **comprovado em execução**
+- **Dimensão:** técnica / produto · **Confiança:** alta · **Situação:** **comprovado em execução**; **limitação já documentada** no README do plugin ("Limitações conhecidas")
+- **Errata (2026-10-30):** a primeira versão deste relatório classificou o achado como P1 e não registrou que o README já o declarava, com mitigação: a correção incrementa `course.cacherev` e, para execuções gravadas a partir da versão 2026103001, a página avisa "a sala foi alterada depois desta auditoria". No laboratório o aviso não apareceu só porque a execução era anterior à coluna. Com a mitigação, o achado é P2: a tarefa não fica impedida, mas o relatório continua listando o problema corrigido, com o botão de proposta, ao lado do aviso.
 - **Local:** `classes/local/correction/executor.php:180-181` (`reaudit()` chama `engine::audit`, não `recorder`); `index.php:101`
   (`run_store::latest_valid` — a página mostra só o último resultado gravado, decisão 12.1)
 - **Evidência:** sala `LOTE_B_002` (s5), CL‑13 em "Questionário 1" (cmid 58). A tela de resultado disse "Correção

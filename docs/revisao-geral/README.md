@@ -21,8 +21,8 @@ laboratório · **Natureza:** auditoria independente, sem alterações no plugin
    - Divergências menores: sem FKs no XMLDB, poucos eventos de log, textos das regras fora de `lang/`.
 
 2. **Existem problemas que impedem a homologação?**
-   Um: **A‑01 (P1)**. Depois de uma correção aplicada, o relatório continua mostrando o problema, porque a reauditoria
-   não é gravada. Foi comprovado no laboratório e a correção estimada é de cerca de 1 dia.
+   Não. *Errata de 2026-10-30:* a primeira versão apontava o A‑01 como P1. Ele era limitação já documentada no
+   README e mitigada pelo aviso "a sala foi alterada"; foi reclassificado como P2 e tratado na etapa 1.
 
 3. **Há riscos de segurança ou integridade não cobertos pelas specs anteriores?**
    Nenhum P0. Não foram encontrados SQL injection, XSS, CSRF ou acesso indevido entre salas. Riscos novos:
@@ -75,9 +75,9 @@ laboratório · **Natureza:** auditoria independente, sem alterações no plugin
 
 ## Parecer sobre a prontidão para homologação institucional
 
-**Pronto para homologação condicionada.** A base técnica é sólida e segura para ser instalada num ambiente de
-homologação institucional (não produção), desde que **A‑01 seja corrigido antes** ou registrado como defeito conhecido
-para quem for testar.
+**Pronto para homologação.** A base técnica é sólida e segura para ser instalada num ambiente de homologação
+institucional (não produção). *Errata de 2026-10-30:* a condição "corrigir A‑01 antes" foi retirada, porque o
+achado era limitação documentada e mitigada (agora P2, tratado na etapa 1).
 
 Antes de **produção**, é preciso resolver os itens da seção 3 do Relatório C e obter as decisões institucionais
 pendentes:

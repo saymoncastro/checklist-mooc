@@ -42,7 +42,9 @@ estado → gravidade → categoria → regra), não para resolução. A hipótes
 
 **Ruptura comprovada na jornada 1:** depois de uma correção aplicada com sucesso, "Voltar ao relatório" mostra o mesmo
 problema ainda listado, com o botão de proposta (capturas `06` e `07`; detalhes em A‑01). Hoje esse é o maior defeito de
-experiência, porque mina a confiança no ponto em que o usuário mais precisa dela.
+experiência, porque mina a confiança no ponto em que o usuário mais precisa dela. *Errata de 2026-10-30:* o README do
+plugin já declarava essa limitação; em execuções novas a página mostra também "a sala foi alterada depois desta
+auditoria", o que atenua mas não elimina a confusão.
 
 ## 4. Achados por interface
 

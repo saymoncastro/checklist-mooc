@@ -13,9 +13,9 @@ testes PHPUnit e 13 Behat passando, CI com `moodle-plugin-ci`, controle de acess
 escritas protegidas por `sesskey`, e um caminho de correção com detecção de conflito acima da média. Não foi encontrado
 nenhum risco crítico (P0).
 
-Há **um defeito funcional relevante (P1)**: depois de uma correção assistida bem-sucedida, o relatório continua
-mostrando o problema como aberto, porque a reauditoria não é gravada no histórico. A falha está na integração entre as
-specs 002 e 005 e foi comprovada no laboratório.
+Não há defeito P1. O achado mais visível (A‑01, P2 após errata) é uma limitação já documentada: depois de uma
+correção assistida bem-sucedida, o relatório continua mostrando o problema (com aviso de que a sala mudou) até alguém
+executar a auditoria de novo, porque a reauditoria não é gravada no histórico.
 
 O maior ganho operacional não está na técnica, e sim na **apresentação**. O relatório foi organizado para inspeção, não
 para resolução: códigos e valores de banco no lugar de frases, o mesmo problema espalhado em várias seções, inventário
@@ -24,11 +24,7 @@ pessoas reais.
 
 ## 2. Riscos impeditivos de homologação
 
-| ID | Achado | Por que impede | Esforço |
-|---|---|---|---|
-| A‑01 / B‑09 | Reauditoria pós-correção não gravada; o relatório mostra o problema corrigido | Quebra a tarefa essencial "corrigir e verificar" e o painel subconta o progresso | P |
-
-Nenhum outro achado impede a **homologação** (testes em ambiente institucional). Os da seção 3 devem ser resolvidos
+Nenhum achado impede a **homologação** (testes em ambiente institucional). Errata de 2026-10-30: o A‑01 constava aqui como P1, mas era limitação documentada e mitigada pelo aviso de sala alterada; passou a P2 e foi tratado na etapa 1. Os da seção 3 devem ser resolvidos
 antes da **instalação em produção**.
 
 ## 3. Melhorias necessárias (antes da produção)
