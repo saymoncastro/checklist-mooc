@@ -85,7 +85,7 @@ class finding {
             if ($r['status'] !== status::NAO_CONFORME) {
                 continue;
             }
-            $occ = catalog::parse_occurrence($r['occurrence'] ?? null);
+            $occ = catalog::occurrence_of($r);
             if ($r['rule'] === 'X-DEP-02' && $occ['check'] === 'target_completion' && !empty($r['cmid'])) {
                 $this->blockedcms[(int) $r['cmid']] = true;
             }
@@ -98,11 +98,11 @@ class finding {
     /**
      * Presentable result.
      *
-     * @param array $r stored result (contract 1.0)
+     * @param array $r stored result (contract 1.0 or 1.1)
      * @return stdClass problem, why, fix, alternatives[], who, verify, before, actions[], fallback, check
      */
     public function present(array $r): stdClass {
-        $occ = catalog::parse_occurrence($r['occurrence'] ?? null);
+        $occ = catalog::occurrence_of($r);
         $out = (object) ['fallback' => true, 'check' => $occ['check'], 'actions' => [], 'alternatives' => []];
         $variant = $occ['check'] !== '' ? catalog::variant($r, $occ['check'], $occ['subject']) : null;
         if ($variant === null) {
@@ -151,9 +151,32 @@ class finding {
         $out->whoyou = $who === catalog::WHO_TEACHER && $out->actions;
         $out->who = $out->whoyou ? get_string('who_you', 'local_mooc_audit') : get_string('who_' . $who, 'local_mooc_audit');
         $out->before = $this->before($r, $occ['check'], $a);
+        $fr = $this->found_required($r, $occ['check']);
+        $out->found = $fr[0] ?? null;
+        $out->required = $fr[1] ?? null;
         // Without the plugin there is no screen to go to: the problem belongs to the course as a whole.
         $out->place = $variant === 'noplugin' ? get_string('place_course', 'local_mooc_audit') : $this->place($r, $cm, $a);
         return $out;
+    }
+
+    /**
+     * Function that describes a result in words (the problem sentence, or the rule title and place when the catalogue has
+     * no message), for the lists of resolved and introduced problems of the assisted correction (specs/006, US4).
+     *
+     * @param int $courseid
+     * @param array $results results the descriptions refer to
+     * @param array $policy
+     * @return \Closure fn(array $result): string
+     */
+    public static function describer(int $courseid, array $results, array $policy): \Closure {
+        $presenter = new self($courseid, $results, $policy, new moodle_url(
+            '/local/mooc_audit/index.php',
+            ['courseid' => $courseid]
+        ));
+        return function (array $r) use ($presenter): string {
+            $p = $presenter->present($r);
+            return $p->fallback ? $r['titulo'] . ' — ' . ($r['local'] ?? '-') : $p->problem;
+        };
     }
 
     /**
@@ -455,6 +478,53 @@ class finding {
      */
     protected function course_action(string $capability, string $label, moodle_url $url): array {
         return has_capability($capability, $this->context) ? [(object) ['label' => $label, 'url' => $url->out(false)]] : [];
+    }
+
+    /**
+     * Value found and value required, in words, from the structured params of contract 1.1 (none for older runs).
+     *
+     * @param array $r
+     * @param string $check
+     * @return array [found, required] or []
+     */
+    protected function found_required(array $r, string $check): array {
+        $p = $r['params'] ?? null;
+        if (!is_array($p)) {
+            return [];
+        }
+        $s = fn(string $id, $a = null) => get_string($id, 'local_mooc_audit', $a);
+        $date = fn($ts) => $ts ? userdate((int) $ts, get_string('strftimedate', 'langconfig')) : $s('fr_notset');
+        // Dates of the policy come as dd/mm/yyyy: shown in the same format as the dates found.
+        $policydate = fn(string $d) => preg_match('~^(\d{1,2})/(\d{1,2})/(\d{4})$~', $d, $m)
+            ? userdate(make_timestamp((int) $m[3], (int) $m[2], (int) $m[1]), get_string('strftimedate', 'langconfig')) : $d;
+        switch ($r['rule'] . '|' . $check) {
+            case 'CL-06|startdate':
+                return [$date($p['found'] ?? 0), $policydate((string) ($p['required'] ?? ''))];
+            case 'CL-07|enddate':
+                return [$date($p['found'] ?? 0), implode(' ' . $s('msg_or') . ' ', array_map(
+                    $policydate,
+                    (array) ($p['required'] ?? [])
+                ))];
+            case 'CL-08|self_enrol':
+                $found = [$s(!empty($p['enabled']) ? 'fr_enrol_on' : 'fr_enrol_off'),
+                    $s(!empty($p['newenrols']) ? 'fr_new_on' : 'fr_new_off'),
+                    !empty($p['start']) && !empty($p['end'])
+                        ? $s('fr_period', (object) ['start' => $date($p['start']), 'end' => $date($p['end'])]) : $s('fr_noperiod')];
+                return [implode('; ', $found), $s('fr_enrol_required', (object) ['start' => $date($p['coursestart'] ?? 0),
+                    'end' => $date($p['courseend'] ?? 0)])];
+            case 'CL-12|total_sum':
+                return [format_float((float) ($p['found'] ?? 0), -1), format_float((float) ($p['required'] ?? 0), -1)];
+            case 'CL-13|attempts':
+                $n = (int) ($p['found'] ?? 0);
+                return [$n === 0 ? $s('fr_unlimited') : $s('fr_attempts', $n),
+                    $s(($p['rule'] ?? '') === 'exact' ? 'fr_attempts_exact' : 'fr_attempts_min', (int) ($p['required'] ?? 0))];
+            case 'CL-14|close_date':
+                return [$date($p['found'] ?? 0), $s('fr_courseend', $date($p['courseend'] ?? 0))];
+            case 'CL-23|min_grade':
+                return [isset($p['found']) ? $s('fr_mingrade', format_float((float) $p['found'], -1)) : $s('fr_nogradecondition'),
+                    $s('fr_mingrade_total', format_float((float) ($p['required'] ?? 0), -1))];
+        }
+        return [];
     }
 
     /**

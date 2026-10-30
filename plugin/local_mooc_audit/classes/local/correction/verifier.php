@@ -48,12 +48,13 @@ class verifier {
      * @param array $after results after the change
      * @param string $ruleid target rule
      * @param int $cmid target activity
+     * @param callable|null $describe fn(array $result): string for the lists (default "RULE — location: evidence")
      * @return array targetbefore, targetafter (statuses of the target findings), targetresolved, resolved, introduced,
-     *               introducedwarnings (lists of "RULE — location: evidence"), outcome (one of the constants)
+     *               introducedwarnings (lists of descriptions), outcome (one of the constants)
      */
-    public static function compare(array $before, array $after, string $ruleid, int $cmid): array {
-        $cb = self::counts($before);
-        $ca = self::counts($after);
+    public static function compare(array $before, array $after, string $ruleid, int $cmid, ?callable $describe = null): array {
+        $cb = self::counts($before, $describe);
+        $ca = self::counts($after, $describe);
         $resolved = [];
         $introduced = [];
         $introducedwarnings = [];
@@ -122,16 +123,18 @@ class verifier {
      * Findings grouped by state then by (rule, activity, location); values are human readable descriptions.
      *
      * @param array $results
+     * @param callable|null $describe fn(array $result): string; default rule, location and evidence
      * @return array
      */
-    protected static function counts(array $results): array {
+    protected static function counts(array $results, ?callable $describe = null): array {
         $out = [status::NAO_CONFORME => [], status::ATENCAO => []];
         foreach ($results as $r) {
             if (!isset($out[$r['status']])) {
                 continue;
             }
             $key = $r['rule'] . '|' . (int) ($r['cmid'] ?? 0) . '|' . ($r['local'] ?? '');
-            $out[$r['status']][$key][] = $r['rule'] . ' — ' . ($r['local'] ?? '-') . ': ' . ($r['evidencia'] ?? '');
+            $out[$r['status']][$key][] = $describe ? $describe($r)
+                : $r['rule'] . ' — ' . ($r['local'] ?? '-') . ': ' . ($r['evidencia'] ?? '');
         }
         return $out;
     }

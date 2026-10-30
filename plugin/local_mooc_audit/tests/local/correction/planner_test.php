@@ -67,7 +67,13 @@ final class planner_test extends correction_testcase {
         $this->assertSame(1, $p->current);
         $this->assertSame(2, $p->proposed);
         // The nine elements.
-        $this->assertStringContainsString('tentativas permitidas=1', $p->problem);
+        // In Moodle language (specs/006, US4): the problem sentence of the finding, not its database evidence.
+        $this->assertStringContainsString(get_string(
+            'msg_cl13_attempts_nc_problem',
+            'local_mooc_audit',
+            (object) ['name' => 'Avaliação do Tópico 1', 'min' => 2]
+        ), $p->problem);
+        $this->assertStringNotContainsString('tentativas permitidas=1', $p->problem);
         $this->assertStringContainsString('Avaliação do Tópico 1', $p->location);
         $this->assertStringContainsString('/course/modedit.php?update=' . $q->coursemodule, $p->editurl);
         $this->assertNotEmpty($p->ruletitle);
@@ -82,7 +88,9 @@ final class planner_test extends correction_testcase {
         $this->assertTrue($p->canexecute, 'admin');
         // Simulation.
         $this->assertTrue($p->impact['targetresolved']);
-        $this->assertCount(2, array_filter($p->impact['resolved'], fn($r) => str_starts_with($r, 'CL-13')));
+        $name = (object) ['name' => 'Avaliação do Tópico 1', 'min' => 2];
+        $this->assertSame([get_string('msg_cl13_attempts_nc_problem', 'local_mooc_audit', $name),
+            get_string('msg_cl13_intro_attempts_nc_problem', 'local_mooc_audit', $name)], $p->impact['resolved']);
         $this->assertSame([], $p->impact['introduced']);
         $this->assertSame([], $p->blockers);
         $this->assertSame([], $p->risks, 'no students, no override');
@@ -166,8 +174,10 @@ final class planner_test extends correction_testcase {
         $this->assertSame('timeclose', $p->field);
         $this->assertSame(0, $p->current);
         $this->assertSame((int) $course->enddate, $p->proposed);
-        $this->assertSame(['CL-14 — ' . \local_mooc_audit\local\helpers::label(['modname' => 'quiz', 'name' => 'Q',
-            'cmid' => $q->coursemodule]) . ': data de encerramento não definida'], $p->impact['resolved']);
+        $this->assertSame(
+            [get_string('msg_cl14_close_date_nc_problem', 'local_mooc_audit', (object) ['name' => 'Q'])],
+            $p->impact['resolved']
+        );
         $this->assertArrayHasKey('enddate', $p->state);
     }
 

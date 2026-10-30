@@ -6,7 +6,7 @@ inglês, com os cursos de teste A (referência) e B (com problemas conhecidos).
 
 ## Catálogo funcional
 
-Reconstruído do código da versão 0.6.1 (páginas, capacidades e menus), não das especificações.
+Reconstruído do código da versão 0.9.0 (páginas, capacidades e menus), não das especificações.
 
 | Funcionalidade | Para quê | Quem (padrão) | Onde | Estado |
 |---|---|---|---|---|
@@ -90,15 +90,16 @@ Abrir a página **não** executa a auditoria.
 | **Não verificável** | O plugin não teve como verificar (ex.: plugin ausente). Não é falha da sala; confira manualmente se importar. |
 | **Erro na verificação** | A regra falhou ao executar; as demais não são afetadas. Relate o caso. |
 
-Gravidades: **Bloqueante**, **Alta**, **Média**, **Baixa**, **Informativa**. A tabela *Resultados por estado*
-conta resultados (uma regra pode gerar vários), não regras.
+Gravidades: **Bloqueante**, **Alta**, **Média**, **Baixa**, **Informativa**, sempre acompanhadas do impacto prático. A
+tabela *Resultados por estado*, nos detalhes técnicos, conta resultados (uma regra pode gerar vários), não regras.
 
 ### O que o relatório não diz
 
 - Não vê o arquivo `.mbz`: corrupção de backup só é detectável antes da restauração.
 - Regras que dependem de nomes (fórum "Espaço de interação", pesquisas, certificado, blocos) seguem a política; num site
   com outros nomes, ajuste a política (ver [instalacao.md](instalacao.md)).
-- Os textos de *Evidência* são gerados em português, mesmo com a interface em inglês.
+- A evidência técnica gravada (nos *Detalhes técnicos*) fica em português, mesmo com a interface em inglês; o resto do
+  relatório segue o idioma de quem lê.
 
 ## Correção assistida
 

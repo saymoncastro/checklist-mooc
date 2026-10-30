@@ -31,9 +31,9 @@ use local_mooc_audit\local\status;
  */
 class engine {
     /** @var string Engine version recorded in every report; equal to $plugin->release (checked by engine_test). */
-    const VERSION = '0.8.0';
+    const VERSION = '0.9.0';
     /** @var string Version of the JSON report contract (bumped only on incompatible changes). */
-    const CONTRACT_VERSION = '1.0';
+    const CONTRACT_VERSION = '1.1';
 
     /**
      * Audit a course.
@@ -174,8 +174,8 @@ class engine {
                 // Safety net only: a collision is a defect of the rule (occurrence_test fails on the reference courses).
                 $seen[$key] = ($seen[$key] ?? 0) + 1;
                 $f['occurrence'] = $seen[$key] > 1 ? $key . '#' . $seen[$key] : $key;
-                unset($f['check'], $f['subject']);
-                $results[] = $f;
+                // Contract 1.1 (specs/006): check and subject stay in the result, with the structured facts of the check.
+                $results[] = $f + \local_mooc_audit\local\details::for_result($id, $f, $snapshot, $policy);
             }
         }
         return $results;
@@ -270,7 +270,7 @@ class engine {
     }
 
     /**
-     * JSON serialisation of a report (contract 1.0): the single encoding used by the page and the CLI.
+     * JSON serialisation of a report (contract 1.1): the single encoding used by the page and the CLI.
      *
      * @param array $report
      * @return string

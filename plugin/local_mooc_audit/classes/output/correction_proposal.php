@@ -109,7 +109,7 @@ class correction_proposal implements renderable, templatable {
         $data->policyversion = $p->policyversion;
         $data->history = array_map(fn($row) => (object) [
             'date' => userdate($row->timecreated),
-            'field' => $row->field,
+            'field' => correction_result::field_label((string) $row->field),
             'oldvalue' => $row->oldvalue,
             'newvalue' => $row->newvalue,
             'outcome' => get_string('fix_outcome_' . $row->outcome, 'local_mooc_audit'),

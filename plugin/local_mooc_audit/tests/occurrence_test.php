@@ -130,8 +130,10 @@ final class occurrence_test extends \advanced_testcase {
         $this->assertSame('CONFORME', $pass[0]['status']);
         $this->assertSame('CL-13|cm:100|attempts', $fail[0]['occurrence']);
         $this->assertSame($fail[0]['occurrence'], $pass[0]['occurrence']);
-        $this->assertArrayNotHasKey('check', $fail[0]);
-        $this->assertArrayNotHasKey('subject', $fail[0]);
+        // Contract 1.1 (specs/006): check and subject stay in the result, equal for pass and fail.
+        $this->assertSame('attempts', $fail[0]['check']);
+        $this->assertSame($fail[0]['check'], $pass[0]['check']);
+        $this->assertNull($fail[0]['subject']);
 
         $broken = new class extends local\rule\cl13 {
             /**

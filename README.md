@@ -26,7 +26,7 @@ Catálogo completo: [docs/guia-do-usuario.md](docs/guia-do-usuario.md).
 
 ## Situação
 
-- **Versão 0.8.0, maturidade ALPHA.** Estágio: *plugin instalável para homologação* — instalado a partir do ZIP em
+- **Versão 0.9.0, maturidade ALPHA.** Estágio: *plugin instalável para homologação* — instalado a partir do ZIP em
   Moodle 4.5 e 5.3 limpos, sem avisos com depuração de desenvolvedor, e usado de ponta a ponta por um perfil de professor
   editor ([relatório de prontidão](docs/prontidao-distribuicao/README.md)). Ainda não foi usado em produção nem
   homologado com usuários externos.

@@ -21,6 +21,7 @@ use local_mooc_audit\engine;
 use local_mooc_audit\output\correction_proposal;
 use local_mooc_audit\output\correction_result;
 use local_mooc_audit\output\report;
+use local_mooc_audit\local\status;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -85,11 +86,23 @@ final class output_test extends correction_testcase {
         }
         $noundo = s(get_string('fix_noundo', 'local_mooc_audit'));
         $this->assertStringContainsString($noundo, $html);
+        // In Moodle language (specs/006, US4): the problem sentence and the activity name, no category letter, no
+        // database evidence and no capability names for whoever may apply it.
+        $this->assertStringContainsString(s(get_string(
+            'msg_cl13_attempts_nc_problem',
+            'local_mooc_audit',
+            (object) ['name' => 'Q', 'min' => 2]
+        )), $html);
+        $this->assertStringNotContainsString('(cmid=', $html);
+        $this->assertStringNotContainsString('tentativas permitidas=', $html);
+        $this->assertStringNotContainsString(get_string('fix_category_a', 'local_mooc_audit'), $html);
+        $this->assertStringNotContainsString('local/mooc_audit:applycorrection', $html);
 
         $p->canexecute = false;
         $html = $renderer->render(new correction_proposal($p, $url, $url));
         $this->assertStringNotContainsString('name="fingerprint"', $html);
         $this->assertStringContainsString(get_string('fix_cannotexecute', 'local_mooc_audit'), $html);
+        $this->assertStringContainsString('local/mooc_audit:applycorrection', $html, 'who cannot apply sees what to ask for');
 
         $g = $this->plan($course, 'CL-17', $page->coursemodule);
         $html = $renderer->render(new correction_proposal($g, $url, $url));
@@ -101,6 +114,32 @@ final class output_test extends correction_testcase {
 
         $html = $renderer->render(new correction_proposal(null, $url, $url));
         $this->assertStringContainsString(get_string('fix_nothing', 'local_mooc_audit'), $html);
+    }
+
+    /**
+     * The result of an applied correction names the setting as the edit form does and the states in words.
+     */
+    public function test_result_in_moodle_language(): void {
+        global $PAGE;
+        $course = $this->ccourse();
+        $q = $this->quiz($course, 'Q', 1, 50, 0, '<p>Tentativas permitidas: 2.</p>');
+        $p = $this->plan($course, 'CL-13', $q->coursemodule);
+        $url = new \moodle_url('/local/mooc_audit/index.php');
+        $comparison = ['targetbefore' => [status::NAO_CONFORME, status::NAO_CONFORME], 'targetafter' => [],
+            'resolved' => $p->impact['resolved'], 'introduced' => [], 'introducedwarnings' => [], 'outcome' => verifier::RESOLVED];
+        $html = $PAGE->get_renderer('local_mooc_audit')->render(new correction_result(
+            ['status' => executor::APPLIED,
+            'reaudit' => verifier::RESOLVED, 'proposal' => $p, 'comparison' => $comparison, 'message' => '', 'fixid' => 1],
+            $url,
+            $url
+        ));
+        $this->assertStringContainsString(get_string('attemptsallowed', 'quiz') . ': 1', $html);
+        $this->assertStringNotContainsString('NAO_CONFORME', $html);
+        $this->assertStringNotContainsString('attempts:', $html);
+        $this->assertStringContainsString(\core_text::strtolower(get_string('status_nao_conforme', 'local_mooc_audit')), $html);
+        $this->assertStringContainsString(get_string('fix_noproblem', 'local_mooc_audit'), $html);
+        $this->assertNotEmpty($p->impact['resolved']);
+        $this->assertStringNotContainsString('(cmid=', implode(' ', $p->impact['resolved']));
     }
 
     /**

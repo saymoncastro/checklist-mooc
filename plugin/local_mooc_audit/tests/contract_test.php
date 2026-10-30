@@ -17,8 +17,8 @@
 namespace local_mooc_audit;
 
 /**
- * JSON report contract 1.0: the reports of courses A and B validate against schema/report-v1.0.schema.json, keep
- * every field of the PoC, and page and CLI share one encoding.
+ * JSON report contract 1.1 (additive to 1.0, specs/006): the reports of courses A and B validate against
+ * schema/report-v1.1.schema.json, keep every field of the PoC, and page and CLI share one encoding.
  *
  * The validator (tests/helper/schema_validator.php, shared with the comparison contract) covers only the JSON Schema
  * subset the contracts use; no external library.
@@ -42,7 +42,7 @@ final class contract_test extends \advanced_testcase {
         parent::setUp();
         require_once($CFG->dirroot . '/local/mooc_audit/tests/helper/schema_validator.php');
         $this->validator = new \local_mooc_audit\tests\schema_validator(
-            $CFG->dirroot . '/local/mooc_audit/schema/report-v1.0.schema.json'
+            $CFG->dirroot . '/local/mooc_audit/schema/report-v1.1.schema.json'
         );
         $this->schema = $this->validator->schema();
         $this->assertIsArray($this->schema);
@@ -120,7 +120,7 @@ final class contract_test extends \advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
         $report = engine::audit($course->id);
         $json = engine::to_json($report);
-        $this->assertStringContainsString('"contract_version": "1.0"', $json);
+        $this->assertStringContainsString('"contract_version": "1.1"', $json);
         $this->assertStringContainsString('/course/edit.php?id=', $json, 'slashes must not be escaped');
         $this->assertStringContainsString('Média', $json, 'unicode must not be escaped');
         $this->assertSame($report, json_decode($json, true));

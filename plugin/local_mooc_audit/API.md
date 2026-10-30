@@ -131,7 +131,7 @@ Execuções de salas removidas só são lidas por contas com `local/mooc_audit:v
 | `summary` | `by_status` [{status, count}], `by_severity` [{severity, count}], `rules`, `overall_status` |
 | `errors` | [{code, rule?, message}]: `rule_error`, `policy_warning`, `collection_warning`, `course_missing`, `permission`, `exception`, `interrupted`, `stale` |
 | `evolution` | `baserunid`, `counts` (8 classes: new, changed, persistent, replaced, unverifiable, not_comparable, removed, resolved; ausente quando não comparável), `notes`, `items` (com `includeevolutionitems=1`), `items_unavailable` (a execução base já foi removida pela retenção) |
-| `report` | **texto JSON** do relatório guardado (contrato 1.0, valida em `schema/report-v1.0.schema.json`) |
+| `report` | **texto JSON** do relatório guardado. Execuções a partir da 0.9.0: contrato 1.1 (`schema/report-v1.1.schema.json`), que acrescenta a cada resultado os campos opcionais `check`, `subject`, `subjects`, `params` e `evidence_level`; execuções anteriores: contrato 1.0 (`schema/report-v1.0.schema.json`). O campo `contract_version` diz qual |
 
 Nenhuma resposta identifica quem pediu a auditoria.
 

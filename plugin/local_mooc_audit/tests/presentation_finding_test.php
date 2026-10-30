@@ -96,6 +96,18 @@ final class presentation_finding_test extends \advanced_testcase {
     }
 
     /**
+     * Contract 1.1: the values found and required in words; runs recorded with contract 1.0 have no such line.
+     */
+    public function test_found_and_required(): void {
+        $r = $this->result('CL-13', 'attempts');
+        $p = $this->presenter()->present($r);
+        $this->assertSame(get_string('fr_attempts', 'local_mooc_audit', 1), $p->found);
+        $this->assertSame(get_string('fr_attempts_min', 'local_mooc_audit', 2), $p->required);
+        unset($r['params']);
+        $this->assertNull($this->presenter()->present($r)->found);
+    }
+
+    /**
      * Another fix on the same activity says that the invalid condition must be fixed first (the form is not saved).
      */
     public function test_invalid_condition_comes_first_on_the_same_activity(): void {
@@ -221,7 +233,7 @@ final class presentation_finding_test extends \advanced_testcase {
         $this->assertStringContainsString('/enrol/editinstance.php', $p->actions[0]->url);
         $this->assertStringContainsString('returnurl=', $p->actions[0]->url);
         $old = $this->result('CL-08', 'self_enrol');
-        unset($old['occurrence']);
+        unset($old['occurrence'], $old['check'], $old['subject']);
         $this->assertTrue($this->presenter()->present($old)->fallback);
     }
 }

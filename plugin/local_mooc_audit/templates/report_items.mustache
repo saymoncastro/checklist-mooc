@@ -52,7 +52,9 @@
                 <td class="local_mooc_audit-todo" data-label="{{#str}} label_todo, local_mooc_audit {{/str}}">
                     {{#samecause}}<p class="mb-1 small local_mooc_audit-samecause"><a href="#{{samecauseanchor}}">{{samecause}}</a></p>{{/samecause}}
                     {{#presented}}
+                    {{#found}}<p class="mb-1 local_mooc_audit-foundrequired"><strong>{{#str}} label_found, local_mooc_audit {{/str}}:</strong> {{found}} · <strong>{{#str}} label_expected, local_mooc_audit {{/str}}:</strong> {{required}}</p>{{/found}}
                     <p class="mb-1"><strong>{{#str}} label_why, local_mooc_audit {{/str}}:</strong> {{why}}</p>
+                    {{#hasrelated}}<p class="mb-1 small local_mooc_audit-related">{{#str}} related_chain, local_mooc_audit {{/str}}</p><ul class="mb-1 small">{{#related}}<li><a href="#{{anchor}}">{{problem}}</a></li>{{/related}}</ul>{{/hasrelated}}
                     {{#alsosolves}}<p class="mb-1 small local_mooc_audit-alsosolves">{{alsosolves}}</p>{{/alsosolves}}
                     {{#before}}<p class="mb-1 text-danger local_mooc_audit-before"><strong>{{before}}</strong></p>{{/before}}
                     <p class="mb-1"><strong>{{#str}} label_fix, local_mooc_audit {{/str}}:</strong> {{fix}}</p>

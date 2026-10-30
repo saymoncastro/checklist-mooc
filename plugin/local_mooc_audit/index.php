@@ -19,7 +19,7 @@
  *
  * GET shows the result of the last recorded audit of the course, read-only: opening or reloading the page never runs
  * nor records anything. "Run audit" / "Run again" (POST with sesskey, action=run) runs a new audit, records it in the
- * history and redirects back to the page. format=json returns the last recorded report (contract 1.0 + run), or 404
+ * history and redirects back to the page. format=json returns the last recorded report (contract 1.1 + run), or 404
  * when the course has never been audited. The course itself is never modified.
  *
  * Parameters: courseid (or id), required; format=html|json; action=run (POST).
