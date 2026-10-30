@@ -66,7 +66,9 @@ no relatório e na prévia de correção mudaram só as classes dos selos de est
 3. **Aquecer o site** (5 min antes): entre com a conta do participante, abra o relatório do Curso B e a tela de edição
    do "Questionário 1" e volte ao Painel. No primeiro acesso o editor de "Restringir acesso" leva alguns segundos para
    aparecer; quem salva antes disso não vê a validação da condição, e a observação da T6/INT‑ORDEM se perde.
-   Saia da conta depois.
+   Saia da conta depois. O aquecimento só reduz o atraso do primeiro acesso ao site: **não** esconde a dificuldade. Se,
+   na sessão, o participante salvar antes de o editor aparecer, ou esperar sem saber se a página terminou de carregar,
+   registre **INT‑CARGA** — é um dado da linha de base, não um erro do participante.
 4. **Navegador:** janela anônima, 1366 × 768 ou maior, zoom 100%. Deixe o participante entrar com o usuário `lb_p01`
    e a senha. Comece no **Painel** (a página que abre depois de entrar), não no relatório. **Não** use a "Página
    inicial" do site: ela lista as salas de todos os participantes com o mesmo nome, e a primeira pode ser de outra
@@ -181,6 +183,7 @@ Agradeça e encerre a gravação.
 | INT‑ALERTA | Não sabe se um alerta exige ação |
 | INT‑ORDEM | Tenta uma correção que o Moodle recusa por causa de outra inconformidade (ex.: tentativas do Questionário 1 antes da condição) |
 | INT‑RESP | Não sabe a quem recorrer para um problema que não pode resolver |
+| INT‑CARGA | Salva o formulário antes de o editor de restrições terminar de carregar, ou hesita porque a tela parece incompleta |
 | ROL‑INVENT | Lê o inventário ou se detém nele procurando o problema |
 | FRAG‑ATIV | Não percebe que o mesmo problema ou atividade aparece em outro ponto do relatório |
 | BOTAO‑DUP | Hesita entre os dois botões "Ver proposta" do CL‑13 |
@@ -225,6 +228,7 @@ Verifique também as hipóteses da spec. Se a linha de base contrariar alguma de
 | B‑05 (alertas) | INT‑ALERTA |
 | U‑02/U‑03 (ordem e formulário, auditoria de correção) | INT‑ORDEM, T6 |
 | U‑09 (responsável) | INT‑RESP, pergunta da T7 |
+| Atraso do editor de restrições do Moodle (piloto técnico) | INT‑CARGA |
 | B‑06 (botões) | BOTAO‑DUP |
 | B‑12/B‑13 (correção) | CODIGO‑CORR |
 | **Visão inicial ([validar])** | Se professores procuram os problemas pela atividade (relatam ou fazem isso na T2/T3), considere a visão "por atividade" como inicial para esse perfil |

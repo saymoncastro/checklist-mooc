@@ -295,13 +295,18 @@ moocaudit_53 moocaudit-db-1 && docker network rm moocaudit_53 && docker exec moo
 ## Ambiente da linha de base com usuários (spec 006, fase 0: f0)
 
 Site de **sessão** para o roteiro `specs/006-experiencia-relatorio/validacao/roteiro-linha-de-base.md`: Moodle 4.5 da
-árvore local (com `mod_simplecertificate`, `mod_game` e `block_completion_progress`), Auditor montado de um worktree em
-0.6.1, idioma `pt_br`, porta **8102**, banco `moodle_f0`, rede `moocaudit_f0`. Diferença dos outros ambientes: um
+árvore local (com `mod_simplecertificate`, `mod_game` e `block_completion_progress`), idioma `pt_br`, porta **8102**,
+banco `moodle_f0`, rede `moocaudit_f0`. **Ambiente congelado:** o Auditor vem do ZIP instalável de `main` 0c1035f
+(0.6.1), extraído em `moodle-local/f0-plugin/` e montado **somente leitura** — nenhuma mudança de ramo em worktree
+altera o site durante as sessões. Valores fixados na ficha de `validacao/resultados-linha-de-base.md`. Diferença dos outros ambientes: um
 `config.php` próprio, montado só neste contêiner, mantém a depuração de desenvolvedor na linha de comando (o
 `preparar_sessao.php` a exige) e a desliga nas páginas, para o participante não ver rodapé de desempenho nem avisos de
 depuração. O `config.php` da árvore compartilhada não é alterado.
 
 ```bash
+tools/package-plugin.sh 0c1035f /tmp/f0-dist        # SHA-256 f580b51f…1c31 (reprodutível: mesmo commit, mesmo ZIP)
+rm -rf "$PROJECT_DIR/moodle-local/f0-plugin" && mkdir -p "$PROJECT_DIR/moodle-local/f0-plugin"
+unzip -q /tmp/f0-dist/local_mooc_audit-0.6.1-2026103101.zip -d "$PROJECT_DIR/moodle-local/f0-plugin"
 sed -e 's/^\$CFG->debug = (E_ALL);.*/$CFG->debug = (defined("CLI_SCRIPT") \&\& CLI_SCRIPT) ? E_ALL : 0;/' \
     -e 's/^\$CFG->debugdisplay = 1;/$CFG->debugdisplay = (defined("CLI_SCRIPT") \&\& CLI_SCRIPT) ? 1 : 0;/' \
     -e 's/^\$CFG->debugstringids = 1;.*/$CFG->debugstringids = 0;/' -e 's/^\$CFG->perfdebug = 15;/$CFG->perfdebug = 7;/' \
@@ -314,17 +319,16 @@ docker run -d --name moocaudit-f0-web --network moocaudit_f0 -p 127.0.0.1:8102:8
   -e MOODLE_DOCKER_DBTYPE=pgsql -e MOODLE_DOCKER_DBNAME=moodle_f0 -e MOODLE_DOCKER_DBUSER=moodle -e 'MOODLE_DOCKER_DBPASS=m@0dl3ing' \
   -e MOODLE_DOCKER_WEB_HOST=localhost -e MOODLE_DOCKER_WEB_PORT=127.0.0.1:8102 -e MOODLE_DOCKER_RUNNING=1 \
   -v "$PROJECT_DIR/moodle-local/moodle:/var/www/html" -v "$PROJECT_DIR/moodle-local/config-sessao.php:/var/www/html/config.php:ro" \
-  -v "<worktree em 0.6.1>/plugin/local_mooc_audit:/var/www/html/local/mooc_audit" \
+  -v "$PROJECT_DIR/moodle-local/f0-plugin/mooc_audit:/var/www/html/local/mooc_audit:ro" \
   -w /var/www/html moodlehq/moodle-php-apache:8.3
 docker exec moocaudit-f0-web bash -c 'mkdir -p /var/www/moodledata && chown www-data /var/www/moodledata'
 docker exec -w /var/www/html moocaudit-f0-web php admin/cli/install_database.php --agree-license \
   --fullname="Auditor MOOC (fase 0, linha de base)" --shortname=f0 --adminpass='Admin123!' --adminemail=admin@example.com --lang=pt_br
-docker exec -w /var/www/html moocaudit-f0-web php local/mooc_audit/cli/make_fixtures.php     # A = 2, B = 3 (salas de referência)
 docker exec moocaudit-f0-web chown -R www-data /var/www/moodledata
 ```
 
-Atenção: `make_fixtures.php` apaga e recria os Cursos A e B (ids novos); rode‑o só na instalação. As salas das sessões
-vêm de `preparar_sessao.php` (passo 2 do roteiro). Site: http://localhost:8102 (admin / `Admin123!`, apenas local). Sem
+O ZIP não traz os scripts `cli/make_*.php`; o site não precisa deles: as salas das sessões vêm de `preparar_sessao.php`
+(passo 2 do roteiro), que usa o gerador incluído no pacote. Site: http://localhost:8102 (admin / `Admin123!`, apenas local). Sem
 Selenium nem PHPUnit: este site não roda testes. Remover tudo, depois do estudo: `docker rm -f moocaudit-f0-web &&
 docker network disconnect moocaudit_f0 moocaudit-db-1 && docker network rm moocaudit_f0 && docker exec moocaudit-db-1
-dropdb -U moodle moodle_f0 && rm "$PROJECT_DIR/moodle-local/config-sessao.php"`.
+dropdb -U moodle moodle_f0 && rm -r "$PROJECT_DIR/moodle-local/config-sessao.php" "$PROJECT_DIR/moodle-local/f0-plugin"`.

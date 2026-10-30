@@ -8,9 +8,19 @@
 `mod_simplecertificate` _versão_ · `mod_game` _versão_ · `block_completion_progress` _versão_ · contagem do Curso B
 impressa pelo script: _situação, não conformes, alertas_
 
-> Conferido no piloto técnico de 2026-10-30 (`moocaudit-f0-web`): Auditor 0.6.1 · Moodle 4.5.15 (Build: 20261005) ·
-> `mod_simplecertificate` 4.0.01 · `mod_game` 2026-10-08 · `block_completion_progress` 2026101200 · Curso B: Bloqueada,
-> 25 não conformes, 5 alertas. O técnico confirma estes valores no dia do piloto com pessoas; se mudarem, registre aqui.
+> **Ambiente congelado em 2026-10-30** (`moocaudit-f0-web`, http://localhost:8102), conferido no piloto técnico:
+>
+> | Item | Valor |
+> |---|---|
+> | Auditor | 0.6.1 (version 2026103101), ZIP de `main` 0c1035f, árvore do plugin `4b004d56`, SHA-256 do ZIP `f580b51fdc6d20c2fcab2a6f8c049db86f093212fbf52c9e5515d372fdc31c31`, montado somente leitura |
+> | Moodle | 4.5.15 (Build: 20261005), PHP 8.3, PostgreSQL, tema Boost, `pt_br` |
+> | Plugins de terceiros | `mod_simplecertificate` 4.0.01 (2024051100) · `mod_game` 2026-10-08 (2026100800) · `block_completion_progress` 2026101200 |
+> | Política | `2027-decisoes-2026-10-28` (padrão do plugin), ano da reoferta 2027 |
+> | Gabarito do Curso B | Bloqueada · 25 não conformes (bloqueantes CL‑18, CL‑23, X‑CERT‑01, X‑DEP‑02, X‑DEP‑04; 9 altas, 9 médias, 2 baixas) · 5 alertas |
+> | Gabarito da sala com alertas | Requer correções · 2 não conformes · 3 alertas · 1 não verificável |
+>
+> Contas fictícias do piloto técnico no site: `lb_p97` (salas 2 e 3). Os participantes recebem códigos a partir de P01.
+> Se algum valor mudar no dia das sessões, pare e registre aqui antes de continuar.
 
 ## Critérios de sucesso (comparação com a nova interface em FR‑030)
 

@@ -36,7 +36,7 @@ responde em `localhost`, por isso a sessão acontece nesse computador.
 ## Piloto técnico (2026-10-30, sem participantes)
 
 Ensaio feito pelo agente com contas fictícias P97 (professor) e P98 (equipe técnica), **sem pessoas**: valida o
-ambiente e os instrumentos, não a interface. Site `moocaudit-f0-web`, Moodle 4.5.15 (Build: 20261005), Auditor 0.6.1,
+ambiente e os instrumentos, não a interface. Site `moocaudit-f0-web`, Moodle 4.5.15 (Build: 20261005), Auditor 0.6.1 (depois congelado no ZIP de `main` 0c1035f, com o gabarito reconferido),
 `mod_simplecertificate` 4.0.01, `mod_game` 2026-10-08, `block_completion_progress` 2026101200.
 
 | Verificação | Resultado |
@@ -49,6 +49,11 @@ ambiente e os instrumentos, não a interface. Site `moocaudit-f0-web`, Moodle 4.
 | T3 | O link do CL‑08 leva à lista de métodos; a edição da autoinscrição está a um clique (critério "Parcial" × "Sucesso" observável) |
 | T4 | Correção do CL‑13 aplicada e confirmada; "Voltar ao relatório" mostra o problema resolvido |
 | T6 | Com o editor de restrições carregado, o formulário do "Questionário 1" é **recusado** ("Por favor, acione" na condição "Escolher…"): INT‑ORDEM observável no 4.5 como no 5.3. Ativar a conclusão em "Aprofundamento" e "Executar novamente" resolve o X‑DEP‑02 ("Resolvidas: 1") |
+
+**Achado mantido em aberto:** no primeiro acesso, o editor de "Restringir acesso" do Moodle leva alguns segundos para
+aparecer; um salvamento feito antes disso grava o formulário sem validar a condição (no piloto, o Questionário 1 foi
+salvo com a condição quebrada intacta). É comportamento do Moodle, não do plugin, mas afeta a T6 e o uso real; o
+aquecimento reduz o atraso e o código **INT‑CARGA** registra quando ele ainda aparecer.
 
 **Ajustes feitos no roteiro a partir do piloto:** começar no **Painel**, porque a "Página inicial" lista as salas de
 todos os participantes com o mesmo nome e a primeira era de outra pessoa; **aquecer o site** antes da sessão, porque no
