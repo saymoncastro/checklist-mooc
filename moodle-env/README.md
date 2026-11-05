@@ -30,6 +30,22 @@ moodle-docker/bin/moodle-docker-wait-for-db
 `local.yml` monta `plugin/local_mooc_audit` em `/var/www/html/local/mooc_audit` e a raiz do projeto em `/backups`
 (somente leitura) para restaurar os `.mbz`.
 
+### Perfil rápido no Windows / Docker Desktop
+
+O override também copia o Moodle core uma única vez para o volume Linux `moocaudit-moodle-code` e guarda o
+`moodledata` em `moocaudit-moodle-data`. Somente o plugin continua montado a partir do Windows. Isso evita o custo de
+consultar dezenas de milhares de arquivos PHP pelo filesystem 9P/DrvFS. Na primeira subida, o serviço
+`moodle-volume-init` pode levar alguns minutos; as próximas subidas reutilizam o volume.
+
+O arquivo `php-performance.ini` aumenta os caches de caminho real e OPcache. `MOODLE_LOCAL_FAST=1` é o padrão para
+navegação local. O `config.php` local usa essa variável para desligar `debugdisplay`, `debugstringids`, `perfdebug` e
+`debugpageinfo`. Para investigar um problema com diagnóstico completo, defina `MOODLE_LOCAL_FAST=0` e recrie o
+webserver.
+
+Alterações no plugin aparecem imediatamente. Alterações no Moodle core não são sincronizadas automaticamente com o
+volume; nesse caso, pare o webserver, recrie apenas `moocaudit-moodle-code` e suba novamente para que o inicializador
+copie a árvore atual. Não use `docker compose down -v` se quiser preservar o `moodledata` local.
+
 ## Plugins de terceiros instalados (copiados para a árvore do Moodle)
 
 | Plugin | Fonte | Versão instalada | Observação |
