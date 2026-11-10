@@ -27,7 +27,7 @@ O pacote é um ZIP com uma única pasta, `mooc_audit/`, e o nome `local_mooc_aud
 
   ```bash
   tools/package-plugin.sh            # commit atual → dist/
-  tools/package-plugin.sh v0.6.1     # uma tag ou um commit específico
+  tools/package-plugin.sh v1.0.0     # uma tag ou um commit específico
   ```
 
   O script empacota só arquivos versionados daquele commit (o mesmo commit gera sempre o mesmo ZIP), deixa de fora os
@@ -60,9 +60,9 @@ use a instalação manual.
 
 ```bash
 # Moodle 4.5
-unzip local_mooc_audit-0.6.1-2026103101.zip -d <moodle>/local/
+unzip local_mooc_audit-1.0.0-2026111000.zip -d <moodle>/local/
 # Moodle 5.1 ou posterior (código web em public/)
-unzip local_mooc_audit-0.6.1-2026103101.zip -d <moodle>/public/local/
+unzip local_mooc_audit-1.0.0-2026111000.zip -d <moodle>/public/local/
 
 php <moodle>/admin/cli/upgrade.php --non-interactive   # ou Administração do site > Notificações
 ```
@@ -131,7 +131,7 @@ protocolo REST, o serviço "Auditor MOOC" e uma conta de integração: [API.md](
 
 ## Conferir a instalação
 
-1. *Administração do site > Plugins > Visão geral dos plugins*: *Auditoria MOOC*, versão 2026103101.
+1. *Administração do site > Plugins > Visão geral dos plugins*: *Auditoria MOOC*, versão 2026111000.
 2. Numa sala, como gerente ou professor editor: *Mais > Auditoria técnica* → "Esta sala ainda não foi auditada…" →
    *Executar auditoria* mostra o relatório.
 3. *Administração do site > Cursos*: entradas *Comparar ofertas* e *Acompanhamento das auditorias*.

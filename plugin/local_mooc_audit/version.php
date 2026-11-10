@@ -25,8 +25,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'local_mooc_audit';
-$plugin->version   = 2026103104;
+$plugin->version   = 2026111000;
 $plugin->requires  = 2024100700; // Moodle 4.5.
 $plugin->supported = [405, 503];
-$plugin->maturity  = MATURITY_ALPHA;
-$plugin->release   = '0.9.0';
+$plugin->maturity  = MATURITY_STABLE;
+$plugin->release   = '1.0.0';
