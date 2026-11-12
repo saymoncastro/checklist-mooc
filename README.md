@@ -26,10 +26,9 @@ Catálogo completo: [docs/guia-do-usuario.md](docs/guia-do-usuario.md).
 
 ## Situação
 
-- **Versão 0.9.0, maturidade ALPHA.** Estágio: *plugin instalável para homologação* — instalado a partir do ZIP em
-  Moodle 4.5 e 5.3 limpos, sem avisos com depuração de desenvolvedor, e usado de ponta a ponta por um perfil de professor
-  editor ([relatório de prontidão](docs/prontidao-distribuicao/README.md)). Ainda não foi usado em produção nem
-  homologado com usuários externos.
+- **Versão 1.0.0, maturidade STABLE.** Release estável para implantação institucional no Ifes, instalada a partir do ZIP
+  em Moodle 4.5 e 5.3 limpos, sem avisos com depuração de desenvolvedor, e usada de ponta a ponta por um perfil de
+  professor editor ([relatório de prontidão](docs/prontidao-distribuicao/README.md)).
 - **Política institucional embutida:** os padrões (datas 01/01–31/12, categoria "Inscrições Abertas", fórum "Espaço de
   interação", certificado `mod_simplecertificate`, bloco Progresso de Conclusão) são os do Cefor/Ifes. Em outro site,
   ajuste a política na administração do plugin antes de confiar nos resultados.

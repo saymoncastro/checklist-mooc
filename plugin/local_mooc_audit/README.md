@@ -10,8 +10,8 @@ is re-imported and must be checked again.
   follows all courses (managers).
 - **Read-only by default:** auditing never changes the course. Two settings of quizzes can be fixed from the report,
   always after a preview and an explicit confirmation (see *Assisted correction*).
-- **Status:** release 0.6.1, maturity **ALPHA**. Used in a laboratory and under institutional validation; not yet
-  used in production.
+- **Status:** release 1.0.0, maturity **STABLE**, prepared for institutional production deployment at Ifes after
+  validation of the supported workflows.
 
 > **Institutional policy.** The default policy is the one of Cefor/Ifes (course dates on 01/01–31/12, category
 > "Inscrições Abertas", forum "Espaço de interação", certificate by `mod_simplecertificate`, Progress block, Portuguese

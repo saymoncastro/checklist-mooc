@@ -1,7 +1,11 @@
 # Changes
 
-All releases so far are ALPHA and were tested in laboratory sites only. Detailed technical notes (in Portuguese) are in
-`docs/desenvolvimento/arquitetura-plugin.md` of the project repository.
+Detailed technical notes (in Portuguese) are in `docs/desenvolvimento/arquitetura-plugin.md` of the project repository.
+
+## 1.0.0 (2026111000) — 2026-11-10
+
+- First stable release for production deployment at Ifes, after institutional testing of the supported workflows.
+- Release metadata and documentation promoted from ALPHA to STABLE. No functional, database or contract changes.
 
 ## 0.9.0 (2026103104) — 2026-10-30
 

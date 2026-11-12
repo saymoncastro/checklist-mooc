@@ -1,5 +1,38 @@
 services:
-  webserver:
+  moodle-volume-init:
+    image: "moodlehq/moodle-php-apache:${MOODLE_DOCKER_PHP_VERSION}"
+    command:
+      - /bin/sh
+      - -c
+      - |
+        set -eu
+        if [ ! -f /target/version.php ]; then
+          cp -a /source/. /target/
+        fi
+        mkdir -p /data
+        chmod 0777 /data
+        php /bootstrap/patch-fast-config.php /target/config.php
     volumes:
+      - "${MOODLE_DOCKER_WWWROOT}:/source:ro"
+      - "moocaudit-moodle-code:/target"
+      - "moocaudit-moodle-data:/data"
+      - "${PROJECT_DIR}/moodle-env/patch-fast-config.php:/bootstrap/patch-fast-config.php:ro"
+
+  webserver:
+    depends_on:
+      moodle-volume-init:
+        condition: service_completed_successfully
+    environment:
+      MOODLE_LOCAL_FAST: "${MOODLE_LOCAL_FAST:-1}"
+    volumes:
+      - "moocaudit-moodle-code:/var/www/html"
       - "${PROJECT_DIR}/plugin/local_mooc_audit:/var/www/html/local/mooc_audit"
+      - "moocaudit-moodle-data:/var/www/moodledata"
       - "${PROJECT_DIR}:/backups:ro"
+      - "${PROJECT_DIR}/moodle-env/php-performance.ini:/usr/local/etc/php/conf.d/zz-moodle-local-performance.ini:ro"
+
+volumes:
+  moocaudit-moodle-code:
+    name: moocaudit-moodle-code
+  moocaudit-moodle-data:
+    name: moocaudit-moodle-data
